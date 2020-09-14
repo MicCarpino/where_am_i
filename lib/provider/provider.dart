@@ -5,7 +5,7 @@ import 'package:where_am_i/models/logged_user.dart';
 import 'package:where_am_i/utilities/constants.dart';
 
 //TODO: fix the AES encryption and replace hardcoded password
-String encryptedPw ="=";
+String encryptedPw ="";
 
 Future<LoggedUser> performLogin(String username, String password) async {
   var uri = Uri.https(BASE_URL, '/WhereAmI/login', {'username': username, 'password': encryptedPw});

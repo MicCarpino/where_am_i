@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:where_am_i/pages/home_screen.dart';
 import 'package:where_am_i/utilities/constants.dart';
+import 'package:where_am_i/utilities/shared_preferences.dart';
 import 'pages/login_screen.dart';
 import 'pages/splash_screen.dart';
 
-void main() => runApp(MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await sharedPreferences.init();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -21,11 +26,10 @@ class MyApp extends StatelessWidget {
       ),
       home: SplashScreen(),
       routes: <String, WidgetBuilder>{
-      SPLASH_SCREEN: (BuildContext context) => SplashScreen(),
-      LOGIN_SCREEN: (BuildContext context) => LoginScreen(),
-      HOME_SCREEN: (BuildContext context) => HomeScreen(),
-      //GRID_ITEM_DETAILS_SCREEN: (BuildContext context) => GridItemDetails(),
-    },
+        SPLASH_SCREEN_KEY: (BuildContext context) => SplashScreen(),
+        LOGIN_SCREEN_KEY: (BuildContext context) => LoginScreen(),
+        HOME_SCREEN_KEY: (BuildContext context) => HomeScreen(),
+      },
     );
   }
 }

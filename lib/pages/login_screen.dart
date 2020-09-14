@@ -249,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         final loginResult = await performLogin(_username.trim(), _password.trim());
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString(JWT_TOKEN, loginResult.authenticationToken);
+        prefs.setString(JWT_TOKEN_KEY, loginResult.authenticationToken);
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
           return new HomeScreen();
         }));

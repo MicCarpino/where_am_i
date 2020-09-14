@@ -20,10 +20,10 @@ const Color divider_color = Color(0xffaaaaaa);
 const Color transparent_70 = Color(0xffB3414141);
 
 //keys
-const String SPLASH_SCREEN = 'SPLASH_SCREEN';
-const String LOGIN_SCREEN = 'LOGIN_SCREEN';
-const String HOME_SCREEN = 'HOME_SCREEN';
-const String JWT_TOKEN ='JWT_TOKEN';
+const String SPLASH_SCREEN_KEY = 'SPLASH_SCREEN';
+const String LOGIN_SCREEN_KEY = 'LOGIN_SCREEN';
+const String HOME_SCREEN_KEY = 'HOME_SCREEN';
+const String JWT_TOKEN_KEY ='JWT_TOKEN';
 
 const String BASE_URL = "wai.dncsrl.com";
 
