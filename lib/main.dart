@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:where_am_i/pages/home_screen.dart';
 import 'package:where_am_i/utilities/constants.dart';
 import 'package:where_am_i/utilities/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'pages/login_screen.dart';
 import 'pages/splash_screen.dart';
 
@@ -20,6 +21,16 @@ class MyApp extends StatelessWidget {
       statusBarColor: dncDarkBlue, // status bar color
     ));
     return MaterialApp(
+      localizationsDelegates: [
+        // ... app-specific localization delegate[s] here
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en', ''), // English, no country code
+        const Locale('it', ''), // Hebrew, no country code
+      ],
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.lightBlue,
