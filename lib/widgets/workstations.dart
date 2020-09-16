@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Workstations extends StatelessWidget {
+class Workstations extends StatefulWidget {
   const Workstations( {
     Key key,this.quantity,this.columnsNumber,this.columnsSpacing = 0
   }) : super(key: key);
@@ -10,16 +10,20 @@ class Workstations extends StatelessWidget {
   final double columnsSpacing;
 
   @override
+  _WorkstationsState createState() => _WorkstationsState();
+}
+
+class _WorkstationsState extends State<Workstations> {
+  @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        child: GridView.count(
+    return  GridView.count(
           physics: ScrollPhysics(),
           shrinkWrap: true,
           childAspectRatio: 1 / 1,
-          crossAxisCount: columnsNumber,
+          crossAxisCount: widget.columnsNumber,
           mainAxisSpacing: 0,
-          crossAxisSpacing: columnsSpacing,
-          children: List.generate(quantity, (index) {
+          crossAxisSpacing: widget.columnsSpacing,
+          children: List.generate(widget.quantity, (index) {
             return FlatButton(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
@@ -27,6 +31,6 @@ class Workstations extends StatelessWidget {
                 onPressed: () {},
                 child: Text('boh'));
           }),
-        ));
+        );
   }
 }

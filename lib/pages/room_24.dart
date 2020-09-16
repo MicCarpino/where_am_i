@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:where_am_i/widgets/event_calendar.dart';
 import 'package:where_am_i/widgets/workstations.dart';
 
 class Room24 extends StatefulWidget {
@@ -15,26 +16,25 @@ class _Room24State extends State<Room24> {
       child: Column(
         children: [
           Row(
-            children: [
-              Container(
-                  width: 160,
-                  child: Workstations(quantity: 8, columnsNumber: 2)),
-              Container(
-                  width: 160,
-                  child: Workstations(quantity: 8, columnsNumber: 2))
-            ],
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: Workstations(quantity: 8, columnsNumber: 2)),
+              SizedBox(width: 16),
+              Expanded(child: Workstations(quantity: 8, columnsNumber: 2))
+            ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Saletta riunioni - civico 24'),
+              Text('Saletta riunioni - Civico 24'),
               IconButton(
                 icon: Icon(Icons.settings),
                 onPressed: () {},
-              )
+              ),
             ],
           ),
+          EventCalendar()
         ],
       ),
     );
