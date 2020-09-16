@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:where_am_i/widgets/workstations.dart';
 
 class Room24 extends StatefulWidget {
   @override
@@ -15,8 +16,12 @@ class _Room24State extends State<Room24> {
         children: [
           Row(
             children: [
-              Container(width: 160,child: _generateWorkstations(),),
-              Container(width: 160,child: _generateWorkstations(),),
+              Container(
+                  width: 160,
+                  child: Workstations(quantity: 8, columnsNumber: 2)),
+              Container(
+                  width: 160,
+                  child: Workstations(quantity: 8, columnsNumber: 2))
             ],
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           ),
@@ -32,25 +37,6 @@ class _Room24State extends State<Room24> {
           ),
         ],
       ),
-    );
-  }
-
-  _generateWorkstations() {
-    return GridView.count(
-      physics: ScrollPhysics(),
-      shrinkWrap: true,
-      childAspectRatio: 1 / 1,
-      crossAxisCount: 2,
-      mainAxisSpacing: 0,
-      crossAxisSpacing: 0,
-      children: List.generate(8, (index) {
-        return FlatButton(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-                side: BorderSide(color: Colors.black54)),
-            onPressed: () {},
-            child: Text('boh'));
-      }),
     );
   }
 }

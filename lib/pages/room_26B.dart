@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:where_am_i/widgets/workstations.dart';
 
 class Room26B extends StatefulWidget {
   @override
@@ -14,7 +15,7 @@ class _Room26BState extends State<Room26B> {
       padding: EdgeInsets.all(16),
       child: Column(
         children: [
-          _generateWorkstations(),
+          Workstations(quantity: 18, columnsNumber: 3, columnsSpacing: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -29,27 +30,6 @@ class _Room26BState extends State<Room26B> {
         ],
       ),
     );
-  }
-
-  _generateWorkstations() {
-    return SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: GridView.count(
-          physics: ScrollPhysics(),
-          shrinkWrap: true,
-          childAspectRatio: 1 / 1,
-          crossAxisCount: 3,
-          mainAxisSpacing: 0,
-          crossAxisSpacing: 15,
-          children: List.generate(18, (index) {
-            return FlatButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    side: BorderSide(color: Colors.black54)),
-                onPressed: () {},
-                child: Text('boh'));
-          }),
-        ));
   }
 
   _generateCalendar() {

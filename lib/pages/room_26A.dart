@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:where_am_i/widgets/workstations.dart';
 
 class Room26A extends StatefulWidget {
   @override
@@ -13,29 +14,12 @@ class _Room26AState extends State<Room26A> {
       padding: EdgeInsets.all(16),
       child: Column(
         children: [
-          Text('Stanza 1'), _generateWorkstations(6,3),
-          Text('Stanza 2'), _generateWorkstations(8,4),
-          Text('Stanza 3'), _generateWorkstations(6,3),
-          Text('Stanza 4'), _generateWorkstations(6,2),
+          Text('Stanza 1'), Workstations(quantity:6,columnsNumber: 3),
+          Text('Stanza 2'),Workstations(quantity:8,columnsNumber: 4),
+          Text('Stanza 3'), Workstations(quantity:6,columnsNumber: 3),
+          Text('Stanza 4'),Workstations(quantity:6,columnsNumber: 2),
         ],
       ),
-    );
-  }
-
-  _generateWorkstations(int quantity,int columns){
-    return GridView.count(
-      physics:ScrollPhysics(),
-      shrinkWrap: true,
-      childAspectRatio: 1 / 1,
-      crossAxisCount: columns,
-      children: List.generate(quantity, (index) {
-        return FlatButton(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-                side: BorderSide(color: Colors.black54)),
-            onPressed: () {},
-            child: Text('boh'));
-      }),
     );
   }
 }
