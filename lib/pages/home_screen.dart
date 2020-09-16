@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:where_am_i/widgets/date_picker.dart';
 import 'package:where_am_i/pages/login_screen.dart';
+import 'package:where_am_i/pages/room_24.dart';
+import 'package:where_am_i/pages/room_26A.dart';
+import 'package:where_am_i/pages/room_26B.dart';
 import 'package:where_am_i/utilities/shared_preferences.dart';
 import 'package:where_am_i/utilities/constants.dart';
 
@@ -10,17 +14,53 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentItem = 0;
+  String _title = "";
+  List<Widget> pages = [
+    Room26B(),
+    Room26A(),
+    Room24(),
+  ];
+
+  @override
+  void initState() {
+    _title = "CIVICO 26/B";
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("WAI", style: TextStyle(color: Colors.white)),
+        title: Text(_title, style: TextStyle(color: Colors.white)),
         backgroundColor: dncBlue,
         iconTheme: IconThemeData(color: Colors.white),
       ),
       drawer: _buildDrawer(context),
-      body: Column(children: [_buildDatePicker()]),
+      body: Column(children: [
+        DatePicker(),
+        Expanded(
+          child: PageView.builder(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (BuildContext context, int index) {
+              return pages[index];
+            },
+            onPageChanged: (pageIndex) {
+              switch (pageIndex) {
+                case 0:
+                  _setAppBarTitle("CIVICO 26/B");
+                  break;
+                case 1:
+                  _setAppBarTitle("CIVICO 26/A");
+                  break;
+                case 2:
+                  _setAppBarTitle("CIVICO 24");
+                  break;
+              }
+            },
+            itemCount: pages.length,
+          ),
+        )
+      ]),
     );
   }
 
@@ -120,68 +160,9 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
   }
 
-  _buildDatePicker() {
-    return Container(
-      color: dncLightBlue,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ClipOval(
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                child: SizedBox(
-                    width: 50,
-                    height: 50,
-                    child:
-                        Icon(Icons.keyboard_arrow_left, color: Colors.white)),
-                onTap: () {
-                  print('-');
-                },
-              ),
-            ),
-          ),
-          GestureDetector(
-              child: Text('Martedì 15 settembre 2020',
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
-              onTap: () {
-                _showCalendar(context);
-              }),
-          ClipOval(
-            child: Material(
-              color: Colors.transparent, // button color
-              child: InkWell(
-                splashColor: dncLightBlue, // inkwell color
-                child: SizedBox(
-                    width: 40,
-                    height: 40,
-                    child:
-                        Icon(Icons.keyboard_arrow_right, color: Colors.white)),
-                onTap: () {
-                  print('+');
-                },
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  _showCalendar(context) async {
-    await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime.now().subtract(Duration(days: 365)),
-        lastDate: DateTime(2021).add(Duration(days: 365)),
-        locale: const Locale("it", ""),
-        builder: (context, child) {
-          return Theme(
-            data: ThemeData(),
-            child: child,
-          );
-        }).then((selectedDate) {
-      print(selectedDate);
+  _setAppBarTitle(String title) {
+    setState(() {
+      _title = title;
     });
   }
 }
