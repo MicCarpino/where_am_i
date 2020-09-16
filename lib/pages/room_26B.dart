@@ -9,9 +9,34 @@ class Room26B extends StatefulWidget {
 class _Room26BState extends State<Room26B> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      padding: EdgeInsets.all(16),
+      child: Column(
+        children: [
+          _generateWorkstations(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Saletta riunioni - civico 26'),
+              IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () {},
+              )
+            ],
+          ),
+          _generateCalendar()
+        ],
+      ),
+    );
+  }
+
+  _generateWorkstations() {
+    return SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: GridView.count(
+          physics: ScrollPhysics(),
+          shrinkWrap: true,
           childAspectRatio: 1 / 1,
           crossAxisCount: 3,
           mainAxisSpacing: 0,
@@ -19,11 +44,19 @@ class _Room26BState extends State<Room26B> {
           children: List.generate(18, (index) {
             return FlatButton(
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    side: BorderSide(color: Colors.black87)),
+                    borderRadius: BorderRadius.circular(5),
+                    side: BorderSide(color: Colors.black54)),
                 onPressed: () {},
                 child: Text('boh'));
           }),
         ));
+  }
+
+  _generateCalendar() {
+    return Container(
+      width: double.infinity,
+      color: Colors.red,
+      height: 200,
+    );
   }
 }
