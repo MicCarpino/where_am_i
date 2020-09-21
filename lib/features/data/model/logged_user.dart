@@ -1,4 +1,4 @@
-import 'package:where_am_i/models/user_details.dart';
+import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/features/data/model/user_details.dart';
 
 class LoggedUser {
   final UserDetails userInfo;

@@ -1,6 +1,6 @@
 // utils/shared_prefs.dart
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:where_am_i/utilities/constants.dart';
+import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/core/utils/constants.dart';
 
 class SharedPrefs {
   static SharedPreferences _sharedPreferences;

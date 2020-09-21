@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:where_am_i/pages/home_screen.dart';
-import 'package:where_am_i/utilities/constants.dart';
-import 'package:where_am_i/utilities/shared_preferences.dart';
+import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/core/utils/constants.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'pages/login_screen.dart';
-import 'pages/splash_screen.dart';
+import 'package:where_am_i/core/utils/shared_preferences.dart';
+import 'package:where_am_i/features/presentation/pages/home_screen.dart';
+import 'package:where_am_i/features/presentation/pages/login_screen.dart';
+import 'package:where_am_i/features/presentation/pages/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

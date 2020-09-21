@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:where_am_i/provider/provider.dart';
-import 'package:where_am_i/utilities/constants.dart';
+import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/provider.dart';
+import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/core/utils/constants.dart';
 
 import 'home_screen.dart';
 

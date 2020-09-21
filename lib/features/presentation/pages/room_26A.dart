@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:where_am_i/widgets/workstations.dart';
+import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/features/presentation/widgets/workstations.dart';
 
 class Room26A extends StatefulWidget {
   @override

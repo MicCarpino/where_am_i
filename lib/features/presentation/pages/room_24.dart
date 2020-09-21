@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:where_am_i/widgets/event_calendar.dart';
-import 'package:where_am_i/widgets/workstations.dart';
+import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/features/presentation/widgets/event_calendar.dart';
+import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/features/presentation/widgets/workstations.dart';
 
 class Room24 extends StatefulWidget {
   @override
