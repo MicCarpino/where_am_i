@@ -2,8 +2,9 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:where_am_i/core/utils/shared_preferences.dart';
-import 'package:where_am_i/features/presentation/pages/home_screen.dart';
-import 'package:where_am_i/features/presentation/pages/login_screen.dart';
+
+import 'home_screen.dart';
+import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

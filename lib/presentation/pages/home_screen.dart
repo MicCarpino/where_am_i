@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:where_am_i/core/utils/shared_preferences.dart';
-import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/features/presentation/widgets/date_picker.dart';
+import 'package:where_am_i/presentation/pages/room_24.dart';
+import 'package:where_am_i/presentation/pages/room_26A.dart';
+import 'package:where_am_i/presentation/pages/room_26B.dart';
+import 'package:where_am_i/presentation/widgets/date_picker.dart';
 import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/core/utils/constants.dart';
-import 'package:where_am_i/features/presentation/pages/room_26B.dart';
-import 'package:where_am_i/features/presentation/pages/room_26A.dart';
-import 'package:where_am_i/features/presentation/pages/room_24.dart';
 
 import 'login_screen.dart';
 

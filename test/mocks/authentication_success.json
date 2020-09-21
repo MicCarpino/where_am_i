@@ -1,0 +1,13 @@
+{
+  "user": {
+    "idResource": "1",
+    "idRole": 3,
+    "username": "marior",
+    "password": null,
+    "surname": "Rossi",
+    "name": "Mario",
+    "email": "mario.rossi@abc.com"
+  },
+  "token": "eyJ0eXAiOiJKV1QiLC2MDA3MjQyNGciOi5hbWUiOiJyNDUsImlhdCI6MTYwJ0eXAiOiJKV1QiLCJhbjYXJwaW5vbSJ9.rbN3A6QUi52pum-ESZToojyPWA3ES3DooFVES3AXongc",
+  "expiration": 30000
+}

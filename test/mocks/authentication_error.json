@@ -1,0 +1,7 @@
+{
+  "timestamp": "2020-09-21T13:19:37.811+0000",
+  "status": 500,
+  "error": "Internal Server Error",
+  "message": "Input byte array has wrong 4-byte ending unit",
+  "path": "/WhereAmI/login"
+}

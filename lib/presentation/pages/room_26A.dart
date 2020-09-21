@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/features/presentation/widgets/workstations.dart';
+import 'package:where_am_i/presentation/widgets/workstations.dart';
 
 class Room26A extends StatefulWidget {
   @override
@@ -14,10 +14,14 @@ class _Room26AState extends State<Room26A> {
       padding: EdgeInsets.all(16),
       child: Column(
         children: [
-          Text('Stanza 1'), Workstations(quantity:6,columnsNumber: 3),
-          Text('Stanza 2'),Workstations(quantity:8,columnsNumber: 4),
-          Text('Stanza 3'), Workstations(quantity:6,columnsNumber: 3),
-          Text('Stanza 4'),Workstations(quantity:6,columnsNumber: 2),
+          Text('Stanza 1'),
+          Workstations(quantity: 6, columnsNumber: 3),
+          Text('Stanza 2'),
+          Workstations(quantity: 8, columnsNumber: 4),
+          Text('Stanza 3'),
+          Workstations(quantity: 6, columnsNumber: 3),
+          Text('Stanza 4'),
+          Workstations(quantity: 6, columnsNumber: 2),
         ],
       ),
     );
