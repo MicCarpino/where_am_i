@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/provider.dart';
-import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/domain/usecases/perform_user_authentication.dart';
+import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
+import 'package:where_am_i/presentation/widgets/loading_widget.dart';
 
 import 'home_screen.dart';
+
+final sl = GetIt.instance;
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -65,13 +71,40 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.all(10.0),
                         child: new CircularProgressIndicator(
                             valueColor:
-                                AlwaysStoppedAnimation<Color>(dncBlue))),
+                            AlwaysStoppedAnimation<Color>(dncBlue))),
                   ),
                 )
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  BlocProvider<LoginBloc> buildBody(BuildContext context) {
+    return BlocProvider(
+      create: (_) => sl<LoginBloc>(),
+      child: BlocBuilder<LoginBloc, LoginState>(
+        builder: (context, state) {
+          if (state is LoginInitial) {
+            return null;
+          } else if (state is Loading) {
+            setState(() {
+              _isLoading = true;
+            });
+          } else if (state is LoginSuccessful) {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) {
+                  return new HomeScreen();
+                }));
+          } else if (state is LoginError) {
+            _scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: new Text('Error: ${state.errorMessage.toString()}'),
+                duration: new Duration(seconds: 5)));
+          }
+          return Container();
+        },
       ),
     );
   }
@@ -103,6 +136,9 @@ class _LoginScreenState extends State<LoginScreen> {
             onFieldSubmitted: (term) {
               _fieldFocusChange(context, _usernameFocus, _passwordFocus);
             },
+            onChanged: (value) {
+              _username = value;
+            },
             validator: (value) => value.isEmpty ? "Username required" : null,
             onSaved: (value) => _username = value,
             controller: _usernameController,
@@ -124,10 +160,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'Password',
-          style: kLabelStyle,
-        ),
+        Text('Password', style: kLabelStyle),
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
@@ -139,6 +172,9 @@ class _LoginScreenState extends State<LoginScreen> {
               _passwordFocus.unfocus();
             },
             validator: (value) => value.isEmpty ? "Password required" : null,
+            onChanged: (value) {
+              _password = value;
+            },
             onSaved: (value) => _password = value,
             controller: _passwordController,
             obscureText: _obscureText,
@@ -161,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Icon(
                   _obscureText ? Icons.visibility : Icons.visibility_off,
                   semanticLabel:
-                      _obscureText ? 'show password' : 'hide password',
+                  _obscureText ? 'show password' : 'hide password',
                   color: dncBlue,
                 ),
               ),
@@ -205,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
           setState(() {
             _isLoading = true;
           });
-          validateAndSubmit();
+          BlocProvider.of<LoginBloc>(context).add(OnLoginButtonClick(_username,_password));
         },
         padding: EdgeInsets.fromLTRB(50, 15, 50, 15),
         shape: RoundedRectangleBorder(
@@ -226,41 +262,10 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  _fieldFocusChange(
-      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
+  _fieldFocusChange(BuildContext context, FocusNode currentFocus,
+      FocusNode nextFocus) {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
   }
 
-  bool _validateAndSave() {
-    setState(() {
-      _isLoading = true;
-    });
-    final form = _formKey.currentState;
-    if (form.validate()) {
-      form.save();
-      return true;
-    }
-    return false;
-  }
-
-  void validateAndSubmit() async {
-    if (_validateAndSave()) {
-      try {
-        final loginResult = await performLogin(_username.trim(), _password.trim());
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString(JWT_TOKEN_KEY, loginResult.authenticationToken);
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-          return new HomeScreen();
-        }));
-      } catch (e) {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-            content: new Text('Error: ${e.toString()}'),
-            duration: new Duration(seconds: 5)));
-      }
-    }
-    setState(() {
-      _isLoading = false;
-    });
-  }
 }

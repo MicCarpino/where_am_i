@@ -7,22 +7,22 @@ import 'package:where_am_i/domain/entities/user.dart';
 
 import '../repositories/login_repository.dart';
 
-class GetAuthenticatedUser extends UseCase<User, Params> {
+class PerformUserAuthentication extends UseCase<User, LoginParams> {
   final LoginRepository loginRepository;
 
-  GetAuthenticatedUser(this.loginRepository);
+  PerformUserAuthentication(this.loginRepository);
 
-  Future<Either<Failure, User>> call(Params params) async {
+  Future<Either<Failure, User>> call(LoginParams params) async {
     return loginRepository.performUserAuthentication(
         params.username, params.password);
   }
 }
 
-class Params extends Equatable {
+class LoginParams extends Equatable {
   final String username;
   final String password;
 
-  Params({@required this.username, @required this.password});
+  LoginParams({@required this.username, @required this.password});
 
   @override
   List<Object> get props => [username, password];

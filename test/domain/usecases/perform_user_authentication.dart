@@ -5,17 +5,17 @@ import 'package:where_am_i/core/error/failure.dart';
 
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/repositories/login_repository.dart';
-import 'package:where_am_i/domain/usecases/get_remote_user.dart';
+import 'package:where_am_i/domain/usecases/perform_user_authentication.dart';
 
 class MockLoginRepository extends Mock implements LoginRepository {}
 
 void main() {
-  GetAuthenticatedUser usecase;
+  PerformUserAuthentication usecase;
   MockLoginRepository mockLoginRepository;
 
   setUp(() {
     mockLoginRepository = MockLoginRepository();
-    usecase = GetAuthenticatedUser(mockLoginRepository);
+    usecase = PerformUserAuthentication(mockLoginRepository);
   });
 
   final tUserDetails = UserDetails(
@@ -34,11 +34,11 @@ void main() {
     expiration: 100,
   );
 
-  test('should retrieve the authenticated user object', () async {
+  test('should get the authenticated user object when remote auth succeed', () async {
     when(mockLoginRepository.performUserAuthentication(any, any))
         .thenAnswer((_) async => Right(tUser));
 
-    final result = await usecase(Params(username: tUsername,password: tPassword));
+    final result = await usecase(LoginParams(username: tUsername,password: tPassword));
 
     expect(result, Right(tUser));
     verify(mockLoginRepository.performUserAuthentication(tUsername, tPassword));

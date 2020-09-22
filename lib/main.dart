@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/constants.dart';
+import 'injection_container.dart' as di;
+
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:where_am_i/core/utils/shared_preferences.dart';
 import 'package:where_am_i/presentation/pages/home_screen.dart';
 import 'package:where_am_i/presentation/pages/login_screen.dart';
 import 'package:where_am_i/presentation/pages/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await sharedPreferences.init();
+  await di.init();
   runApp(MyApp());
 }
 
