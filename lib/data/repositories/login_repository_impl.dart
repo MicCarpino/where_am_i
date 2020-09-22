@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
+import 'package:where_am_i/core/error/exceptions.dart';
 
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
@@ -19,7 +20,21 @@ class LoginRepositoryImpl implements LoginRepository {
   @override
   Future<Either<Failure, User>> performUserAuthentication(
       String username, String password) async {
-    return Right(
-        await remoteDataSource.performUserAuthentication(username, password));
+    try {
+      final remoteTrivia = await  remoteDataSource.performUserAuthentication(username, password);
+      return Right(remoteTrivia);
+    } on ServerException {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> isUserLogged() async {
+    try {
+      final cachedUser = await localDataSource.getCachedUser();
+      return Right(cachedUser);
+    } on CacheException {
+      return Left(CacheFailure());
+    }
   }
 }

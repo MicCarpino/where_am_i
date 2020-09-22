@@ -32,11 +32,8 @@ class MyApp extends StatelessWidget {
         const Locale('en', ''), // English, no country code
         const Locale('it', ''), // Hebrew, no country code
       ],
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.lightBlue,
-      ),
-      home: SplashScreen(),
+      theme: ThemeData(primarySwatch: Colors.lightBlue),
+      home: LoginScreen(),
       routes: <String, WidgetBuilder>{
         SPLASH_SCREEN_KEY: (BuildContext context) => SplashScreen(),
         LOGIN_SCREEN_KEY: (BuildContext context) => LoginScreen(),

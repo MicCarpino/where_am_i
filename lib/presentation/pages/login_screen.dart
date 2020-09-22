@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/domain/usecases/perform_user_authentication.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
-import 'package:where_am_i/presentation/widgets/loading_widget.dart';
+import 'package:where_am_i/presentation/pages/splash_screen.dart';
 
 import 'home_screen.dart';
 
@@ -34,52 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 100),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Center(
-                  child: Column(
-                    children: <Widget>[
-                      Image(image: AssetImage('assets/dnc_def_logo.png')),
-                      Form(
-                        key: _formKey,
-                        child: _buildForm(),
-                      ),
-                      _buildLoginBtn(),
-                    ],
-                  ),
-                ),
-                Visibility(
-                  maintainSize: true,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  visible: _isLoading,
-                  child: Container(
-                    color: Colors.transparent,
-                    width: 60.0,
-                    height: 60.0,
-                    child: new Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: new CircularProgressIndicator(
-                            valueColor:
-                            AlwaysStoppedAnimation<Color>(dncBlue))),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    return Scaffold(key: _scaffoldKey, body: buildBody(context));
   }
 
   BlocProvider<LoginBloc> buildBody(BuildContext context) {
@@ -88,16 +41,27 @@ class _LoginScreenState extends State<LoginScreen> {
       child: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
           if (state is LoginInitial) {
-            return null;
+            BlocProvider.of<LoginBloc>(context).add(CheckUserAlreadyLogged());
+            return SplashScreen();
+          } else if (state is LoginCheckingStatus) {
+            final isUserLogged = state.isUserLogged;
+            if (isUserLogged) {
+              Navigator.of(context)
+                  .pushReplacement(MaterialPageRoute(builder: (context) {
+                return new HomeScreen();
+              }));
+            } else {
+              return renderLoginPage();
+            }
           } else if (state is Loading) {
             setState(() {
               _isLoading = true;
             });
           } else if (state is LoginSuccessful) {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) {
-                  return new HomeScreen();
-                }));
+            Navigator.of(context)
+                .pushReplacement(MaterialPageRoute(builder: (context) {
+              return new HomeScreen();
+            }));
           } else if (state is LoginError) {
             _scaffoldKey.currentState.showSnackBar(SnackBar(
                 content: new Text('Error: ${state.errorMessage.toString()}'),
@@ -105,6 +69,48 @@ class _LoginScreenState extends State<LoginScreen> {
           }
           return Container();
         },
+      ),
+    );
+  }
+
+  Widget renderLoginPage() {
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 100),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Center(
+                child: Column(
+                  children: <Widget>[
+                    Image(image: AssetImage('assets/dnc_def_logo.png')),
+                    Form(key: _formKey, child: _buildForm()),
+                    _buildLoginBtn(),
+                  ],
+                ),
+              ),
+              Visibility(
+                maintainSize: true,
+                maintainAnimation: true,
+                maintainState: true,
+                visible: _isLoading,
+                child: Container(
+                  color: Colors.transparent,
+                  width: 60.0,
+                  height: 60.0,
+                  child: new Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: new CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(dncBlue))),
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -171,23 +177,17 @@ class _LoginScreenState extends State<LoginScreen> {
             onFieldSubmitted: (value) {
               _passwordFocus.unfocus();
             },
-            validator: (value) => value.isEmpty ? "Password required" : null,
             onChanged: (value) {
               _password = value;
             },
             onSaved: (value) => _password = value,
             controller: _passwordController,
             obscureText: _obscureText,
-            style: TextStyle(
-              color: Colors.black87,
-            ),
+            style: TextStyle(color: Colors.black87),
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 14.0),
-              prefixIcon: Icon(
-                Icons.lock,
-                color: dncBlue,
-              ),
+              prefixIcon: Icon(Icons.lock, color: dncBlue),
               suffixIcon: GestureDetector(
                 onTap: () {
                   setState(() {
@@ -195,11 +195,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   });
                 },
                 child: Icon(
-                  _obscureText ? Icons.visibility : Icons.visibility_off,
-                  semanticLabel:
-                  _obscureText ? 'show password' : 'hide password',
-                  color: dncBlue,
-                ),
+                    _obscureText ? Icons.visibility : Icons.visibility_off,
+                    semanticLabel:
+                        _obscureText ? 'show password' : 'hide password',
+                    color: dncBlue),
               ),
             ),
           ),
@@ -238,34 +237,32 @@ class _LoginScreenState extends State<LoginScreen> {
       child: RaisedButton(
         elevation: 5.0,
         onPressed: () {
+          BlocProvider.of<LoginBloc>(context)
+              .add(OnLoginButtonClick(_username, _password));
           setState(() {
             _isLoading = true;
           });
-          BlocProvider.of<LoginBloc>(context).add(OnLoginButtonClick(_username,_password));
         },
         padding: EdgeInsets.fromLTRB(50, 15, 50, 15),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         color: dncBlue,
         child: Text(
           'LOGIN',
           style: TextStyle(
-            color: Colors.white,
-            letterSpacing: 1.5,
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'OpenSans',
-          ),
+              color: Colors.white,
+              letterSpacing: 1.5,
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'OpenSans'),
         ),
       ),
     );
   }
 
-  _fieldFocusChange(BuildContext context, FocusNode currentFocus,
-      FocusNode nextFocus) {
+  _fieldFocusChange(
+      BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
   }
-
 }

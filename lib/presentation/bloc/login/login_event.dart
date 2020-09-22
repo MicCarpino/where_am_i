@@ -1,5 +1,6 @@
 part of 'login_bloc.dart';
 
+@immutable
 abstract class LoginEvent extends Equatable {
   const LoginEvent([List props = const <dynamic>[]]);
 
@@ -14,3 +15,5 @@ class OnLoginButtonClick extends LoginEvent {
   OnLoginButtonClick(this.inUsername, this.inPassword)
       : super([inUsername, inPassword]);
 }
+
+class CheckUserAlreadyLogged extends LoginEvent {}

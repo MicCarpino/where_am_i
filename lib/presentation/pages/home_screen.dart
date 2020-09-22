@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:where_am_i/core/utils/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:where_am_i/presentation/pages/room_24.dart';
 import 'package:where_am_i/presentation/pages/room_26A.dart';
 import 'package:where_am_i/presentation/pages/room_26B.dart';
@@ -96,9 +96,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Icon(Icons.exit_to_app, color: Colors.black87),
                             title: Text('Logout'),
                             onTap: () {
-                              sharedPreferences.removeJwtToken().then((value) =>
-                                  Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(builder: (context) {
+                              SharedPreferences.getInstance().then((value) {
+                                value.remove("JWT_TOKEN");
+                              }).then((value) => Navigator.of(context)
+                                      .pushReplacement(
+                                          MaterialPageRoute(builder: (context) {
                                     return new LoginScreen();
                                   })));
                             })

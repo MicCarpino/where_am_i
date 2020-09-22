@@ -14,9 +14,10 @@ final sl = GetIt.instance;
 Future<void> init() async {
   // Features - Number trivia
   // Bloc
-  sl.registerFactory(() => LoginBloc(performUserAuthentication: sl()));
+  sl.registerFactory(() => LoginBloc(performUserAuthentication: sl(),checkUserAlreadyLogged:sl() ));
   // Use Cases
   sl.registerLazySingleton(() => PerformUserAuthentication(sl()));
+  sl.registerLazySingleton(() => CheckUserAlreadyLogged());
   // Repository
   sl.registerLazySingleton<LoginRepository>(
       () => (LoginRepositoryImpl(
