@@ -16,4 +16,4 @@ class OnLoginButtonClick extends LoginEvent {
       : super([inUsername, inPassword]);
 }
 
-class CheckUserAlreadyLogged extends LoginEvent {}
+class OnLoginStartUp extends LoginEvent {}

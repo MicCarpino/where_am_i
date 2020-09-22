@@ -37,17 +37,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   BlocProvider<LoginBloc> buildBody(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<LoginBloc>(),
+      create: (_) => sl<LoginBloc>()..add(OnLoginStartUp()),
       child: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
           if (state is LoginInitial) {
-            BlocProvider.of<LoginBloc>(context).add(CheckUserAlreadyLogged());
             return SplashScreen();
-          } else if (state is LoginCheckingStatus) {
-            final isUserLogged = state.isUserLogged;
-            if (isUserLogged) {
+          } else if (state is LoginStatus) {
+            if (state.loggedUser != null) {
               Navigator.of(context)
                   .pushReplacement(MaterialPageRoute(builder: (context) {
+                //TODO: pass logged user to home screen
                 return new HomeScreen();
               }));
             } else {

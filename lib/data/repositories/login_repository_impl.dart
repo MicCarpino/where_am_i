@@ -29,7 +29,7 @@ class LoginRepositoryImpl implements LoginRepository {
   }
 
   @override
-  Future<Either<Failure, User>> isUserLogged() async {
+  Future<Either<Failure, User>> getLoggedUser() async {
     try {
       final cachedUser = await localDataSource.getCachedUser();
       return Right(cachedUser);

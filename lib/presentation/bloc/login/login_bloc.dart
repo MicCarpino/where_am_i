@@ -6,6 +6,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
+import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/domain/usecases/check_user_already_logged.dart';
 import 'package:where_am_i/domain/usecases/perform_user_authentication.dart';
 
 part 'login_event.dart';
@@ -17,7 +19,7 @@ const String INVALID_INPUT_FAILURE_MESSAGE =
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final PerformUserAuthentication performUserAuthentication;
-  final CheckUserAlreadyLogged checkUserAlreadyLogged;
+  final CheckUserAlreadyLogged getLoggedUser;
 
   LoginBloc({
     @required PerformUserAuthentication performUserAuthentication,
@@ -25,7 +27,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   })  : assert(performUserAuthentication != null),
         assert(checkUserAlreadyLogged != null),
         performUserAuthentication = performUserAuthentication,
-        checkUserAlreadyLogged = checkUserAlreadyLogged,
+        getLoggedUser = checkUserAlreadyLogged,
         super(LoginInitial());
 
   @override
@@ -40,9 +42,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         yield* _loginSuccessOrErrorState(loginResult);
       }
     }
-    if (event is CheckUserAlreadyLogged) {
-      final isUserLogged = checkUserAlreadyLogged;
-      yield LoginCheckingStatus(isUserLogged != null);
+    if (event is OnLoginStartUp) {
+      final loggedUser = await getLoggedUser(NoParams());
+      yield loggedUser.fold(
+          (failure) => LoginStatus(null), (loggedUser) => LoginStatus(loggedUser));
     }
   }
 

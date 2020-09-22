@@ -10,12 +10,12 @@ class LoginInitial extends LoginState {
   List<Object> get props => [];
 }
 
-class LoginCheckingStatus extends LoginState {
-  final bool isUserLogged;
-  LoginCheckingStatus(this.isUserLogged);
+class LoginStatus extends LoginState {
+  final User loggedUser;
+  LoginStatus(this.loggedUser);
 
   @override
-  List<Object> get props => [isUserLogged];
+  List<Object> get props => [loggedUser];
 }
 
 class InvalidInput extends LoginState {

@@ -9,6 +9,8 @@ import 'package:where_am_i/domain/repositories/login_repository.dart';
 import 'package:where_am_i/domain/usecases/perform_user_authentication.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 
+import 'domain/usecases/check_user_already_logged.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -17,7 +19,7 @@ Future<void> init() async {
   sl.registerFactory(() => LoginBloc(performUserAuthentication: sl(),checkUserAlreadyLogged:sl() ));
   // Use Cases
   sl.registerLazySingleton(() => PerformUserAuthentication(sl()));
-  sl.registerLazySingleton(() => CheckUserAlreadyLogged());
+  sl.registerLazySingleton(() => CheckUserAlreadyLogged(sl()));
   // Repository
   sl.registerLazySingleton<LoginRepository>(
       () => (LoginRepositoryImpl(

@@ -11,7 +11,7 @@ class CheckUserAlreadyLogged implements UseCase<User, NoParams> {
 
   @override
   Future<Either<Failure, User>> call(NoParams params) async{
-    return await loginRepository.isUserLogged();
+    return await loginRepository.getLoggedUser();
   }
 
 }
