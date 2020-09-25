@@ -8,7 +8,7 @@ import 'package:where_am_i/data/models/reservation_model.dart';
 import 'package:where_am_i/data/models/user_model.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
 
-const BASE_URL = "wai.dncsrl.com/WhereAmI";
+const BASE_URL = "wai.dncsrl.com";
 String encryptedPw = "=";
 
 abstract class RemoteDataSource {
@@ -28,7 +28,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<UserModel> performUserAuthentication(
       String username, String password) async {
     //TODO: replace with password encription
-    var uri = Uri.https(BASE_URL, '/login',
+    var uri = Uri.https(BASE_URL, '/WhereAmI/login',
         {'username': username.trim(), 'password': encryptedPw});
     final response = await http.post(uri,
         headers: {HttpHeaders.contentTypeHeader: 'application/json'});
@@ -42,7 +42,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<List<WorkstationModel>> getWorkstations(
       String token, DateTime date) async {
-    var uri = Uri.https(BASE_URL, '/workstation/$date');
+    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/$date');
     final response = await http.post(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'

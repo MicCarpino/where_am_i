@@ -9,19 +9,11 @@ import './bloc.dart';
 //ignore:
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final PerformLogIn performLogIn;
-  final PerformLogOut performLogOut;
-  final GetLoggedUser getLoggedUser;
 
   LoginBloc({
     @required PerformLogIn performLogIn,
-    @required PerformLogOut performLogOut,
-    @required GetLoggedUser getLoggedUser,
   })  : assert(performLogIn != null),
-        assert(performLogOut != null),
-        assert(getLoggedUser != null),
         performLogIn = performLogIn,
-        performLogOut = performLogOut,
-        getLoggedUser = getLoggedUser,
         super(LoadingState());
 
   @override

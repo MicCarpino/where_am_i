@@ -8,6 +8,7 @@ import 'package:where_am_i/data/repositories/login_repository_impl.dart';
 import 'package:where_am_i/domain/repositories/login_repository.dart';
 import 'package:where_am_i/domain/usecases/perform_log_in.dart';
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
+import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 
 import 'domain/usecases/get_logged_user.dart';
@@ -17,7 +18,8 @@ final sl = GetIt.instance;
 Future<void> init() async {
   // Features - Number trivia
   // Bloc
-  sl.registerFactory(() => LoginBloc(performLogIn: sl(),performLogOut:sl(),getLoggedUser: sl() ));
+  sl.registerFactory(() => LoginBloc(performLogIn: sl()));
+  sl.registerFactory(() => HomeBloc(performLogOut:sl()));
   // Use Cases
   sl.registerLazySingleton(() => PerformLogIn(sl()));
   sl.registerLazySingleton(() => PerformLogOut(sl()));
