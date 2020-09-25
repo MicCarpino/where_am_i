@@ -8,12 +8,12 @@ import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/core/utils/constants
 
 import 'login_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class Home extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _HomeState createState() => _HomeState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeState extends State<Home> {
   int _currentItem = 0;
   String _title = "";
   List<Widget> pages = [

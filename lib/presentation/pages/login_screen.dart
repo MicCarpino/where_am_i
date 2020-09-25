@@ -7,7 +7,7 @@ import 'package:where_am_i/core/utils/size_config.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 import 'package:where_am_i/presentation/bloc/login/login_state.dart';
 import 'package:where_am_i/presentation/bloc/login/login_event.dart';
-import 'package:where_am_i/presentation/pages/home.dart';
+import 'package:where_am_i/presentation/pages/home_screen.dart';
 import 'package:where_am_i/presentation/widgets/login_button.dart';
 
 final sl = GetIt.instance;
@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     LoginButton(
                       'Log In',
                       isLoading: _isLoading,
-                      onTap: () => _login(),
+                      onTap: () => _login(context),
                     ),
                   ],
                 ),
@@ -127,12 +127,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  _login() {
+  _login(BuildContext context) {
     String email = _usernameController.value.text;
     String password = _passwordController.value.text;
-    if (email.isEmpty || password.isEmpty) {return;}
-    _isLoading = true;
-    loginBloc.add(LoginButtonPressed(username: email, password: password));
+    if (email.isEmpty || password.isEmpty) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+          content: new Text('Username and password fields must not be empty'),
+          duration: new Duration(seconds: 5)));
+    } else {
+      _isLoading = true;
+      loginBloc.add(LoginButtonPressed(username: email, password: password));
+    }
   }
 
   Widget _buildUsernameTF() {

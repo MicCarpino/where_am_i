@@ -22,13 +22,13 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<UserModel> performUserAuthentication(
       String username, String password) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/login',
-        {'username': username, 'password': encryptedPw});
+        {'username': username.trim(), 'password': encryptedPw});
     final response =
         await http.post(uri, headers: {'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
       return UserModel.fromJson(json.decode(response.body));
     } else {
-      throw ServerException();
+      throw ServerException(response.body);
     }
   }
 }

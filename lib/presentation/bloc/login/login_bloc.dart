@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
+import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/domain/usecases/get_logged_user.dart';
 import 'package:where_am_i/domain/usecases/perform_log_in.dart';
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
@@ -32,11 +33,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     LoginEvent event,
   ) async* {
     if (event is LoginButtonPressed) {
-        yield LoadingState();
-        final result = await performLogIn.loginRepository
-            .performUserAuthentication(event.username, event.password);
-        yield result.fold((failure) => FailureState(error: failure.toString()),
-            (loggedUser) => LoggedInState());
+      yield LoadingState();
+      final result = await performLogIn.loginRepository
+          .performUserAuthentication(event.username, event.password);
+      yield result.fold((failure) {
+        //TODO: shows error message returned from server
+        /*if (failure is ServerFailure) {
+          return FailureState(error: failure.errorMessage);
+        }*/
+        return FailureState(error: failure.toString());
+      }, (loggedUser) => LoggedInState());
     }
   }
 }
