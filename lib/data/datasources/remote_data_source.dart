@@ -43,7 +43,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<List<WorkstationModel>> getWorkstations(
       String token, DateTime date) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/$date');
-    final response = await http.post(uri, headers: {
+    final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
     });

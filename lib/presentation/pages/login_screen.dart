@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: <Widget>[
                   Image(image: AssetImage('assets/dnc_def_logo.png')),
-                  Form(key: _formKey, child: formFields())
+                  Form(key: _formKey, child: _formFields())
                 ],
               ),
             ),
@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget formFields() {
+  Widget _formFields() {
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[

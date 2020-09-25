@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
+import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
+import 'package:where_am_i/presentation/widgets/room_24.dart';
+import 'package:where_am_i/presentation/widgets/room_26A.dart';
 import 'package:where_am_i/presentation/widgets/room_26B.dart';
 
 import 'login_screen.dart';
@@ -15,8 +19,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  HomeBloc _homeBloc;
   int _currentItem = 0;
-  String _title = "";
+  String _title;
+
   List<Widget> pages = [
     Room26B(),
     Room26A(),
@@ -26,44 +32,63 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     _title = "CIVICO 26/B";
+    _homeBloc = sl<HomeBloc>();
+    _homeBloc.add(FetchLists());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_title, style: TextStyle(color: Colors.white)),
-        backgroundColor: dncBlue,
-        iconTheme: IconThemeData(color: Colors.white),
-      ),
-      drawer: _buildDrawer(context),
-      body: Column(children: [
-        DatePicker(),
-        Expanded(
-          child: PageView.builder(
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (BuildContext context, int index) {
-              return pages[index];
-            },
-            onPageChanged: (pageIndex) {
-              switch (pageIndex) {
-                case 0:
-                  _setAppBarTitle("CIVICO 26/B");
-                  break;
-                case 1:
-                  _setAppBarTitle("CIVICO 26/A");
-                  break;
-                case 2:
-                  _setAppBarTitle("CIVICO 24");
-                  break;
-              }
-            },
-            itemCount: pages.length,
-          ),
-        )
-      ]),
+    return BlocProvider(
+      create: (context) => _homeBloc,
+      child: _buildHomePage(context),
     );
+  }
+
+  Widget _buildHomePage(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(_title, style: TextStyle(color: Colors.white)),
+          backgroundColor: dncBlue,
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        drawer: _buildDrawer(context),
+        body: Column(children: [
+          DatePicker(),
+          Expanded(
+            child: PageView.builder(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext context, int index) {
+                return BlocBuilder<HomeBloc, HomeState>(
+                  builder: (context, state) {
+                    if (state is HomeLoadingState) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if(state is ListsFetchCompletedState){
+                      print(state.workstationsList.toString());
+                      return pages[index];
+                    } else {
+                      return pages[index];
+                    }
+                  },
+                );
+              },
+              onPageChanged: (pageIndex) {
+                switch (pageIndex) {
+                  case 0:
+                    _setAppBarTitle("CIVICO 26/B");
+                    break;
+                  case 1:
+                    _setAppBarTitle("CIVICO 26/A");
+                    break;
+                  case 2:
+                    _setAppBarTitle("CIVICO 24");
+                    break;
+                }
+              },
+              itemCount: pages.length,
+            ),
+          )
+        ]));
   }
 
   _buildDrawer(BuildContext context) {
@@ -97,7 +122,7 @@ class _HomeState extends State<Home> {
                                 Icon(Icons.exit_to_app, color: Colors.black87),
                             title: Text('Logout'),
                             onTap: () async {
-                              await sl<PerformLogOut>().loginRepository.removeLoggedUser();
+                              _homeBloc.add(OnLogoutButtonClick());
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(

@@ -3,32 +3,33 @@ part of 'home_bloc.dart';
 @immutable
 abstract class HomeEvent {}
 
+class FetchLists extends HomeEvent {}
 //Drawer events
-class OnHeaderImageLongClick{}
+class OnHeaderImageLongClick extends HomeEvent {}
 
-class OnLogoutButtonClick {}
+class OnLogoutButtonClick extends HomeEvent {}
 
-class OnMyPresencesClick {}
+class OnMyPresencesClick extends HomeEvent {}
 
-class OnPresencesManagementClick {}
+class OnPresencesManagementClick extends HomeEvent {}
 
-class OnUsersManagementClick {}
+class OnUsersManagementClick extends HomeEvent {}
 
 //Widgets events
-class OnWorkstationClick {
-  int idWorkstation;
+class OnWorkstationClick extends HomeEvent {
+  final int idWorkstation;
 
   OnWorkstationClick({this.idWorkstation});
 }
 
-class OnWorkstationLongClick {
-  int idWorkstation;
+class OnWorkstationLongClick extends HomeEvent {
+  final int idWorkstation;
 
   OnWorkstationLongClick({this.idWorkstation});
 }
 
-class OnDateSelected {
-  DateTime date;
+class OnDateSelected extends HomeEvent {
+  final DateTime date;
 
   OnDateSelected({this.date});
 }
