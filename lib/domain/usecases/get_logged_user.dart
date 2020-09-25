@@ -5,13 +5,12 @@ import '../../core/usecases/usecase.dart';
 import '../entities/user.dart';
 import '../repositories/login_repository.dart';
 
-class CheckUserAlreadyLogged implements UseCase<User, NoParams> {
+class GetLoggedUser implements UseCase<User, NoParams> {
   final LoginRepository loginRepository;
-  CheckUserAlreadyLogged(this.loginRepository);
+  GetLoggedUser(this.loginRepository);
 
   @override
   Future<Either<Failure, User>> call(NoParams params) async{
     return await loginRepository.getLoggedUser();
   }
-
 }

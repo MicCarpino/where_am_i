@@ -6,20 +6,22 @@ import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/data/repositories/login_repository_impl.dart';
 import 'package:where_am_i/domain/repositories/login_repository.dart';
-import 'package:where_am_i/domain/usecases/perform_user_authentication.dart';
+import 'package:where_am_i/domain/usecases/perform_log_in.dart';
+import 'package:where_am_i/domain/usecases/perform_log_out.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 
-import 'domain/usecases/check_user_already_logged.dart';
+import 'domain/usecases/get_logged_user.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
   // Features - Number trivia
   // Bloc
-  sl.registerFactory(() => LoginBloc(performUserAuthentication: sl(),checkUserAlreadyLogged:sl() ));
+  sl.registerFactory(() => LoginBloc(performLogIn: sl(),performLogOut:sl(),getLoggedUser: sl() ));
   // Use Cases
-  sl.registerLazySingleton(() => PerformUserAuthentication(sl()));
-  sl.registerLazySingleton(() => CheckUserAlreadyLogged(sl()));
+  sl.registerLazySingleton(() => PerformLogIn(sl()));
+  sl.registerLazySingleton(() => PerformLogOut(sl()));
+  sl.registerLazySingleton(() => GetLoggedUser(sl()));
   // Repository
   sl.registerLazySingleton<LoginRepository>(
       () => (LoginRepositoryImpl(

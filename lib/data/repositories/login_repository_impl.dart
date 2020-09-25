@@ -18,11 +18,13 @@ class LoginRepositoryImpl implements LoginRepository {
   });
 
   @override
-  Future<Either<Failure, User>> performUserAuthentication(
-      String username, String password) async {
+  Future<Either<Failure, User>> performUserAuthentication(String username,
+      String password) async {
     try {
-      final remoteTrivia = await  remoteDataSource.performUserAuthentication(username, password);
-      return Right(remoteTrivia);
+      final loggedUser = await remoteDataSource.performUserAuthentication(
+          username, password);
+      localDataSource.cacheLoggedUser(loggedUser);
+      return Right(loggedUser);
     } on ServerException {
       return Left(ServerFailure());
     }
@@ -37,4 +39,15 @@ class LoginRepositoryImpl implements LoginRepository {
       return Left(CacheFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, void>> removeLoggedUser() async {
+    try {
+      final result = await localDataSource.deleteLoggedUser();
+      return Right(result);
+    } on CacheException {
+      return Left(CacheFailure());
+    }
+  }
 }
+

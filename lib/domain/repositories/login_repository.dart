@@ -6,4 +6,5 @@ import '../entities/user.dart';
 abstract class LoginRepository {
   Future<Either<Failure, User>> performUserAuthentication(String username, String password);
   Future<Either<Failure, User>> getLoggedUser();
+  Future<Either<Failure,void>> removeLoggedUser();
 }

@@ -33,12 +33,12 @@ class MyApp extends StatelessWidget {
         const Locale('it', ''), // Hebrew, no country code
       ],
       theme: ThemeData(primarySwatch: Colors.lightBlue),
-      home: LoginScreen(),
-      routes: <String, WidgetBuilder>{
+      home: SplashScreen(),
+      /*routes: <String, WidgetBuilder>{
         SPLASH_SCREEN_KEY: (BuildContext context) => SplashScreen(),
         LOGIN_SCREEN_KEY: (BuildContext context) => LoginScreen(),
         HOME_SCREEN_KEY: (BuildContext context) => HomeScreen(),
-      },
+      },*/
     );
   }
 }

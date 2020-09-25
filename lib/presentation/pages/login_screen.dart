@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/size_config.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
-import 'package:where_am_i/presentation/pages/splash_screen.dart';
-
-import 'home_screen.dart';
+import 'package:where_am_i/presentation/bloc/login/login_state.dart';
+import 'package:where_am_i/presentation/bloc/login/login_event.dart';
+import 'package:where_am_i/presentation/pages/home.dart';
+import 'package:where_am_i/presentation/widgets/login_button.dart';
 
 final sl = GetIt.instance;
 
@@ -16,113 +18,121 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final FocusNode _usernameFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
-
+  final ScrollController _scrollController = ScrollController();
   bool _rememberMe = false;
   bool _obscureText = false;
   bool _isLoading = false;
-
-  String _username = "";
-  String _password = "";
+  LoginBloc loginBloc = sl<LoginBloc>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(key: _scaffoldKey, body: buildBody(context));
-  }
-
-  BlocProvider<LoginBloc> buildBody(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<LoginBloc>()..add(OnLoginStartUp()),
-      child: BlocBuilder<LoginBloc, LoginState>(
-        builder: (context, state) {
-          if (state is LoginInitial) {
-            return SplashScreen();
-          } else if (state is LoginStatus) {
-            if (state.loggedUser != null) {
-              Navigator.of(context)
-                  .pushReplacement(MaterialPageRoute(builder: (context) {
-                //TODO: pass logged user to home screen
-                return new HomeScreen();
-              }));
-            } else {
-              return renderLoginPage();
-            }
-          } else if (state is Loading) {
-            setState(() {
-              _isLoading = true;
-            });
-          } else if (state is LoginSuccessful) {
-            Navigator.of(context)
-                .pushReplacement(MaterialPageRoute(builder: (context) {
-              return new HomeScreen();
-            }));
-          } else if (state is LoginError) {
-            _scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: new Text('Error: ${state.errorMessage.toString()}'),
+    return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      extendBodyBehindAppBar: false,
+      backgroundColor: Colors.white,
+      body: BlocConsumer<LoginBloc, LoginState>(
+        cubit: loginBloc,
+        listener: (context, state) {
+          if(state is LoadingState){
+            _isLoading = true;
+          }
+          if (state is FailureState) {
+            _isLoading = false;
+            Scaffold.of(context).showSnackBar(SnackBar(
+                content: new Text('Error: ${state.error}'),
                 duration: new Duration(seconds: 5)));
           }
-          return Container();
+          if (state is LoggedInState) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Home()),
+              (Route<dynamic> route) => false,
+            );
+          }
+        },
+        builder: (context, state) {
+          return GestureDetector(
+              onTap: () {
+                //Dismiss soft keyboard if user taps somewhere on the screen
+                FocusScope.of(context).requestFocus(new FocusNode());
+              },
+              child: phoneLayout(context));
         },
       ),
     );
   }
 
-  Widget renderLoginPage() {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: 40, vertical: 100),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Center(
+  Widget phoneLayout(BuildContext context) {
+    SizeConfig().init(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+      child: Stack(
+        children: <Widget>[
+          SingleChildScrollView(
+            controller: _scrollController,
+            physics: AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 100),
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  Image(image: AssetImage('assets/dnc_def_logo.png')),
+                  Form(key: _formKey, child: formFields())
+                ],
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              color: Colors.white,
+              child: Padding(
+                padding: EdgeInsets.only(
+                    bottom: SizeConfig.safeBlockVertical * 4,
+                    left: 2.0,
+                    right: 2.0),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Image(image: AssetImage('assets/dnc_def_logo.png')),
-                    Form(key: _formKey, child: _buildForm()),
-                    _buildLoginBtn(),
+                    LoginButton(
+                      'Log In',
+                      isLoading: _isLoading,
+                      onTap: () => _login(),
+                    ),
                   ],
                 ),
               ),
-              Visibility(
-                maintainSize: true,
-                maintainAnimation: true,
-                maintainState: true,
-                visible: _isLoading,
-                child: Container(
-                  color: Colors.transparent,
-                  width: 60.0,
-                  height: 60.0,
-                  child: new Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: new CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(dncBlue))),
-                ),
-              )
-            ],
-          ),
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
 
-  Widget _buildForm() {
-    return Column(children: [
-      SizedBox(height: 30.0),
-      _buildUsernameTF(),
-      SizedBox(height: 30.0),
-      _buildPasswordTF(),
-      SizedBox(height: 30.0),
-      _buildRememberMeCheckbox()
-    ]);
+  Widget formFields() {
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(height: SizeConfig.safeBlockVertical * 10),
+          _buildUsernameTF(),
+          SizedBox(height: SizeConfig.safeBlockVertical * 3),
+          _buildPasswordTF(),
+          SizedBox(height: SizeConfig.safeBlockVertical * 3),
+          _buildRememberMeCheckbox()
+        ],
+    );
+  }
+
+  _login() {
+    String email = _usernameController.value.text;
+    String password = _passwordController.value.text;
+    if (email.isEmpty || password.isEmpty) {return;}
+    _isLoading = true;
+    loginBloc.add(LoginButtonPressed(username: email, password: password));
   }
 
   Widget _buildUsernameTF() {
@@ -141,11 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
             onFieldSubmitted: (term) {
               _fieldFocusChange(context, _usernameFocus, _passwordFocus);
             },
-            onChanged: (value) {
-              _username = value;
-            },
             validator: (value) => value.isEmpty ? "Username required" : null,
-            onSaved: (value) => _username = value,
             controller: _usernameController,
             keyboardType: TextInputType.text,
             style: TextStyle(color: Colors.black87),
@@ -176,10 +182,6 @@ class _LoginScreenState extends State<LoginScreen> {
             onFieldSubmitted: (value) {
               _passwordFocus.unfocus();
             },
-            onChanged: (value) {
-              _password = value;
-            },
-            onSaved: (value) => _password = value,
             controller: _passwordController,
             obscureText: _obscureText,
             style: TextStyle(color: Colors.black87),
@@ -226,35 +228,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           Text('Remember me', style: kLabelStyle),
         ],
-      ),
-    );
-  }
-
-  Widget _buildLoginBtn() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 25.0),
-      child: RaisedButton(
-        elevation: 5.0,
-        onPressed: () {
-          BlocProvider.of<LoginBloc>(context)
-              .add(OnLoginButtonClick(_username, _password));
-          setState(() {
-            _isLoading = true;
-          });
-        },
-        padding: EdgeInsets.fromLTRB(50, 15, 50, 15),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-        color: dncBlue,
-        child: Text(
-          'LOGIN',
-          style: TextStyle(
-              color: Colors.white,
-              letterSpacing: 1.5,
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'OpenSans'),
-        ),
       ),
     );
   }

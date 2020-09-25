@@ -1,48 +1,16 @@
-part of 'login_bloc.dart';
+import 'package:meta/meta.dart';
 
 @immutable
-abstract class LoginState extends Equatable {
-  const LoginState();
-}
+abstract class LoginState {}
 
-class LoginInitial extends LoginState {
-  @override
-  List<Object> get props => [];
-}
+class InitialLoginState extends LoginState {}
 
-class LoginStatus extends LoginState {
-  final User loggedUser;
-  LoginStatus(this.loggedUser);
+class LoadingState extends LoginState {}
 
-  @override
-  List<Object> get props => [loggedUser];
-}
+class LoggedInState extends LoginState {}
 
-class InvalidInput extends LoginState {
-  final bool invalidUsername;
-  final bool invalidPassword;
+class FailureState extends LoginState {
+  final String error;
 
-  InvalidInput(this.invalidUsername, this.invalidPassword);
-
-  @override
-  List<Object> get props => [invalidUsername, invalidPassword];
-}
-
-class Loading extends LoginState {
-  @override
-  List<Object> get props => [];
-}
-
-class LoginSuccessful extends LoginState {
-  @override
-  List<Object> get props => [];
-}
-
-class LoginError extends LoginState {
-  final String errorMessage;
-
-  LoginError({@required this.errorMessage});
-
-  @override
-  List<Object> get props => [errorMessage];
+  FailureState({this.error});
 }

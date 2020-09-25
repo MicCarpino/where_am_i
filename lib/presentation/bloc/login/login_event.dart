@@ -1,19 +1,11 @@
-part of 'login_bloc.dart';
+import 'package:meta/meta.dart';
 
 @immutable
-abstract class LoginEvent extends Equatable {
-  const LoginEvent([List props = const <dynamic>[]]);
+abstract class LoginEvent {}
 
-  @override
-  List<Object> get props => const <dynamic>[];
+class LoginButtonPressed extends LoginEvent {
+  final String username;
+  final String password;
+
+  LoginButtonPressed({this.username, this.password});
 }
-
-class OnLoginButtonClick extends LoginEvent {
-  final String inUsername;
-  final String inPassword;
-
-  OnLoginButtonClick(this.inUsername, this.inPassword)
-      : super([inUsername, inPassword]);
-}
-
-class OnLoginStartUp extends LoginEvent {}

@@ -5,8 +5,11 @@ import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/data/models/user_model.dart';
 
 abstract class LocalDataSource {
-  Future<void> cacheLoggedUser(UserModel userModel);
   Future<UserModel> getCachedUser();
+
+  Future<void> cacheLoggedUser(UserModel userModel);
+
+  Future<void> deleteLoggedUser();
 }
 
 const CACHED_LOGGED_USER = 'CACHED_LOGGED_USER';
@@ -17,12 +20,6 @@ class LocalDataSourceImpl implements LocalDataSource {
   LocalDataSourceImpl({@required this.sharedPreferences});
 
   @override
-  Future<void> cacheLoggedUser(UserModel loggedUser) {
-    return sharedPreferences.setString(
-        CACHED_LOGGED_USER, json.encode(loggedUser.toJson()));
-  }
-
-  @override
   Future<UserModel> getCachedUser() {
     final jsonString = sharedPreferences.getString(CACHED_LOGGED_USER);
     if (jsonString != null) {
@@ -30,5 +27,16 @@ class LocalDataSourceImpl implements LocalDataSource {
     } else {
       throw CacheException();
     }
+  }
+
+  @override
+  Future<void> cacheLoggedUser(UserModel loggedUser) {
+    return sharedPreferences.setString(
+        CACHED_LOGGED_USER, json.encode(loggedUser.toJson()));
+  }
+
+  @override
+  Future<void> deleteLoggedUser() {
+    return sharedPreferences.remove(CACHED_LOGGED_USER);
   }
 }
