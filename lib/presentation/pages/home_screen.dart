@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:where_am_i/core/utils/SharedPreferencesManager.dart';
+import 'package:get_it/get_it.dart';
+import 'package:where_am_i/domain/usecases/perform_log_out.dart';
 import 'package:where_am_i/presentation/pages/room_24.dart';
 import 'package:where_am_i/presentation/pages/room_26A.dart';
 import 'package:where_am_i/presentation/pages/room_26B.dart';
@@ -7,6 +8,8 @@ import 'package:where_am_i/presentation/widgets/date_picker.dart';
 import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/core/utils/constants.dart';
 
 import 'login_screen.dart';
+
+final sl = GetIt.instance;
 
 class Home extends StatefulWidget {
   @override
@@ -96,7 +99,7 @@ class _HomeState extends State<Home> {
                                 Icon(Icons.exit_to_app, color: Colors.black87),
                             title: Text('Logout'),
                             onTap: () async {
-                              await SharedPreferencesManager.clearPrefs();
+                              await sl<PerformLogOut>().loginRepository.removeLoggedUser();
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(

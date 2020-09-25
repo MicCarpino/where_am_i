@@ -135,7 +135,6 @@ class _LoginScreenState extends State<LoginScreen> {
           content: new Text('Username and password fields must not be empty'),
           duration: new Duration(seconds: 5)));
     } else {
-      _isLoading = true;
       loginBloc.add(LoginButtonPressed(username: email, password: password));
     }
   }

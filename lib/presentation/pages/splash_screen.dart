@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:where_am_i/core/utils/SharedPreferencesManager.dart';
+import 'package:get_it/get_it.dart';
+import 'package:where_am_i/domain/usecases/get_logged_user.dart';
 import 'package:where_am_i/presentation/pages/home_screen.dart';
 import 'package:where_am_i/presentation/pages/login_screen.dart';
+
+final sl = GetIt.instance;
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -30,15 +33,17 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   // perform auto login if creds are saved to shared prefs
-  void autoLogin() async {
-    var userEmail = await SharedPreferencesManager.getuserEmail();
-    var userPass = await SharedPreferencesManager.getuserPass();
-    if (userEmail != null && userPass != null) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
-    } else {
-      Future.delayed(Duration(seconds: 4), () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-      });
-    }
+  void autoLogin() {
+    Future.delayed(Duration(seconds: 2), () async {
+      var loggedUser =
+      await sl<GetLoggedUser>().loginRepository.getLoggedUser();
+      loggedUser.fold((userNotFound) =>
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen())), (
+          loggedUser) =>
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Home())));
+    });
   }
 }
