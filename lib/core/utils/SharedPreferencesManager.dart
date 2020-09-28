@@ -22,12 +22,12 @@ class SharedPreferencesManager {
 
   static Future<dynamic> getuserEmail() async {
     final sp = await getPreferences();
-    return await sp.getString(userEmail);
+    return sp.getString(userEmail);
   }
 
   static Future<dynamic> getuserPass() async {
     final sp = await getPreferences();
-    return await sp.getString(userPass);
+    return sp.getString(userPass);
   }
 
   static void clearPrefs() async {

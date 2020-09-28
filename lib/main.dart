@@ -4,8 +4,6 @@ import 'package:where_am_i/core/utils/constants.dart';
 import 'injection_container.dart' as di;
 
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:where_am_i/presentation/pages/home_screen.dart';
-import 'package:where_am_i/presentation/pages/login_screen.dart';
 import 'package:where_am_i/presentation/pages/splash_screen.dart';
 
 Future<void> main() async {

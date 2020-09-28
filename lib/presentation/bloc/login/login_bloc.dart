@@ -2,9 +2,7 @@ import 'dart:async';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 import 'package:where_am_i/core/error/failure.dart';
-import 'package:where_am_i/domain/usecases/get_logged_user.dart';
 import 'package:where_am_i/domain/usecases/perform_log_in.dart';
-import 'package:where_am_i/domain/usecases/perform_log_out.dart';
 import './bloc.dart';
 
 //ignore:
@@ -16,9 +14,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   })  : assert(performLogIn != null),
         performLogIn = performLogIn,
         super(LoadingState());
-
-  @override
-  LoginState get initialState => LoadingState();
 
   @override
   Stream<LoginState> mapEventToState(

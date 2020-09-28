@@ -42,6 +42,13 @@ class _HomeState extends State<Home> {
   }
 
   @override
+  void dispose() {
+    _reservationsBloc.close();
+    _workstationBloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => _homeBloc,
@@ -57,16 +64,16 @@ class _HomeState extends State<Home> {
           iconTheme: IconThemeData(color: Colors.white),
         ),
         drawer: _buildDrawer(context),
-        body: Column(children: [
-          DatePicker(),
-          Expanded(
-            child: MultiBlocProvider(
-              providers: [
-                BlocProvider<WorkstationBloc>(
-                    create: (context) => _workstationBloc),
-                BlocProvider<ReservationsBloc>(
-                    create: (context) => _reservationsBloc),
-              ],
+        body: MultiBlocProvider(
+          providers: [
+            BlocProvider<WorkstationBloc>(
+                create: (context) => _workstationBloc),
+            BlocProvider<ReservationsBloc>(
+                create: (context) => _reservationsBloc),
+          ],
+          child: Column(children: [
+            DatePicker(),
+            Expanded(
               child: PageView.builder(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext context, int index) {
@@ -88,8 +95,8 @@ class _HomeState extends State<Home> {
                 itemCount: pages.length,
               ),
             ),
-          )
-        ]));
+          ]),
+        ));
   }
 
   _buildDrawer(BuildContext context) {

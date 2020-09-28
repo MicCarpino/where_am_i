@@ -1,18 +1,18 @@
 import 'package:equatable/equatable.dart';
 
 class Reservation extends Equatable {
-  int idReservation;
-  String reservationDate;
-  int idRoom;
-  int idHandler;
-  String freeHandler;
-  int startMinutes;
-  int endMinutes;
-  int startHour;
-  int endHour;
-  String description;
-  String idParticipants;
-  int status;
+  final int idReservation;
+  final String reservationDate;
+  final int idRoom;
+  final int idHandler;
+  final String freeHandler;
+  final int startMinutes;
+  final   int endMinutes;
+  final int startHour;
+  final int endHour;
+  final String description;
+  final String idParticipants;
+  final int status;
 
   Reservation(
       {this.idReservation,
