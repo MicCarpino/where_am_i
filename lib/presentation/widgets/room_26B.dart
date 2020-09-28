@@ -8,14 +8,13 @@ import 'package:where_am_i/presentation/widgets/workstations.dart';
 class Room26B extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.all(16),
         child: Column(children: [
-          BlocListener<WorkstationBloc, WorkstationState>(
-            cubit: _workstationBloc,
-            listener: (context, state) {
+          BlocBuilder<WorkstationBloc, WorkstationState>(
+            cubit: BlocProvider.of<WorkstationBloc>(context),
+            builder: (context, state) {
               if (state is WorkstationsFetchLoadingState) {
                 return Center(
                   child: CircularProgressIndicator(backgroundColor: Colors.red),
@@ -37,7 +36,6 @@ class Room26B extends StatelessWidget {
                 return Workstations(
                     quantity: 18, columnsNumber: 3, columnsSpacing: 15);
             },
-            child: Container(),
           ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text('Saletta riunioni - civico 26'),
