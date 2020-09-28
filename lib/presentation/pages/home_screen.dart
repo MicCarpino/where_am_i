@@ -64,6 +64,7 @@ class _HomeState extends State<Home> {
                     if (state is HomeLoadingState) {
                       return Center(child: CircularProgressIndicator());
                     } else if(state is ListsFetchCompletedState){
+
                       print(state.workstationsList.toString());
                       return pages[index];
                     } else {

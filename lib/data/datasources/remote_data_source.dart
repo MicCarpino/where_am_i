@@ -48,8 +48,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       HttpHeaders.contentTypeHeader: 'application/json'
     });
     if (response.statusCode == 200) {
-      Iterable workstationsList = json.decode(response.body);
-      return List<WorkstationModel>.from(workstationsList);
+      List<dynamic> workstationsList = json.decode(response.body);
+      return List<WorkstationModel>.from(workstationsList.map((e) => WorkstationModel.fromJson(e)));
     } else {
       throw ServerException(response.body);
     }
