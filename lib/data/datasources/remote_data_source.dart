@@ -9,7 +9,8 @@ import 'package:where_am_i/data/models/user_model.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
 
 const BASE_URL = "wai.dncsrl.com";
-String encryptedPw = "=";
+String encryptedPw =
+    "=";
 
 abstract class RemoteDataSource {
   Future<UserModel> performUserAuthentication(String username, String password);
@@ -49,7 +50,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     });
     if (response.statusCode == 200) {
       List<dynamic> workstationsList = json.decode(response.body);
-      return List<WorkstationModel>.from(workstationsList.map((e) => WorkstationModel.fromJson(e)));
+      return List<WorkstationModel>.from(
+          workstationsList.map((e) => WorkstationModel.fromJson(e)));
     } else {
       throw ServerException(response.body);
     }
@@ -64,8 +66,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       HttpHeaders.contentTypeHeader: 'application/json'
     });
     if (response.statusCode == 200) {
-      Iterable reservationsList = json.decode(response.body);
-      return List<ReservationModel>.from(reservationsList);
+      List<dynamic> reservationsList = json.decode(response.body);
+      return List<ReservationModel>.from(
+          reservationsList.map((e) => ReservationModel.fromJson(e)));
     } else {
       throw ServerException(response.body);
     }

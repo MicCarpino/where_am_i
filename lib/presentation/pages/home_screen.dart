@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/domain/usecases/perform_log_out.dart';
 import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
+import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
+import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
 import 'package:where_am_i/presentation/widgets/room_24.dart';
 import 'package:where_am_i/presentation/widgets/room_26A.dart';
@@ -20,6 +21,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   HomeBloc _homeBloc;
+  WorkstationBloc _workstationBloc;
+  ReservationsBloc _reservationsBloc;
   int _currentItem = 0;
   String _title;
 
@@ -33,7 +36,8 @@ class _HomeState extends State<Home> {
   void initState() {
     _title = "CIVICO 26/B";
     _homeBloc = sl<HomeBloc>();
-    _homeBloc.add(FetchLists());
+    _reservationsBloc = sl<ReservationsBloc>()..add(FetchReservationsList());
+    _workstationBloc = sl<WorkstationBloc>()..add(FetchWorkstationsLists());
     super.initState();
   }
 
@@ -56,37 +60,33 @@ class _HomeState extends State<Home> {
         body: Column(children: [
           DatePicker(),
           Expanded(
-            child: PageView.builder(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (BuildContext context, int index) {
-                return BlocBuilder<HomeBloc, HomeState>(
-                  builder: (context, state) {
-                    if (state is HomeLoadingState) {
-                      return Center(child: CircularProgressIndicator());
-                    } else if(state is ListsFetchCompletedState){
-
-                      print(state.workstationsList.toString());
-                      return pages[index];
-                    } else {
-                      return pages[index];
-                    }
-                  },
-                );
-              },
-              onPageChanged: (pageIndex) {
-                switch (pageIndex) {
-                  case 0:
-                    _setAppBarTitle("CIVICO 26/B");
-                    break;
-                  case 1:
-                    _setAppBarTitle("CIVICO 26/A");
-                    break;
-                  case 2:
-                    _setAppBarTitle("CIVICO 24");
-                    break;
-                }
-              },
-              itemCount: pages.length,
+            child: MultiBlocProvider(
+              providers: [
+                BlocProvider<WorkstationBloc>(
+                    create: (context) => _workstationBloc),
+                BlocProvider<ReservationsBloc>(
+                    create: (context) => _reservationsBloc),
+              ],
+              child: PageView.builder(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (BuildContext context, int index) {
+                  return pages[index];
+                },
+                onPageChanged: (pageIndex) {
+                  switch (pageIndex) {
+                    case 0:
+                      _setAppBarTitle("CIVICO 26/B");
+                      break;
+                    case 1:
+                      _setAppBarTitle("CIVICO 26/A");
+                      break;
+                    case 2:
+                      _setAppBarTitle("CIVICO 24");
+                      break;
+                  }
+                },
+                itemCount: pages.length,
+              ),
             ),
           )
         ]));

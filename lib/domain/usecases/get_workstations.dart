@@ -11,6 +11,6 @@ class GetWorkstations extends UseCase<List<Workstation>, DateTime> {
   GetWorkstations(this.homeRepository);
 
   Future<Either<Failure, List<Workstation>>> call(DateTime date) async {
-    return homeRepository.getWorkstations(date);
+    return await homeRepository.getWorkstations(date);
   }
 }
