@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:where_am_i/core/error/failure.dart';
 
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/domain/usecases/get_reservations.dart';
@@ -18,19 +19,25 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
         super(ReservationInitial());
 
   @override
-  Stream<ReservationState> mapEventToState(ReservationsEvent event,) async* {
+  Stream<ReservationState> mapEventToState(
+    ReservationsEvent event,
+  ) async* {
     if (event is FetchReservationsList) {
       yield ReservationsFetchLoadingState();
-      print('fetching workstations');
-      final tempDate = DateTime.parse("2020-03-09");
+      print('fetching reservations');
+      final tempDate = DateTime.parse("2020-02-06");
 
-      final reservationsList = await getReservations.homeRepository
-          .getReservations(tempDate);
+      final reservationsList =
+          await getReservations.homeRepository.getReservations(tempDate);
 
-      yield reservationsList.fold((failure) => ReservationsFetchErrorState(),
-              (reservations) =>
-              ReservationsFetchCompletedState(reservations));
+      yield reservationsList.fold((failure) {
+        print(
+            'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+        return ReservationsFetchErrorState();
+      }, (reservations) {
+        print('reservations : ${reservations.toList()}');
+        return ReservationsFetchCompletedState(reservations);
+      });
     }
   }
 }
-

@@ -60,8 +60,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<List<ReservationModel>> getReservations(
       String token, DateTime date) async {
-    var uri = Uri.https(BASE_URL, '/reservation/$date');
-    final response = await http.post(uri, headers: {
+    var uri = Uri.https(BASE_URL, '/WhereAmI/reservation/$date');
+    final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
     });
