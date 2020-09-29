@@ -18,7 +18,7 @@ void main() {
     usecase = PerformLogIn(mockLoginRepository);
   });
 
-  final tUserDetails = User(
+  final tUser = User(
     idResource: "1",
     idRole: 1,
     username: "tUsername",
@@ -28,15 +28,15 @@ void main() {
 
   final tUsername = "inUsername";
   final tPassword = "inPassword";
-  final tUser = AuthenticatedUser(
-    userDetails: tUserDetails,
+  final tAuthUser = AuthenticatedUser(
+    user: tUser,
     authenticationToken: "tToken",
     expiration: 100,
   );
 
   test('should get the authenticated user object when remote auth succeed', () async {
     when(mockLoginRepository.performUserAuthentication(any, any))
-        .thenAnswer((_) async => Right(tUser));
+        .thenAnswer((_) async => Right(tAuthUser));
 
     final result = await usecase(LoginParams(username: tUsername,password: tPassword));
 
