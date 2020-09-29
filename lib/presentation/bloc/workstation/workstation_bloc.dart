@@ -26,10 +26,10 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
       yield WorkstationsFetchLoadingState();
       print('fetching workstations');
       final tempDate = DateTime.parse("2020-03-09");
-      final workstationsList =
-          await getWorkstations.homeRepository.getWorkstations(tempDate);
+      final workstationsList = await getWorkstations(tempDate);
       yield workstationsList.fold((failure) {
-        print('workstations fail : ${failure is ServerFailure? failure.errorMessage : failure.toString()}');
+        print(
+            'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
         return WorkstationsFetchErrorState();
       }, (workstations) {
         print('workstations : ${workstations.toList()}');

@@ -5,20 +5,20 @@ import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/data/models/authenticated_user_model.dart';
 import 'package:where_am_i/data/models/user_model.dart';
-import 'package:where_am_i/data/repositories/login_repository_impl.dart';
+import 'package:where_am_i/data/repositories/auth_repository_impl.dart';
 
 class MockRemoteDataSource extends Mock implements RemoteDataSource {}
 class MockLocalDataSource extends Mock implements LocalDataSource {}
 
 void main() {
-  LoginRepositoryImpl loginRepository;
+  AuthRepositoryImpl loginRepository;
   MockRemoteDataSource mockRemoteDataSource;
   MockLocalDataSource mockLocalDataSource;
 
   setUp(() {
     mockRemoteDataSource = MockRemoteDataSource();
     mockLocalDataSource = MockLocalDataSource();
-    loginRepository = LoginRepositoryImpl(remoteDataSource: mockRemoteDataSource, localDataSource: mockLocalDataSource);
+    loginRepository = AuthRepositoryImpl(remoteDataSource: mockRemoteDataSource, localDataSource: mockLocalDataSource);
   });
 
   group('get_authenticated_user', () {

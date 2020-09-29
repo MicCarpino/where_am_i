@@ -4,10 +4,10 @@ import 'package:mockito/mockito.dart';
 
 import 'package:where_am_i/domain/entities/authenticated_user.dart';
 import 'package:where_am_i/domain/entities/user.dart';
-import 'package:where_am_i/domain/repositories/login_repository.dart';
+import 'package:where_am_i/domain/repositories/auth_repository.dart';
 import 'package:where_am_i/domain/usecases/perform_log_in.dart';
 
-class MockLoginRepository extends Mock implements LoginRepository {}
+class MockLoginRepository extends Mock implements AuthRepository {}
 
 void main() {
   PerformLogIn usecase;

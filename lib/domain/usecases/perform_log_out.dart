@@ -2,10 +2,10 @@ import 'package:dartz/dartz.dart';
 
 import '../../core/error/failure.dart';
 import '../../core/usecases/usecase.dart';
-import '../repositories/login_repository.dart';
+import '../repositories/auth_repository.dart';
 
 class PerformLogOut extends UseCase<void, void> {
-  final LoginRepository loginRepository;
+  final AuthRepository loginRepository;
 
   PerformLogOut(this.loginRepository);
 

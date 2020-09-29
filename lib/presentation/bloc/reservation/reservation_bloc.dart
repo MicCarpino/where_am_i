@@ -28,7 +28,7 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
       final tempDate = DateTime.parse("2020-02-06");
 
       final reservationsList =
-          await getReservations.homeRepository.getReservations(tempDate);
+          await getReservations(tempDate);
 
       yield reservationsList.fold((failure) {
         print(

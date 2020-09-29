@@ -1,18 +1,18 @@
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
-import 'package:where_am_i/core/error/exceptions.dart';
 
+import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/domain/entities/authenticated_user.dart';
-import 'package:where_am_i/domain/repositories/login_repository.dart';
+import 'package:where_am_i/domain/repositories/auth_repository.dart';
 
-class LoginRepositoryImpl implements LoginRepository {
+class AuthRepositoryImpl implements AuthRepository {
   final RemoteDataSource remoteDataSource;
   final LocalDataSource localDataSource;
 
-  LoginRepositoryImpl({
+  AuthRepositoryImpl({
     @required this.remoteDataSource,
     @required this.localDataSource,
   });

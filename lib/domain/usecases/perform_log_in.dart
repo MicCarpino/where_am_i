@@ -5,10 +5,10 @@ import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/domain/entities/authenticated_user.dart';
 
-import '../repositories/login_repository.dart';
+import '../repositories/auth_repository.dart';
 
 class PerformLogIn extends UseCase<AuthenticatedUser, LoginParams> {
-  final LoginRepository loginRepository;
+  final AuthRepository loginRepository;
 
   PerformLogIn(this.loginRepository);
 
