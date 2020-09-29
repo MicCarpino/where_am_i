@@ -1,10 +1,10 @@
 import 'package:dartz/dartz.dart';
 
 import '../../core/error/failure.dart';
-import '../entities/user.dart';
+import '../entities/authenticated_user.dart';
 
 abstract class LoginRepository {
-  Future<Either<Failure, User>> performUserAuthentication(String username, String password);
-  Future<Either<Failure, User>> getLoggedUser();
+  Future<Either<Failure, AuthenticatedUser>> performUserAuthentication(String username, String password);
+  Future<Either<Failure, AuthenticatedUser>> getLoggedUser();
   Future<Either<Failure,void>> removeLoggedUser();
 }

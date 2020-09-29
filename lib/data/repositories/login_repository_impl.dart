@@ -5,7 +5,7 @@ import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
-import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/domain/entities/authenticated_user.dart';
 import 'package:where_am_i/domain/repositories/login_repository.dart';
 
 class LoginRepositoryImpl implements LoginRepository {
@@ -18,7 +18,7 @@ class LoginRepositoryImpl implements LoginRepository {
   });
 
   @override
-  Future<Either<Failure, User>> performUserAuthentication(
+  Future<Either<Failure, AuthenticatedUser>> performUserAuthentication(
       String username, String password) async {
     try {
       final loggedUser =
@@ -31,7 +31,7 @@ class LoginRepositoryImpl implements LoginRepository {
   }
 
   @override
-  Future<Either<Failure, User>> getLoggedUser() async {
+  Future<Either<Failure, AuthenticatedUser>> getLoggedUser() async {
     try {
       final cachedUser = await localDataSource.getCachedUser();
       return Right(cachedUser);

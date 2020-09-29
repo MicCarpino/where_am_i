@@ -35,7 +35,7 @@ class _WorkstationsState extends State<Workstations> {
                 borderRadius: BorderRadius.circular(5),
                 side: BorderSide(color: Colors.black54)),
             onPressed: () {},
-            child: Text('boh'));
+            child: Text('Index $index'));
       }),
     );
   }

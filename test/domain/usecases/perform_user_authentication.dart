@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:where_am_i/core/error/failure.dart';
 
+import 'package:where_am_i/domain/entities/authenticated_user.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/repositories/login_repository.dart';
 import 'package:where_am_i/domain/usecases/perform_log_in.dart';
@@ -18,7 +18,7 @@ void main() {
     usecase = PerformLogIn(mockLoginRepository);
   });
 
-  final tUserDetails = UserDetails(
+  final tUserDetails = User(
     idResource: "1",
     idRole: 1,
     username: "tUsername",
@@ -28,7 +28,7 @@ void main() {
 
   final tUsername = "inUsername";
   final tPassword = "inPassword";
-  final tUser = User(
+  final tUser = AuthenticatedUser(
     userDetails: tUserDetails,
     authenticationToken: "tToken",
     expiration: 100,

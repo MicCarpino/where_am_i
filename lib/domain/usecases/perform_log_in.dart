@@ -3,16 +3,16 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
-import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/domain/entities/authenticated_user.dart';
 
 import '../repositories/login_repository.dart';
 
-class PerformLogIn extends UseCase<User, LoginParams> {
+class PerformLogIn extends UseCase<AuthenticatedUser, LoginParams> {
   final LoginRepository loginRepository;
 
   PerformLogIn(this.loginRepository);
 
-  Future<Either<Failure, User>> call(LoginParams params) async {
+  Future<Either<Failure, AuthenticatedUser>> call(LoginParams params) async {
     return loginRepository.performUserAuthentication(
       params.username,
       params.password,

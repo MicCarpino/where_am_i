@@ -2,34 +2,7 @@ import 'package:meta/meta.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 
 class UserModel extends User {
-  UserModel(
-      {@required UserDetailsModel userDetails,
-      @required String authenticationToken,
-      @required int expiration})
-      : super(
-            userDetails: userDetails,
-            authenticationToken: authenticationToken,
-            expiration: expiration);
-
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      userDetails: UserDetailsModel.fromJson(json['user']),
-      authenticationToken: json['token'],
-      expiration: json['expiration'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'user': (userDetails as UserDetailsModel).toJson(),
-      'token': authenticationToken,
-      'expiration': expiration
-    };
-  }
-}
-
-class UserDetailsModel extends UserDetails {
-  UserDetailsModel({
+  UserModel({
     @required String idResource,
     @required int idRole,
     @required String username,
@@ -43,8 +16,8 @@ class UserDetailsModel extends UserDetails {
           surname: surname,
         );
 
-  factory UserDetailsModel.fromJson(Map<String, dynamic> json) {
-    return UserDetailsModel(
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
       idResource: json['idResource'],
       idRole: json['idRole'],
       username: json['username'],

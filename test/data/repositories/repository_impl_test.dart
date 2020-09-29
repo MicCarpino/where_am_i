@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
+import 'package:where_am_i/data/models/authenticated_user_model.dart';
 import 'package:where_am_i/data/models/user_model.dart';
 import 'package:where_am_i/data/repositories/login_repository_impl.dart';
 
@@ -17,19 +18,19 @@ void main() {
   setUp(() {
     mockRemoteDataSource = MockRemoteDataSource();
     mockLocalDataSource = MockLocalDataSource();
-    loginRepository = LoginRepositoryImpl(remoteDataSource: mockRemoteDataSource);
+    loginRepository = LoginRepositoryImpl(remoteDataSource: mockRemoteDataSource, localDataSource: mockLocalDataSource);
   });
 
   group('get_authenticated_user', () {
-    final tUserDetails = UserDetailsModel(
+    final tUserDetails = UserModel(
       idResource: "1",
       idRole: 3,
       username: "tUsername",
       name: "tName",
       surname: "tSurname",
     );
-    final tUserModel = UserModel(
-        userDetails: tUserDetails,
+    final tUserModel = AuthenticatedUserModel(
+        user: tUserDetails,
         authenticationToken: "abc",
         expiration: 100);
     test(

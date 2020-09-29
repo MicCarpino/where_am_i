@@ -1,25 +1,26 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:where_am_i/data/models/authenticated_user_model.dart';
 import 'package:where_am_i/data/models/user_model.dart';
-import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/domain/entities/authenticated_user.dart';
 
 import '../../mocks/mock_reader.dart';
 
 void main() {
-  final tUserDetailsModel = UserDetailsModel(
+  final tUserDetailsModel = UserModel(
       idResource: "1",
       idRole: 3,
       username: "tUsername",
       name: "tName",
       surname: "tSurname");
-  final tUserModel = UserModel(
-      userDetails: tUserDetailsModel,
+  final tUserModel = AuthenticatedUserModel(
+      user: tUserDetailsModel,
       authenticationToken: "ahhvjs",
       expiration: 100);
 
   test('should be a subclass of User entity', () async {
-    expect(tUserModel, isA<User>());
+    expect(tUserModel, isA<AuthenticatedUser>());
   });
 
   group('fromJson', () {
@@ -27,7 +28,7 @@ void main() {
         () async {
       final Map<String, dynamic> jsonMap =
           json.decode(mockFile('authentication_success.json'));
-      final result = UserModel.fromJson(jsonMap);
+      final result = AuthenticatedUserModel.fromJson(jsonMap);
       expect(result, tUserModel);
     });
   });

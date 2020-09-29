@@ -5,6 +5,7 @@ import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
+import 'package:where_am_i/domain/entities/authenticated_user.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/home_repository.dart';
@@ -19,7 +20,7 @@ class HomeRepositoryImpl implements HomeRepository {
   });
 
   @override
-  Future<Either<Failure, User>> getLoggedUser() async {
+  Future<Either<Failure, AuthenticatedUser>> getLoggedUser() async {
     try {
       final cachedUser = await localDataSource.getCachedUser();
       return Right(cachedUser);
@@ -31,8 +32,8 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<Either<Failure, void>> removeLoggedUser() async {
     try {
-      final result = await localDataSource.deleteLoggedUser();
-      return Right(result);
+      final logoutResult = await localDataSource.deleteLoggedUser();
+      return Right(logoutResult);
     } on CacheException {
       return Left(CacheFailure());
     }
@@ -43,10 +44,10 @@ class HomeRepositoryImpl implements HomeRepository {
       DateTime date) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
-      final result = await remoteDataSource.getWorkstations(
+      final workstationsList = await remoteDataSource.getWorkstations(
           loggedUser.authenticationToken, date);
-      return Right(result);
-    } on ServerException catch(error) {
+      return Right(workstationsList);
+    } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
     }
   }
@@ -56,11 +57,24 @@ class HomeRepositoryImpl implements HomeRepository {
       DateTime date) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
-      final result = await remoteDataSource.getReservations(
+      final reservationsList = await remoteDataSource.getReservations(
           loggedUser.authenticationToken, date);
-      return Right(result);
-    } on ServerException catch(error) {
+      return Right(reservationsList);
+    } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
     }
   }
+
+  @override
+  Future<Either<Failure, List<User>>> getUsers() async {
+    try {
+      var loggedUser = await localDataSource.getCachedUser();
+      final usersList =
+          await remoteDataSource.getUsers(loggedUser.authenticationToken);
+      return Right(usersList);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    }
+  }
+
 }
