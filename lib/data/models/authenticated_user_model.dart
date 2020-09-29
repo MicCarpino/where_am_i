@@ -8,7 +8,7 @@ class AuthenticatedUserModel extends AuthenticatedUser {
         @required String authenticationToken,
         @required int expiration})
       : super(
-      userDetails: user,
+      user: user,
       authenticationToken: authenticationToken,
       expiration: expiration);
 
@@ -22,7 +22,7 @@ class AuthenticatedUserModel extends AuthenticatedUser {
 
   Map<String, dynamic> toJson() {
     return {
-      'user': (userDetails as UserModel).toJson(),
+      'user': (user as UserModel).toJson(),
       'token': authenticationToken,
       'expiration': expiration
     };
