@@ -87,6 +87,6 @@ final kBoxDecorationStyle = BoxDecoration(
   ],
 );
 
-final kRoom26aLabelStyle = TextStyle(
+final kRoomLabelStyle = TextStyle(
   fontSize:  20,
 );
