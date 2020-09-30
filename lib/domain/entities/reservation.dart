@@ -15,19 +15,20 @@ class Reservation extends Equatable {
   final String idParticipants;
   final int status;
 
-  Reservation(
-      {@required this.idReservation,
-      @required this.reservationDate,
-      @required this.idRoom,
-      @required this.idHandler,
-      @required this.freeHandler,
-      @required this.startMinutes,
-      @required this.endMinutes,
-      @required this.startHour,
-      @required this.endHour,
-      @required this.description,
-      @required this.idParticipants,
-      @required this.status});
+  Reservation({
+    @required this.idReservation,
+    @required this.reservationDate,
+    @required this.idRoom,
+    @required this.idHandler,
+    @required this.freeHandler,
+    @required this.startMinutes,
+    @required this.endMinutes,
+    @required this.startHour,
+    @required this.endHour,
+    @required this.description,
+    @required this.idParticipants,
+    @required this.status,
+  });
 
   @override
   List<Object> get props => [

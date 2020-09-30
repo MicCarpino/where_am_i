@@ -8,12 +8,19 @@ class WorkstationModel extends Workstation {
   final String freeName;
   final String codeWorkstation;
 
-  WorkstationModel(
-      {@required this.idWorkstation,
-      @required this.idResource,
-      @required this.workstationDate,
-      @required this.freeName,
-      @required this.codeWorkstation});
+  WorkstationModel({
+    @required this.idWorkstation,
+    @required this.idResource,
+    @required this.workstationDate,
+    @required this.freeName,
+    @required this.codeWorkstation,
+  }) : super(
+          idWorkstation: idWorkstation,
+          idResource: idResource,
+          workstationDate: workstationDate,
+          freeName: freeName,
+          codeWorkstation: codeWorkstation,
+        );
 
   factory WorkstationModel.fromJson(Map<String, dynamic> json) {
     return WorkstationModel(

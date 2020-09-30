@@ -2,32 +2,33 @@ import 'package:meta/meta.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 
 class ReservationModel extends Reservation {
-  final int idReservation;
-  final String reservationDate;
-  final int idRoom;
-  final int idHandler;
-  final String freeHandler;
-  final int startMinutes;
-  final int endMinutes;
-  final int startHour;
-  final int endHour;
-  final String description;
-  final String idParticipants;
-  final int status;
-
-  ReservationModel(
-      {@required this.idReservation,
-      @required this.reservationDate,
-      @required this.idRoom,
-      @required this.idHandler,
-      @required this.freeHandler,
-      @required this.startMinutes,
-      @required this.endMinutes,
-      @required this.startHour,
-      @required this.endHour,
-      @required this.description,
-      @required this.idParticipants,
-      @required this.status});
+  ReservationModel({
+    @required int idReservation,
+    @required String reservationDate,
+    @required int idRoom,
+    @required int idHandler,
+    @required String freeHandler,
+    @required int startMinutes,
+    @required int endMinutes,
+    @required int startHour,
+    @required int endHour,
+    @required String description,
+    @required String idParticipants,
+    @required int status,
+  }) : super(
+          idReservation: idReservation,
+          reservationDate: reservationDate,
+          idRoom: idRoom,
+          idHandler: idHandler,
+          freeHandler: freeHandler,
+          startMinutes: startMinutes,
+          endMinutes: endMinutes,
+          startHour: startHour,
+          endHour: endHour,
+          description: description,
+          idParticipants: idParticipants,
+          status: status,
+        );
 
   factory ReservationModel.fromJson(Map<String, dynamic> json) {
     return ReservationModel(
