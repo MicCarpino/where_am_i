@@ -27,18 +27,19 @@ class Room26B extends StatelessWidget {
                   columnsNumber: 3,
                   columnsSpacing: 15,
                   workstations: workstations,
-                  startingIndex:0,
+                  startingIndex: 1,
                 );
               } else if (state is WorkstationsFetchErrorState) {
                 return Center(
-                  child:
-                      MaterialButton(child: Text('riprova'), onPressed: () {
+                  child: MaterialButton(
+                      child: Text('riprova'),
+                      onPressed: () {
                         _workstationBloc.add(FetchWorkstationsLists());
                       }),
                 );
-              } else
-                return Workstations(
-                    quantity: 18, columnsNumber: 3, columnsSpacing: 15);
+              } else {
+                return Container();
+              }
             },
           ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -48,6 +49,4 @@ class Room26B extends StatelessWidget {
           EventCalendar()
         ]));
   }
-
-
 }

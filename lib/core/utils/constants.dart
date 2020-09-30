@@ -23,9 +23,50 @@ const Color transparent_70 = Color(0xffB3414141);
 const String SPLASH_SCREEN_KEY = 'SPLASH_SCREEN';
 const String LOGIN_SCREEN_KEY = 'LOGIN_SCREEN';
 const String HOME_SCREEN_KEY = 'HOME_SCREEN';
-const String JWT_TOKEN_KEY ='JWT_TOKEN';
+const String JWT_TOKEN_KEY = 'JWT_TOKEN';
 
 const String BASE_URL = "wai.dncsrl.com";
+
+//left current code, right old code
+const getOldWorkstationCodeFor26b = {
+  1: 1,
+  2: 7,
+  3: 13,
+  4: 2,
+  5: 8,
+  6: 14,
+  7: 3,
+  8: 9,
+  9: 15,
+  10: 4,
+  11: 10,
+  12: 16,
+  13: 5,
+  14: 11,
+  15: 17,
+  16: 6,
+  17: 12,
+  18: 18
+};
+//left current code, right old code
+const getOldWorkstationCodeFor24 = {
+  19:19,
+  21:20,
+  23:21,
+  25:22,
+  20:23,
+  22:24,
+  24:25,
+  26:26,
+  27:27,
+  29:28,
+  31:29,
+  33:30,
+  28:31,
+  30:32,
+  32:33,
+  34:34
+};
 
 //Styles
 final kLabelStyle = TextStyle(

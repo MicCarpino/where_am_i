@@ -38,6 +38,8 @@ dependencies:
   shared_preferences: ^0.5.3+4
   # Widget for daily calendar
   flutter_week_view: ^1.0.0+1
+  # AutoSize text view
+  auto_size_text: ^2.1.0
 
 dev_dependencies:
   flutter_test:
