@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:where_am_i/data/repositories/reservation_repository_impl.dart';
 import 'package:where_am_i/domain/repositories/reservation_repository.dart';
-import 'data/repositories/user_repository.dart';
+import 'data/repositories/user_repository_impl.dart';
 import 'domain/usecases/get_logged_user.dart';
 
 import 'package:where_am_i/data/datasources/local_data_source.dart';
@@ -13,8 +13,8 @@ import 'package:where_am_i/data/repositories/auth_repository_impl.dart';
 import 'package:where_am_i/domain/repositories/auth_repository.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
-import 'package:where_am_i/domain/usecases/get_reservations.dart';
-import 'package:where_am_i/domain/usecases/get_workstations.dart';
+import 'package:where_am_i/domain/usecases/get_reservations_by_date.dart';
+import 'package:where_am_i/domain/usecases/get_workstations_by_date.dart';
 import 'package:where_am_i/domain/usecases/perform_log_in.dart';
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
 import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
@@ -35,8 +35,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => PerformLogIn(sl()));
   sl.registerLazySingleton(() => PerformLogOut(sl()));
   sl.registerLazySingleton(() => GetLoggedUser(sl()));
-  sl.registerLazySingleton(() => GetWorkstations(sl()));
-  sl.registerLazySingleton(() => GetReservations(sl()));
+  sl.registerLazySingleton(() => GetWorkstationsByDate(sl(),sl()));
+  sl.registerLazySingleton(() => GetReservationsByDate(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(() => (AuthRepositoryImpl(

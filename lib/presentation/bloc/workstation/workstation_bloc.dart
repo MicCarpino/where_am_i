@@ -4,16 +4,16 @@ import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
-import 'package:where_am_i/domain/usecases/get_workstations.dart';
+import 'package:where_am_i/domain/usecases/get_workstations_by_date.dart';
 
 part 'workstation_event.dart';
 
 part 'workstation_state.dart';
 
 class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
-  final GetWorkstations getWorkstations;
+  final GetWorkstationsByDate getWorkstations;
 
-  WorkstationBloc({@required GetWorkstations getWorkstations})
+  WorkstationBloc({@required GetWorkstationsByDate getWorkstations})
       : assert(getWorkstations != null),
         getWorkstations = getWorkstations,
         super(WorkstationInitial());

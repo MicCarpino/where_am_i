@@ -8,12 +8,13 @@ import 'package:where_am_i/presentation/widgets/workstations.dart';
 class Room26B extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.all(16),
         child: Column(children: [
           BlocBuilder<WorkstationBloc, WorkstationState>(
-            cubit: BlocProvider.of<WorkstationBloc>(context),
+            cubit: _workstationBloc,
             builder: (context, state) {
               if (state is WorkstationsFetchLoadingState) {
                 return Center(
@@ -26,11 +27,14 @@ class Room26B extends StatelessWidget {
                   columnsNumber: 3,
                   columnsSpacing: 15,
                   workstations: workstations,
+                  startingIndex:0,
                 );
               } else if (state is WorkstationsFetchErrorState) {
                 return Center(
                   child:
-                      MaterialButton(child: Text('riprova'), onPressed: () {}),
+                      MaterialButton(child: Text('riprova'), onPressed: () {
+                        _workstationBloc.add(FetchWorkstationsLists());
+                      }),
                 );
               } else
                 return Workstations(
@@ -44,4 +48,6 @@ class Room26B extends StatelessWidget {
           EventCalendar()
         ]));
   }
+
+
 }

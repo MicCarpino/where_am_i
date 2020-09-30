@@ -12,6 +12,8 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   final RemoteDataSource remoteDataSource;
   final LocalDataSource localDataSource;
 
+  static var cachedWorkstationsList = List<Workstation>();
+
   WorkstationRepositoryImpl({
     @required this.remoteDataSource,
     @required this.localDataSource,
@@ -24,6 +26,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       var loggedUser = await localDataSource.getCachedUser();
       final workstationsList = await remoteDataSource.getWorkstations(
           loggedUser.authenticationToken, date);
+      cachedWorkstationsList = workstationsList;
       return Right(workstationsList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));

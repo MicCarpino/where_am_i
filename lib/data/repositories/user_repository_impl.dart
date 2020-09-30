@@ -12,6 +12,8 @@ class UserRepositoryImpl implements UserRepository {
   final RemoteDataSource remoteDataSource;
   final LocalDataSource localDataSource;
 
+  static var cachedUsersList = List<User>();
+
   UserRepositoryImpl({
     @required this.remoteDataSource,
     @required this.localDataSource,
@@ -19,11 +21,15 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<Either<Failure, List<User>>> getAllUsers() async {
+    if (cachedUsersList.isNotEmpty) {
+      return Right(cachedUsersList);
+    }
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final usersList =
           await remoteDataSource.getUsers(loggedUser.authenticationToken);
-      return Right(usersList);
+      cachedUsersList = usersList;
+      return Right(cachedUsersList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
     }

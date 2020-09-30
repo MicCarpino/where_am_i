@@ -12,6 +12,8 @@ class ReservationRepositoryImpl implements ReservationRepository {
   final RemoteDataSource remoteDataSource;
   final LocalDataSource localDataSource;
 
+  static var cachedReservationList = List<Reservation>();
+
   ReservationRepositoryImpl({
     @required this.remoteDataSource,
     @required this.localDataSource,
@@ -24,6 +26,7 @@ class ReservationRepositoryImpl implements ReservationRepository {
       var loggedUser = await localDataSource.getCachedUser();
       final reservationsList = await remoteDataSource.getReservations(
           loggedUser.authenticationToken, date);
+      cachedReservationList = reservationsList;
       return Right(reservationsList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));

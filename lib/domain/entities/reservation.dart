@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 
 class Reservation extends Equatable {
@@ -7,7 +8,7 @@ class Reservation extends Equatable {
   final int idHandler;
   final String freeHandler;
   final int startMinutes;
-  final   int endMinutes;
+  final int endMinutes;
   final int startHour;
   final int endHour;
   final String description;
@@ -15,18 +16,18 @@ class Reservation extends Equatable {
   final int status;
 
   Reservation(
-      {this.idReservation,
-      this.reservationDate,
-      this.idRoom,
-      this.idHandler,
-      this.freeHandler,
-      this.startMinutes,
-      this.endMinutes,
-      this.startHour,
-      this.endHour,
-      this.description,
-      this.idParticipants,
-      this.status});
+      {@required this.idReservation,
+      @required this.reservationDate,
+      @required this.idRoom,
+      @required this.idHandler,
+      @required this.freeHandler,
+      @required this.startMinutes,
+      @required this.endMinutes,
+      @required this.startHour,
+      @required this.endHour,
+      @required this.description,
+      @required this.idParticipants,
+      @required this.status});
 
   @override
   List<Object> get props => [

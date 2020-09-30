@@ -1,6 +1,7 @@
+import 'package:meta/meta.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 
-class ReservationModel extends Reservation{
+class ReservationModel extends Reservation {
   final int idReservation;
   final String reservationDate;
   final int idRoom;
@@ -15,18 +16,18 @@ class ReservationModel extends Reservation{
   final int status;
 
   ReservationModel(
-      {this.idReservation,
-      this.reservationDate,
-      this.idRoom,
-      this.idHandler,
-      this.freeHandler,
-      this.startMinutes,
-      this.endMinutes,
-      this.startHour,
-      this.endHour,
-      this.description,
-      this.idParticipants,
-      this.status});
+      {@required this.idReservation,
+      @required this.reservationDate,
+      @required this.idRoom,
+      @required this.idHandler,
+      @required this.freeHandler,
+      @required this.startMinutes,
+      @required this.endMinutes,
+      @required this.startHour,
+      @required this.endHour,
+      @required this.description,
+      @required this.idParticipants,
+      @required this.status});
 
   factory ReservationModel.fromJson(Map<String, dynamic> json) {
     return ReservationModel(
