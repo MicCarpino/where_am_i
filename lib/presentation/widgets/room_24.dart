@@ -81,7 +81,8 @@ class Room24 extends StatelessWidget {
           if (state is ReservationsFetchLoadingState) {
             return CircularLoading();
           } else if (state is ReservationsFetchCompletedState) {
-            return ReservationsCalendar(reservationsList: state.reservationsList);
+            return ReservationsCalendar(reservationsList: state.reservationsList
+                .where((element) => element.idRoom == 24).toList());
           } else if (state is ReservationsFetchErrorState) {
             return Center(
               child: MaterialButton(
