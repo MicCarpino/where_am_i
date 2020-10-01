@@ -15,10 +15,10 @@ class OnPresencesManagementClick extends HomeEvent {}
 class OnUsersManagementClick extends HomeEvent {}
 
 //Widgets events
-class OnDateSelected extends HomeEvent {
+class OnNewDate extends HomeEvent {
   final DateTime date;
 
-  OnDateSelected({this.date});
+  OnNewDate({this.date});
 }
 
 class OnEventLongClick {}

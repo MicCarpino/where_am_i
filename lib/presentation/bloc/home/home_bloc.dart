@@ -17,9 +17,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         super(HomeInitialState());
 
   //Controller is private - you do not want to expose it
-  final StreamController<DateTime> _homeController = StreamController<DateTime>();
+  final StreamController<DateTime> _homeController =
+      StreamController<DateTime>.broadcast();
+
   //Instead, you expose a stream
-  Stream<DateTime> get visualizedDate => _homeController.stream;
+  Stream<DateTime> get visualizedDateStream => _homeController.stream;
+
+  DateTime visualizedDate;
 
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
@@ -34,8 +38,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }*/
         return HomeErrorState(errorMessage: 'Log out unsuccessful');
       }, (success) => LoggedOutState());
-    } else if(event is OnDateSelected){
-      _homeController.sink.add(event.date);
+    } else if (event is OnNewDate) {
+      this.visualizedDate = event.date;
+      _homeController.sink.add(this.visualizedDate);
     }
   }
 
@@ -44,5 +49,4 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     _homeController.close();
     return super.close();
   }
-
 }

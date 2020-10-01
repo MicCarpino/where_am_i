@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
 
 class DatePicker extends StatefulWidget {
   @override
@@ -7,6 +10,14 @@ class DatePicker extends StatefulWidget {
 }
 
 class _DatePickerState extends State<DatePicker> {
+  HomeBloc _homeBloc;
+
+  @override
+  void initState() {
+    _homeBloc = BlocProvider.of<HomeBloc>(context);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,16 +35,26 @@ class _DatePickerState extends State<DatePicker> {
                     child:
                         Icon(Icons.keyboard_arrow_left, color: Colors.white)),
                 onTap: () {
-                  print('-');
+                  _homeBloc.add(
+                    OnNewDate(
+                        date: _homeBloc.visualizedDate.subtract(
+                      Duration(days: 1),
+                    )),
+                  );
                 },
               ),
             ),
           ),
-          GestureDetector(
-              child: Text('Martedì 15 settembre 2020',
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
-              onTap: () {
-                _showCalendar(context);
+          StreamBuilder<DateTime>(
+              initialData: DateTime.now(),
+              stream: _homeBloc.visualizedDateStream,
+              builder: (BuildContext context, AsyncSnapshot<DateTime> date) {
+                return GestureDetector(
+                    child: Text( DateFormat('EEE, MMM d').format(date.data),
+                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                    onTap: () {
+                      _showCalendar(context);
+                    });
               }),
           ClipOval(
             child: Material(
@@ -46,7 +67,12 @@ class _DatePickerState extends State<DatePicker> {
                     child:
                         Icon(Icons.keyboard_arrow_right, color: Colors.white)),
                 onTap: () {
-                  print('+');
+                  _homeBloc.add(
+                    OnNewDate(
+                        date: _homeBloc.visualizedDate.add(
+                      Duration(days: 1),
+                    )),
+                  );
                 },
               ),
             ),
@@ -56,12 +82,18 @@ class _DatePickerState extends State<DatePicker> {
     );
   }
 
+  @override
+  void dispose() {
+    _homeBloc.close();
+    super.dispose();
+  }
+
   _showCalendar(context) async {
     await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate: _homeBloc.visualizedDate,
         firstDate: DateTime.now().subtract(Duration(days: 365)),
-        lastDate: DateTime(2021).add(Duration(days: 365)),
+        lastDate: DateTime.now().add(Duration(days: 365)),
         locale: const Locale("it", ""),
         builder: (context, child) {
           return Theme(
@@ -69,7 +101,11 @@ class _DatePickerState extends State<DatePicker> {
             child: child,
           );
         }).then((selectedDate) {
-      print(selectedDate);
+      if (selectedDate != null) {
+        _homeBloc.add(
+          OnNewDate(date: _homeBloc.visualizedDate = selectedDate),
+        );
+      }
     });
   }
 }

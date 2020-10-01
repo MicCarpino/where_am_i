@@ -15,7 +15,8 @@ String encryptedPw =
     "=";
 
 abstract class RemoteDataSource {
-  Future<AuthenticatedUserModel> performUserAuthentication(String username, String password);
+  Future<AuthenticatedUserModel> performUserAuthentication(
+      String username, String password);
 
   Future<List<WorkstationModel>> getWorkstations(String token, DateTime date);
 
@@ -29,9 +30,12 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   RemoteDataSourceImpl({@required this.client});
 
+  String formatDateToString(DateTime date) =>
+      DateFormat('yyyy-MM-dd').format(date);
+
   @override
-  Future<AuthenticatedUserModel> performUserAuthentication(String username,
-      String password) async {
+  Future<AuthenticatedUserModel> performUserAuthentication(
+      String username, String password) async {
     //TODO: replace with password encription
     var uri = Uri.https(BASE_URL, '/WhereAmI/login',
         {'username': username.trim(), 'password': encryptedPw});
@@ -45,10 +49,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<List<WorkstationModel>> getWorkstations(String token,
-      DateTime date) async {
-    var formattedDate = DateFormat('yyyy-MM-dd').format(date);
-    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/$formattedDate');
+  Future<List<WorkstationModel>> getWorkstations(
+      String token, DateTime date) async {
+    var uri = Uri.https(
+        BASE_URL, '/WhereAmI/workstation/${formatDateToString(date)}');
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
@@ -63,10 +67,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<List<ReservationModel>> getReservations(String token,
-      DateTime date) async {
-    var formattedDate = DateFormat('yyyy-MM-dd').format(date);
-    var uri = Uri.https(BASE_URL, '/WhereAmI/reservation/$formattedDate');
+  Future<List<ReservationModel>> getReservations(
+      String token, DateTime date) async {
+    var uri = Uri.https(
+        BASE_URL, '/WhereAmI/reservation/${formatDateToString(date)}');
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
@@ -89,8 +93,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     });
     if (response.statusCode == 200) {
       List<dynamic> usersList = json.decode(response.body);
-      return List<UserModel>.from(
-          usersList.map((e) => UserModel.fromJson(e)));
+      return List<UserModel>.from(usersList.map((e) => UserModel.fromJson(e)));
     } else {
       throw ServerException(response.body);
     }

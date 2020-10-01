@@ -35,11 +35,11 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     _title = "CIVICO 26/B";
-    _homeBloc.visualizedDate.listen((date) {
+    _homeBloc.visualizedDateStream.listen((date) {
       _workstationBloc.add(FetchWorkstationsLists(dateToFetch: date));
       _reservationsBloc.add(FetchReservationsList(dateToFetch: date));
     });
-    _homeBloc..add(OnDateSelected(date: DateTime.now()));
+    _homeBloc..add(OnNewDate(date: DateTime.now()));
     super.initState();
   }
 
