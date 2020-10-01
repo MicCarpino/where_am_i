@@ -26,6 +26,8 @@ const String HOME_SCREEN_KEY = 'HOME_SCREEN';
 const String JWT_TOKEN_KEY = 'JWT_TOKEN';
 
 const String BASE_URL = "wai.dncsrl.com";
+const reservationPending = 0;
+const reservationConfirmed = 1;
 
 //left current code, right old code
 const getOldWorkstationCodeFor26b = {
