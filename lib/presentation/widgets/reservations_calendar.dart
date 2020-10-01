@@ -3,10 +3,12 @@ import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 
-class EventCalendar extends StatelessWidget {
+//https://pub.dev/packages/flutter_week_view
+
+class ReservationsCalendar extends StatelessWidget {
   final List<Reservation> reservationsList;
 
-  EventCalendar({@required this.reservationsList});
+  ReservationsCalendar({@required this.reservationsList});
 
   @override
   Widget build(BuildContext context) {

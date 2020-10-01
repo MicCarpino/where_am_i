@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
-import 'package:where_am_i/presentation/widgets/event_calendar.dart';
+import 'package:where_am_i/presentation/widgets/reservations_calendar.dart';
 import 'package:where_am_i/presentation/widgets/room_label.dart';
 import 'package:where_am_i/presentation/widgets/workstations.dart';
 
@@ -81,7 +81,7 @@ class Room24 extends StatelessWidget {
           if (state is ReservationsFetchLoadingState) {
             return CircularLoading();
           } else if (state is ReservationsFetchCompletedState) {
-            return EventCalendar(reservationsList: state.reservationsList);
+            return ReservationsCalendar(reservationsList: state.reservationsList);
           } else if (state is ReservationsFetchErrorState) {
             return Center(
               child: MaterialButton(
