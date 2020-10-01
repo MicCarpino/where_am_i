@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:where_am_i/core/error/exceptions.dart';
@@ -46,7 +47,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<List<WorkstationModel>> getWorkstations(String token,
       DateTime date) async {
-    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/$date');
+    var formattedDate = DateFormat('yyyy-MM-dd').format(date);
+    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/$formattedDate');
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
@@ -63,7 +65,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<List<ReservationModel>> getReservations(String token,
       DateTime date) async {
-    var uri = Uri.https(BASE_URL, '/WhereAmI/reservation/$date');
+    var formattedDate = DateFormat('yyyy-MM-dd').format(date);
+    var uri = Uri.https(BASE_URL, '/WhereAmI/reservation/$formattedDate');
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'

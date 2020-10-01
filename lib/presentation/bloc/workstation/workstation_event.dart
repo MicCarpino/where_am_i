@@ -3,7 +3,11 @@ part of 'workstation_bloc.dart';
 @immutable
 abstract class WorkstationEvent {}
 
-class FetchWorkstationsLists extends WorkstationEvent {}
+class FetchWorkstationsLists extends WorkstationEvent {
+  final DateTime dateToFetch;
+
+  FetchWorkstationsLists({@required this.dateToFetch});
+}
 
 class OnWorkstationClick extends WorkstationEvent {
   final int idWorkstation;

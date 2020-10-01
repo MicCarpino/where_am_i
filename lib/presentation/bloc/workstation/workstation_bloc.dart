@@ -24,9 +24,8 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   ) async* {
     if (event is FetchWorkstationsLists) {
       yield WorkstationsFetchLoadingState();
-      print('fetching workstations');
-      final tempDate = DateTime.parse("2020-03-09");
-      final workstationsList = await getWorkstations(tempDate);
+      print('fetching workstations for ${event.dateToFetch}');
+      final workstationsList = await getWorkstations(event.dateToFetch);
       yield workstationsList.fold((failure) {
         print(
             'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');

@@ -20,9 +20,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  HomeBloc _homeBloc;
-  WorkstationBloc _workstationBloc;
-  ReservationsBloc _reservationsBloc;
+  HomeBloc _homeBloc = sl<HomeBloc>();
+  WorkstationBloc _workstationBloc = sl<WorkstationBloc>();
+  ReservationsBloc _reservationsBloc = sl<ReservationsBloc>();
   int _currentItem = 0;
   String _title;
 
@@ -35,9 +35,11 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     _title = "CIVICO 26/B";
-    _homeBloc = sl<HomeBloc>();
-    _reservationsBloc = sl<ReservationsBloc>()..add(FetchReservationsList());
-    _workstationBloc = sl<WorkstationBloc>()..add(FetchWorkstationsLists());
+    _homeBloc.visualizedDate.listen((date) {
+      _workstationBloc.add(FetchWorkstationsLists(dateToFetch: date));
+      _reservationsBloc.add(FetchReservationsList(dateToFetch: date));
+    });
+    _homeBloc..add(OnDateSelected(date: DateTime.now()));
     super.initState();
   }
 

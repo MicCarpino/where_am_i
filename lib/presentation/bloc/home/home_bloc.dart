@@ -11,11 +11,15 @@ part 'home_state.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final PerformLogOut performLogOut;
 
-  HomeBloc(
-      {@required PerformLogOut performLogOut})
+  HomeBloc({@required PerformLogOut performLogOut})
       : assert(performLogOut != null),
         performLogOut = performLogOut,
         super(HomeInitialState());
+
+  //Controller is private - you do not want to expose it
+  final StreamController<DateTime> _homeController = StreamController<DateTime>();
+  //Instead, you expose a stream
+  Stream<DateTime> get visualizedDate => _homeController.stream;
 
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
@@ -30,6 +34,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }*/
         return HomeErrorState(errorMessage: 'Log out unsuccessful');
       }, (success) => LoggedOutState());
+    } else if(event is OnDateSelected){
+      _homeController.sink.add(event.date);
     }
   }
+
+  @override
+  Future<Function> close() {
+    _homeController.close();
+    return super.close();
+  }
+
 }

@@ -24,11 +24,10 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
   ) async* {
     if (event is FetchReservationsList) {
       yield ReservationsFetchLoadingState();
-      print('fetching reservations');
-      final tempDate = DateTime.parse("2020-02-06");
 
-      final reservationsList =
-          await getReservations(tempDate);
+      print('fetching reservations for ${event.dateToFetch}');
+
+      final reservationsList = await getReservations(event.dateToFetch);
 
       yield reservationsList.fold((failure) {
         print(
