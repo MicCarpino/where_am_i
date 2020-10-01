@@ -27,7 +27,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {
-    if (event is OnLogoutButtonClick) {
+    if (event is OnNewDate) {
+      this.visualizedDate = event.date;
+      _homeController.sink.add(this.visualizedDate);
+    } else if (event is OnLogoutButtonClick) {
       yield HomeLoadingState();
       final logoutResult =
           await performLogOut.loginRepository.removeLoggedUser();
@@ -38,9 +41,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         }*/
         return HomeErrorState(errorMessage: 'Log out unsuccessful');
       }, (success) => LoggedOutState());
-    } else if (event is OnNewDate) {
-      this.visualizedDate = event.date;
-      _homeController.sink.add(this.visualizedDate);
     }
   }
 

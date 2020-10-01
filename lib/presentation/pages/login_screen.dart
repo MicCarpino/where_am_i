@@ -7,7 +7,7 @@ import 'package:where_am_i/core/utils/size_config.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 import 'package:where_am_i/presentation/bloc/login/login_state.dart';
 import 'package:where_am_i/presentation/bloc/login/login_event.dart';
-import 'package:where_am_i/presentation/pages/home_screen.dart';
+import 'package:where_am_i/presentation/pages/main_screen.dart';
 import 'package:where_am_i/presentation/widgets/login_button.dart';
 
 final sl = GetIt.instance;
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (state is LoggedInState) {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => Home()),
+              MaterialPageRoute(builder: (context) => MainScreen()),
               (Route<dynamic> route) => false,
             );
           }

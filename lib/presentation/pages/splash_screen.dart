@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/domain/usecases/get_logged_user.dart';
-import 'package:where_am_i/presentation/pages/home_screen.dart';
+import 'package:where_am_i/presentation/pages/main_screen.dart';
 import 'package:where_am_i/presentation/pages/login_screen.dart';
 
 final sl = GetIt.instance;
@@ -43,7 +43,7 @@ class SplashScreenState extends State<SplashScreen> {
               MaterialPageRoute(builder: (context) => LoginScreen())), (
           loggedUser) =>
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Home())));
+              context, MaterialPageRoute(builder: (context) => MainScreen())));
     });
   }
 }

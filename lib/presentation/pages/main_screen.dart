@@ -5,32 +5,26 @@ import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
-import 'package:where_am_i/presentation/widgets/date_picker.dart';
-import 'package:where_am_i/presentation/widgets/room_24.dart';
-import 'package:where_am_i/presentation/widgets/room_26A.dart';
-import 'package:where_am_i/presentation/widgets/room_26B.dart';
+import 'package:where_am_i/presentation/pages/home_page.dart';
+import 'package:where_am_i/presentation/pages/my_presences_page.dart';
+import 'package:where_am_i/presentation/pages/presences_management_page.dart';
+import 'package:where_am_i/presentation/pages/users_management_page.dart';
 
 import 'login_screen.dart';
 
 final sl = GetIt.instance;
 
-class Home extends StatefulWidget {
+class MainScreen extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _MainScreenState createState() => _MainScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _MainScreenState extends State<MainScreen> {
   HomeBloc _homeBloc = sl<HomeBloc>();
   WorkstationBloc _workstationBloc = sl<WorkstationBloc>();
   ReservationsBloc _reservationsBloc = sl<ReservationsBloc>();
   int _currentItem = 0;
   String _title;
-
-  List<Widget> pages = [
-    Room26B(),
-    Room26A(),
-    Room24(),
-  ];
 
   @override
   void initState() {
@@ -41,13 +35,6 @@ class _HomeState extends State<Home> {
     });
     _homeBloc..add(OnNewDate(date: DateTime.now()));
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _reservationsBloc.close();
-    _workstationBloc.close();
-    super.dispose();
   }
 
   @override
@@ -66,38 +53,52 @@ class _HomeState extends State<Home> {
           iconTheme: IconThemeData(color: Colors.white),
         ),
         drawer: _buildDrawer(context),
-        body: MultiBlocProvider(
-          providers: [
-            BlocProvider<WorkstationBloc>(
-                create: (context) => _workstationBloc),
-            BlocProvider<ReservationsBloc>(
-                create: (context) => _reservationsBloc),
-          ],
-          child: Column(children: [
-            DatePicker(),
-            Expanded(
-              child: PageView.builder(
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (BuildContext context, int index) {
-                  return pages[index];
-                },
-                onPageChanged: (pageIndex) {
-                  switch (pageIndex) {
-                    case 0:
-                      _setAppBarTitle("CIVICO 26/B");
-                      break;
-                    case 1:
-                      _setAppBarTitle("CIVICO 26/A");
-                      break;
-                    case 2:
-                      _setAppBarTitle("CIVICO 24");
-                      break;
-                  }
-                },
-                itemCount: pages.length,
-              ),
-            ),
-          ]),
+        body: MultiBlocProvider(providers: [
+          BlocProvider<HomeBloc>(create: (context) => _homeBloc),
+          BlocProvider<WorkstationBloc>(create: (context) => _workstationBloc),
+          BlocProvider<ReservationsBloc>(create: (context) => _reservationsBloc)
+        ], child: HomePage(setAppBarTitle)));
+  }
+
+  Widget _buildMyPresencesPage(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(_title, style: TextStyle(color: Colors.white)),
+          backgroundColor: dncBlue,
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        drawer: _buildDrawer(context),
+        body: BlocProvider(
+          create: (BuildContext context) => _workstationBloc,
+          child: MyPresencesPage(setAppBarTitle),
+        ));
+  }
+
+  Widget _buildPresencesManagementPage(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(_title, style: TextStyle(color: Colors.white)),
+          backgroundColor: dncBlue,
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        drawer: _buildDrawer(context),
+        body: BlocProvider(
+          create: (BuildContext context) => _workstationBloc,
+          child: PresencesManagementPage(setAppBarTitle),
+        ));
+  }
+
+  Widget _buildUsersManagementPage(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(_title, style: TextStyle(color: Colors.white)),
+          backgroundColor: dncBlue,
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        drawer: _buildDrawer(context),
+        body: BlocProvider(
+          create: (BuildContext context) => _workstationBloc,
+          child: UsersManagementPage(setAppBarTitle),
         ));
   }
 
@@ -114,13 +115,18 @@ class _HomeState extends State<Home> {
               _createDrawerItem(
                   position: 1,
                   icon: Icons.event_available,
-                  text: 'Le mie presenze'),
+                  text: 'Le mie presenze',
+                  onTap: () => _buildMyPresencesPage(context)),
               _createDrawerItem(
                   position: 2,
                   icon: Icons.supervisor_account,
-                  text: 'Gestione presenze'),
+                  text: 'Gestione presenze',
+                  onTap: () => _buildPresencesManagementPage(context)),
               _createDrawerItem(
-                  position: 3, icon: Icons.lock_open, text: 'Gestione utenze')
+                  position: 3,
+                  icon: Icons.lock_open,
+                  text: 'Gestione utenze',
+                  onTap: () => _buildUsersManagementPage(context))
             ])),
             Container(
                 child: Align(
@@ -148,8 +154,12 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _createDrawerItem(
-      {int position, IconData icon, String text, GestureTapCallback onTap}) {
+  Widget _createDrawerItem({
+    int position,
+    IconData icon,
+    String text,
+    GestureTapCallback onTap,
+  }) {
     return Ink(
       color: position == _currentItem ? dncOrange : null,
       child: ListTile(
@@ -199,9 +209,16 @@ class _HomeState extends State<Home> {
     ));
   }
 
-  _setAppBarTitle(String title) {
+  setAppBarTitle(String title) {
     setState(() {
       _title = title;
     });
+  }
+
+  @override
+  void dispose() {
+    _reservationsBloc.close();
+    _workstationBloc.close();
+    super.dispose();
   }
 }
