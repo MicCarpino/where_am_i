@@ -12,6 +12,13 @@ import 'package:where_am_i/presentation/pages/users_management_page.dart';
 
 import 'login_screen.dart';
 
+enum Pages {
+  home_page,
+  my_presences_page,
+  presences_management_page,
+  users_management_page
+}
+
 final sl = GetIt.instance;
 
 class MainScreen extends StatefulWidget {
@@ -23,83 +30,54 @@ class _MainScreenState extends State<MainScreen> {
   HomeBloc _homeBloc = sl<HomeBloc>();
   WorkstationBloc _workstationBloc = sl<WorkstationBloc>();
   ReservationsBloc _reservationsBloc = sl<ReservationsBloc>();
-  int _currentItem = 0;
+  Pages _bodyContent;
   String _title;
 
   @override
   void initState() {
+    _bodyContent = Pages.home_page;
     _title = "CIVICO 26/B";
     _homeBloc.visualizedDateStream.listen((date) {
       _workstationBloc.add(FetchWorkstationsLists(dateToFetch: date));
       _reservationsBloc.add(FetchReservationsList(dateToFetch: date));
     });
-    _homeBloc..add(OnNewDate(date: DateTime.now()));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => _homeBloc,
-      child: _buildHomePage(context),
-    );
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(_title, style: TextStyle(color: Colors.white)),
+          backgroundColor: dncBlue,
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        drawer: _buildDrawer(context),
+        body: _getBodyContent());
+  }
+
+  Widget _getBodyContent() {
+    switch (_bodyContent) {
+      case Pages.my_presences_page:
+        return MyPresencesPage(setAppBarTitle);
+        break;
+      case Pages.presences_management_page:
+        return PresencesManagementPage(setAppBarTitle);
+        break;
+      case Pages.users_management_page:
+        return UsersManagementPage(setAppBarTitle);
+        break;
+      default:
+        return _buildHomePage(context);
+    }
   }
 
   Widget _buildHomePage(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(_title, style: TextStyle(color: Colors.white)),
-          backgroundColor: dncBlue,
-          iconTheme: IconThemeData(color: Colors.white),
-        ),
-        drawer: _buildDrawer(context),
-        body: MultiBlocProvider(providers: [
-          BlocProvider<HomeBloc>(create: (context) => _homeBloc),
-          BlocProvider<WorkstationBloc>(create: (context) => _workstationBloc),
-          BlocProvider<ReservationsBloc>(create: (context) => _reservationsBloc)
-        ], child: HomePage(setAppBarTitle)));
-  }
-
-  Widget _buildMyPresencesPage(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(_title, style: TextStyle(color: Colors.white)),
-          backgroundColor: dncBlue,
-          iconTheme: IconThemeData(color: Colors.white),
-        ),
-        drawer: _buildDrawer(context),
-        body: BlocProvider(
-          create: (BuildContext context) => _workstationBloc,
-          child: MyPresencesPage(setAppBarTitle),
-        ));
-  }
-
-  Widget _buildPresencesManagementPage(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(_title, style: TextStyle(color: Colors.white)),
-          backgroundColor: dncBlue,
-          iconTheme: IconThemeData(color: Colors.white),
-        ),
-        drawer: _buildDrawer(context),
-        body: BlocProvider(
-          create: (BuildContext context) => _workstationBloc,
-          child: PresencesManagementPage(setAppBarTitle),
-        ));
-  }
-
-  Widget _buildUsersManagementPage(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(_title, style: TextStyle(color: Colors.white)),
-          backgroundColor: dncBlue,
-          iconTheme: IconThemeData(color: Colors.white),
-        ),
-        drawer: _buildDrawer(context),
-        body: BlocProvider(
-          create: (BuildContext context) => _workstationBloc,
-          child: UsersManagementPage(setAppBarTitle),
-        ));
+    return MultiBlocProvider(providers: [
+      BlocProvider<HomeBloc>(create: (context) => _homeBloc),
+      BlocProvider<WorkstationBloc>(create: (context) => _workstationBloc),
+      BlocProvider<ReservationsBloc>(create: (context) => _reservationsBloc)
+    ], child: HomePage(setAppBarTitle));
   }
 
   _buildDrawer(BuildContext context) {
@@ -111,22 +89,26 @@ class _MainScreenState extends State<MainScreen> {
             Expanded(
                 child: ListView(padding: EdgeInsets.zero, children: <Widget>[
               _createDrawerHeader(),
-              _createDrawerItem(position: 0, icon: Icons.home, text: 'Home'),
               _createDrawerItem(
-                  position: 1,
-                  icon: Icons.event_available,
-                  text: 'Le mie presenze',
-                  onTap: () => _buildMyPresencesPage(context)),
+                itemPage: Pages.home_page,
+                icon: Icons.home,
+                text: 'Home',
+              ),
               _createDrawerItem(
-                  position: 2,
-                  icon: Icons.supervisor_account,
-                  text: 'Gestione presenze',
-                  onTap: () => _buildPresencesManagementPage(context)),
+                itemPage: Pages.my_presences_page,
+                icon: Icons.event_available,
+                text: 'Le mie presenze',
+              ),
               _createDrawerItem(
-                  position: 3,
-                  icon: Icons.lock_open,
-                  text: 'Gestione utenze',
-                  onTap: () => _buildUsersManagementPage(context))
+                itemPage: Pages.presences_management_page,
+                icon: Icons.supervisor_account,
+                text: 'Gestione presenze',
+              ),
+              _createDrawerItem(
+                itemPage: Pages.users_management_page,
+                icon: Icons.lock_open,
+                text: 'Gestione utenze',
+              ),
             ])),
             Container(
                 child: Align(
@@ -155,24 +137,24 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _createDrawerItem({
-    int position,
+    Pages itemPage,
     IconData icon,
     String text,
     GestureTapCallback onTap,
   }) {
     return Ink(
-      color: position == _currentItem ? dncOrange : null,
+      color: itemPage == _bodyContent ? dncOrange : null,
       child: ListTile(
         title: Row(
           children: <Widget>[
             Icon(icon,
                 color:
-                    position == _currentItem ? Colors.white : Colors.black87),
+                    itemPage == _bodyContent ? Colors.white : Colors.black87),
             Padding(
                 padding: EdgeInsets.only(left: 8.0),
                 child: Text(text,
                     style: TextStyle(
-                        color: position == _currentItem
+                        color: itemPage == _bodyContent
                             ? Colors.white
                             : Colors.black87)))
           ],
@@ -180,7 +162,7 @@ class _MainScreenState extends State<MainScreen> {
         onTap: () {
           Navigator.pop(context);
           setState(() {
-            _currentItem = position;
+            _bodyContent = itemPage;
           });
         },
       ),

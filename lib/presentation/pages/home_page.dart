@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
 import 'package:where_am_i/presentation/widgets/room_24.dart';
 import 'package:where_am_i/presentation/widgets/room_26A.dart';
@@ -12,10 +14,12 @@ List<Widget> pages = [
 
 class HomePage extends StatelessWidget {
   final void Function(String title) _setAppBarTitle;
+
   HomePage(this._setAppBarTitle);
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<HomeBloc>(context)..add(OnNewDate(date: DateTime.now()));
     return Column(children: [
       DatePicker(),
       Expanded(
