@@ -13,6 +13,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   final LocalDataSource localDataSource;
 
   static var cachedWorkstationsList = List<Workstation>();
+  static var cachedUserPresences = List<Workstation>();
 
   WorkstationRepositoryImpl({
     @required this.remoteDataSource,
@@ -24,10 +25,25 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       DateTime date) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
-      final workstationsList = await remoteDataSource.getWorkstations(
+      final workstationsList = await remoteDataSource.getAllWorkstationsByDate(
           loggedUser.authenticationToken, date);
       cachedWorkstationsList = workstationsList;
       return Right(workstationsList);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    }
+  }
+
+  @override
+  Future<Either<Failure,
+      List<Workstation>>> getAllWorkstationsByIdResource() async {
+    try {
+      var loggedUser = await localDataSource.getCachedUser();
+      final userPresences = await remoteDataSource
+          .getAllWorkstationsByIdResource(
+          loggedUser.authenticationToken, loggedUser.user.idResource);
+      cachedUserPresences = userPresences;
+      return Right(userPresences);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
     }
@@ -49,4 +65,5 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   Future<Either<Failure, void>> deleteWorkstation(int idWorkstation) {
     throw UnimplementedError();
   }
+
 }

@@ -6,6 +6,8 @@ import '../../core/error/failure.dart';
 abstract class WorkstationRepository {
   Future<Either<Failure, List<Workstation>>> getAllWorkstationsByDate(DateTime date);
 
+  Future<Either<Failure, List<Workstation>>> getAllWorkstationsByIdResource();
+
   Future<Either<Failure, Workstation>> updateWorkstation(Workstation workstation);
 
   Future<Either<Failure, Workstation>>insertWorkstation(Workstation workstation);

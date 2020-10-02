@@ -21,12 +21,12 @@ enum Pages {
 
 final sl = GetIt.instance;
 
-class MainScreen extends StatefulWidget {
+class HomeScreen extends StatefulWidget {
   @override
-  _MainScreenState createState() => _MainScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   HomeBloc _homeBloc = sl<HomeBloc>();
   WorkstationBloc _workstationBloc = sl<WorkstationBloc>();
   ReservationsBloc _reservationsBloc = sl<ReservationsBloc>();

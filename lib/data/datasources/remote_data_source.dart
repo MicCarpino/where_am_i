@@ -18,9 +18,14 @@ abstract class RemoteDataSource {
   Future<AuthenticatedUserModel> performUserAuthentication(
       String username, String password);
 
-  Future<List<WorkstationModel>> getWorkstations(String token, DateTime date);
+  Future<List<WorkstationModel>> getAllWorkstationsByDate(
+      String token, DateTime date);
 
-  Future<List<ReservationModel>> getReservations(String token, DateTime date);
+  Future<List<WorkstationModel>> getAllWorkstationsByIdResource(
+      String token, String idResource);
+
+  Future<List<ReservationModel>> getAllReservationsByDate(
+      String token, DateTime date);
 
   Future<List<UserModel>> getUsers(String token);
 }
@@ -49,7 +54,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<List<WorkstationModel>> getWorkstations(
+  Future<List<WorkstationModel>> getAllWorkstationsByDate(
       String token, DateTime date) async {
     var uri = Uri.https(
         BASE_URL, '/WhereAmI/workstation/${formatDateToString(date)}');
@@ -67,7 +72,24 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<List<ReservationModel>> getReservations(
+  Future<List<WorkstationModel>> getAllWorkstationsByIdResource(
+      String token, String idResource) async {
+    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/resource/$idResource');
+    final response = await http.get(uri, headers: {
+      HttpHeaders.authorizationHeader: token,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    });
+    if (response.statusCode == 200) {
+      List<dynamic> workstationsList = json.decode(response.body);
+      return List<WorkstationModel>.from(
+          workstationsList.map((e) => WorkstationModel.fromJson(e)));
+    } else {
+      throw ServerException(response.body);
+    }
+  }
+
+  @override
+  Future<List<ReservationModel>> getAllReservationsByDate(
       String token, DateTime date) async {
     var uri = Uri.https(
         BASE_URL, '/WhereAmI/reservation/${formatDateToString(date)}');

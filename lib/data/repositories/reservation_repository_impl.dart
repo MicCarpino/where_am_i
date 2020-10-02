@@ -24,7 +24,7 @@ class ReservationRepositoryImpl implements ReservationRepository {
       DateTime date) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
-      final reservationsList = await remoteDataSource.getReservations(
+      final reservationsList = await remoteDataSource.getAllReservationsByDate(
           loggedUser.authenticationToken, date);
       cachedReservationList = reservationsList;
       return Right(reservationsList);

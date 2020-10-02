@@ -20,3 +20,5 @@ class OnWorkstationLongClick extends WorkstationEvent {
 
   OnWorkstationLongClick({this.idWorkstation});
 }
+
+class FetchUserPresences extends WorkstationEvent {}

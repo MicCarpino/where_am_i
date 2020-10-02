@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:where_am_i/data/repositories/reservation_repository_impl.dart';
 import 'package:where_am_i/domain/repositories/reservation_repository.dart';
+import 'package:where_am_i/domain/usecases/get_workstations_by_id_resource.dart';
 import 'data/repositories/user_repository_impl.dart';
 import 'domain/usecases/get_logged_user.dart';
 
@@ -28,14 +29,18 @@ Future<void> init() async {
   // Bloc
   sl.registerFactory(() => LoginBloc(performLogIn: sl()));
   sl.registerFactory(() => HomeBloc(performLogOut: sl()));
-  sl.registerFactory(() => WorkstationBloc(getWorkstations: sl()));
+  sl.registerFactory(() => WorkstationBloc(
+        getWorkstationsByDate: sl(),
+        getWorkstationsByIdResource: sl(),
+      ));
   sl.registerFactory(() => ReservationsBloc(getReservations: sl()));
 
   // Use Cases
   sl.registerLazySingleton(() => PerformLogIn(sl()));
   sl.registerLazySingleton(() => PerformLogOut(sl()));
   sl.registerLazySingleton(() => GetLoggedUser(sl()));
-  sl.registerLazySingleton(() => GetWorkstationsByDate(sl(),sl()));
+  sl.registerLazySingleton(() => GetWorkstationsByDate(sl(), sl()));
+  sl.registerLazySingleton(() => GetWorkstationsByIdResource(sl()));
   sl.registerLazySingleton(() => GetReservationsByDate(sl()));
 
   // Repository
