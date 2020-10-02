@@ -22,3 +22,9 @@ class OnWorkstationLongClick extends WorkstationEvent {
 }
 
 class FetchUserPresences extends WorkstationEvent {}
+
+class OnPresencesUpdate extends WorkstationEvent {
+  final List<DateTime> updatedPresences;
+
+  OnPresencesUpdate(this.updatedPresences);
+}

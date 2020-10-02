@@ -14,4 +14,6 @@ abstract class WorkstationRepository {
 
   Future<Either<Failure, void>> deleteWorkstation(int idWorkstation);
 
+  Future<Either<Failure, List<Workstation>>> updateWorkstationsForUser(List<DateTime> userPresences);
+
 }

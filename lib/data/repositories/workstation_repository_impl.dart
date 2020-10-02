@@ -50,6 +50,20 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
+  Future<Either<Failure, List<Workstation>>> updateWorkstationsForUser(List<DateTime> userPresences) {
+    try{
+      //TODO: write function to check if there are element removed or added then perform insert or delete
+      print('cachedUsers${cachedUserPresences.length}');
+      var elementsAdded = userPresences.map((e) => cachedUserPresences.contains(e)).toList();
+      var elementsRemoved = cachedUserPresences.map((e) => !cachedUserPresences.contains(e)).toList();
+      print('elementsAdded ${elementsAdded.length}');
+      print('elementsRemoved ${elementsRemoved.length}');
+    } catch (e){
+      print(e.toString());
+    }
+  }
+
+  @override
   Future<Either<Failure, Workstation>> insertWorkstation(
       Workstation workstation) {
     throw UnimplementedError();
@@ -61,9 +75,12 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     throw UnimplementedError();
   }
 
+
+
   @override
   Future<Either<Failure, void>> deleteWorkstation(int idWorkstation) {
     throw UnimplementedError();
   }
+
 
 }

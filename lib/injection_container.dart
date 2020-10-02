@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:where_am_i/data/repositories/reservation_repository_impl.dart';
 import 'package:where_am_i/domain/repositories/reservation_repository.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_id_resource.dart';
+import 'package:where_am_i/domain/usecases/update_user_presences.dart';
 import 'data/repositories/user_repository_impl.dart';
 import 'domain/usecases/get_logged_user.dart';
 
@@ -30,17 +31,21 @@ Future<void> init() async {
   sl.registerFactory(() => LoginBloc(performLogIn: sl()));
   sl.registerFactory(() => HomeBloc(performLogOut: sl()));
   sl.registerFactory(() => WorkstationBloc(
-        getWorkstationsByDate: sl(),
-        getWorkstationsByIdResource: sl(),
-      ));
+      getWorkstationsByDate: sl(),
+      getWorkstationsByIdResource: sl(),
+      updateUserPresences: sl()));
   sl.registerFactory(() => ReservationsBloc(getReservations: sl()));
 
   // Use Cases
+  //User
   sl.registerLazySingleton(() => PerformLogIn(sl()));
   sl.registerLazySingleton(() => PerformLogOut(sl()));
   sl.registerLazySingleton(() => GetLoggedUser(sl()));
+  //Workstation
   sl.registerLazySingleton(() => GetWorkstationsByDate(sl(), sl()));
   sl.registerLazySingleton(() => GetWorkstationsByIdResource(sl()));
+  sl.registerLazySingleton(() => UpdateUserPresences(sl()));
+  //Reservation
   sl.registerLazySingleton(() => GetReservationsByDate(sl()));
 
   // Repository
