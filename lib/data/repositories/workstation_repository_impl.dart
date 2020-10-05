@@ -35,12 +35,12 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure,
-      List<Workstation>>> getAllWorkstationsByIdResource() async {
+  Future<Either<Failure, List<Workstation>>>
+  getAllWorkstationsByIdResource() async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
-      final userPresences = await remoteDataSource
-          .getAllWorkstationsByIdResource(
+      final userPresences =
+      await remoteDataSource.getAllWorkstationsByIdResource(
           loggedUser.authenticationToken, loggedUser.user.idResource);
       cachedUserPresences = userPresences;
       return Right(userPresences);
@@ -49,38 +49,56 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     }
   }
 
+  //TODO: enable insert/delete calls when switching to test server
   @override
-  Future<Either<Failure, List<Workstation>>> updateWorkstationsForUser(List<DateTime> userPresences) {
-    try{
-      //TODO: write function to check if there are element removed or added then perform insert or delete
-      print('cachedUsers${cachedUserPresences.length}');
-      var elementsAdded = userPresences.map((e) => cachedUserPresences.contains(e)).toList();
-      var elementsRemoved = cachedUserPresences.map((e) => !cachedUserPresences.contains(e)).toList();
-      print('elementsAdded ${elementsAdded.length}');
-      print('elementsRemoved ${elementsRemoved.length}');
-    } catch (e){
-      print(e.toString());
+  Future<Either<Failure, List<Workstation>>> updateUserWorkstations(
+      List<DateTime> newUserPresences) async {
+    try {
+      var currentUser = await localDataSource.getCachedUser();
+      var oldUserPresences =
+      cachedUserPresences.map((e) => e.workstationDate).toList();
+      //date has been removed
+      DateTime dateRemoved = oldUserPresences
+          .toSet()
+          .difference(newUserPresences.toSet())
+          .toList()
+          .first;
+      if (dateRemoved != null) {
+        var idWorkstation = cachedUserPresences
+            .firstWhere((element) => element.workstationDate == dateRemoved)
+            .idWorkstation;
+       /* await remoteDataSource.deleteWorkstation(
+            currentUser.authenticationToken, idWorkstation);
+        cachedUserPresences.removeWhere((element) =>
+        element.workstationDate == dateRemoved);*/
+      }
+      //date has been added
+      DateTime dateAdded = newUserPresences
+          .toSet()
+          .difference(oldUserPresences.toSet())
+          .toList()
+          .first;
+      if (dateAdded != null) {
+        /*var addPresenceResult = await remoteDataSource.insertWorkstation(
+            currentUser.authenticationToken,
+            WorkstationModel(
+                idResource: currentUser.user.idResource,
+                idWorkstation: null,
+                freeName: null,
+                codeWorkstation: null,
+                workstationDate: dateAdded));
+        cachedUserPresences.add(addPresenceResult);*/
+      }
+      return Right(cachedUserPresences);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
     }
   }
-
-  @override
-  Future<Either<Failure, Workstation>> insertWorkstation(
-      Workstation workstation) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<Failure, Workstation>> updateWorkstation(
-      Workstation workstation) {
-    throw UnimplementedError();
-  }
-
-
 
   @override
   Future<Either<Failure, void>> deleteWorkstation(int idWorkstation) {
     throw UnimplementedError();
   }
-
-
 }

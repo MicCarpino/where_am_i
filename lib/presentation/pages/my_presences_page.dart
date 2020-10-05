@@ -11,9 +11,7 @@ final sl = GetIt.instance;
 
 class MyPresencesPage extends StatefulWidget {
   final void Function(String title) _setAppBarTitle;
-
   MyPresencesPage(this._setAppBarTitle);
-
   @override
   _MyPresencesPageState createState() => _MyPresencesPageState();
 }
@@ -36,9 +34,6 @@ class _MyPresencesPageState extends State<MyPresencesPage> {
           if (state is UserPresencesFetchCompleted) {
             userPresences =
                 state.userPresences.map((e) => e.workstationDate).toList();
-            userPresences.add(DateTime.now().add(Duration(days: 2)));
-            userPresences.add(DateTime.now().add(Duration(days: 3)));
-            userPresences.add(DateTime.now().add(Duration(days: 5)));
             return _buildSFCalendar(userPresences);
           } else if (state is WorkstationsFetchErrorState) {
             return Center(

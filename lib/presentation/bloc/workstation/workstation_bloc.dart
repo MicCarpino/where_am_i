@@ -35,7 +35,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
     WorkstationEvent event,
   ) async* {
     if (event is FetchWorkstationsLists) {
-      yield*  _fetchWorkstationsList(event);
+      yield* _fetchWorkstationsList(event);
     } else if (event is FetchUserPresences) {
       yield* _fetchUserPresences();
     } else if (event is OnPresencesUpdate) {
@@ -43,7 +43,8 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
     }
   }
 
-  Stream<WorkstationState> _fetchWorkstationsList(FetchWorkstationsLists event) async* {
+  Stream<WorkstationState> _fetchWorkstationsList(
+      FetchWorkstationsLists event) async* {
     yield WorkstationsFetchLoadingState();
     print('fetching workstations for ${event.dateToFetch}');
     final workstationsList = await getWorkstationsByDate(event.dateToFetch);
@@ -71,7 +72,15 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
     });
   }
 
-  void _updateUserPresences(List<DateTime> updatedPresences) {
-    updateUserPresences(updatedPresences);
+  Stream<void> _updateUserPresences(List<DateTime> updatedPresences) async* {
+    final updateResult = await updateUserPresences(updatedPresences);
+    updateResult.fold((failure) {
+      print(
+          'update fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+      return WorkstationsFetchErrorState();
+    }, (userPresences) {
+      print('update : ${updateResult.length}');
+      return UserPresencesFetchCompleted(userPresences);
+    });
   }
 }

@@ -24,6 +24,11 @@ abstract class RemoteDataSource {
   Future<List<WorkstationModel>> getAllWorkstationsByIdResource(
       String token, String idResource);
 
+  Future<WorkstationModel> insertWorkstation(
+      String token, WorkstationModel workstation);
+
+  Future<void> deleteWorkstation(String token, int idWorkstation);
+
   Future<List<ReservationModel>> getAllReservationsByDate(
       String token, DateTime date);
 
@@ -83,6 +88,37 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       List<dynamic> workstationsList = json.decode(response.body);
       return List<WorkstationModel>.from(
           workstationsList.map((e) => WorkstationModel.fromJson(e)));
+    } else {
+      throw ServerException(response.body);
+    }
+  }
+
+  @override
+  Future<WorkstationModel> insertWorkstation(
+      String token, WorkstationModel workstation) async {
+    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation');
+    final response = await http.post(uri, headers: {
+      HttpHeaders.authorizationHeader: token,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    }, body: {
+      json.encode(workstation.toJson())
+    });
+    if (response.statusCode == 200) {
+      return WorkstationModel.fromJson(json.decode(response.body));
+    } else {
+      throw ServerException(response.body);
+    }
+  }
+
+  @override
+  Future<void> deleteWorkstation(String token, int idWorkstation) async {
+    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation//$idWorkstation');
+    final response = await http.delete(uri, headers: {
+      HttpHeaders.authorizationHeader: token,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    });
+    if (response.statusCode == 200) {
+      return;
     } else {
       throw ServerException(response.body);
     }

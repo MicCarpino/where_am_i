@@ -30,4 +30,14 @@ class WorkstationModel extends Workstation {
         freeName: json["freeName"],
         codeWorkstation: json["codeWorkstation"]);
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'idWorkstation': idWorkstation,
+      'idResource': idResource,
+      'workstationDate': workstationDate,
+      'freeName': freeName,
+      'codeWorkstation': codeWorkstation,
+    };
+  }
 }

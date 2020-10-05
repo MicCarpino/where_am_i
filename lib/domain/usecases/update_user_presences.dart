@@ -11,6 +11,6 @@ class UpdateUserPresences extends UseCase<List<Workstation>, List<DateTime>> {
   UpdateUserPresences(this._workstationRepository);
 
   Future<Either<Failure, List<Workstation>>> call(List<DateTime> userPresences) async {
-    return await _workstationRepository.updateWorkstationsForUser(userPresences);
+    return await _workstationRepository.updateUserWorkstations(userPresences);
   }
 }

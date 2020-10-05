@@ -8,12 +8,6 @@ abstract class WorkstationRepository {
 
   Future<Either<Failure, List<Workstation>>> getAllWorkstationsByIdResource();
 
-  Future<Either<Failure, Workstation>> updateWorkstation(Workstation workstation);
-
-  Future<Either<Failure, Workstation>>insertWorkstation(Workstation workstation);
-
-  Future<Either<Failure, void>> deleteWorkstation(int idWorkstation);
-
-  Future<Either<Failure, List<Workstation>>> updateWorkstationsForUser(List<DateTime> userPresences);
+  Future<Either<Failure, List<Workstation>>> updateUserWorkstations(List<DateTime> userPresences);
 
 }
