@@ -26,8 +26,11 @@ const String HOME_SCREEN_KEY = 'HOME_SCREEN';
 const String JWT_TOKEN_KEY = 'JWT_TOKEN';
 
 const String BASE_URL = "wai.dncsrl.com";
-const reservationPending = 0;
-const reservationConfirmed = 1;
+const RESERVATION_PENDING = 0;
+const RESERVATION_CONFIRMED = 1;
+const ROLE_USER = 1;
+const ROLE_STAFF = 2;
+const ROLE_ADMIN = 3;
 
 //left current code, right old code
 const getOldWorkstationCodeFor26b = {
@@ -52,22 +55,22 @@ const getOldWorkstationCodeFor26b = {
 };
 //left current code, right old code
 const getOldWorkstationCodeFor24 = {
-  19:19,
-  21:20,
-  23:21,
-  25:22,
-  20:23,
-  22:24,
-  24:25,
-  26:26,
-  27:27,
-  29:28,
-  31:29,
-  33:30,
-  28:31,
-  30:32,
-  32:33,
-  34:34
+  19: 19,
+  21: 20,
+  23: 21,
+  25: 22,
+  20: 23,
+  22: 24,
+  24: 25,
+  26: 26,
+  27: 27,
+  29: 28,
+  31: 29,
+  33: 30,
+  28: 31,
+  30: 32,
+  32: 33,
+  34: 34
 };
 
 //Styles
@@ -90,5 +93,5 @@ final kBoxDecorationStyle = BoxDecoration(
 );
 
 final kRoomLabelStyle = TextStyle(
-  fontSize:  20,
+  fontSize: 20,
 );
