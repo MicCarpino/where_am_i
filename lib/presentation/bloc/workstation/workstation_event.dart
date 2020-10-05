@@ -21,10 +21,16 @@ class OnWorkstationLongClick extends WorkstationEvent {
   OnWorkstationLongClick({this.idWorkstation});
 }
 
-class FetchUserPresences extends WorkstationEvent {}
+class FetchCurrentUserPresences extends WorkstationEvent {}
 
-class OnPresencesUpdate extends WorkstationEvent {
+class FetchAllUserPresences extends WorkstationEvent {
+  final DateTime dateToFetch;
+
+  FetchAllUserPresences({@required this.dateToFetch});
+}
+
+class OnCurrentUserPresencesUpdate extends WorkstationEvent {
   final List<DateTime> updatedPresences;
 
-  OnPresencesUpdate(this.updatedPresences);
+  OnCurrentUserPresencesUpdate(this.updatedPresences);
 }

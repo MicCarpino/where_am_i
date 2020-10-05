@@ -4,7 +4,9 @@ import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
+import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
+import 'package:where_am_i/domain/usecases/get_all_users_presences_by_date.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_date.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_id_resource.dart';
 import 'package:where_am_i/domain/usecases/update_user_presences.dart';
@@ -16,17 +18,21 @@ part 'workstation_state.dart';
 class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   final GetWorkstationsByDate getWorkstationsByDate;
   final GetWorkstationsByIdResource getWorkstationsByIdResource;
+  final GetAllUserPresencesByDate getAllUserPresencesByDate;
   final UpdateUserPresences updateUserPresences;
 
   WorkstationBloc({
     @required GetWorkstationsByDate getWorkstationsByDate,
     @required GetWorkstationsByIdResource getWorkstationsByIdResource,
+    @required GetAllUserPresencesByDate getAllUserPresencesByDate,
     @required UpdateUserPresences updateUserPresences,
   })  : assert(getWorkstationsByDate != null),
         assert(getWorkstationsByIdResource != null),
         assert(updateUserPresences != null),
+        assert(getAllUserPresencesByDate != null),
         getWorkstationsByDate = getWorkstationsByDate,
         getWorkstationsByIdResource = getWorkstationsByIdResource,
+        getAllUserPresencesByDate = getAllUserPresencesByDate,
         updateUserPresences = updateUserPresences,
         super(WorkstationInitial());
 
@@ -36,9 +42,11 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   ) async* {
     if (event is FetchWorkstationsLists) {
       yield* _fetchWorkstationsList(event);
-    } else if (event is FetchUserPresences) {
-      yield* _fetchUserPresences();
-    } else if (event is OnPresencesUpdate) {
+    } else if (event is FetchCurrentUserPresences) {
+      yield* _fetchCurrentUserPresences();
+    } else if (event is FetchAllUserPresences) {
+      yield* _fetchAllUsersPresences(event.dateToFetch);
+    } else if (event is OnCurrentUserPresencesUpdate) {
       _updateUserPresences(event.updatedPresences);
     }
   }
@@ -58,7 +66,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
     });
   }
 
-  Stream<WorkstationState> _fetchUserPresences() async* {
+  Stream<WorkstationState> _fetchCurrentUserPresences() async* {
     yield WorkstationsFetchLoadingState();
     print('fetching user presences');
     final userPresences = await getWorkstationsByIdResource(NoParams());
@@ -68,7 +76,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
       return WorkstationsFetchErrorState();
     }, (userPresences) {
       print('user presences : ${userPresences.length}');
-      return UserPresencesFetchCompleted(userPresences);
+      return CurrentUserPresencesFetchCompleted(userPresences);
     });
   }
 
@@ -80,7 +88,21 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
       return WorkstationsFetchErrorState();
     }, (userPresences) {
       print('update : ${updateResult.length}');
-      return UserPresencesFetchCompleted(userPresences);
+      return CurrentUserPresencesFetchCompleted(userPresences);
+    });
+  }
+
+  Stream<WorkstationState> _fetchAllUsersPresences(DateTime date) async* {
+    yield WorkstationsFetchLoadingState();
+    print('fetching all users presences');
+    final userPresences = await getAllUserPresencesByDate(date);
+    yield userPresences.fold((failure) {
+      print(
+          'all users presences fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+      return WorkstationsFetchErrorState();
+    }, (allUserPresences) {
+      print('all users user presences : ${userPresences.length}');
+      return AllUsersPresencesFetchCompleted(allUserPresences);
     });
   }
 }

@@ -5,22 +5,19 @@ class UserModel extends User {
   UserModel({
     @required String idResource,
     @required int idRole,
-    @required String username,
     @required String name,
     @required String surname,
   }) : super(
           idResource: idResource,
           idRole: idRole,
-          username: username,
           name: name,
-          surname: surname,
+          surname: surname
         );
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       idResource: json['idResource'],
       idRole: json['idRole'],
-      username: json['username'],
       name: json['name'],
       surname: json['surname'],
     );
@@ -30,7 +27,6 @@ class UserModel extends User {
     return {
       'idResource': idResource,
       'idRole': idRole,
-      'username': username,
       'surname': surname,
       'name': name
     };

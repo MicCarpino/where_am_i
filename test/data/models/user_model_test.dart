@@ -11,7 +11,6 @@ void main() {
   final tUserDetailsModel = UserModel(
       idResource: "1",
       idRole: 3,
-      username: "tUsername",
       name: "tName",
       surname: "tSurname");
   final tUserModel = AuthenticatedUserModel(

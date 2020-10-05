@@ -5,7 +5,6 @@ import 'package:meta/meta.dart';
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
 
 part 'home_event.dart';
-
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
@@ -23,7 +22,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   //Instead, you expose a stream
   Stream<DateTime> get visualizedDateStream => _homeController.stream;
 
-  DateTime visualizedDate;
+  DateTime visualizedDate = DateTime.now();
 
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {

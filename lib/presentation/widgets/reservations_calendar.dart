@@ -32,16 +32,16 @@ class ReservationsCalendar extends StatelessWidget {
     var date = DateTime.now();
     return FlutterWeekViewEvent(
       decoration: BoxDecoration(
-          color: reservation.status == reservationPending
+          color: reservation.status == RESERVATION_PENDING
               ? dncTransparentBlue
               : dncOrangeTransparent,
           border: Border.all(
-              color: reservation.status == reservationPending
+              color: reservation.status == RESERVATION_PENDING
                   ? dncBlue
                   : dncOrange),
           borderRadius: BorderRadius.circular(5)),
       textStyle: TextStyle(
-          color: reservation.status == reservationPending
+          color: reservation.status == RESERVATION_PENDING
               ? Colors.white
               : Colors.black54,
           fontWeight: FontWeight.bold),

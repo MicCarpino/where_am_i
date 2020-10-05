@@ -21,7 +21,6 @@ void main() {
   final tUser = User(
     idResource: "1",
     idRole: 1,
-    username: "tUsername",
     name: "tName",
     surname: "tSurname",
   );

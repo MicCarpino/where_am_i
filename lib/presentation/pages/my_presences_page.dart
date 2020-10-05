@@ -22,7 +22,7 @@ class _MyPresencesPageState extends State<MyPresencesPage> {
 
   @override
   void initState() {
-    _workstationBloc..add(FetchUserPresences());
+    _workstationBloc..add(FetchCurrentUserPresences());
     super.initState();
   }
 
@@ -31,16 +31,16 @@ class _MyPresencesPageState extends State<MyPresencesPage> {
     return BlocBuilder<WorkstationBloc, WorkstationState>(
         cubit: _workstationBloc,
         builder: (context, state) {
-          if (state is UserPresencesFetchCompleted) {
+          if (state is CurrentUserPresencesFetchCompleted) {
             userPresences =
-                state.userPresences.map((e) => e.workstationDate).toList();
+                state.currentUserPresences.map((e) => e.workstationDate).toList();
             return _buildSFCalendar(userPresences);
           } else if (state is WorkstationsFetchErrorState) {
             return Center(
               child: MaterialButton(
                   child: Text('riprova'),
                   onPressed: () {
-                    _workstationBloc.add(FetchUserPresences());
+                    _workstationBloc.add(FetchCurrentUserPresences());
                   }),
             );
           } else {
@@ -62,6 +62,6 @@ class _MyPresencesPageState extends State<MyPresencesPage> {
       );
 
   _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    _workstationBloc.add(OnPresencesUpdate(args.value));
+    _workstationBloc.add(OnCurrentUserPresencesUpdate(args.value));
   }
 }

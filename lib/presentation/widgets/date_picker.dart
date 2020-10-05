@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
+
+final sl = GetIt.instance;
 
 class DatePicker extends StatefulWidget {
   @override
@@ -10,13 +12,7 @@ class DatePicker extends StatefulWidget {
 }
 
 class _DatePickerState extends State<DatePicker> {
-  HomeBloc _homeBloc;
-
-  @override
-  void initState() {
-    _homeBloc = BlocProvider.of<HomeBloc>(context);
-    super.initState();
-  }
+  HomeBloc _homeBloc = sl<HomeBloc>();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +46,7 @@ class _DatePickerState extends State<DatePicker> {
               stream: _homeBloc.visualizedDateStream,
               builder: (BuildContext context, AsyncSnapshot<DateTime> date) {
                 return GestureDetector(
-                    child: Text( DateFormat('EEE, MMM d').format(date.data),
+                    child: Text(DateFormat('EEE, MMM d').format(date.data),
                         style: TextStyle(color: Colors.white, fontSize: 16)),
                     onTap: () {
                       _showCalendar(context);

@@ -15,8 +15,13 @@ class WorkstationsFetchCompletedState extends WorkstationState {
 
 class WorkstationsFetchErrorState extends WorkstationState {}
 
-class UserPresencesFetchCompleted extends WorkstationState {
-  final List<Workstation> userPresences;
+class CurrentUserPresencesFetchCompleted extends WorkstationState {
+  final List<Workstation> currentUserPresences;
 
-  UserPresencesFetchCompleted(this.userPresences);
+  CurrentUserPresencesFetchCompleted(this.currentUserPresences);
+}
+class AllUsersPresencesFetchCompleted extends WorkstationState {
+  final List<User> allUsersPresences;
+
+  AllUsersPresencesFetchCompleted(this.allUsersPresences);
 }

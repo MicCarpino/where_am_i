@@ -160,6 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         onTap: () {
+          //close drawer
           Navigator.pop(context);
           setState(() {
             _bodyContent = itemPage;

@@ -25,7 +25,6 @@ void main() {
     final tUserDetails = UserModel(
       idResource: "1",
       idRole: 3,
-      username: "tUsername",
       name: "tName",
       surname: "tSurname",
     );
