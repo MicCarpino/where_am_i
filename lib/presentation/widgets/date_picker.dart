@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
-
-final sl = GetIt.instance;
 
 class DatePicker extends StatefulWidget {
+  final Function(DateTime date) onDateChanged;
+
+  DatePicker(this.onDateChanged);
+
   @override
-  _DatePickerState createState() => _DatePickerState();
+  _DatePickerState createState() =>
+      _DatePickerState(onDateChanged: this.onDateChanged);
 }
 
 class _DatePickerState extends State<DatePicker> {
-  HomeBloc _homeBloc = sl<HomeBloc>();
+  _DatePickerState({@required this.onDateChanged});
+
+  final Function(DateTime date) onDateChanged;
+  DateTime visualizedDate;
+
+  @override
+  void initState() {
+    //when initialized set date to current date and invoke callback function
+    //which demand data updates
+    visualizedDate = DateTime.now();
+    super.initState();
+    onDateChanged.call(visualizedDate);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,26 +44,20 @@ class _DatePickerState extends State<DatePicker> {
                     child:
                         Icon(Icons.keyboard_arrow_left, color: Colors.white)),
                 onTap: () {
-                  _homeBloc.add(
-                    OnNewDate(
-                        date: _homeBloc.visualizedDate.subtract(
-                      Duration(days: 1),
-                    )),
-                  );
+                  setState(() {
+                    visualizedDate = visualizedDate.subtract(Duration(days: 1));
+                    onDateChanged(visualizedDate);
+                  });
                 },
               ),
             ),
           ),
-          StreamBuilder<DateTime>(
-              initialData: DateTime.now(),
-              stream: _homeBloc.visualizedDateStream,
-              builder: (BuildContext context, AsyncSnapshot<DateTime> date) {
-                return GestureDetector(
-                    child: Text(DateFormat('EEE, MMM d').format(date.data),
-                        style: TextStyle(color: Colors.white, fontSize: 16)),
-                    onTap: () {
-                      _showCalendar(context);
-                    });
+          GestureDetector(
+              child: Text(
+                  DateFormat('EEE, MMM d').format(visualizedDate),
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
+              onTap: () {
+                _showCalendar(context);
               }),
           ClipOval(
             child: Material(
@@ -63,12 +70,10 @@ class _DatePickerState extends State<DatePicker> {
                     child:
                         Icon(Icons.keyboard_arrow_right, color: Colors.white)),
                 onTap: () {
-                  _homeBloc.add(
-                    OnNewDate(
-                        date: _homeBloc.visualizedDate.add(
-                      Duration(days: 1),
-                    )),
-                  );
+                  setState(() {
+                    visualizedDate = visualizedDate.add(Duration(days: 1));
+                    onDateChanged(visualizedDate);
+                  });
                 },
               ),
             ),
@@ -78,16 +83,10 @@ class _DatePickerState extends State<DatePicker> {
     );
   }
 
-  @override
-  void dispose() {
-    _homeBloc.close();
-    super.dispose();
-  }
-
   _showCalendar(context) async {
     await showDatePicker(
         context: context,
-        initialDate: _homeBloc.visualizedDate,
+        initialDate: visualizedDate,
         firstDate: DateTime.now().subtract(Duration(days: 365)),
         lastDate: DateTime.now().add(Duration(days: 365)),
         locale: const Locale("it", ""),
@@ -98,9 +97,10 @@ class _DatePickerState extends State<DatePicker> {
           );
         }).then((selectedDate) {
       if (selectedDate != null) {
-        _homeBloc.add(
-          OnNewDate(date: _homeBloc.visualizedDate = selectedDate),
-        );
+        setState(() {
+          visualizedDate = selectedDate;
+          onDateChanged(visualizedDate);
+        });
       }
     });
   }

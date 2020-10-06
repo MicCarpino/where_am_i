@@ -37,10 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     _bodyContent = Pages.home_page;
     _title = "CIVICO 26/B";
-    _homeBloc.visualizedDateStream.listen((date) {
-      _workstationBloc.add(FetchWorkstationsLists(dateToFetch: date));
-      _reservationsBloc.add(FetchReservationsList(dateToFetch: date));
-    });
     super.initState();
   }
 
@@ -59,13 +55,13 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _getBodyContent() {
     switch (_bodyContent) {
       case Pages.my_presences_page:
-        return MyPresencesPage(setAppBarTitle);
+        return MyPresencesPage(_setAppBarTitle);
         break;
       case Pages.presences_management_page:
-        return PresencesManagementPage(setAppBarTitle);
+        return PresencesManagementPage(_setAppBarTitle);
         break;
       case Pages.users_management_page:
-        return UsersManagementPage(setAppBarTitle);
+        return UsersManagementPage(_setAppBarTitle);
         break;
       default:
         return _buildHomePage(context);
@@ -77,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
       BlocProvider<HomeBloc>(create: (context) => _homeBloc),
       BlocProvider<WorkstationBloc>(create: (context) => _workstationBloc),
       BlocProvider<ReservationsBloc>(create: (context) => _reservationsBloc)
-    ], child: HomePage(setAppBarTitle));
+    ], child: HomePage(_setAppBarTitle, _onDateChanged));
   }
 
   _buildDrawer(BuildContext context) {
@@ -192,10 +188,15 @@ class _HomeScreenState extends State<HomeScreen> {
     ));
   }
 
-  setAppBarTitle(String title) {
+  _setAppBarTitle(String title) {
     setState(() {
       _title = title;
     });
+  }
+
+  _onDateChanged(DateTime newDate) {
+    _workstationBloc.add(FetchWorkstationsLists(dateToFetch: newDate));
+    _reservationsBloc.add(FetchReservationsList(dateToFetch: newDate));
   }
 
   @override

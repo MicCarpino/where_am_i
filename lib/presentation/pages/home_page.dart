@@ -14,14 +14,14 @@ List<Widget> pages = [
 
 class HomePage extends StatelessWidget {
   final void Function(String title) _setAppBarTitle;
+  final void Function(DateTime date) _onDateChanged;
 
-  HomePage(this._setAppBarTitle);
+  HomePage(this._setAppBarTitle, this._onDateChanged);
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<HomeBloc>(context)..add(OnNewDate(date: DateTime.now()));
     return Column(children: [
-      DatePicker(),
+      DatePicker(this._onDateChanged),
       Expanded(
         child: PageView.builder(
           scrollDirection: Axis.horizontal,
