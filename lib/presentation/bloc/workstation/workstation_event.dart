@@ -21,6 +21,12 @@ class OnWorkstationLongClick extends WorkstationEvent {
   OnWorkstationLongClick({this.idWorkstation});
 }
 
+class OnExternalUserAdded extends WorkstationEvent {
+  final Workstation externalUser;
+
+  OnExternalUserAdded({@required this.externalUser});
+}
+
 class FetchCurrentUserPresences extends WorkstationEvent {}
 
 class FetchAllUserPresences extends WorkstationEvent {

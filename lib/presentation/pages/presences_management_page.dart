@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:where_am_i/domain/entities/workstation.dart';
 
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
+import 'package:where_am_i/presentation/widgets/text_input_dialog.dart';
 
 final sl = GetIt.instance;
 
@@ -21,10 +23,12 @@ class PresencesManagementPage extends StatefulWidget {
 class _PresencesManagementPageState extends State<PresencesManagementPage> {
   WorkstationBloc _workstationBloc = sl<WorkstationBloc>();
   List<DateTime> userPresences = [];
+  DateTime visualizedDate;
 
   @override
   void initState() {
     _workstationBloc.add(FetchAllUserPresences(dateToFetch: DateTime.now()));
+    visualizedDate = DateTime.now();
     super.initState();
   }
 
@@ -42,7 +46,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
           if (state is AllUsersPresencesFetchCompleted) {
             return Column(
               children: [
-                DatePicker(onDateChanged),
+                DatePicker(_onDateChanged),
                 Row(
                   children: [
                     Expanded(
@@ -58,9 +62,18 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.person_add),
-                      onPressed: () {},
-                    ),
+                        icon: Icon(Icons.person_add),
+                        onPressed: () {
+                          return showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return TextInputDialog(
+                                  messageText:
+                                      "Aggiungi risorsa non presente in elenco",
+                                  onAddButtonPressed: _onExternalUserAdded,
+                                );
+                              });
+                        })
                   ],
                 ),
                 Expanded(
@@ -97,7 +110,34 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
         });
   }
 
-  onDateChanged(DateTime newDate) {
+  _onDateChanged(DateTime newDate) {
+    this.visualizedDate = newDate;
     _workstationBloc.add(FetchAllUserPresences(dateToFetch: newDate));
+  }
+
+  _onExternalUserAdded(String externalUser) {
+    if (externalUser.isNotEmpty) {
+      _showSnackbarWithMessage(externalUser);
+      _workstationBloc.add(OnExternalUserAdded(
+          externalUser: Workstation(
+        idWorkstation: null,
+        codeWorkstation: null,
+        idResource: null,
+        freeName: externalUser,
+        resourceName: null,
+        resourceSurname: null,
+        workstationDate: this.visualizedDate,
+      )));
+    } else {
+      _showSnackbarWithMessage('Inserimento risorsa non riuscito');
+    }
+  }
+
+  _showSnackbarWithMessage(String message){
+    Scaffold.of(context).showSnackBar(
+        SnackBar(
+            content: new Text(message),
+            duration: new Duration(seconds: 3))
+    );
   }
 }

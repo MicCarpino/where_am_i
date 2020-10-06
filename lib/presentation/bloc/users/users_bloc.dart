@@ -6,6 +6,7 @@ import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/usecases/get_users.dart';
+import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 
 part 'users_event.dart';
 
@@ -33,6 +34,8 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
         print('users : ${users.toList()}');
         return UserFetchCompleteState(users);
       });
+    } else if(event is OnExternalUserAdded){
+
     }
   }
 }

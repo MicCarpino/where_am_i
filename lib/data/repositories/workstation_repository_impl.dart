@@ -5,6 +5,7 @@ import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
+import 'package:where_am_i/data/models/workstation_model.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 
@@ -36,12 +37,12 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
 
   @override
   Future<Either<Failure, List<Workstation>>>
-  getAllWorkstationsByIdResource() async {
+      getAllWorkstationsByIdResource() async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final userPresences =
-      await remoteDataSource.getAllWorkstationsByIdResource(
-          loggedUser.authenticationToken, loggedUser.user.idResource);
+          await remoteDataSource.getAllWorkstationsByIdResource(
+              loggedUser.authenticationToken, loggedUser.user.idResource);
       cachedUserPresences = userPresences;
       return Right(userPresences);
     } on ServerException catch (error) {
@@ -53,10 +54,11 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   @override
   Future<Either<Failure, List<Workstation>>> updateUserWorkstations(
       List<DateTime> newUserPresences) async {
+    throw UnimplementedError();
     try {
       var currentUser = await localDataSource.getCachedUser();
       var oldUserPresences =
-      cachedUserPresences.map((e) => e.workstationDate).toList();
+          cachedUserPresences.map((e) => e.workstationDate).toList();
       //date has been removed
       DateTime dateRemoved = oldUserPresences
           .toSet()
@@ -67,10 +69,10 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
         var idWorkstation = cachedUserPresences
             .firstWhere((element) => element.workstationDate == dateRemoved)
             .idWorkstation;
-       /* await remoteDataSource.deleteWorkstation(
+        await remoteDataSource.deleteWorkstation(
             currentUser.authenticationToken, idWorkstation);
-        cachedUserPresences.removeWhere((element) =>
-        element.workstationDate == dateRemoved);*/
+        cachedUserPresences
+            .removeWhere((element) => element.workstationDate == dateRemoved);
       }
       //date has been added
       DateTime dateAdded = newUserPresences
@@ -79,7 +81,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
           .toList()
           .first;
       if (dateAdded != null) {
-        /*var addPresenceResult = await remoteDataSource.insertWorkstation(
+        var addPresenceResult = await remoteDataSource.insertWorkstation(
             currentUser.authenticationToken,
             WorkstationModel(
                 idResource: currentUser.user.idResource,
@@ -87,7 +89,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
                 freeName: null,
                 codeWorkstation: null,
                 workstationDate: dateAdded));
-        cachedUserPresences.add(addPresenceResult);*/
+        cachedUserPresences.add(addPresenceResult);
       }
       return Right(cachedUserPresences);
     } on ServerException catch (error) {
@@ -98,7 +100,33 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteWorkstation(int idWorkstation) {
+  Future<Either<Failure, List<Workstation>>> insertWorkstation(
+      Workstation workstation) async {
     throw UnimplementedError();
+    try {
+      var loggedUser = await localDataSource.getCachedUser();
+      final insertResult = await remoteDataSource.insertWorkstation(
+          loggedUser.authenticationToken, workstation);
+      cachedUserPresences.add(insertResult);
+      return Right(cachedWorkstationsList);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Workstation>>> deleteWorkstation(
+      int idWorkstation) async {
+    throw UnimplementedError();
+    try {
+      var loggedUser = await localDataSource.getCachedUser();
+      final deleteResult = await remoteDataSource.deleteWorkstation(
+          loggedUser.authenticationToken, idWorkstation);
+      cachedUserPresences.removeWhere(
+            (workstation) => workstation.idWorkstation == idWorkstation);
+      return Right(cachedWorkstationsList);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    }
   }
 }

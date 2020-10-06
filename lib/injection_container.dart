@@ -6,6 +6,7 @@ import 'package:where_am_i/domain/repositories/reservation_repository.dart';
 import 'package:where_am_i/domain/usecases/get_all_users_presences_by_date.dart';
 import 'package:where_am_i/domain/usecases/get_users.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_id_resource.dart';
+import 'package:where_am_i/domain/usecases/insert_workstation.dart';
 import 'package:where_am_i/domain/usecases/update_user_presences.dart';
 import 'package:where_am_i/presentation/bloc/users/users_bloc.dart';
 import 'data/repositories/user_repository_impl.dart';
@@ -50,6 +51,7 @@ Future<void> init() async {
   //Workstation
   sl.registerLazySingleton(() => GetWorkstationsByDate(sl(), sl()));
   sl.registerLazySingleton(() => GetWorkstationsByIdResource(sl()));
+  sl.registerLazySingleton(() => InsertWorkstation(sl()));
   sl.registerLazySingleton(() => GetAllUserPresencesByDate(sl(), sl()));
   sl.registerLazySingleton(() => UpdateUserPresences(sl()));
   //Reservation
