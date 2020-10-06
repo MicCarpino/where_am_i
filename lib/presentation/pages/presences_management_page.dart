@@ -40,74 +40,80 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<WorkstationBloc, WorkstationState>(
-        cubit: _workstationBloc,
-        builder: (context, state) {
-          if (state is AllUsersPresencesFetchCompleted) {
-            return Column(
-              children: [
-                DatePicker(_onDateChanged),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(top: 14.0),
-                          border: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
+    return Column(
+      children: [
+        DatePicker(_onDateChanged),
+        Expanded(
+          child: BlocBuilder<WorkstationBloc, WorkstationState>(
+              cubit: _workstationBloc,
+              builder: (context, state) {
+                if (state is AllUsersPresencesFetchCompleted) {
+                  return Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              maxLines: 1,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.only(top: 14.0),
+                                border: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.red),
+                                ),
+                                prefixIcon: Icon(Icons.search, color: Colors.black),
+                              ),
+                            ),
                           ),
-                          prefixIcon: Icon(Icons.search, color: Colors.black),
+                          IconButton(
+                              icon: Icon(Icons.person_add),
+                              onPressed: () {
+                                return showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return TextInputDialog(
+                                        messageText:
+                                            "Aggiungi risorsa non presente in elenco",
+                                        onAddButtonPressed: _onExternalUserAdded,
+                                      );
+                                    });
+                              })
+                        ],
+                      ),
+                      Expanded(
+                        child: ListView.separated(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          separatorBuilder: (context, index) => Divider(
+                            color: Colors.black26,
+                          ),
+                          itemBuilder: (context, index) {
+                            var user = state.allUsersPresences[index];
+                            return ListTile(
+                              title: Text(
+                                "${user.surname} ${user.name}",
+                                style: TextStyle(
+                                    color: user.idWorkstation != null
+                                        ? Colors.black
+                                        : Colors.black38),
+                              ),
+                            );
+                          },
+                          itemCount: state.allUsersPresences.length,
                         ),
                       ),
-                    ),
-                    IconButton(
-                        icon: Icon(Icons.person_add),
-                        onPressed: () {
-                          return showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return TextInputDialog(
-                                  messageText:
-                                      "Aggiungi risorsa non presente in elenco",
-                                  onAddButtonPressed: _onExternalUserAdded,
-                                );
-                              });
-                        })
-                  ],
-                ),
-                Expanded(
-                  child: ListView.separated(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    separatorBuilder: (context, index) => Divider(
-                      color: Colors.black26,
-                    ),
-                    itemBuilder: (context, index) {
-                      var user = state.allUsersPresences[index];
-                      return ListTile(
-                        title: Text(
-                          "${user.surname} ${user.name}",
-                          style: TextStyle(
-                              color: user.idWorkstation != null
-                                  ? Colors.black
-                                  : Colors.black38),
-                        ),
-                      );
-                    },
-                    itemCount: state.allUsersPresences.length,
-                  ),
-                ),
-              ],
-            );
-          } else if (state is WorkstationsFetchErrorState) {
-            return Center(
-              child: MaterialButton(child: Text('riprova'), onPressed: () {}),
-            );
-          } else {
-            return Center(child: CircularLoading());
-          }
-        });
+                    ],
+                  );
+                } else if (state is WorkstationsFetchErrorState) {
+                  return Center(
+                    child: MaterialButton(child: Text('riprova'), onPressed: () {}),
+                  );
+                } else {
+                  return Center(child: CircularLoading());
+                }
+              }),
+        ),
+      ],
+    );
   }
 
   _onDateChanged(DateTime newDate) {
