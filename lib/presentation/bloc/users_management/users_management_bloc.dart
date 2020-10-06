@@ -6,13 +6,13 @@ import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/usecases/get_users.dart';
-import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 
 part 'users_management_event.dart';
 
 part 'users_management_state.dart';
 
-class UsersManagementBloc extends Bloc<UsersManagementEvent, UsersManagementState> {
+class UsersManagementBloc
+    extends Bloc<UsersManagementEvent, UsersManagementState> {
   UsersManagementBloc({@required GetAllUsers getUsers})
       : assert(getUsers != null),
         getUsers = getUsers,
@@ -22,20 +22,18 @@ class UsersManagementBloc extends Bloc<UsersManagementEvent, UsersManagementStat
 
   @override
   Stream<UsersManagementState> mapEventToState(
-    UsersManagementEvent event,
-  ) async* {
+      UsersManagementEvent event,) async* {
     if (event is FetchUsersList) {
       final usersList = await getUsers(NoParams());
       yield usersList.fold((failure) {
         print(
-            'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+            'workstations fail : ${failure is ServerFailure ? failure
+                .errorMessage : failure.toString()}');
         return UsersFetchErrorState();
       }, (users) {
         print('users : ${users.toList()}');
         return UserFetchCompleteState(users);
       });
-    } else if(event is OnExternalUserAdded){
-
     }
   }
 }

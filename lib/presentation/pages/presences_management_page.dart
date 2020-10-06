@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
+import 'package:where_am_i/presentation/bloc/presences_management/presences_management_bloc.dart';
 
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
@@ -21,7 +22,7 @@ class PresencesManagementPage extends StatefulWidget {
 }
 
 class _PresencesManagementPageState extends State<PresencesManagementPage> {
-  WorkstationBloc _workstationBloc = sl<WorkstationBloc>();
+  PresencesManagementBloc _presencesManagementBloc = sl<PresencesManagementBloc>();
   List<DateTime> userPresences = [];
   TextEditingController _textFieldController = TextEditingController();
   DateTime visualizedDate;
@@ -31,7 +32,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     _textFieldController.addListener(() {
       _filterList(_textFieldController.text);
     });
-    _workstationBloc.add(FetchAllUserPresences(dateToFetch: DateTime.now()));
+    _presencesManagementBloc.add(FetchAllUserPresences(dateToFetch: DateTime.now()));
     visualizedDate = DateTime.now();
     super.initState();
   }
@@ -39,7 +40,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   @override
   void dispose() {
     _textFieldController.dispose();
-    _workstationBloc.close();
+    _presencesManagementBloc.close();
     super.dispose();
   }
 
@@ -49,8 +50,8 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
       children: [
         DatePicker(_onDateChanged),
         Expanded(
-          child: BlocBuilder<WorkstationBloc, WorkstationState>(
-              cubit: _workstationBloc,
+          child: BlocBuilder<PresencesManagementBloc, PresencesManagementState>(
+              cubit: _presencesManagementBloc,
               builder: (context, state) {
                 if (state is AllUsersPresencesFetchCompleted) {
                   return Column(
@@ -127,13 +128,13 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
 
   _onDateChanged(DateTime newDate) {
     this.visualizedDate = newDate;
-    _workstationBloc.add(FetchAllUserPresences(dateToFetch: newDate));
+    _presencesManagementBloc.add(FetchAllUserPresences(dateToFetch: newDate));
   }
 
   _onExternalUserAdded(String externalUser) {
     if (externalUser.isNotEmpty) {
       _showSnackbarWithMessage(externalUser);
-      _workstationBloc.add(OnExternalUserAdded(
+      _presencesManagementBloc.add(OnExternalUserAdded(
           externalUser: Workstation(
         idWorkstation: null,
         codeWorkstation: null,

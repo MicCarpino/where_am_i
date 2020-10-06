@@ -9,6 +9,7 @@ import 'package:where_am_i/domain/usecases/get_workstations_by_id_resource.dart'
 import 'package:where_am_i/domain/usecases/insert_workstation.dart';
 import 'package:where_am_i/domain/usecases/update_user_presences.dart';
 import 'package:where_am_i/presentation/bloc/my_presences/my_presences_bloc.dart';
+import 'package:where_am_i/presentation/bloc/presences_management/presences_management_bloc.dart';
 import 'package:where_am_i/presentation/bloc/users_management/users_management_bloc.dart';
 import 'data/repositories/user_repository_impl.dart';
 import 'domain/usecases/get_logged_user.dart';
@@ -35,12 +36,11 @@ Future<void> init() async {
   // Bloc
   sl.registerFactory(() => LoginBloc(performLogIn: sl()));
   sl.registerFactory(() => HomeBloc(performLogOut: sl()));
-  sl.registerFactory(() => WorkstationBloc(
-        getWorkstationsByDate: sl(),
-        getAllUserPresencesByDate: sl(),
-      ));
+  sl.registerFactory(() => WorkstationBloc(getWorkstationsByDate: sl()));
   sl.registerFactory(() => ReservationsBloc(getReservations: sl()));
   sl.registerFactory(() => UsersManagementBloc(getUsers: sl()));
+  sl.registerFactory(
+      () => PresencesManagementBloc(getAllUserPresencesByDate: sl()));
   sl.registerFactory(() => MyPresencesBloc(
         getWorkstationsByIdResource: sl(),
         updateUserPresences: sl(),
