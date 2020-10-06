@@ -27,16 +27,9 @@ class OnExternalUserAdded extends WorkstationEvent {
   OnExternalUserAdded({@required this.externalUser});
 }
 
-class FetchCurrentUserPresences extends WorkstationEvent {}
 
 class FetchAllUserPresences extends WorkstationEvent {
   final DateTime dateToFetch;
 
   FetchAllUserPresences({@required this.dateToFetch});
-}
-
-class OnCurrentUserPresencesUpdate extends WorkstationEvent {
-  final List<DateTime> updatedPresences;
-
-  OnCurrentUserPresencesUpdate(this.updatedPresences);
 }

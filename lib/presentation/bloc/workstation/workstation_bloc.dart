@@ -17,23 +17,15 @@ part 'workstation_state.dart';
 
 class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   final GetWorkstationsByDate getWorkstationsByDate;
-  final GetWorkstationsByIdResource getWorkstationsByIdResource;
   final GetAllUserPresencesByDate getAllUserPresencesByDate;
-  final UpdateUserPresences updateUserPresences;
 
   WorkstationBloc({
     @required GetWorkstationsByDate getWorkstationsByDate,
-    @required GetWorkstationsByIdResource getWorkstationsByIdResource,
     @required GetAllUserPresencesByDate getAllUserPresencesByDate,
-    @required UpdateUserPresences updateUserPresences,
   })  : assert(getWorkstationsByDate != null),
-        assert(getWorkstationsByIdResource != null),
-        assert(updateUserPresences != null),
         assert(getAllUserPresencesByDate != null),
         getWorkstationsByDate = getWorkstationsByDate,
-        getWorkstationsByIdResource = getWorkstationsByIdResource,
         getAllUserPresencesByDate = getAllUserPresencesByDate,
-        updateUserPresences = updateUserPresences,
         super(WorkstationInitial());
 
   @override
@@ -42,12 +34,8 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   ) async* {
     if (event is FetchWorkstationsLists) {
       yield* _fetchWorkstationsList(event.dateToFetch);
-    } else if (event is FetchCurrentUserPresences) {
-      yield* _fetchCurrentUserPresences();
     } else if (event is FetchAllUserPresences) {
       yield* _fetchAllUsersPresences(event.dateToFetch);
-    } else if (event is OnCurrentUserPresencesUpdate) {
-      yield* _updateUserPresences(event.updatedPresences);
     }
   }
 
@@ -63,32 +51,6 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
     }, (workstations) {
       print('workstations : ${workstations.toList()}');
       return WorkstationsFetchCompletedState(workstations);
-    });
-  }
-
-  Stream<WorkstationState> _fetchCurrentUserPresences() async* {
-    yield WorkstationsFetchLoadingState();
-    print('fetching user presences');
-    final userPresences = await getWorkstationsByIdResource(NoParams());
-    yield userPresences.fold((failure) {
-      print(
-          'user presences fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
-      return WorkstationsFetchErrorState();
-    }, (userPresences) {
-      print('user presences : ${userPresences.length}');
-      return CurrentUserPresencesFetchCompleted(userPresences);
-    });
-  }
-
-  Stream<void> _updateUserPresences(List<DateTime> updatedPresences) async* {
-    final updateResult = await updateUserPresences(updatedPresences);
-    updateResult.fold((failure) {
-      print(
-          'update fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
-      return WorkstationsFetchErrorState();
-    }, (userPresences) {
-      print('update : ${updateResult.length}');
-      return CurrentUserPresencesFetchCompleted(userPresences);
     });
   }
 

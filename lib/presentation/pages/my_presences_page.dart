@@ -4,43 +4,46 @@ import 'package:get_it/get_it.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
+import 'package:where_am_i/presentation/bloc/my_presences/my_presences_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 
 final sl = GetIt.instance;
 
 class MyPresencesPage extends StatefulWidget {
   final void Function(String title) _setAppBarTitle;
+
   MyPresencesPage(this._setAppBarTitle);
+
   @override
   _MyPresencesPageState createState() => _MyPresencesPageState();
 }
 
 class _MyPresencesPageState extends State<MyPresencesPage> {
-  WorkstationBloc _workstationBloc = sl<WorkstationBloc>();
+  MyPresencesBloc _myPresencesBloc = sl<MyPresencesBloc>();
   List<DateTime> userPresences = [];
 
   @override
   void initState() {
-    _workstationBloc..add(FetchCurrentUserPresences());
+    _myPresencesBloc..add(FetchCurrentUserPresences());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<WorkstationBloc, WorkstationState>(
-        cubit: _workstationBloc,
+    return BlocBuilder<MyPresencesBloc, MyPresencesState>(
+        cubit: _myPresencesBloc,
         builder: (context, state) {
           if (state is CurrentUserPresencesFetchCompleted) {
-            userPresences =
-                state.currentUserPresences.map((e) => e.workstationDate).toList();
+            userPresences = state.currentUserPresences
+                .map((e) => e.workstationDate)
+                .toList();
             return _buildSFCalendar(userPresences);
-          } else if (state is WorkstationsFetchErrorState) {
+          } else if (state is CurrentUserPresencesFetchErrorState) {
             return Center(
               child: MaterialButton(
                   child: Text('riprova'),
                   onPressed: () {
-                    _workstationBloc.add(FetchCurrentUserPresences());
+                    _myPresencesBloc.add(FetchCurrentUserPresences());
                   }),
             );
           } else {
@@ -62,6 +65,6 @@ class _MyPresencesPageState extends State<MyPresencesPage> {
       );
 
   _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    _workstationBloc.add(OnCurrentUserPresencesUpdate(args.value));
+    _myPresencesBloc.add(OnCurrentUserPresencesUpdate(args.value));
   }
 }
