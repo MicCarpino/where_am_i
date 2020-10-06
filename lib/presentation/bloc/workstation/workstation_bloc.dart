@@ -41,21 +41,21 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
     WorkstationEvent event,
   ) async* {
     if (event is FetchWorkstationsLists) {
-      yield* _fetchWorkstationsList(event);
+      yield* _fetchWorkstationsList(event.dateToFetch);
     } else if (event is FetchCurrentUserPresences) {
       yield* _fetchCurrentUserPresences();
     } else if (event is FetchAllUserPresences) {
       yield* _fetchAllUsersPresences(event.dateToFetch);
     } else if (event is OnCurrentUserPresencesUpdate) {
-      _updateUserPresences(event.updatedPresences);
+      yield* _updateUserPresences(event.updatedPresences);
     }
   }
 
   Stream<WorkstationState> _fetchWorkstationsList(
-      FetchWorkstationsLists event) async* {
+      DateTime dateToFetch) async* {
     yield WorkstationsFetchLoadingState();
-    print('fetching workstations for ${event.dateToFetch}');
-    final workstationsList = await getWorkstationsByDate(event.dateToFetch);
+    print('fetching workstations for $dateToFetch');
+    final workstationsList = await getWorkstationsByDate(dateToFetch);
     yield workstationsList.fold((failure) {
       print(
           'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
