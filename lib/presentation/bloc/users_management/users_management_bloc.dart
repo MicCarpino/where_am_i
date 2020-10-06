@@ -8,12 +8,12 @@ import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/usecases/get_users.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 
-part 'users_event.dart';
+part 'users_management_event.dart';
 
-part 'users_state.dart';
+part 'users_management_state.dart';
 
-class UsersBloc extends Bloc<UsersEvent, UsersState> {
-  UsersBloc({@required GetAllUsers getUsers})
+class UsersManagementBloc extends Bloc<UsersManagementEvent, UsersManagementState> {
+  UsersManagementBloc({@required GetAllUsers getUsers})
       : assert(getUsers != null),
         getUsers = getUsers,
         super(UsersInitial());
@@ -21,8 +21,8 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
   final GetAllUsers getUsers;
 
   @override
-  Stream<UsersState> mapEventToState(
-    UsersEvent event,
+  Stream<UsersManagementState> mapEventToState(
+    UsersManagementEvent event,
   ) async* {
     if (event is FetchUsersList) {
       final usersList = await getUsers(NoParams());

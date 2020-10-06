@@ -23,10 +23,14 @@ class PresencesManagementPage extends StatefulWidget {
 class _PresencesManagementPageState extends State<PresencesManagementPage> {
   WorkstationBloc _workstationBloc = sl<WorkstationBloc>();
   List<DateTime> userPresences = [];
+  TextEditingController _textFieldController = TextEditingController();
   DateTime visualizedDate;
 
   @override
   void initState() {
+    _textFieldController.addListener(() {
+      _filterList(_textFieldController.text);
+    });
     _workstationBloc.add(FetchAllUserPresences(dateToFetch: DateTime.now()));
     visualizedDate = DateTime.now();
     super.initState();
@@ -34,6 +38,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
 
   @override
   void dispose() {
+    _textFieldController.dispose();
     _workstationBloc.close();
     super.dispose();
   }
@@ -54,13 +59,15 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                         children: [
                           Expanded(
                             child: TextField(
+                              controller: _textFieldController,
                               maxLines: 1,
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.only(top: 14.0),
                                 border: UnderlineInputBorder(
                                   borderSide: BorderSide(color: Colors.red),
                                 ),
-                                prefixIcon: Icon(Icons.search, color: Colors.black),
+                                prefixIcon:
+                                    Icon(Icons.search, color: Colors.black),
                               ),
                             ),
                           ),
@@ -73,7 +80,8 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                                       return TextInputDialog(
                                         messageText:
                                             "Aggiungi risorsa non presente in elenco",
-                                        onAddButtonPressed: _onExternalUserAdded,
+                                        onAddButtonPressed:
+                                            _onExternalUserAdded,
                                       );
                                     });
                               })
@@ -105,7 +113,8 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                   );
                 } else if (state is WorkstationsFetchErrorState) {
                   return Center(
-                    child: MaterialButton(child: Text('riprova'), onPressed: () {}),
+                    child: MaterialButton(
+                        child: Text('riprova'), onPressed: () {}),
                   );
                 } else {
                   return Center(child: CircularLoading());
@@ -139,11 +148,11 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     }
   }
 
-  _showSnackbarWithMessage(String message){
-    Scaffold.of(context).showSnackBar(
-        SnackBar(
-            content: new Text(message),
-            duration: new Duration(seconds: 3))
-    );
+  _showSnackbarWithMessage(String message) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+        content: new Text(message), duration: new Duration(seconds: 3)));
+  }
+
+  _filterList(String input) {
   }
 }

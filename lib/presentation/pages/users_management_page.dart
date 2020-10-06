@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/presentation/bloc/users/users_bloc.dart';
+import 'package:where_am_i/presentation/bloc/users_management/users_management_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 
 final sl = GetIt.instance;
@@ -17,17 +17,17 @@ class UsersManagementPage extends StatefulWidget {
 }
 
 class _UsersManagementPageState extends State<UsersManagementPage> {
-  UsersBloc _usersBloc;
+  UsersManagementBloc _usersBloc;
 
   @override
   void initState() {
-    _usersBloc = sl<UsersBloc>();
+    _usersBloc = sl<UsersManagementBloc>();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UsersBloc, UsersState>(
+    return BlocBuilder<UsersManagementBloc, UsersManagementState>(
         cubit: _usersBloc,
         builder: (context, state) {
           if (state is UsersInitial) {
