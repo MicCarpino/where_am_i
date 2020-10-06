@@ -24,7 +24,6 @@ class _DatePickerState extends State<DatePicker> {
     //which demand data updates
     visualizedDate = DateTime.now();
     super.initState();
-    onDateChanged.call(visualizedDate);
   }
 
   @override

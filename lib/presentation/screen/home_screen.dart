@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
-import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
-import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/pages/home_page.dart';
 import 'package:where_am_i/presentation/pages/my_presences_page.dart';
 import 'package:where_am_i/presentation/pages/presences_management_page.dart';
@@ -28,8 +25,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   HomeBloc _homeBloc = sl<HomeBloc>();
-  WorkstationBloc _workstationBloc = sl<WorkstationBloc>();
-  ReservationsBloc _reservationsBloc = sl<ReservationsBloc>();
   Pages _bodyContent;
   String _title;
 
@@ -69,11 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHomePage(BuildContext context) {
-    return MultiBlocProvider(providers: [
-      BlocProvider<HomeBloc>(create: (context) => _homeBloc),
-      BlocProvider<WorkstationBloc>(create: (context) => _workstationBloc),
-      BlocProvider<ReservationsBloc>(create: (context) => _reservationsBloc)
-    ], child: HomePage(_setAppBarTitle, _onDateChanged));
+    return HomePage(_setAppBarTitle);
   }
 
   _buildDrawer(BuildContext context) {
@@ -192,17 +183,5 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _title = title;
     });
-  }
-
-  _onDateChanged(DateTime newDate) {
-    _workstationBloc.add(FetchWorkstationsLists(dateToFetch: newDate));
-    _reservationsBloc.add(FetchReservationsList(dateToFetch: newDate));
-  }
-
-  @override
-  void dispose() {
-    _reservationsBloc.close();
-    _workstationBloc.close();
-    super.dispose();
   }
 }

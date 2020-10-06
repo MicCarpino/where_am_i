@@ -23,6 +23,12 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   List<DateTime> userPresences = [];
 
   @override
+  void initState() {
+    _workstationBloc.add(FetchAllUserPresences(dateToFetch: DateTime.now()));
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _workstationBloc.close();
     super.dispose();
@@ -30,74 +36,68 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          DatePicker(onDateChanged),
-          BlocBuilder<WorkstationBloc, WorkstationState>(
-              cubit: _workstationBloc,
-              builder: (context, state) {
-                if (state is AllUsersPresencesFetchCompleted) {
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              maxLines: 1,
-                              decoration: InputDecoration(
-                                border: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.red),
-                                ),
-                                prefixIcon: Icon(Icons.search, color: Colors.black),
-                              ),
-                            ),
+    return BlocBuilder<WorkstationBloc, WorkstationState>(
+        cubit: _workstationBloc,
+        builder: (context, state) {
+          if (state is AllUsersPresencesFetchCompleted) {
+            return Column(
+              children: [
+                DatePicker(onDateChanged),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        maxLines: 1,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.only(top: 14.0),
+                          border: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.person_add),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: ListView.separated(
-                          separatorBuilder: (context, index) => Divider(
-                            color: Colors.black26,
-                          ),
-                          itemBuilder: (context, index) {
-                            var user = state.allUsersPresences[index];
-                            return ListTile(
-                              title: Text(
-                                "${user.surname} ${user.name}",
-                                style: TextStyle(
-                                    color: user.idWorkstation != null
-                                        ? Colors.black
-                                        : Colors.black38),
-                              ),
-                            );
-                          },
-                          itemCount: state.allUsersPresences.length,
+                          prefixIcon: Icon(Icons.search, color: Colors.black),
                         ),
                       ),
-                    ],
-                  );
-                } else if (state is WorkstationsFetchErrorState) {
-                  return Center(
-                    child: MaterialButton(
-                        child: Text('riprova'),
-                        onPressed: () {                  }),
-                  );
-                } else {
-                  return Center(child: CircularLoading());
-                }
-              }),
-        ],
-      ),
-    );
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.person_add),
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: ListView.separated(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    separatorBuilder: (context, index) => Divider(
+                      color: Colors.black26,
+                    ),
+                    itemBuilder: (context, index) {
+                      var user = state.allUsersPresences[index];
+                      return ListTile(
+                        title: Text(
+                          "${user.surname} ${user.name}",
+                          style: TextStyle(
+                              color: user.idWorkstation != null
+                                  ? Colors.black
+                                  : Colors.black38),
+                        ),
+                      );
+                    },
+                    itemCount: state.allUsersPresences.length,
+                  ),
+                ),
+              ],
+            );
+          } else if (state is WorkstationsFetchErrorState) {
+            return Center(
+              child: MaterialButton(child: Text('riprova'), onPressed: () {}),
+            );
+          } else {
+            return Center(child: CircularLoading());
+          }
+        });
   }
 
-  onDateChanged(DateTime newDate){
+  onDateChanged(DateTime newDate) {
     _workstationBloc.add(FetchAllUserPresences(dateToFetch: newDate));
   }
-
 }
