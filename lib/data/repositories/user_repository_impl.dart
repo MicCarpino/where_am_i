@@ -28,6 +28,8 @@ class UserRepositoryImpl implements UserRepository {
       var loggedUser = await localDataSource.getCachedUser();
       final usersList =
           await remoteDataSource.getUsers(loggedUser.authenticationToken);
+      usersList.removeWhere((user) => user.surname.toLowerCase() == "admin");
+      usersList.sort((a, b) => a.surname.compareTo(b.surname));
       cachedUsersList = usersList;
       return Right(cachedUsersList);
     } on ServerException catch (error) {

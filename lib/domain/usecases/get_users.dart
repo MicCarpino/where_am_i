@@ -5,12 +5,12 @@ import 'package:where_am_i/domain/repositories/user_repository.dart';
 import '../../core/error/failure.dart';
 import '../../core/usecases/usecase.dart';
 
-class GetUsers extends UseCase<List<User>, void> {
+class GetAllUsers extends UseCase<List<User>, NoParams> {
   final UserRepository userRepository;
 
-  GetUsers(this.userRepository);
+  GetAllUsers(this.userRepository);
 
-  Future<Either<Failure, List<User>>> call(void params) async {
+  Future<Either<Failure, List<User>>> call(NoParams params) async {
     return await userRepository.getAllUsers();
   }
 }
