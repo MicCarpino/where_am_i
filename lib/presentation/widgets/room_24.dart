@@ -8,6 +8,11 @@ import 'package:where_am_i/presentation/widgets/room_label.dart';
 import 'package:where_am_i/presentation/widgets/workstations.dart';
 
 class Room24 extends StatelessWidget {
+  final Function() onWorkstationTryAgainPressed;
+  final Function() onReservationTryAgainPressed;
+
+  Room24(this.onWorkstationTryAgainPressed, this.onReservationTryAgainPressed);
+
   @override
   Widget build(BuildContext context) {
     final _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
@@ -63,9 +68,7 @@ class Room24 extends StatelessWidget {
           return Center(
             child: MaterialButton(
                 child: Text('riprova workstations'),
-                onPressed: () {
-                  _workstationBloc.add(FetchWorkstationsLists());
-                }),
+                onPressed: () => onWorkstationTryAgainPressed()),
           );
         } else {
           return Container();
@@ -81,15 +84,15 @@ class Room24 extends StatelessWidget {
           if (state is ReservationsFetchLoadingState) {
             return CircularLoading();
           } else if (state is ReservationsFetchCompletedState) {
-            return ReservationsCalendar(reservationsList: state.reservationsList
-                .where((element) => element.idRoom == 24).toList());
+            return ReservationsCalendar(
+                reservationsList: state.reservationsList
+                    .where((element) => element.idRoom == 24)
+                    .toList());
           } else if (state is ReservationsFetchErrorState) {
             return Center(
               child: MaterialButton(
                   child: Text('riprova reservations'),
-                  onPressed: () {
-                    _reservationBloc.add(FetchReservationsList());
-                  }),
+                  onPressed: () => onReservationTryAgainPressed()),
             );
           } else {
             return Container();

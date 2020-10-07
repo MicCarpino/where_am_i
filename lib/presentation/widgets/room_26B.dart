@@ -9,6 +9,11 @@ import 'package:where_am_i/presentation/widgets/room_label.dart';
 import 'package:where_am_i/presentation/widgets/workstations.dart';
 
 class Room26B extends StatelessWidget {
+  final Function() onWorkstationTryAgainPressed;
+  final Function() onReservationTryAgainPressed;
+
+  Room26B(this.onWorkstationTryAgainPressed, this.onReservationTryAgainPressed);
+
   @override
   Widget build(BuildContext context) {
     final _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
@@ -45,9 +50,7 @@ class Room26B extends StatelessWidget {
           return Center(
             child: MaterialButton(
                 child: Text('riprova'),
-                onPressed: () {
-                  _workstationBloc.add(FetchWorkstationsLists());
-                }),
+                onPressed: () => onWorkstationTryAgainPressed()),
           );
         } else {
           return Container();
@@ -65,14 +68,13 @@ class Room26B extends StatelessWidget {
           } else if (state is ReservationsFetchCompletedState) {
             return ReservationsCalendar(
                 reservationsList: state.reservationsList
-                    .where((element) => element.idRoom == 26).toList());
+                    .where((element) => element.idRoom == 26)
+                    .toList());
           } else if (state is ReservationsFetchErrorState) {
             return Center(
               child: MaterialButton(
                   child: Text('riprova reservations'),
-                  onPressed: () {
-                    _reservationBloc.add(FetchReservationsList());
-                  }),
+                  onPressed: () => onReservationTryAgainPressed()),
             );
           } else {
             return Container();

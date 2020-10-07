@@ -10,12 +10,6 @@ import 'package:where_am_i/presentation/widgets/room_26B.dart';
 
 final sl = GetIt.instance;
 
-List<Widget> pages = [
-  Room26B(),
-  Room26A(),
-  Room24(),
-];
-
 class HomePage extends StatefulWidget {
   final void Function(String title) _setAppBarTitle;
 
@@ -26,6 +20,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Widget> pages;
+  DateTime _visualizedDate = DateTime.now();
   WorkstationBloc _workstationBloc = sl<WorkstationBloc>();
   ReservationsBloc _reservationsBloc = sl<ReservationsBloc>();
 
@@ -33,6 +29,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _workstationBloc..add(FetchWorkstationsLists(dateToFetch: DateTime.now()));
     _reservationsBloc..add(FetchReservationsList(dateToFetch: DateTime.now()));
+    pages = [
+      Room26B(_onWorkstationTryAgainPressed, _onReservationTryAgainPressed),
+      Room26A(_onWorkstationTryAgainPressed, _onReservationTryAgainPressed),
+      Room24(_onWorkstationTryAgainPressed, _onReservationTryAgainPressed),
+    ];
     super.initState();
   }
 
@@ -45,13 +46,11 @@ class _HomePageState extends State<HomePage> {
           scrollDirection: Axis.horizontal,
           itemBuilder: (BuildContext context, int index) {
             return MultiBlocProvider(providers: [
-            BlocProvider<WorkstationBloc>(create: (context)
-            =>
-            _workstationBloc
-            ),
-            BlocProvider<ReservationsBloc>(create: (context) => _reservationsBloc)
-            ],
-            child:pages[index]);
+              BlocProvider<WorkstationBloc>(
+                  create: (context) => _workstationBloc),
+              BlocProvider<ReservationsBloc>(
+                  create: (context) => _reservationsBloc)
+            ], child: pages[index]);
           },
           onPageChanged: (pageIndex) {
             switch (pageIndex) {
@@ -73,8 +72,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   _onDateChanged(DateTime newDate) {
+    this._visualizedDate = newDate;
     _workstationBloc.add(FetchWorkstationsLists(dateToFetch: newDate));
     _reservationsBloc.add(FetchReservationsList(dateToFetch: newDate));
+  }
+
+  _onWorkstationTryAgainPressed() {
+    _workstationBloc
+        .add(FetchWorkstationsLists(dateToFetch: this._visualizedDate));
+  }
+
+  _onReservationTryAgainPressed() {
+    _reservationsBloc
+        .add(FetchReservationsList(dateToFetch: this._visualizedDate));
   }
 
   @override
