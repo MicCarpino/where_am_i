@@ -20,3 +20,14 @@ class OnUsersPresencesFilterUpdate extends PresencesManagementEvent {
 
   OnUsersPresencesFilterUpdate({@required this.filterInput});
 }
+
+class OnInsertWorkstation extends PresencesManagementEvent {
+  final Workstation workstation;
+
+  OnInsertWorkstation({@required this.workstation});
+}
+class OnDeleteWorkstation extends PresencesManagementEvent {
+  final int idWorkstation;
+
+  OnDeleteWorkstation({@required this.idWorkstation});
+}

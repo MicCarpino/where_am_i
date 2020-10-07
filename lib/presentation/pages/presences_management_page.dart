@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/presences_management_bloc.dart';
 
@@ -104,15 +105,14 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                           itemBuilder: (context, index) {
                             var user = state.allUsersPresences[index];
                             return ListTile(
-                              title: Text(
-                                "${user.surname} ${user.name}",
-                                style: TextStyle(
-                                    color: user.idWorkstation != null
-                                        ? Colors.black
-                                        : Colors.black38),
-                              ),
-                              onLongPress: () {},
-                            );
+                                title: Text(
+                                  "${user.surname} ${user.name}",
+                                  style: TextStyle(
+                                      color: user.idWorkstation != null
+                                          ? Colors.black
+                                          : Colors.black38),
+                                ),
+                                onLongPress: () => _onUserLongClick(user));
                           },
                           itemCount: state.allUsersPresences.length,
                         ),
@@ -137,12 +137,12 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
 
   _onDateChanged(DateTime newDate) {
     this.visualizedDate = newDate;
-    _presencesManagementBloc.add(OnUsersPresencesFetchRequested(dateToFetch: newDate));
+    _presencesManagementBloc
+        .add(OnUsersPresencesFetchRequested(dateToFetch: newDate));
   }
 
   _onExternalUserAdded(String externalUser) {
     if (externalUser.isNotEmpty) {
-      _showSnackbarWithMessage(externalUser);
       _presencesManagementBloc.add(OnExternalUserAdded(
           externalUser: Workstation(
         idWorkstation: null,
@@ -158,12 +158,29 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     }
   }
 
+  _onUserLongClick(User user) {
+    user.idWorkstation == null
+        ? _presencesManagementBloc.add(OnInsertWorkstation(
+            workstation: Workstation(
+            idWorkstation: null,
+            idResource: user.idResource,
+            workstationDate: this.visualizedDate,
+            codeWorkstation: null,
+            freeName: null,
+            resourceSurname: user.surname,
+            resourceName: user.name,
+          )))
+        : _presencesManagementBloc
+            .add(OnDeleteWorkstation(idWorkstation: user.idWorkstation));
+  }
+
   _showSnackbarWithMessage(String message) {
     Scaffold.of(context).showSnackBar(SnackBar(
         content: new Text(message), duration: new Duration(seconds: 3)));
   }
 
   _filterList(String input) {
-    _presencesManagementBloc.add(OnUsersPresencesFilterUpdate(filterInput: input));
+    _presencesManagementBloc
+        .add(OnUsersPresencesFilterUpdate(filterInput: input));
   }
 }
