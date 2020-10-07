@@ -157,24 +157,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-//TODO:remove empty space at header bottom
   _createDrawerHeader() {
     return DrawerHeader(
+        // decoration: BoxDecoration(color: dncBlue),
         child: Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Image(image: AssetImage('assets/dnc_def_logo.png'), width: 200),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Ciao Giangianni',
-                style: TextStyle(
-                    color: dncBlue, fontSize: 20, fontWeight: FontWeight.bold)),
-            Text('Oggi lavori al ',
-                style: TextStyle(
-                    color: dncBlue, fontSize: 16, fontWeight: FontWeight.bold))
-          ],
-        ),
+        Text('Ciao Giangianni',
+            style: TextStyle(
+                color: dncBlue, fontSize: 20, fontWeight: FontWeight.bold)),
+        Text('Oggi lavori al ',
+            style: TextStyle(
+                color: dncBlue, fontSize: 16, fontWeight: FontWeight.bold)),
       ],
     ));
   }
