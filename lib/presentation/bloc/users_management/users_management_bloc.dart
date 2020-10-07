@@ -13,27 +13,51 @@ part 'users_management_state.dart';
 
 class UsersManagementBloc
     extends Bloc<UsersManagementEvent, UsersManagementState> {
+  final GetAllUsers getUsers;
+
   UsersManagementBloc({@required GetAllUsers getUsers})
       : assert(getUsers != null),
         getUsers = getUsers,
         super(UsersInitial());
 
-  final GetAllUsers getUsers;
+  List<User> originalUsersList = List<User>();
 
   @override
   Stream<UsersManagementState> mapEventToState(
-      UsersManagementEvent event,) async* {
-    if (event is FetchUsersList) {
-      final usersList = await getUsers(NoParams());
-      yield usersList.fold((failure) {
-        print(
-            'workstations fail : ${failure is ServerFailure ? failure
-                .errorMessage : failure.toString()}');
-        return UsersFetchErrorState();
-      }, (users) {
-        print('users : ${users.toList()}');
-        return UserFetchCompleteState(users);
-      });
+    UsersManagementEvent event,
+  ) async* {
+    if (event is OnUsersListFetchRequested) {
+      yield* _fetchUsersList();
+    }
+    if (event is OnUsersListFilterUpdated) {
+      yield* _applyFilterToList(event.filterInput);
+    }
+  }
+
+  Stream<UsersManagementState> _fetchUsersList() async* {
+    yield UsersListLoadingState();
+    final usersList = await getUsers(NoParams());
+    yield usersList.fold((failure) {
+      print(
+          'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+      return UsersListErrorState();
+    }, (users) {
+      print('users : ${users.toList()}');
+      originalUsersList = users;
+      return UsersListReadyState(users);
+    });
+  }
+
+  Stream<UsersManagementState> _applyFilterToList(String filterInput) async* {
+    if (filterInput.isEmpty) {
+      yield UsersListReadyState(originalUsersList);
+    } else {
+      var filteredList = originalUsersList
+          .where((user) =>
+              user.name.toLowerCase().contains(filterInput.toLowerCase()) ||
+              user.surname.toLowerCase().contains(filterInput.toLowerCase()))
+          .toList();
+      yield UsersListReadyState(filteredList);
     }
   }
 }

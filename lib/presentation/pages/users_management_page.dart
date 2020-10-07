@@ -18,11 +18,22 @@ class UsersManagementPage extends StatefulWidget {
 
 class _UsersManagementPageState extends State<UsersManagementPage> {
   UsersManagementBloc _usersBloc;
+  TextEditingController _textFieldController = TextEditingController();
 
   @override
   void initState() {
+    _textFieldController.addListener(() {
+      _filterList(_textFieldController.text);
+    });
     _usersBloc = sl<UsersManagementBloc>();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _textFieldController.dispose();
+    _usersBloc.close();
+    super.dispose();
   }
 
   @override
@@ -31,20 +42,28 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
         cubit: _usersBloc,
         builder: (context, state) {
           if (state is UsersInitial) {
-            _usersBloc.add(FetchUsersList());
+            _usersBloc.add(OnUsersListFetchRequested());
             return CircularLoading();
           }
-          if (state is UserFetchCompleteState) {
+          if (state is UsersListReadyState) {
             return Column(
               children: [
                 TextField(
+                  controller: _textFieldController,
                   maxLines: 1,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(top: 14.0),
                     border: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.red),
                     ),
-                    prefixIcon: Icon(Icons.search, color: Colors.black),
+                    prefixIcon: _textFieldController.text.isEmpty
+                        ? Icon(Icons.search, color: Colors.black)
+                        : IconButton(
+                      onPressed: () =>
+                          _textFieldController.clear(),
+                      icon: Icon(Icons.clear,
+                          color: Colors.black),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -71,7 +90,7 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                 ),
               ],
             );
-          } else if (state is UsersFetchErrorState) {
+          } else if (state is UsersListErrorState) {
             return Center(
               child: MaterialButton(child: Text('riprova'), onPressed: () {}),
             );
@@ -79,12 +98,6 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
             return Center(child: CircularLoading());
           }
         });
-  }
-
-  @override
-  void dispose() {
-    _usersBloc.close();
-    super.dispose();
   }
 
   Text _buildRoleLabel(int idRole) {
@@ -95,5 +108,9 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
     } else {
       return Text("USER", style: TextStyle(color:dncBlue));
     }
+  }
+
+  _filterList(String input) {
+    _usersBloc.add(OnUsersListFilterUpdated(filterInput: input));
   }
 }
