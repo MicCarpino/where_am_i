@@ -14,3 +14,9 @@ class FetchAllUserPresences extends PresencesManagementEvent {
 
   FetchAllUserPresences({@required this.dateToFetch});
 }
+
+class FilterUsersPresences extends PresencesManagementEvent {
+  final String filterInput;
+
+  FilterUsersPresences({@required this.filterInput});
+}

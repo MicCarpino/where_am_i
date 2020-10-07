@@ -14,6 +14,7 @@ part 'presences_management_state.dart';
 class PresencesManagementBloc
     extends Bloc<PresencesManagementEvent, PresencesManagementState> {
   final GetAllUserPresencesByDate getAllUserPresencesByDate;
+  List<User> originalUsersList = List<User>();
 
   PresencesManagementBloc({
     @required GetAllUserPresencesByDate getAllUserPresencesByDate,
@@ -25,6 +26,9 @@ class PresencesManagementBloc
   Stream<PresencesManagementState> mapEventToState(
     PresencesManagementEvent event,
   ) async* {
+    if (event is FilterUsersPresences) {
+      yield* _applyFilterToList(event.filterInput);
+    }
     if (event is FetchAllUserPresences) {
       yield* _fetchAllUsersPresences(event.dateToFetch);
     }
@@ -32,16 +36,31 @@ class PresencesManagementBloc
 
   Stream<PresencesManagementState> _fetchAllUsersPresences(
       DateTime date) async* {
-    yield UsersPresencesFetchLoadingState();
+    yield UsersPresencesLoadingState();
     print('fetching all users presences');
     final userPresences = await getAllUserPresencesByDate(date);
     yield userPresences.fold((failure) {
       print(
           'all users presences fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
-      return UserPresencesFetchErrorState();
+      return UserPresencesErrorState();
     }, (allUserPresences) {
       print('all users user presences : ${userPresences.length}');
-      return AllUsersPresencesFetchCompleted(allUserPresences);
+      originalUsersList = allUserPresences;
+      return UsersPresencesReadyState(allUserPresences);
     });
+  }
+
+  Stream<PresencesManagementState> _applyFilterToList(
+      String filterInput) async* {
+    if (filterInput.isEmpty) {
+      yield UsersPresencesReadyState(originalUsersList);
+    } else {
+      var filteredList = originalUsersList
+          .where((user) =>
+              user.name.toLowerCase().contains(filterInput.toLowerCase()) ||
+              user.surname.toLowerCase().contains(filterInput.toLowerCase()))
+          .toList();
+      yield UsersPresencesReadyState(filteredList);
+    }
   }
 }

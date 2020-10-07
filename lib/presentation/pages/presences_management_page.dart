@@ -22,7 +22,8 @@ class PresencesManagementPage extends StatefulWidget {
 }
 
 class _PresencesManagementPageState extends State<PresencesManagementPage> {
-  PresencesManagementBloc _presencesManagementBloc = sl<PresencesManagementBloc>();
+  PresencesManagementBloc _presencesManagementBloc =
+      sl<PresencesManagementBloc>();
   List<DateTime> userPresences = [];
   TextEditingController _textFieldController = TextEditingController();
   DateTime visualizedDate;
@@ -32,7 +33,8 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     _textFieldController.addListener(() {
       _filterList(_textFieldController.text);
     });
-    _presencesManagementBloc.add(FetchAllUserPresences(dateToFetch: DateTime.now()));
+    _presencesManagementBloc
+        .add(FetchAllUserPresences(dateToFetch: DateTime.now()));
     visualizedDate = DateTime.now();
     super.initState();
   }
@@ -53,7 +55,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
           child: BlocBuilder<PresencesManagementBloc, PresencesManagementState>(
               cubit: _presencesManagementBloc,
               builder: (context, state) {
-                if (state is AllUsersPresencesFetchCompleted) {
+                if (state is UsersPresencesReadyState) {
                   return Column(
                     children: [
                       Row(
@@ -63,13 +65,18 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                               controller: _textFieldController,
                               maxLines: 1,
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(top: 14.0),
-                                border: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.red),
-                                ),
-                                prefixIcon:
-                                    Icon(Icons.search, color: Colors.black),
-                              ),
+                                  contentPadding: EdgeInsets.only(top: 14.0),
+                                  border: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.red),
+                                  ),
+                                  prefixIcon: _textFieldController.text.isEmpty
+                                      ? Icon(Icons.search, color: Colors.black)
+                                      : IconButton(
+                                          onPressed: () =>
+                                              _textFieldController.clear(),
+                                          icon: Icon(Icons.clear,
+                                              color: Colors.black),
+                                        )),
                             ),
                           ),
                           IconButton(
@@ -155,5 +162,6 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   }
 
   _filterList(String input) {
+    _presencesManagementBloc.add(FilterUsersPresences(filterInput: input));
   }
 }
