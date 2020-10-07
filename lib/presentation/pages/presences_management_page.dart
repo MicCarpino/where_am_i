@@ -24,7 +24,6 @@ class PresencesManagementPage extends StatefulWidget {
 class _PresencesManagementPageState extends State<PresencesManagementPage> {
   PresencesManagementBloc _presencesManagementBloc =
       sl<PresencesManagementBloc>();
-  List<DateTime> userPresences = [];
   TextEditingController _textFieldController = TextEditingController();
   DateTime visualizedDate;
 
@@ -34,7 +33,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
       _filterList(_textFieldController.text);
     });
     _presencesManagementBloc
-        .add(FetchAllUserPresences(dateToFetch: DateTime.now()));
+        .add(OnUsersPresencesFetchRequested(dateToFetch: DateTime.now()));
     visualizedDate = DateTime.now();
     super.initState();
   }
@@ -112,6 +111,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                                         ? Colors.black
                                         : Colors.black38),
                               ),
+                              onLongPress: () {},
                             );
                           },
                           itemCount: state.allUsersPresences.length,
@@ -122,7 +122,9 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                 } else if (state is WorkstationsFetchErrorState) {
                   return Center(
                     child: MaterialButton(
-                        child: Text('riprova'), onPressed: () {}),
+                        child: Text('riprova'),
+                        onPressed: () => OnUsersPresencesFetchRequested(
+                            dateToFetch: this.visualizedDate)),
                   );
                 } else {
                   return Center(child: CircularLoading());
@@ -135,7 +137,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
 
   _onDateChanged(DateTime newDate) {
     this.visualizedDate = newDate;
-    _presencesManagementBloc.add(FetchAllUserPresences(dateToFetch: newDate));
+    _presencesManagementBloc.add(OnUsersPresencesFetchRequested(dateToFetch: newDate));
   }
 
   _onExternalUserAdded(String externalUser) {
@@ -162,6 +164,6 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   }
 
   _filterList(String input) {
-    _presencesManagementBloc.add(FilterUsersPresences(filterInput: input));
+    _presencesManagementBloc.add(OnUsersPresencesFilterUpdate(filterInput: input));
   }
 }

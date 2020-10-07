@@ -9,14 +9,14 @@ class OnExternalUserAdded extends PresencesManagementEvent {
   OnExternalUserAdded({@required this.externalUser});
 }
 
-class FetchAllUserPresences extends PresencesManagementEvent {
+class OnUsersPresencesFetchRequested extends PresencesManagementEvent {
   final DateTime dateToFetch;
 
-  FetchAllUserPresences({@required this.dateToFetch});
+  OnUsersPresencesFetchRequested({@required this.dateToFetch});
 }
 
-class FilterUsersPresences extends PresencesManagementEvent {
+class OnUsersPresencesFilterUpdate extends PresencesManagementEvent {
   final String filterInput;
 
-  FilterUsersPresences({@required this.filterInput});
+  OnUsersPresencesFilterUpdate({@required this.filterInput});
 }

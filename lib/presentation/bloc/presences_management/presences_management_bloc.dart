@@ -14,7 +14,7 @@ part 'presences_management_state.dart';
 class PresencesManagementBloc
     extends Bloc<PresencesManagementEvent, PresencesManagementState> {
   final GetAllUserPresencesByDate getAllUserPresencesByDate;
-  List<User> originalUsersList = List<User>();
+  List<User> originalUsersPresencesList = List<User>();
 
   PresencesManagementBloc({
     @required GetAllUserPresencesByDate getAllUserPresencesByDate,
@@ -26,11 +26,11 @@ class PresencesManagementBloc
   Stream<PresencesManagementState> mapEventToState(
     PresencesManagementEvent event,
   ) async* {
-    if (event is FilterUsersPresences) {
-      yield* _applyFilterToList(event.filterInput);
-    }
-    if (event is FetchAllUserPresences) {
+    if (event is OnUsersPresencesFetchRequested) {
       yield* _fetchAllUsersPresences(event.dateToFetch);
+    }
+    if (event is OnUsersPresencesFilterUpdate) {
+      yield* _applyFilterToList(event.filterInput);
     }
   }
 
@@ -45,7 +45,7 @@ class PresencesManagementBloc
       return UserPresencesErrorState();
     }, (allUserPresences) {
       print('all users user presences : ${userPresences.length}');
-      originalUsersList = allUserPresences;
+      originalUsersPresencesList = allUserPresences;
       return UsersPresencesReadyState(allUserPresences);
     });
   }
@@ -53,9 +53,9 @@ class PresencesManagementBloc
   Stream<PresencesManagementState> _applyFilterToList(
       String filterInput) async* {
     if (filterInput.isEmpty) {
-      yield UsersPresencesReadyState(originalUsersList);
+      yield UsersPresencesReadyState(originalUsersPresencesList);
     } else {
-      var filteredList = originalUsersList
+      var filteredList = originalUsersPresencesList
           .where((user) =>
               user.name.toLowerCase().contains(filterInput.toLowerCase()) ||
               user.surname.toLowerCase().contains(filterInput.toLowerCase()))
