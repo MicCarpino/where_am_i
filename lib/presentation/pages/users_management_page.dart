@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/presentation/bloc/users_management/users_management_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
+import 'package:where_am_i/presentation/widgets/edit_role_dialog.dart';
 
 final sl = GetIt.instance;
 
@@ -24,6 +26,14 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
   void initState() {
     _textFieldController.addListener(() {
       _filterList(_textFieldController.text);
+    });
+    _usersBloc.listen((state) {
+      if (state is UserUpdateErrorState) {
+        Scaffold.of(context).showSnackBar(SnackBar(
+            content: new Text(
+                'Si è verificato un errore. Il ruolo non è stato aggiornato'),
+            duration: new Duration(seconds: 3)));
+      }
     });
     _usersBloc = sl<UsersManagementBloc>();
     super.initState();
@@ -59,11 +69,9 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                     prefixIcon: _textFieldController.text.isEmpty
                         ? Icon(Icons.search, color: Colors.black)
                         : IconButton(
-                      onPressed: () =>
-                          _textFieldController.clear(),
-                      icon: Icon(Icons.clear,
-                          color: Colors.black),
-                    ),
+                            onPressed: () => _textFieldController.clear(),
+                            icon: Icon(Icons.clear, color: Colors.black),
+                          ),
                   ),
                 ),
                 Expanded(
@@ -75,15 +83,29 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                     itemBuilder: (context, index) {
                       var user = state.usersList[index];
                       return ListTile(
-                        title: Text(
-                          "${user.surname} ${user.name}",
-                          style: TextStyle(
-                              color: user.idWorkstation != null
-                                  ? Colors.black
-                                  : Colors.black38),
-                        ),
-                        trailing: _buildRoleLabel(user.idRole),
-                      );
+                          title: Text(
+                            "${user.surname} ${user.name}",
+                            style: TextStyle(
+                                color: user.idWorkstation != null
+                                    ? Colors.black
+                                    : Colors.black38),
+                          ),
+                          trailing: _buildRoleLabel(user.idRole),
+                          onLongPress: () => showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return EditRoleDialog(
+                                  userSelected: user,
+                                  onNewRoleAssigned: (newRoleId) =>
+                                      _usersBloc.add(OnNewRoleAssigned(
+                                          userUpdated: User(
+                                              idResource: user.idResource,
+                                              surname: user.surname,
+                                              name: user.name,
+                                              idRole: newRoleId,
+                                              idWorkstation: null))),
+                                );
+                              }));
                     },
                     itemCount: state.usersList.length,
                   ),
@@ -102,11 +124,11 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
 
   Text _buildRoleLabel(int idRole) {
     if (idRole == ROLE_ADMIN) {
-      return Text("ADMIN", style: TextStyle(color: Colors.red ));
+      return Text("ADMIN", style: TextStyle(color: Colors.red));
     } else if (idRole == ROLE_STAFF) {
       return Text("STAFF", style: TextStyle(color: dncOrange));
     } else {
-      return Text("USER", style: TextStyle(color:dncBlue));
+      return Text("USER", style: TextStyle(color: dncBlue));
     }
   }
 

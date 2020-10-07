@@ -6,6 +6,7 @@ import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/usecases/get_users.dart';
+import 'package:where_am_i/domain/usecases/update_user.dart';
 
 part 'users_management_event.dart';
 
@@ -13,11 +14,16 @@ part 'users_management_state.dart';
 
 class UsersManagementBloc
     extends Bloc<UsersManagementEvent, UsersManagementState> {
-  final GetAllUsers getUsers;
+  final GetAllUsers _getUsers;
+  final UpdateUser _updateUser;
 
-  UsersManagementBloc({@required GetAllUsers getUsers})
-      : assert(getUsers != null),
-        getUsers = getUsers,
+  UsersManagementBloc({
+    @required GetAllUsers getUsers,
+    @required UpdateUser updateUser,
+  })  : assert(getUsers != null),
+        assert(updateUser != null),
+        _getUsers = getUsers,
+        _updateUser = updateUser,
         super(UsersInitial());
 
   List<User> originalUsersList = List<User>();
@@ -28,18 +34,28 @@ class UsersManagementBloc
   ) async* {
     if (event is OnUsersListFetchRequested) {
       yield* _fetchUsersList();
-    }
-    if (event is OnUsersListFilterUpdated) {
+    } else if (event is OnUsersListFilterUpdated) {
       yield* _applyFilterToList(event.filterInput);
+    } else if (event is OnNewRoleAssigned) {
+     var updatedUsersList = await _updateUser(event.userUpdated);
+     updatedUsersList.fold((failure) {
+       print(
+           'update user fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+       return UserUpdateErrorState();
+     }, (users) {
+       print('users : ${users.toList()}');
+       originalUsersList = users;
+       return UsersListReadyState(users);
+     });
     }
   }
 
   Stream<UsersManagementState> _fetchUsersList() async* {
     yield UsersListLoadingState();
-    final usersList = await getUsers(NoParams());
+    final usersList = await _getUsers(NoParams());
     yield usersList.fold((failure) {
       print(
-          'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+          'user list fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
       return UsersListErrorState();
     }, (users) {
       print('users : ${users.toList()}');

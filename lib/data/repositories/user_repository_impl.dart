@@ -38,7 +38,18 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, User>> updateUser(User user) {
+  Future<Either<Failure, List<User>>> updateUser(User updatedUser) async {
     throw UnimplementedError();
+    try {
+      var loggedUser = await localDataSource.getCachedUser();
+      var userUpdateResult = await remoteDataSource.updateUser(
+          loggedUser.authenticationToken, updatedUser);
+      var oldUserIndex = cachedUsersList.indexWhere(
+          (element) => element.idResource == userUpdateResult.idResource);
+      cachedUsersList[oldUserIndex] = userUpdateResult;
+      return Right(cachedUsersList);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    }
   }
 }

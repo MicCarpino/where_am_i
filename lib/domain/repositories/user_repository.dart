@@ -7,5 +7,5 @@ abstract class UserRepository {
 
   Future<Either<Failure, List<User>>> getAllUsers();
 
-  Future<Either<Failure,User>> updateUser(User user);
+  Future<Either<Failure,List<User>>> updateUser(User user);
 }

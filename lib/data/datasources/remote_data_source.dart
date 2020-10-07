@@ -9,6 +9,7 @@ import 'package:where_am_i/data/models/reservation_model.dart';
 
 import 'package:where_am_i/data/models/user_model.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
+import 'package:where_am_i/domain/entities/user.dart';
 
 const BASE_URL = "wai.dncsrl.com";
 String encryptedPw =
@@ -33,6 +34,8 @@ abstract class RemoteDataSource {
       String token, DateTime date);
 
   Future<List<UserModel>> getUsers(String token);
+
+  Future<UserModel> updateUser(String token, User updatedUser);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -152,6 +155,23 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       List<dynamic> usersList = json.decode(response.body);
       return List<UserModel>.from(usersList.map((e) => UserModel.fromJson(e)));
+    } else {
+      throw ServerException(response.body);
+    }
+  }
+
+  @override
+  Future<UserModel> updateUser(String token, User updatedUser) async {
+    var uri = Uri.https(
+        BASE_URL, '/WhereAmI/user', {'username': updatedUser.idResource});
+    final response = await http.put(uri, headers: {
+      HttpHeaders.authorizationHeader: token,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    }, body: {
+      'idRole': updatedUser.idRole
+    });
+    if (response.statusCode == 200) {
+      return UserModel.fromJson(json.decode(response.body));
     } else {
       throw ServerException(response.body);
     }

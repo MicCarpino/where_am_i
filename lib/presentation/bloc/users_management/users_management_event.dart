@@ -6,9 +6,9 @@ abstract class UsersManagementEvent {}
 class OnUsersListFetchRequested extends UsersManagementEvent {}
 
 class OnNewRoleAssigned extends UsersManagementEvent {
-  final int roleAssigned;
+  final User userUpdated;
 
-  OnNewRoleAssigned({@required this.roleAssigned});
+  OnNewRoleAssigned({@required this.userUpdated});
 }
 
 class OnUsersListFilterUpdated extends UsersManagementEvent {

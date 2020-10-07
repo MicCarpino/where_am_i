@@ -14,3 +14,5 @@ class UsersListReadyState extends UsersManagementState {
 
   UsersListReadyState(this.usersList);
 }
+
+class UserUpdateErrorState extends UsersManagementState {}
