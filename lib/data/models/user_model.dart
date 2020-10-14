@@ -8,7 +8,7 @@ class UserModel extends User {
     @required String name,
     @required String surname,
   }) : super(
-          idResource: idResource,
+          idResource: int.parse(idResource),
           idRole: idRole,
           name: name,
           surname: surname

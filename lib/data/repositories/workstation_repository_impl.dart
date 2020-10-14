@@ -42,7 +42,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       var loggedUser = await localDataSource.getCachedUser();
       final userPresences =
           await remoteDataSource.getAllWorkstationsByIdResource(
-              loggedUser.authenticationToken, loggedUser.user.idResource);
+              loggedUser.authenticationToken, loggedUser.user.idResource.toString());
       cachedUserPresences = userPresences;
       return Right(userPresences);
     } on ServerException catch (error) {
@@ -54,7 +54,6 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   @override
   Future<Either<Failure, List<Workstation>>> updateUserWorkstations(
       List<DateTime> newUserPresences) async {
-    throw UnimplementedError();
     try {
       var currentUser = await localDataSource.getCachedUser();
       var oldUserPresences =
@@ -102,7 +101,6 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   @override
   Future<Either<Failure, List<Workstation>>> insertWorkstation(
       Workstation workstation) async {
-    throw UnimplementedError();
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final insertResult = await remoteDataSource.insertWorkstation(
@@ -117,7 +115,6 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   @override
   Future<Either<Failure, List<Workstation>>> deleteWorkstation(
       int idWorkstation) async {
-    throw UnimplementedError();
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final deleteResult = await remoteDataSource.deleteWorkstation(

@@ -21,14 +21,17 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) async* {
     if (event is LoginButtonPressed) {
       yield LoadingState();
-      final result = await performLogIn.loginRepository
-          .performUserAuthentication(event.username, event.password);
+      final result = await performLogIn(
+          LoginParams(username: event.username, password: event.password));
       yield result.fold((failure) {
         //TODO: shows error message returned from server
         if (failure is ServerFailure) {
           return FailureState(error: failure.errorMessage);
+        } else if (failure is UnexpectedFailure) {
+          return FailureState(error: failure.errorMessage);
+        } else {
+          return FailureState(error: failure.toString());
         }
-        return FailureState(error: failure.toString());
       }, (loggedUser) => LoggedInState());
     }
   }

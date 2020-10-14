@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 
 class Workstation extends Equatable {
   final int idWorkstation;
-  final String idResource;
+  final int idResource;
   final String resourceName;
   final String resourceSurname;
   final DateTime workstationDate;
@@ -12,11 +12,11 @@ class Workstation extends Equatable {
 
   Workstation({
     @required this.idWorkstation,
-    @required this.idResource,
-    this.resourceName = "",
-    this.resourceSurname = "",
+    this.idResource,
+    this.resourceName,
+    this.resourceSurname,
     @required this.workstationDate,
-    @required this.freeName,
+    this.freeName,
     @required this.codeWorkstation,
   });
 

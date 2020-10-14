@@ -45,6 +45,10 @@ class Room26B extends StatelessWidget {
             columnsSpacing: 15,
             workstations: workstations,
             startingIndex: 1,
+            onWorkstationUpdated: (workstationSelected, currentWorkstation) =>
+                _workstationBloc.add(OnWorkstationAssigned(
+                    currentWorkstation: currentWorkstation,
+                    workstationSelected: workstationSelected)),
           );
         } else if (state is WorkstationsFetchErrorState) {
           return Center(

@@ -9,10 +9,14 @@ class FetchWorkstationsLists extends WorkstationEvent {
   FetchWorkstationsLists({@required this.dateToFetch});
 }
 
-class OnWorkstationClick extends WorkstationEvent {
-  final int idWorkstation;
+class OnWorkstationAssigned extends WorkstationEvent {
+  final Workstation workstationSelected;
+  final Workstation currentWorkstation;
 
-  OnWorkstationClick({this.idWorkstation});
+  OnWorkstationAssigned({
+    @required this.workstationSelected,
+    @required this.currentWorkstation,
+  });
 }
 
 class OnWorkstationLongClick extends WorkstationEvent {
@@ -20,4 +24,3 @@ class OnWorkstationLongClick extends WorkstationEvent {
 
   OnWorkstationLongClick({this.idWorkstation});
 }
-

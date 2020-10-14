@@ -19,7 +19,7 @@ void main() {
   });
 
   final tUser = User(
-    idResource: "1",
+    idResource: 1,
     idRole: 1,
     name: "tName",
     surname: "tSurname",
