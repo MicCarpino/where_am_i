@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
 class User extends Equatable {
-  final int idResource;
+  final String idResource;
   final int idRole;
   final String name;
   final String surname;

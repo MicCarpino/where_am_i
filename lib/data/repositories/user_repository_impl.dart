@@ -29,6 +29,7 @@ class UserRepositoryImpl implements UserRepository {
       final usersList =
           await remoteDataSource.getUsers(loggedUser.authenticationToken);
       usersList.removeWhere((user) => user.surname?.toLowerCase() == "admin");
+
       usersList.sort((a, b){
         if(a.surname != null && b.surname != null){
           return a.surname.compareTo(b.surname);
@@ -45,7 +46,6 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<Either<Failure, List<User>>> updateUser(User updatedUser) async {
-    throw UnimplementedError();
     try {
       var loggedUser = await localDataSource.getCachedUser();
       var userUpdateResult = await remoteDataSource.updateUser(

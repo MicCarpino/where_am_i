@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:where_am_i/data/repositories/reservation_repository_impl.dart';
 import 'package:where_am_i/domain/repositories/reservation_repository.dart';
+import 'package:where_am_i/domain/usecases/delete_workstation.dart';
 import 'package:where_am_i/domain/usecases/get_all_users_presences_by_date.dart';
 import 'package:where_am_i/domain/usecases/get_users.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_id_resource.dart';
@@ -38,9 +39,12 @@ Future<void> init() async {
   sl.registerFactory(() => HomeBloc(performLogOut: sl()));
   sl.registerFactory(() => WorkstationBloc(getWorkstationsByDate: sl()));
   sl.registerFactory(() => ReservationsBloc(getReservations: sl()));
-  sl.registerFactory(() => UsersManagementBloc(getUsers: sl()));
   sl.registerFactory(
-      () => PresencesManagementBloc(getAllUserPresencesByDate: sl()));
+      () => UsersManagementBloc(getUsers: sl(), updateUser: sl()));
+  sl.registerFactory(() => PresencesManagementBloc(
+      getAllUserPresencesByDate: sl(),
+      insertWorkstation: sl(),
+      deleteWorkstation: sl()));
   sl.registerFactory(() => MyPresencesBloc(
         getWorkstationsByIdResource: sl(),
         updateUserPresences: sl(),
@@ -58,6 +62,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => InsertWorkstation(sl()));
   sl.registerLazySingleton(() => GetAllUserPresencesByDate(sl(), sl()));
   sl.registerLazySingleton(() => UpdateUserPresences(sl()));
+  sl.registerLazySingleton(() => DeleteWorkstation(sl()));
   //Reservation
   sl.registerLazySingleton(() => GetReservationsByDate(sl()));
 
