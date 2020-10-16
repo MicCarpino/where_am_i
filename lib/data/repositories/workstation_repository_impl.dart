@@ -118,9 +118,9 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       int idWorkstation) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
-      final deleteResult = await remoteDataSource.deleteWorkstation(
+      await remoteDataSource.deleteWorkstation(
           loggedUser.authenticationToken, idWorkstation);
-      cachedCurrentUserPresences.removeWhere(
+      cachedWorkstationsList.removeWhere(
           (workstation) => workstation.idWorkstation == idWorkstation);
       return Right(cachedWorkstationsList);
     } on ServerException catch (error) {

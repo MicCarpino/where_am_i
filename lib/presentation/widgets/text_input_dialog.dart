@@ -12,7 +12,7 @@ class TextInputDialog extends StatelessWidget {
   });
 
   final TextEditingController _textEditingController =
-      new TextEditingController();
+  new TextEditingController();
   final _textFormFieldKey = GlobalKey<FormState>();
 
   @override
@@ -31,10 +31,12 @@ class TextInputDialog extends StatelessWidget {
               Form(
                 key: _textFormFieldKey,
                 child: TextFormField(
-                  controller: _textEditingController,
+                    controller: _textEditingController,
                     autofocus: true,
                     validator: (text) {
-                      if (text == null || text.trim().isEmpty) {
+                      if (text == null || text
+                          .trim()
+                          .isEmpty) {
                         return 'Inserire un nominativo valido';
                       }
                       return null;
@@ -47,9 +49,8 @@ class TextInputDialog extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     FlatButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                      onPressed: () => Navigator.pop(context)
+                      ,
                       child: Text(
                         "Annulla",
                         style: TextStyle(color: dncBlue),
@@ -61,9 +62,9 @@ class TextInputDialog extends StatelessWidget {
                     FlatButton(
                       onPressed: () {
                         if (_textFormFieldKey.currentState.validate()) {
-                          print('ma quindi? ${ _textEditingController.text.trim()}');
-                          this.onAddButtonPressed(
-                              _textEditingController.text.trim());
+                          this.onAddButtonPressed(_textEditingController.text
+                              .trim());
+                          Navigator.pop(context);
                         }
                       },
                       child: Text("Aggiungi", style: TextStyle(color: dncBlue)),

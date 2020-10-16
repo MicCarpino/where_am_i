@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/presences_management_bloc.dart';
@@ -90,7 +89,17 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                                         messageText:
                                             "Aggiungi risorsa non presente in elenco",
                                         onAddButtonPressed:
-                                            _onExternalUserAdded,
+                                            (String externalUser) =>
+                                                _presencesManagementBloc.add(
+                                          OnInsertWorkstation(
+                                              workstation: Workstation(
+                                            idWorkstation: null,
+                                            codeWorkstation: null,
+                                            freeName: externalUser,
+                                            workstationDate:
+                                                this.visualizedDate,
+                                          )),
+                                        ),
                                       );
                                     });
                               })
@@ -104,16 +113,24 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                             color: Colors.black26,
                           ),
                           itemBuilder: (context, index) {
-                            var user = state.allUsersPresences[index];
+                            var userWithWorkstation =
+                                state.allUsersPresences[index];
+                            //TODO: workstation.idResource for free name is "null"
                             return ListTile(
                                 title: Text(
-                                  "${user.user.surname} ${user.user.name}",
+                                  userWithWorkstation.user !=
+                                          null
+                                      ? "${userWithWorkstation.user?.surname} ${userWithWorkstation.user?.name}"
+                                      : userWithWorkstation
+                                          .workstation.freeName,
                                   style: TextStyle(
-                                      color: user.workstation != null
+                                      color: userWithWorkstation.workstation !=
+                                              null
                                           ? Colors.black
                                           : Colors.black38),
                                 ),
-                                onLongPress: () => _onUserLongClick(user));
+                                onLongPress: () =>
+                                    _onUserLongClick(userWithWorkstation));
                           },
                           itemCount: state.allUsersPresences.length,
                         ),
@@ -142,20 +159,6 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
         .add(OnUsersPresencesFetchRequested(dateToFetch: newDate));
   }
 
-  _onExternalUserAdded(String externalUser) {
-    if (externalUser.isNotEmpty) {
-      _presencesManagementBloc.add(OnExternalUserAdded(
-          externalUser: Workstation(
-        idWorkstation: null,
-        codeWorkstation: null,
-        freeName: externalUser,
-        workstationDate: this.visualizedDate,
-      )));
-    } else {
-      _showSnackbarWithMessage('Inserimento risorsa non riuscito');
-    }
-  }
-
   _onUserLongClick(UserWithWorkstation userWithWorkstation) {
     userWithWorkstation.workstation == null
         ? _presencesManagementBloc.add(OnInsertWorkstation(
@@ -167,6 +170,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
           )))
         : _presencesManagementBloc.add(OnDeleteWorkstation(
             idWorkstation: userWithWorkstation.workstation.idWorkstation));
+    _textFieldController.clear();
   }
 
   _showSnackbarWithMessage(String message) {

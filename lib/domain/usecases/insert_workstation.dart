@@ -46,4 +46,5 @@ class InsertWorkstation
     freeNamesWorkstations.sort((a, b) => a.workstation.freeName.compareTo(b.workstation.freeName));
     return List.of(freeNamesWorkstations..addAll(usersWithWorkstations));
   }
+
 }

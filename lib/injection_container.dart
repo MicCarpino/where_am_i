@@ -62,7 +62,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => InsertWorkstation(sl(),sl()));
   sl.registerLazySingleton(() => GetAllUserPresencesByDate(sl(), sl()));
   sl.registerLazySingleton(() => UpdateUserPresences(sl()));
-  sl.registerLazySingleton(() => DeleteWorkstation(sl()));
+  sl.registerLazySingleton(() => DeleteWorkstation(sl(),sl()));
   //Reservation
   sl.registerLazySingleton(() => GetReservationsByDate(sl()));
 
