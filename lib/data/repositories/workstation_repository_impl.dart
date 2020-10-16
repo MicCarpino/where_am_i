@@ -42,7 +42,8 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       var loggedUser = await localDataSource.getCachedUser();
       final userPresences =
           await remoteDataSource.getAllWorkstationsByIdResource(
-              loggedUser.authenticationToken, loggedUser.user.idResource.toString());
+              loggedUser.authenticationToken,
+              loggedUser.user.idResource.toString());
       cachedUserPresences = userPresences;
       return Right(userPresences);
     } on ServerException catch (error) {
@@ -104,8 +105,15 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final insertResult = await remoteDataSource.insertWorkstation(
-          loggedUser.authenticationToken, workstation);
-      cachedUserPresences.add(insertResult);
+        loggedUser.authenticationToken,
+        WorkstationModel(
+            idWorkstation: 0,
+            idResource: workstation.idResource,
+            workstationDate: workstation.workstationDate,
+            freeName: workstation.freeName,
+            codeWorkstation: workstation.codeWorkstation),
+      );
+      cachedWorkstationsList.add(insertResult);
       return Right(cachedWorkstationsList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
@@ -120,7 +128,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       final deleteResult = await remoteDataSource.deleteWorkstation(
           loggedUser.authenticationToken, idWorkstation);
       cachedUserPresences.removeWhere(
-            (workstation) => workstation.idWorkstation == idWorkstation);
+          (workstation) => workstation.idWorkstation == idWorkstation);
       return Right(cachedWorkstationsList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));

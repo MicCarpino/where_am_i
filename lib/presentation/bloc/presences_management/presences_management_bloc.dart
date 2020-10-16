@@ -42,10 +42,11 @@ class PresencesManagementBloc
     } else if (event is OnUsersPresencesFilterUpdate) {
       yield* _applyFilterToList(event.filterInput);
     } else if (event is OnInsertWorkstation) {
+      yield* _insertWorkstation(event.workstation);
       //TODO: must reflect insert/delete updates
-      var insertResult =await  insertWorkstation(event.workstation);
+      var insertResult = await  insertWorkstation(event.workstation);
     } else if (event is OnDeleteWorkstation) {
-      var deleteResult =await deleteWorkstation(event.idWorkstation);
+      var deleteResult = await deleteWorkstation(event.idWorkstation);
     }
   }
 
@@ -65,6 +66,16 @@ class PresencesManagementBloc
     });
   }
 
+  Stream<PresencesManagementState> _insertWorkstation(Workstation workstation)async* {
+    var insertResult = await  insertWorkstation(workstation);
+    yield insertResult.fold((failure) {
+      return UserPresencesErrorState();
+    }, (updatedList) {
+      originalUsersPresencesList = updatedList;
+      return UsersPresencesReadyState(allUserPresences);
+    });
+  }
+
   Stream<PresencesManagementState> _applyFilterToList(
       String filterInput) async* {
     if (filterInput.isEmpty) {
@@ -78,4 +89,6 @@ class PresencesManagementBloc
       yield UsersPresencesReadyState(filteredList);
     }
   }
+
+
 }

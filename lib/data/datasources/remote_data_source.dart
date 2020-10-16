@@ -11,7 +11,13 @@ import 'package:where_am_i/data/models/user_model.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 
+//LocalHost
+//const BASE_URL = "10.0.2.2:8080";
+//Test
 const BASE_URL = "test.dncsrl.com";
+//Prod
+//const BASE_URL = "wai.dncsrl.com";
+
 String encryptedPw =
     "=";
 
@@ -99,12 +105,14 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<WorkstationModel> insertWorkstation(
       String token, WorkstationModel workstation) async {
-    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation');
+    var uri = Uri.https(
+      BASE_URL,
+      '/WhereAmI/workstation',
+      workstation.toQueryParams(),
+    );
     final response = await http.post(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
-    }, body: {
-      json.encode(workstation.toJson())
     });
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(json.decode(response.body));
@@ -153,8 +161,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       HttpHeaders.contentTypeHeader: 'application/json'
     });
     if (response.statusCode == 200) {
-      var fe = json.decode(response.body);
-      return List<UserModel>.from(fe.map((e) => UserModel.fromJson(e)));
+      var usersList = json.decode(response.body);
+      return List<UserModel>.from(usersList.map((e) => UserModel.fromJson(e)));
     } else {
       throw ServerException(response.body);
     }
@@ -162,8 +170,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<UserModel> updateUser(String token, User updatedUser) async {
-    var uri = Uri.https(
-        BASE_URL, '/WhereAmI/user', {'username': updatedUser.idResource.toString()});
+    var uri = Uri.https(BASE_URL, '/WhereAmI/user',
+        {'username': updatedUser.idResource.toString()});
     final response = await http.put(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
