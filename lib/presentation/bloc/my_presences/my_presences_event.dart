@@ -5,7 +5,6 @@ abstract class MyPresencesEvent {}
 
 class FetchCurrentUserPresences extends MyPresencesEvent {}
 
-
 class OnCurrentUserPresencesUpdate extends MyPresencesEvent {
   final List<DateTime> updatedPresences;
 

@@ -115,7 +115,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       HttpHeaders.contentTypeHeader: 'application/json'
     });
     if (response.statusCode == 200) {
-      return WorkstationModel.fromJson(json.decode(response.body));
+      var c = WorkstationModel.fromJson(json.decode(response.body));
+      return c;
     } else {
       throw ServerException(response.body);
     }
@@ -123,7 +124,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<void> deleteWorkstation(String token, int idWorkstation) async {
-    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation//$idWorkstation');
+    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/$idWorkstation');
     final response = await http.delete(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
@@ -131,6 +132,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return;
     } else {
+      print("REPO WORK UPDATE ${response.body}");
       throw ServerException(response.body);
     }
   }

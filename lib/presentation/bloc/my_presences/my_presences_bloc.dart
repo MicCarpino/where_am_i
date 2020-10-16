@@ -15,6 +15,7 @@ part 'my_presences_state.dart';
 class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
   final GetWorkstationsByIdResource getWorkstationsByIdResource;
   final UpdateUserPresences updateUserPresences;
+
   MyPresencesBloc({
     @required GetWorkstationsByIdResource getWorkstationsByIdResource,
     @required UpdateUserPresences updateUserPresences,
@@ -47,7 +48,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     });
   }
 
-  Stream<void> _updateUserPresences(List<DateTime> updatedPresences) async* {
+  Stream<MyPresencesState> _updateUserPresences(List<DateTime> updatedPresences) async* {
     final updateResult = await updateUserPresences(updatedPresences);
     updateResult.fold((failure) {
       print(
