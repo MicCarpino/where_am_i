@@ -6,14 +6,12 @@ class User extends Equatable {
   final int idRole;
   final String name;
   final String surname;
-  final int idWorkstation;
 
   User({
     @required this.idResource,
     @required this.idRole,
     @required this.name,
     @required this.surname,
-    this.idWorkstation,
   });
 
   @override

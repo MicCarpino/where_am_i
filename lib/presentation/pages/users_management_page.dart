@@ -85,10 +85,7 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                       return ListTile(
                           title: Text(
                             "${user.surname} ${user.name}",
-                            style: TextStyle(
-                                color: user.idWorkstation != null
-                                    ? Colors.black
-                                    : Colors.black38),
+                            style: TextStyle(color:Colors.black),
                           ),
                           trailing: _buildRoleLabel(user.idRole),
                           onLongPress: () => showDialog(
@@ -102,8 +99,7 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                                               idResource: user.idResource,
                                               surname: user.surname,
                                               name: user.name,
-                                              idRole: newRoleId,
-                                              idWorkstation: null))),
+                                              idRole: newRoleId))),
                                 );
                               }));
                     },

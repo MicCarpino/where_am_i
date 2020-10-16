@@ -10,7 +10,7 @@ class UsersPresencesLoadingState extends PresencesManagementState {}
 class UserPresencesErrorState extends PresencesManagementState {}
 
 class UsersPresencesReadyState extends PresencesManagementState {
-  final List<User> allUsersPresences;
+  final List<UserWithWorkstation> allUsersPresences;
 
   UsersPresencesReadyState(this.allUsersPresences);
 }

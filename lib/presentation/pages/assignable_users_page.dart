@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 
 class AssignableUsersPage extends StatelessWidget {
-  final List<Workstation> assignableUsers;
+  final List<UserWithWorkstation> assignableUsers;
+  final String selectedWorkstationCode;
 
-  AssignableUsersPage({@required this.assignableUsers});
+  AssignableUsersPage({
+    @required this.assignableUsers,
+    @required this.selectedWorkstationCode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +28,18 @@ class AssignableUsersPage extends StatelessWidget {
               ),
               itemCount: assignableUsers.length,
               itemBuilder: (context, index) {
-                var workstation = assignableUsers[index];
+                var rowElement = assignableUsers[index];
                 return ListTile(
-                  title: Text(
-                    "${workstation.resourceSurname} ${workstation.resourceName}"),
-                  onTap: () =>  Navigator.pop(context, workstation),
-                );
+                    title: Text(
+                        "${rowElement.user.surname} ${rowElement.user.name}"),
+                    onTap: () => Navigator.pop(
+                        context,
+                        Workstation(
+                            idWorkstation: null,
+                            idResource: rowElement.user?.idResource,
+                            workstationDate: null,
+                            freeName: rowElement.workstation.freeName,
+                            codeWorkstation: selectedWorkstationCode)));
               },
             )
           : Center(

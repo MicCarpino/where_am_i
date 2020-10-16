@@ -23,7 +23,6 @@ class Room26A extends StatelessWidget {
             if (state is WorkstationsFetchLoadingState) {
               return CircularLoading();
             } else if (state is WorkstationsFetchCompletedState) {
-              final workstations = state.workstationsList;
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -31,19 +30,19 @@ class Room26A extends StatelessWidget {
                   Workstations(
                       quantity: 6,
                       columnsNumber: 3,
-                      workstations: workstations,
+                      usersWithWorkstations:state.usersWithWorkstations,
                       startingIndex: 50),
                   RoomLabel(labelText: 'Stanza 2'),
                   Workstations(
                       quantity: 8,
                       columnsNumber: 4,
-                      workstations: workstations,
+                      usersWithWorkstations:state.usersWithWorkstations,
                       startingIndex: 56),
                   RoomLabel(labelText: 'Stanza 3'),
                   Workstations(
                       quantity: 6,
                       columnsNumber: 3,
-                      workstations: workstations,
+                      usersWithWorkstations:state.usersWithWorkstations,
                       startingIndex: 64),
                   RoomLabel(labelText: 'Stanza 4'),
                   Padding(
@@ -52,7 +51,7 @@ class Room26A extends StatelessWidget {
                     child: Workstations(
                       quantity: 6,
                       columnsNumber: 2,
-                      workstations: workstations,
+                      usersWithWorkstations:state.usersWithWorkstations,
                       startingIndex: 70,
                     ),
                   ),

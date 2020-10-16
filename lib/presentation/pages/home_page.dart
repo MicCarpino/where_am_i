@@ -72,6 +72,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _onDateChanged(DateTime newDate) {
+    print("Home onDateChanged ${newDate.toString()}");
     this._visualizedDate = newDate;
     _workstationBloc.add(FetchWorkstationsLists(dateToFetch: newDate));
     _reservationsBloc.add(FetchReservationsList(dateToFetch: newDate));

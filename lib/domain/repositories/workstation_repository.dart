@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 
 import '../../core/error/failure.dart';

@@ -8,9 +8,9 @@ class WorkstationInitial extends WorkstationState {}
 class WorkstationsFetchLoadingState extends WorkstationState {}
 
 class WorkstationsFetchCompletedState extends WorkstationState {
-  final List<Workstation> workstationsList;
+  final List<UserWithWorkstation> usersWithWorkstations;
 
-  WorkstationsFetchCompletedState(this.workstationsList);
+  WorkstationsFetchCompletedState(this.usersWithWorkstations);
 }
 
 class WorkstationsFetchErrorState extends WorkstationState {}

@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/usecases/delete_workstation.dart';
 import 'package:where_am_i/domain/usecases/get_all_users_presences_by_date.dart';
@@ -31,7 +32,7 @@ class PresencesManagementBloc
         deleteWorkstation = deleteWorkstation,
         super(PresencesManagementInitial());
 
-  List<User> originalUsersPresencesList = List<User>();
+  List<UserWithWorkstation> originalUsersPresencesList = List<UserWithWorkstation>();
 
   @override
   Stream<PresencesManagementState> mapEventToState(
@@ -72,7 +73,7 @@ class PresencesManagementBloc
       return UserPresencesErrorState();
     }, (updatedList) {
       originalUsersPresencesList = updatedList;
-      return UsersPresencesReadyState(allUserPresences);
+      return UsersPresencesReadyState(originalUsersPresencesList);
     });
   }
 
@@ -83,8 +84,8 @@ class PresencesManagementBloc
     } else {
       var filteredList = originalUsersPresencesList
           .where((user) =>
-              user.name.toLowerCase().contains(filterInput.toLowerCase()) ||
-              user.surname.toLowerCase().contains(filterInput.toLowerCase()))
+              user.user.name.toLowerCase().contains(filterInput.toLowerCase()) ||
+              user.user.surname.toLowerCase().contains(filterInput.toLowerCase()))
           .toList();
       yield UsersPresencesReadyState(filteredList);
     }

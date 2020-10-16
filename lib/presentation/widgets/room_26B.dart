@@ -38,12 +38,11 @@ class Room26B extends StatelessWidget {
         if (state is WorkstationsFetchLoadingState) {
           return CircularLoading();
         } else if (state is WorkstationsFetchCompletedState) {
-          final workstations = state.workstationsList;
           return Workstations(
             quantity: 18,
             columnsNumber: 3,
             columnsSpacing: 15,
-            workstations: workstations,
+            usersWithWorkstations:state.usersWithWorkstations,
             startingIndex: 1,
             onWorkstationUpdated: (workstationSelected, currentWorkstation) =>
                 _workstationBloc.add(OnWorkstationAssigned(

@@ -52,7 +52,7 @@ class Room24 extends StatelessWidget {
                 quantity: 8,
                 columnsNumber: 2,
                 startingIndex: 19,
-                workstations: state.workstationsList,
+                usersWithWorkstations: state.usersWithWorkstations,
               )),
               SizedBox(width: 16),
               Expanded(
@@ -60,7 +60,7 @@ class Room24 extends StatelessWidget {
                 quantity: 8,
                 columnsNumber: 2,
                 startingIndex: 27,
-                workstations: state.workstationsList,
+                usersWithWorkstations: state.usersWithWorkstations,
               ))
             ],
           );

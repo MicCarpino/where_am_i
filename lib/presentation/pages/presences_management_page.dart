@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/presences_management_bloc.dart';
 
@@ -106,9 +107,9 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                             var user = state.allUsersPresences[index];
                             return ListTile(
                                 title: Text(
-                                  "${user.surname} ${user.name}",
+                                  "${user.user.surname} ${user.user.name}",
                                   style: TextStyle(
-                                      color: user.idWorkstation != null
+                                      color: user.workstation != null
                                           ? Colors.black
                                           : Colors.black38),
                                 ),
@@ -147,10 +148,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
           externalUser: Workstation(
         idWorkstation: null,
         codeWorkstation: null,
-        idResource: null,
         freeName: externalUser,
-        resourceName: null,
-        resourceSurname: null,
         workstationDate: this.visualizedDate,
       )));
     } else {
@@ -158,20 +156,17 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     }
   }
 
-  _onUserLongClick(User user) {
-    user.idWorkstation == null
+  _onUserLongClick(UserWithWorkstation userWithWorkstation) {
+    userWithWorkstation.workstation == null
         ? _presencesManagementBloc.add(OnInsertWorkstation(
             workstation: Workstation(
             idWorkstation: null,
-            idResource: user.idResource,
-            workstationDate: this.visualizedDate,
             codeWorkstation: null,
-            freeName: null,
-            resourceSurname: user.surname,
-            resourceName: user.name,
+            idResource: userWithWorkstation.user.idResource,
+            workstationDate: this.visualizedDate,
           )))
-        : _presencesManagementBloc
-            .add(OnDeleteWorkstation(idWorkstation: user.idWorkstation));
+        : _presencesManagementBloc.add(OnDeleteWorkstation(
+            idWorkstation: userWithWorkstation.workstation.idWorkstation));
   }
 
   _showSnackbarWithMessage(String message) {
