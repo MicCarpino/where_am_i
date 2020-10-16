@@ -105,7 +105,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final insertResult = await remoteDataSource.insertWorkstation(
-          loggedUser.authenticationToken, workstation);
+          loggedUser.authenticationToken, workstation.toWorkstationModel());
       cachedWorkstationsList.add(insertResult);
       return Right(cachedWorkstationsList);
     } on ServerException catch (error) {
