@@ -58,7 +58,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
       Workstation updatedWorkstation) async* {
     final updateWorkstationResult =
         await _updateWorkstation(updatedWorkstation);
-    updateWorkstationResult.fold(
+    yield updateWorkstationResult.fold(
         (failure) => WorkstationsFetchCompletedState(currentWorkstationList),
         (result) {
       //check if someone were already assigned to the workstation
@@ -67,7 +67,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
               element.workstation.codeWorkstation ==
               updatedWorkstation.codeWorkstation);
       //if there's a result means it has been replaced so his workstationCode is cleared
-      if (indexOfCurrentUserAssigned != null) {
+      if (indexOfCurrentUserAssigned != -1) {
         var currentUser = currentWorkstationList[indexOfCurrentUserAssigned];
         //clearing codeWorkstation of current user assigned
         currentWorkstationList[indexOfCurrentUserAssigned] =
@@ -84,7 +84,6 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
       int newUser = currentWorkstationList.indexWhere((element) =>
           element.workstation.idWorkstation ==
           updatedWorkstation.idWorkstation);
-      currentWorkstationList.singleWhere((element) => false);
       currentWorkstationList[newUser] = UserWithWorkstation(
           user: currentWorkstationList[newUser].user, workstation: result);
       return WorkstationsFetchCompletedState(currentWorkstationList);

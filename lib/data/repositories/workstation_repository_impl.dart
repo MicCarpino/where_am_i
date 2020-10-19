@@ -94,10 +94,10 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       }
       return Right(cachedCurrentUserPresences);
     } on ServerException catch (error) {
-      print("PRESENCES UPDATE SERVER ERROR "+error.errorMessage);
+      print("PRESENCES UPDATE SERVER ERROR " + error.errorMessage);
       return Left(ServerFailure(error.errorMessage));
     } catch (e) {
-      print("PRESENCES UPDATE UNEXP ERROR "+e.toString());
+      print("PRESENCES UPDATE UNEXP ERROR " + e.toString());
       return Left(UnexpectedFailure(e.toString()));
     }
   }
@@ -116,13 +116,14 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     }
   }
 
-
   @override
   Future<Either<Failure, Workstation>> updateWorkstation(
       Workstation updatedWorkstation) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
-      final updateResult = await remoteDataSource.updateWorkstation(loggedUser.authenticationToken, updatedWorkstation);
+      final updateResult = await remoteDataSource.updateWorkstation(
+          loggedUser.authenticationToken,
+          updatedWorkstation.toWorkstationModel());
       return Right(updateResult);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));

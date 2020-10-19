@@ -29,15 +29,17 @@ class AssignableUsersPage extends StatelessWidget {
               itemCount: assignableUsers.length,
               itemBuilder: (context, index) {
                 var selectedUser = assignableUsers[index];
+                //TODO: freename not working
                 var updatedWorkstation = Workstation(
-                    idWorkstation:  selectedUser.workstation.idWorkstation,
-                    idResource: selectedUser.user.idResource,
+                    idWorkstation: selectedUser.workstation.idWorkstation,
+                    idResource: selectedUser.user?.idResource,
                     workstationDate: selectedUser.workstation.workstationDate,
                     freeName: selectedUser.workstation.freeName,
                     codeWorkstation: selectedWorkstationCode);
                 return ListTile(
-                    title: Text(
-                        "${selectedUser.user.surname} ${selectedUser.user.name}"),
+                    title: Text(selectedUser.user != null
+                        ? "${selectedUser.user?.surname} ${selectedUser.user?.name}"
+                        : selectedUser.workstation.freeName),
                     onTap: () => Navigator.pop(context, updatedWorkstation));
               },
             )

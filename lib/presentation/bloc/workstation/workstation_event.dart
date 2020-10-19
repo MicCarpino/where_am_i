@@ -11,11 +11,9 @@ class FetchWorkstationsLists extends WorkstationEvent {
 
 class OnWorkstationAssigned extends WorkstationEvent {
   final Workstation updatedWorkstation;
-  final Workstation currentWorkstation;
 
   OnWorkstationAssigned({
     @required this.updatedWorkstation,
-    @required this.currentWorkstation,
   });
 }
 

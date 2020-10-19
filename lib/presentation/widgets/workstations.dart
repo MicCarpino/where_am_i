@@ -11,9 +11,7 @@ class Workstations extends StatefulWidget {
   final double columnsSpacing;
   final List<UserWithWorkstation> usersWithWorkstations;
   final int startingIndex;
-  final Function(
-          Workstation workstationAssigned, Workstation currentWorkstation)
-      onWorkstationUpdated;
+  final Function(Workstation workstationAssigned) onWorkstationUpdated;
 
   const Workstations({
     Key key,
@@ -43,10 +41,9 @@ class _WorkstationsState extends State<Workstations> {
         //TODO: fix label size to fit container
         var userWithWorkstation =
             _getWorkstationForIndex(index + widget.startingIndex);
-        var resourceLabel = userWithWorkstation != null
+        var resourceLabel = userWithWorkstation?.user != null
             ? userWithWorkstation.user.name +
-                " " +
-                "\n" +
+                " \n" +
                 userWithWorkstation.user.surname
             : "";
         //(workstation.freeName != null ? workstation.freeName : "");
@@ -54,10 +51,8 @@ class _WorkstationsState extends State<Workstations> {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
                 side: BorderSide(color: Colors.black54)),
-            onPressed: () {
-              _onWorkstationClick(userWithWorkstation?.workstation,
-                  getOldWorkstationCodeFor26b[index]);
-            },
+            onPressed: () =>
+                _onWorkstationClick(getOldWorkstationCodeFor26b[index]),
             child: AutoSizeText(
               resourceLabel,
               textAlign: TextAlign.center,
@@ -84,7 +79,7 @@ class _WorkstationsState extends State<Workstations> {
     return workstationOfIndex;
   }
 
-  _onWorkstationClick(Workstation currentWorkstation, String workstationCode) {
+  _onWorkstationClick(String workstationCode) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -95,7 +90,10 @@ class _WorkstationsState extends State<Workstations> {
                     .toList(),
                 selectedWorkstationCode: workstationCode,
               )),
-    ).then((selectedWorkstation) =>
-        widget.onWorkstationUpdated(selectedWorkstation, currentWorkstation));
+    ).then((selectedWorkstation) {
+      if (selectedWorkstation != null) {
+        widget.onWorkstationUpdated(selectedWorkstation);
+      }
+    });
   }
 }
