@@ -37,16 +37,7 @@ class UsersManagementBloc
     } else if (event is OnUsersListFilterUpdated) {
       yield* _applyFilterToList(event.filterInput);
     } else if (event is OnNewRoleAssigned) {
-     var updatedUsersList = await _updateUser(event.userUpdated);
-     updatedUsersList.fold((failure) {
-       print(
-           'update user fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
-       return UserUpdateErrorState();
-     }, (users) {
-       print('users : ${users.toList()}');
-       originalUsersList = users;
-       return UsersListReadyState(users);
-     });
+     yield* _updateUserRole(event.userUpdated);
     }
   }
 
@@ -75,5 +66,16 @@ class UsersManagementBloc
           .toList();
       yield UsersListReadyState(filteredList);
     }
+  }
+
+  Stream<UsersManagementState> _updateUserRole(User updatedUser) async*{
+    var updatedUsersList = await _updateUser(updatedUser);
+    yield updatedUsersList.fold((failure) {
+      print(          'update user fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+       return UserUpdateErrorState();
+    }, (users) {
+      originalUsersList = users;
+      return UsersListReadyState(users);
+    });
   }
 }

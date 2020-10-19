@@ -27,6 +27,8 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
     _textFieldController.addListener(() {
       _filterList(_textFieldController.text);
     });
+
+    _usersBloc = sl<UsersManagementBloc>();
     _usersBloc.listen((state) {
       if (state is UserUpdateErrorState) {
         Scaffold.of(context).showSnackBar(SnackBar(
@@ -35,7 +37,6 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
             duration: new Duration(seconds: 3)));
       }
     });
-    _usersBloc = sl<UsersManagementBloc>();
     super.initState();
   }
 
@@ -83,25 +84,29 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                     itemBuilder: (context, index) {
                       var user = state.usersList[index];
                       return ListTile(
-                          title: Text(
-                            "${user.surname} ${user.name}",
-                            style: TextStyle(color:Colors.black),
-                          ),
-                          trailing: _buildRoleLabel(user.idRole),
-                          onLongPress: () => showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return EditRoleDialog(
-                                  userSelected: user,
-                                  onNewRoleAssigned: (newRoleId) =>
-                                      _usersBloc.add(OnNewRoleAssigned(
-                                          userUpdated: User(
-                                              idResource: user.idResource,
-                                              surname: user.surname,
-                                              name: user.name,
-                                              idRole: newRoleId))),
-                                );
-                              }));
+                        title: Text(
+                          "${user.surname} ${user.name}",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        trailing: _buildRoleLabel(user.idRole),
+                        onLongPress: () => showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return EditRoleDialog(
+                              userSelected: user,
+                              onNewRoleAssigned: (newRoleId) => _usersBloc.add(
+                                OnNewRoleAssigned(
+                                  userUpdated: User(
+                                      idResource: user.idResource,
+                                      surname: user.surname,
+                                      name: user.name,
+                                      idRole: newRoleId),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
                     },
                     itemCount: state.usersList.length,
                   ),

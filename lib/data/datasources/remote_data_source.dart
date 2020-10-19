@@ -41,7 +41,7 @@ abstract class RemoteDataSource {
 
   Future<List<UserModel>> getUsers(String token);
 
-  Future<UserModel> updateUser(String token, User updatedUser);
+  Future<UserModel> updateUser(String token, UserModel userUpdated);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -171,14 +171,13 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<UserModel> updateUser(String token, User updatedUser) async {
-    var uri = Uri.https(BASE_URL, '/WhereAmI/user',
-        {'username': updatedUser.idResource.toString()});
+  Future<UserModel> updateUser(
+      String token, User updatedUser) async {
+    var uri = Uri.https(BASE_URL, '/WhereAmI/role/${updatedUser.idResource}',
+        {'idRole':updatedUser.idRole.toString()});
     final response = await http.put(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
-    }, body: {
-      'idRole': updatedUser.idRole
     });
     if (response.statusCode == 200) {
       return UserModel.fromJson(json.decode(response.body));
