@@ -42,32 +42,35 @@ class _HomePageState extends State<HomePage> {
     return Column(children: [
       DatePicker(this._onDateChanged),
       Expanded(
-        child: PageView.builder(
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (BuildContext context, int index) {
-            return MultiBlocProvider(providers: [
-              BlocProvider<WorkstationBloc>(
-                  create: (context) => _workstationBloc),
-              BlocProvider<ReservationsBloc>(
-                  create: (context) => _reservationsBloc)
-            ], child: pages[index]);
-          },
-          onPageChanged: (pageIndex) {
-            switch (pageIndex) {
-              case 0:
-                this.widget._setAppBarTitle("CIVICO 26/B");
-                break;
-              case 1:
-                widget._setAppBarTitle("CIVICO 26/A");
-                break;
-              case 2:
-                widget._setAppBarTitle("CIVICO 24");
-                break;
-            }
-          },
-          itemCount: pages.length,
+        child: MultiBlocProvider(
+          providers: [
+            BlocProvider<WorkstationBloc>(
+                create: (context) => _workstationBloc),
+            BlocProvider<ReservationsBloc>(
+                create: (context) => _reservationsBloc)
+          ],
+          child: PageView.builder(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (BuildContext context, int index) {
+              return pages[index];
+            },
+            onPageChanged: (pageIndex) {
+              switch (pageIndex) {
+                case 0:
+                  this.widget._setAppBarTitle("CIVICO 26/B");
+                  break;
+                case 1:
+                  widget._setAppBarTitle("CIVICO 26/A");
+                  break;
+                case 2:
+                  widget._setAppBarTitle("CIVICO 24");
+                  break;
+              }
+            },
+            itemCount: pages.length,
+          ),
         ),
-      ),
+      )
     ]);
   }
 
