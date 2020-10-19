@@ -14,9 +14,8 @@ part 'workstation_state.dart';
 class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   final GetWorkstationsByDate getWorkstationsByDate;
 
-  WorkstationBloc({
-    @required GetWorkstationsByDate getWorkstationsByDate
-  })  : assert(getWorkstationsByDate != null),
+  WorkstationBloc({@required GetWorkstationsByDate getWorkstationsByDate})
+      : assert(getWorkstationsByDate != null),
         getWorkstationsByDate = getWorkstationsByDate,
         super(WorkstationInitial());
 
@@ -26,15 +25,14 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   ) async* {
     if (event is FetchWorkstationsLists) {
       yield* _fetchWorkstationsList(event.dateToFetch);
-    } else if (event is OnWorkstationAssigned){
-     /* if(event.currentWorkstation.id){
+    } else if (event is OnWorkstationAssigned) {
+      /* if(event.currentWorkstation.id){
 
       }*/
     }
   }
 
-  Stream<WorkstationState> _fetchWorkstationsList(
-      DateTime dateToFetch) async* {
+  Stream<WorkstationState> _fetchWorkstationsList(DateTime dateToFetch) async* {
     yield WorkstationsFetchLoadingState();
     print('fetching workstations for $dateToFetch');
     final workstationsList = await getWorkstationsByDate(dateToFetch);
@@ -47,5 +45,4 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
       return WorkstationsFetchCompletedState(workstations);
     });
   }
-
 }
