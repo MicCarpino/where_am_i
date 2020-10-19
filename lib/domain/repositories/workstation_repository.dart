@@ -16,6 +16,9 @@ abstract class WorkstationRepository {
   Future<Either<Failure, List<Workstation>>> insertWorkstation(
       Workstation workstation);
 
+  Future<Either<Failure, Workstation>> updateWorkstation(
+      Workstation updatedWorkstation);
+
   Future<Either<Failure, List<Workstation>>> deleteWorkstation(
       int idWorkstation);
 }

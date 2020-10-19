@@ -6,6 +6,7 @@ import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_date.dart';
+import 'package:where_am_i/domain/usecases/update_workstation.dart';
 
 part 'workstation_event.dart';
 
@@ -13,11 +14,18 @@ part 'workstation_state.dart';
 
 class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   final GetWorkstationsByDate getWorkstationsByDate;
+  final UpdateWorkstation _updateWorkstation;
 
-  WorkstationBloc({@required GetWorkstationsByDate getWorkstationsByDate})
+  WorkstationBloc(
+      {@required GetWorkstationsByDate getWorkstationsByDate,
+      @required UpdateWorkstation updateWorkstation})
       : assert(getWorkstationsByDate != null),
+        assert(updateWorkstation != null),
         getWorkstationsByDate = getWorkstationsByDate,
+        _updateWorkstation = updateWorkstation,
         super(WorkstationInitial());
+  List<UserWithWorkstation> currentWorkstationList =
+      List<UserWithWorkstation>();
 
   @override
   Stream<WorkstationState> mapEventToState(
@@ -26,9 +34,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
     if (event is FetchWorkstationsLists) {
       yield* _fetchWorkstationsList(event.dateToFetch);
     } else if (event is OnWorkstationAssigned) {
-      /* if(event.currentWorkstation.id){
-
-      }*/
+      yield* _performWorkstationUpdate(event.updatedWorkstation);
     }
   }
 
@@ -41,8 +47,47 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
           'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
       return WorkstationsFetchErrorState();
     }, (workstations) {
+      //saving last fetch result to perform update without needing to download a new list
+      currentWorkstationList = workstations;
       print('workstations : ${workstations.toList()}');
       return WorkstationsFetchCompletedState(workstations);
+    });
+  }
+
+  Stream<WorkstationState> _performWorkstationUpdate(
+      Workstation updatedWorkstation) async* {
+    final updateWorkstationResult =
+        await _updateWorkstation(updatedWorkstation);
+    updateWorkstationResult.fold(
+        (failure) => WorkstationsFetchCompletedState(currentWorkstationList),
+        (result) {
+      //check if someone were already assigned to the workstation
+      int indexOfCurrentUserAssigned = currentWorkstationList.indexWhere(
+          (element) =>
+              element.workstation.codeWorkstation ==
+              updatedWorkstation.codeWorkstation);
+      //if there's a result means it has been replaced so his workstationCode is cleared
+      if (indexOfCurrentUserAssigned != null) {
+        var currentUser = currentWorkstationList[indexOfCurrentUserAssigned];
+        //clearing codeWorkstation of current user assigned
+        currentWorkstationList[indexOfCurrentUserAssigned] =
+            UserWithWorkstation(
+                user: currentUser.user,
+                workstation: Workstation(
+                    idWorkstation: currentUser.workstation.idWorkstation,
+                    freeName: currentUser.workstation.freeName,
+                    idResource: currentUser.workstation.idResource,
+                    codeWorkstation: null,
+                    workstationDate: currentUser.workstation.workstationDate));
+      }
+      //updating new user assigned to workstation
+      int newUser = currentWorkstationList.indexWhere((element) =>
+          element.workstation.idWorkstation ==
+          updatedWorkstation.idWorkstation);
+      currentWorkstationList.singleWhere((element) => false);
+      currentWorkstationList[newUser] = UserWithWorkstation(
+          user: currentWorkstationList[newUser].user, workstation: result);
+      return WorkstationsFetchCompletedState(currentWorkstationList);
     });
   }
 }

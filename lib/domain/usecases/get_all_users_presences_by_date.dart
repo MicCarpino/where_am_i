@@ -9,7 +9,8 @@ import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import '../../core/error/failure.dart';
 import '../../core/usecases/usecase.dart';
 
-class GetAllUserPresencesByDate extends UseCase<List<UserWithWorkstation>, DateTime> {
+class GetAllUserPresencesByDate
+    extends UseCase<List<UserWithWorkstation>, DateTime> {
   final WorkstationRepository workstationRepository;
   final UserRepository userRepository;
 
@@ -20,7 +21,7 @@ class GetAllUserPresencesByDate extends UseCase<List<UserWithWorkstation>, DateT
     var workstationsModelsList =
         await workstationRepository.getAllWorkstationsByDate(date);
     List<WorkstationModel> workstations =
-    workstationsModelsList.getOrElse(() => null);
+        workstationsModelsList.getOrElse(() => null);
     List<User> users = usersList.getOrElse(() => null);
     //assigning workstation (if present) at each user in list
     if (usersList != null && workstations != null) {
@@ -30,20 +31,24 @@ class GetAllUserPresencesByDate extends UseCase<List<UserWithWorkstation>, DateT
     }
   }
 
-  List<UserWithWorkstation> mergeAndSortUsersWithWorkstations(List<Workstation> workstations, List<User> users){
+  List<UserWithWorkstation> mergeAndSortUsersWithWorkstations(
+      List<Workstation> workstations, List<User> users) {
     List<UserWithWorkstation> usersWithWorkstations = users.map((user) {
       Workstation relatedWorkstation = workstations.firstWhere(
-              (workstation) => workstation.idResource == user.idResource,
+          (workstation) => workstation.idResource == user.idResource,
           orElse: () => null);
       return UserWithWorkstation(user: user, workstation: relatedWorkstation);
     }).toList();
-    usersWithWorkstations.sort((a, b) => a.user.surname.compareTo(b.user.surname));
+    usersWithWorkstations
+        .sort((a, b) => a.user.surname.compareTo(b.user.surname));
     //Free name users
     List<UserWithWorkstation> freeNamesWorkstations = workstations
         .where((workstation) => workstation.freeName != null)
-        .map((workstation) => UserWithWorkstation(user: null,workstation: workstation))
+        .map((workstation) =>
+            UserWithWorkstation(user: null, workstation: workstation))
         .toList();
-    freeNamesWorkstations.sort((a, b) => a.workstation.freeName.compareTo(b.workstation.freeName));
+    freeNamesWorkstations.sort(
+        (a, b) => a.workstation.freeName.compareTo(b.workstation.freeName));
     return List.of(freeNamesWorkstations..addAll(usersWithWorkstations));
   }
 }

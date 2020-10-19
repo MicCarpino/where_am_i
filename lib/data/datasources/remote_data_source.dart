@@ -34,6 +34,9 @@ abstract class RemoteDataSource {
   Future<WorkstationModel> insertWorkstation(
       String token, WorkstationModel workstation);
 
+  Future<WorkstationModel> updateWorkstation(
+      String token, WorkstationModel updatedWorkstation);
+
   Future<void> deleteWorkstation(String token, int idWorkstation);
 
   Future<List<ReservationModel>> getAllReservationsByDate(
@@ -115,7 +118,27 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       HttpHeaders.contentTypeHeader: 'application/json'
     });
     if (response.statusCode == 200) {
-      var c = WorkstationModel.fromJson(json.decode(response.body));
+      return WorkstationModel.fromJson(json.decode(response.body));
+    } else {
+      throw ServerException(response.body);
+    }
+  }
+
+  @override
+  Future<WorkstationModel> updateWorkstation(
+      String token, WorkstationModel updatedWorkstation) async {
+    var uri = Uri.https(
+      BASE_URL,
+      '/WhereAmI/workstation',
+      updatedWorkstation.toQueryParams(),
+    );
+    final response = await http.put(uri, headers: {
+      HttpHeaders.authorizationHeader: token,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    });
+    if (response.statusCode == 200) {
+      WorkstationModel c =
+          WorkstationModel.fromJson(json.decode(response.body));
       return c;
     } else {
       throw ServerException(response.body);
@@ -171,10 +194,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<UserModel> updateUser(
-      String token, User updatedUser) async {
+  Future<UserModel> updateUser(String token, User updatedUser) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/role/${updatedUser.idResource}',
-        {'idRole':updatedUser.idRole.toString()});
+        {'idRole': updatedUser.idRole.toString()});
     final response = await http.put(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'

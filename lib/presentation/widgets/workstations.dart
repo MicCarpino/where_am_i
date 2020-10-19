@@ -55,7 +55,8 @@ class _WorkstationsState extends State<Workstations> {
                 borderRadius: BorderRadius.circular(5),
                 side: BorderSide(color: Colors.black54)),
             onPressed: () {
-              _onWorkstationClick(userWithWorkstation.workstation, getOldWorkstationCodeFor26b[index]);
+              _onWorkstationClick(userWithWorkstation?.workstation,
+                  getOldWorkstationCodeFor26b[index]);
             },
             child: AutoSizeText(
               resourceLabel,
@@ -91,7 +92,8 @@ class _WorkstationsState extends State<Workstations> {
                 assignableUsers: widget.usersWithWorkstations
                     .where((element) =>
                         element.workstation.codeWorkstation == null)
-                    .toList(),selectedWorkstationCode:workstationCode ,
+                    .toList(),
+                selectedWorkstationCode: workstationCode,
               )),
     ).then((selectedWorkstation) =>
         widget.onWorkstationUpdated(selectedWorkstation, currentWorkstation));

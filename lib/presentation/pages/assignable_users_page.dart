@@ -28,18 +28,17 @@ class AssignableUsersPage extends StatelessWidget {
               ),
               itemCount: assignableUsers.length,
               itemBuilder: (context, index) {
-                var rowElement = assignableUsers[index];
+                var selectedUser = assignableUsers[index];
+                var updatedWorkstation = Workstation(
+                    idWorkstation:  selectedUser.workstation.idWorkstation,
+                    idResource: selectedUser.user.idResource,
+                    workstationDate: selectedUser.workstation.workstationDate,
+                    freeName: selectedUser.workstation.freeName,
+                    codeWorkstation: selectedWorkstationCode);
                 return ListTile(
                     title: Text(
-                        "${rowElement.user.surname} ${rowElement.user.name}"),
-                    onTap: () => Navigator.pop(
-                        context,
-                        Workstation(
-                            idWorkstation: null,
-                            idResource: rowElement.user?.idResource,
-                            workstationDate: null,
-                            freeName: rowElement.workstation.freeName,
-                            codeWorkstation: selectedWorkstationCode)));
+                        "${selectedUser.user.surname} ${selectedUser.user.name}"),
+                    onTap: () => Navigator.pop(context, updatedWorkstation));
               },
             )
           : Center(
