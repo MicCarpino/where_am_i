@@ -33,7 +33,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   ) async* {
     if (event is FetchWorkstationsLists) {
       yield* _fetchWorkstationsList(event.dateToFetch);
-    } else if (event is OnWorkstationAssigned) {
+    } else if (event is OnWorkstationUpdate) {
       yield* _performWorkstationUpdate(event.workstation);
     }
   }

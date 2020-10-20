@@ -55,7 +55,7 @@ class Room24 extends StatelessWidget {
                 usersWithWorkstations: state.usersWithWorkstations,
                 onWorkstationUpdated: (workstationSelected) =>
                     _workstationBloc.add(
-                  OnWorkstationAssigned(workstation: workstationSelected),
+                  OnWorkstationUpdate(workstation: workstationSelected),
                 ),
               )),
               SizedBox(width: 16),
@@ -67,7 +67,7 @@ class Room24 extends StatelessWidget {
                 usersWithWorkstations: state.usersWithWorkstations,
                 onWorkstationUpdated: (workstationSelected) =>
                     _workstationBloc.add(
-                  OnWorkstationAssigned(workstation: workstationSelected),
+                  OnWorkstationUpdate(workstation: workstationSelected),
                 ),
               ))
             ],

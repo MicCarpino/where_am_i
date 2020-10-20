@@ -52,6 +52,28 @@ class _WorkstationsState extends State<Workstations> {
                 borderRadius: BorderRadius.circular(5),
                 side: BorderSide(color: Colors.black54)),
             onPressed: () => _onWorkstationClick(index + widget.startingIndex),
+            onLongPress: () => showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Attenzione"),
+                      content: Text(
+                          "Continuando la risorsa verrà rimossa dalla postazione assegnatale"),
+                      actions: [
+                        FlatButton(
+                          child: Text("Annulla"),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        FlatButton(
+                            child: Text("OK"),
+                            onPressed: () => userWithWorkstation != null
+                                ? _onWorkstationLongClick(
+                                    userWithWorkstation.workstation)
+                                : null)
+                      ],
+                    );
+                  },
+                ),
             child: AutoSizeText(
               resourceLabel,
               textAlign: TextAlign.center,
@@ -82,7 +104,7 @@ class _WorkstationsState extends State<Workstations> {
   }
 
   _onWorkstationClick(int gridIndex) {
-    String workstationCode = gridIndex .toString();
+    String workstationCode = gridIndex.toString();
     if (gridIndex <= 18) {
       workstationCode = getOldWorkstationCodeFor26b[gridIndex];
     }
@@ -106,5 +128,17 @@ class _WorkstationsState extends State<Workstations> {
         widget.onWorkstationUpdated(selectedWorkstation);
       }
     });
+  }
+
+  _onWorkstationLongClick(Workstation selectedWorkstation) {
+    var clearedWorkstation = Workstation(
+      idWorkstation: selectedWorkstation.idWorkstation,
+      idResource: selectedWorkstation.idResource,
+      codeWorkstation: null,
+      workstationDate: selectedWorkstation.workstationDate,
+      freeName: selectedWorkstation.freeName,
+    );
+    widget.onWorkstationUpdated(clearedWorkstation);
+    Navigator.pop(context);
   }
 }

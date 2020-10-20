@@ -34,7 +34,7 @@ class Room26A extends StatelessWidget {
                     startingIndex: 50,
                     onWorkstationUpdated: (workstationSelected) =>
                         _workstationBloc.add(
-                      OnWorkstationAssigned(workstation: workstationSelected),
+                      OnWorkstationUpdate(workstation: workstationSelected),
                     ),
                   ),
                   RoomLabel(labelText: 'Stanza 2'),
@@ -45,7 +45,7 @@ class Room26A extends StatelessWidget {
                     startingIndex: 56,
                     onWorkstationUpdated: (workstationSelected) =>
                         _workstationBloc.add(
-                      OnWorkstationAssigned(workstation: workstationSelected),
+                      OnWorkstationUpdate(workstation: workstationSelected),
                     ),
                   ),
                   RoomLabel(labelText: 'Stanza 3'),
@@ -56,7 +56,7 @@ class Room26A extends StatelessWidget {
                     startingIndex: 64,
                     onWorkstationUpdated: (workstationSelected) =>
                         _workstationBloc.add(
-                      OnWorkstationAssigned(workstation: workstationSelected),
+                      OnWorkstationUpdate(workstation: workstationSelected),
                     ),
                   ),
                   RoomLabel(labelText: 'Stanza 4'),
@@ -70,7 +70,7 @@ class Room26A extends StatelessWidget {
                       startingIndex: 70,
                       onWorkstationUpdated: (workstationSelected) =>
                           _workstationBloc.add(
-                        OnWorkstationAssigned(workstation: workstationSelected),
+                        OnWorkstationUpdate(workstation: workstationSelected),
                       ),
                     ),
                   ),

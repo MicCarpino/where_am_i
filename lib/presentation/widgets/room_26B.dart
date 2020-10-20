@@ -45,7 +45,7 @@ class Room26B extends StatelessWidget {
             usersWithWorkstations: state.usersWithWorkstations,
             startingIndex: 0,
             onWorkstationUpdated: (workstationSelected) => _workstationBloc.add(
-              OnWorkstationAssigned(workstation: workstationSelected),
+              OnWorkstationUpdate(workstation: workstationSelected),
             ),
           );
         } else if (state is WorkstationsFetchErrorState) {
