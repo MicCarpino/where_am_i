@@ -21,7 +21,7 @@ class WorkstationModel extends Workstation {
     return WorkstationModel(
         idWorkstation: json['idWorkstation'],
         idResource: json['idResource'].toString(),
-        workstationDate:( DateTime.parse(json['workstationDate'])),
+        workstationDate:(DateTime.parse(json['workstationDate'])),
         freeName: json['freeName'],
         codeWorkstation: json['codeWorkstation']);
   }

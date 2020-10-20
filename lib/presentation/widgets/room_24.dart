@@ -53,6 +53,10 @@ class Room24 extends StatelessWidget {
                 columnsNumber: 2,
                 startingIndex: 19,
                 usersWithWorkstations: state.usersWithWorkstations,
+                onWorkstationUpdated: (workstationSelected) =>
+                    _workstationBloc.add(
+                  OnWorkstationAssigned(workstation: workstationSelected),
+                ),
               )),
               SizedBox(width: 16),
               Expanded(
@@ -61,6 +65,10 @@ class Room24 extends StatelessWidget {
                 columnsNumber: 2,
                 startingIndex: 27,
                 usersWithWorkstations: state.usersWithWorkstations,
+                onWorkstationUpdated: (workstationSelected) =>
+                    _workstationBloc.add(
+                  OnWorkstationAssigned(workstation: workstationSelected),
+                ),
               ))
             ],
           );

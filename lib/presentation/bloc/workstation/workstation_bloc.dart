@@ -16,10 +16,10 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   final GetWorkstationsByDate getWorkstationsByDate;
   final UpdateWorkstation _updateWorkstation;
 
-  WorkstationBloc(
-      {@required GetWorkstationsByDate getWorkstationsByDate,
-      @required UpdateWorkstation updateWorkstation})
-      : assert(getWorkstationsByDate != null),
+  WorkstationBloc({
+    @required GetWorkstationsByDate getWorkstationsByDate,
+    @required UpdateWorkstation updateWorkstation,
+  })  : assert(getWorkstationsByDate != null),
         assert(updateWorkstation != null),
         getWorkstationsByDate = getWorkstationsByDate,
         _updateWorkstation = updateWorkstation,
@@ -34,7 +34,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
     if (event is FetchWorkstationsLists) {
       yield* _fetchWorkstationsList(event.dateToFetch);
     } else if (event is OnWorkstationAssigned) {
-      yield* _performWorkstationUpdate(event.updatedWorkstation);
+      yield* _performWorkstationUpdate(event.workstation);
     }
   }
 

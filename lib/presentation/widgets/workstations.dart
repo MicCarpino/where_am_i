@@ -42,21 +42,22 @@ class _WorkstationsState extends State<Workstations> {
         var userWithWorkstation =
             _getWorkstationForIndex(index + widget.startingIndex);
         var resourceLabel = userWithWorkstation?.user != null
-            ? userWithWorkstation.user.name +
+            ? userWithWorkstation.user.surname +
                 " \n" +
-                userWithWorkstation.user.surname
+                userWithWorkstation.user.name
             : "";
         //(workstation.freeName != null ? workstation.freeName : "");
         return FlatButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
                 side: BorderSide(color: Colors.black54)),
-            onPressed: () =>
-                _onWorkstationClick(getOldWorkstationCodeFor26b[index]),
+            onPressed: () => _onWorkstationClick(index + widget.startingIndex),
             child: AutoSizeText(
               resourceLabel,
               textAlign: TextAlign.center,
               maxLines: resourceLabel.split(" ").length,
+              wrapWords: true,
+              overflow: TextOverflow.clip,
             ));
       }),
     );
@@ -66,7 +67,8 @@ class _WorkstationsState extends State<Workstations> {
     var workstationCode = gridIndex.toString();
     //room 26b
     if (gridIndex <= 18) {
-      workstationCode = getOldWorkstationCodeFor26b[gridIndex];
+      workstationCode =
+          getOldWorkstationCodeFor26b[gridIndex + widget.startingIndex];
     }
     //room 24
     if (gridIndex >= 19 && gridIndex <= 34) {
@@ -79,17 +81,26 @@ class _WorkstationsState extends State<Workstations> {
     return workstationOfIndex;
   }
 
-  _onWorkstationClick(String workstationCode) {
+  _onWorkstationClick(int gridIndex) {
+    String workstationCode = gridIndex .toString();
+    if (gridIndex <= 18) {
+      workstationCode = getOldWorkstationCodeFor26b[gridIndex];
+    }
+    //room 24
+    if (gridIndex >= 19 && gridIndex <= 34) {
+      workstationCode = getOldWorkstationCodeFor24[gridIndex];
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => AssignableUsersPage(
-                assignableUsers: widget.usersWithWorkstations
-                    .where((element) =>
-                        element.workstation.codeWorkstation == null)
-                    .toList(),
-                selectedWorkstationCode: workstationCode,
-              )),
+        builder: (context) => AssignableUsersPage(
+          assignableUsers: widget.usersWithWorkstations
+              .where((element) => element.workstation.codeWorkstation == null)
+              .toList(),
+          selectedWorkstationCode: workstationCode,
+        ),
+      ),
     ).then((selectedWorkstation) {
       if (selectedWorkstation != null) {
         widget.onWorkstationUpdated(selectedWorkstation);

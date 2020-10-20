@@ -28,22 +28,37 @@ class Room26A extends StatelessWidget {
                 children: [
                   RoomLabel(labelText: 'Stanza 1'),
                   Workstations(
-                      quantity: 6,
-                      columnsNumber: 3,
-                      usersWithWorkstations:state.usersWithWorkstations,
-                      startingIndex: 50),
+                    quantity: 6,
+                    columnsNumber: 3,
+                    usersWithWorkstations: state.usersWithWorkstations,
+                    startingIndex: 50,
+                    onWorkstationUpdated: (workstationSelected) =>
+                        _workstationBloc.add(
+                      OnWorkstationAssigned(workstation: workstationSelected),
+                    ),
+                  ),
                   RoomLabel(labelText: 'Stanza 2'),
                   Workstations(
-                      quantity: 8,
-                      columnsNumber: 4,
-                      usersWithWorkstations:state.usersWithWorkstations,
-                      startingIndex: 56),
+                    quantity: 8,
+                    columnsNumber: 4,
+                    usersWithWorkstations: state.usersWithWorkstations,
+                    startingIndex: 56,
+                    onWorkstationUpdated: (workstationSelected) =>
+                        _workstationBloc.add(
+                      OnWorkstationAssigned(workstation: workstationSelected),
+                    ),
+                  ),
                   RoomLabel(labelText: 'Stanza 3'),
                   Workstations(
-                      quantity: 6,
-                      columnsNumber: 3,
-                      usersWithWorkstations:state.usersWithWorkstations,
-                      startingIndex: 64),
+                    quantity: 6,
+                    columnsNumber: 3,
+                    usersWithWorkstations: state.usersWithWorkstations,
+                    startingIndex: 64,
+                    onWorkstationUpdated: (workstationSelected) =>
+                        _workstationBloc.add(
+                      OnWorkstationAssigned(workstation: workstationSelected),
+                    ),
+                  ),
                   RoomLabel(labelText: 'Stanza 4'),
                   Padding(
                     padding:
@@ -51,8 +66,12 @@ class Room26A extends StatelessWidget {
                     child: Workstations(
                       quantity: 6,
                       columnsNumber: 2,
-                      usersWithWorkstations:state.usersWithWorkstations,
+                      usersWithWorkstations: state.usersWithWorkstations,
                       startingIndex: 70,
+                      onWorkstationUpdated: (workstationSelected) =>
+                          _workstationBloc.add(
+                        OnWorkstationAssigned(workstation: workstationSelected),
+                      ),
                     ),
                   ),
                 ],
