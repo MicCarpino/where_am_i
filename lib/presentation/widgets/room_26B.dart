@@ -3,16 +3,19 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
+import 'package:where_am_i/presentation/pages/reservation_form_page.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/reservations_calendar.dart';
 import 'package:where_am_i/presentation/widgets/room_label.dart';
 import 'package:where_am_i/presentation/widgets/workstations.dart';
 
 class Room26B extends StatelessWidget {
+  final DateTime visualizedDate;
   final Function() onWorkstationTryAgainPressed;
   final Function() onReservationTryAgainPressed;
 
-  Room26B(this.onWorkstationTryAgainPressed, this.onReservationTryAgainPressed);
+  Room26B(this.visualizedDate, this.onWorkstationTryAgainPressed,
+      this.onReservationTryAgainPressed);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +28,26 @@ class Room26B extends StatelessWidget {
           _buildRoom26Workstations(_workstationBloc),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             RoomLabel(labelText: "Saletta riunioni - civico 26"),
-            IconButton(icon: Icon(Icons.settings), onPressed: () {})
+            IconButton(
+                icon: Icon(
+                  Icons.add_circle_sharp,
+                  color: Colors.black54,
+                  size: 32,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReservationFormPage(
+                        reservationDate: visualizedDate,
+                      ),
+                    ),
+                  ).then((newReservation) {
+                    if (newReservation != null) {
+                      //insert new reservation
+                    }
+                  });
+                })
           ]),
           _buildRoom26Events(_reservationBloc)
         ]));

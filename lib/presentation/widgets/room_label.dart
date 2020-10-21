@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/styles.dart';
 
 class RoomLabel extends StatelessWidget {
 
@@ -13,7 +13,7 @@ class RoomLabel extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 16, bottom: 8),
       child:
-      Text(labelText, style: kRoomLabelStyle),
+      Text(labelText, style: roomLabelStyle),
     );
   }
 }

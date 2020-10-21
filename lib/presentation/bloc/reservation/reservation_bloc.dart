@@ -23,20 +23,24 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
     ReservationsEvent event,
   ) async* {
     if (event is FetchReservationsList) {
-      yield ReservationsFetchLoadingState();
-
-      print('fetching reservations for ${event.dateToFetch}');
-
-      final reservationsList = await getReservations(event.dateToFetch);
-
-      yield reservationsList.fold((failure) {
-        print(
-            'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
-        return ReservationsFetchErrorState();
-      }, (reservations) {
-        print('reservations : ${reservations.toList()}');
-        return ReservationsFetchCompletedState(reservations);
-      });
+      yield* _fetchReservationsList(event.dateToFetch);
     }
+  }
+
+  Stream<ReservationState> _fetchReservationsList(DateTime dateToFetch) async* {
+    yield ReservationsFetchLoadingState();
+
+    print('fetching reservations for $dateToFetch');
+
+    final reservationsList = await getReservations(dateToFetch);
+
+    yield reservationsList.fold((failure) {
+      print(
+          'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+      return ReservationsFetchErrorState();
+    }, (reservations) {
+      print('reservations : ${reservations.toList()}');
+      return ReservationsFetchCompletedState(reservations);
+    });
   }
 }

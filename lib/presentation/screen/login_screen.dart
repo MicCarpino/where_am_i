@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/core/utils/size_config.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 import 'package:where_am_i/presentation/bloc/login/login_state.dart';
@@ -143,11 +144,11 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Username', style: kLabelStyle),
+        Text('Username', style: loginLabelStyle),
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
+          decoration: loginBoxDecorationStyle,
           height: 60.0,
           child: TextFormField(
             textInputAction: TextInputAction.next,
@@ -175,11 +176,11 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Password', style: kLabelStyle),
+        Text('Password', style: loginLabelStyle),
         SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
+          decoration: loginBoxDecorationStyle,
           height: 60.0,
           child: TextFormField(
             focusNode: _passwordFocus,
@@ -230,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
               },
             ),
           ),
-          Text('Remember me', style: kLabelStyle),
+          Text('Remember me', style: loginLabelStyle),
         ],
       ),
     );

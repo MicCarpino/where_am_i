@@ -30,9 +30,11 @@ class _HomePageState extends State<HomePage> {
     _workstationBloc..add(FetchWorkstationsLists(dateToFetch: DateTime.now()));
     _reservationsBloc..add(FetchReservationsList(dateToFetch: DateTime.now()));
     pages = [
-      Room26B(_onWorkstationTryAgainPressed, _onReservationTryAgainPressed),
+      Room26B(_visualizedDate, _onWorkstationTryAgainPressed,
+          _onReservationTryAgainPressed),
       Room26A(_onWorkstationTryAgainPressed, _onReservationTryAgainPressed),
-      Room24(_onWorkstationTryAgainPressed, _onReservationTryAgainPressed),
+      Room24(_visualizedDate, _onWorkstationTryAgainPressed,
+          _onReservationTryAgainPressed),
     ];
     super.initState();
   }

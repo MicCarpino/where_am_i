@@ -20,6 +20,9 @@ class MyApp extends StatelessWidget {
       statusBarColor: dncDarkBlue, // status bar color
     ));
     return MaterialApp(
+      builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child),
       localizationsDelegates: [
         // ... app-specific localization delegate[s] here
         GlobalMaterialLocalizations.delegate,
@@ -32,11 +35,6 @@ class MyApp extends StatelessWidget {
       ],
       theme: ThemeData(primarySwatch: Colors.lightBlue),
       home: SplashScreen(),
-      /*routes: <String, WidgetBuilder>{
-        SPLASH_SCREEN_KEY: (BuildContext context) => SplashScreen(),
-        LOGIN_SCREEN_KEY: (BuildContext context) => LoginScreen(),
-        HOME_SCREEN_KEY: (BuildContext context) => HomeScreen(),
-      },*/
     );
   }
 }

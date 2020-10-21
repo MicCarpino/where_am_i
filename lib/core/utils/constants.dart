@@ -73,25 +73,3 @@ const getOldWorkstationCodeFor24 = {
   34: "34"
 };
 
-//Styles
-final kLabelStyle = TextStyle(
-  color: dncBlue,
-  fontWeight: FontWeight.bold,
-  fontFamily: 'OpenSans',
-);
-
-final kBoxDecorationStyle = BoxDecoration(
-  color: Colors.white,
-  borderRadius: BorderRadius.circular(10.0),
-  boxShadow: [
-    BoxShadow(
-      color: Colors.black12,
-      blurRadius: 6.0,
-      offset: Offset(0, 2),
-    ),
-  ],
-);
-
-final kRoomLabelStyle = TextStyle(
-  fontSize: 20,
-);

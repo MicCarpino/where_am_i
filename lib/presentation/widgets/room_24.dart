@@ -8,10 +8,12 @@ import 'package:where_am_i/presentation/widgets/room_label.dart';
 import 'package:where_am_i/presentation/widgets/workstations.dart';
 
 class Room24 extends StatelessWidget {
+  final DateTime visualizedDate;
   final Function() onWorkstationTryAgainPressed;
   final Function() onReservationTryAgainPressed;
 
-  Room24(this.onWorkstationTryAgainPressed, this.onReservationTryAgainPressed);
+  Room24(this.visualizedDate, this.onWorkstationTryAgainPressed,
+      this.onReservationTryAgainPressed);
 
   @override
   Widget build(BuildContext context) {
