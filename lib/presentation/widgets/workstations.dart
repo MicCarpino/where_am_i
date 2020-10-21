@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
@@ -41,12 +42,14 @@ class _WorkstationsState extends State<Workstations> {
         //TODO: fix label size to fit container
         var userWithWorkstation =
             _getWorkstationForIndex(index + widget.startingIndex);
-        var resourceLabel = userWithWorkstation?.user != null
-            ? userWithWorkstation.user.surname +
-                " \n" +
-                userWithWorkstation.user.name
-            : "";
-        //(workstation.freeName != null ? workstation.freeName : "");
+        String resourceLabel = "";
+        if (userWithWorkstation?.user != null) {
+          resourceLabel = userWithWorkstation.user.surname +
+              " \n" +
+              userWithWorkstation.user.name;
+        } else if (userWithWorkstation?.workstation?.freeName != null ) {
+          resourceLabel = userWithWorkstation.workstation.freeName.capitalize();
+        }
         return FlatButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
