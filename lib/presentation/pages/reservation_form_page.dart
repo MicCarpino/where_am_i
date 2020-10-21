@@ -27,8 +27,14 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     "Pierugo",
   ];
 
+  TextEditingController _reservationSubjectTextController = TextEditingController();
+  TextEditingController _participantsTextController = TextEditingController();
+
   @override
   void initState() {
+    _participantsTextController.addListener(() {
+      setState(() {});
+    });
     reservationStartTime = TimeOfDay.now();
     reservationEndTime = reservationStartTime.replacing(
         hour: reservationStartTime.hour + 1, minute: 0);
@@ -78,7 +84,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                 style: reservationLabelStyle,
               ),
             ),
-            TextField(),
+            _buildReservationSubjectTextField(),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Row(
@@ -91,13 +97,13 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+              padding: const EdgeInsets.only(top: 16.0),
               child: Text(
                 'Partecipanti',
                 style: reservationLabelStyle,
               ),
             ),
-            TextField(),
+            _buildAddParticipantsTextField(),
             _buildParticipantsChips(),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -129,6 +135,16 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  _buildReservationSubjectTextField() {
+    return TextField(
+      controller: _reservationSubjectTextController,
+      maxLines: 1,
+      decoration: InputDecoration(
+        hintText: "Oggetto",
       ),
     );
   }
@@ -173,6 +189,35 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     );
   }
 
+  Widget _buildAddParticipantsTextField() {
+    return TextField(
+      autofillHints: participants,
+      controller: _participantsTextController,
+      maxLines: 1,
+      decoration: InputDecoration(
+        //delete icon, clears textfield
+        prefixIcon: _participantsTextController.text.isNotEmpty
+            ? IconButton(
+                onPressed: () => _participantsTextController.clear(),
+                icon: Icon(Icons.clear, color: Colors.black),
+              )
+            : null,
+        hintText: "Aggiungi partecipante",
+        //add icon, add participant chip
+        suffixIcon: _participantsTextController.text.isNotEmpty
+            ? IconButton(
+                onPressed: () {
+                  participants.add(_participantsTextController.text);
+                  _participantsTextController.clear();
+                  FocusScope.of(context).unfocus();
+                },
+                icon: Icon(Icons.person_add_rounded, color: dncBlue),
+              )
+            : null,
+      ),
+    );
+  }
+
   Widget _buildParticipantsChips() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -203,4 +248,5 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
   _insertReservation() {
     Navigator.pop(context);
   }
+
 }
