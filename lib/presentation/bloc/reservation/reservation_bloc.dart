@@ -24,6 +24,8 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
   ) async* {
     if (event is FetchReservationsList) {
       yield* _fetchReservationsList(event.dateToFetch);
+    } else if (event is InsertReservation){
+      yield* _validateAndInsertReservation(event.reservation);
     }
   }
 
@@ -42,5 +44,9 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
       print('reservations : ${reservations.toList()}');
       return ReservationsFetchCompletedState(reservations);
     });
+  }
+
+  Stream<ReservationState> _validateAndInsertReservation(Reservation reservation) {
+
   }
 }

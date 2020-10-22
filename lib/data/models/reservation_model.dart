@@ -1,10 +1,11 @@
+import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 
 class ReservationModel extends Reservation {
   ReservationModel({
     @required int idReservation,
-    @required String reservationDate,
+    @required DateTime reservationDate,
     @required int idRoom,
     @required int idHandler,
     @required String freeHandler,
@@ -13,7 +14,7 @@ class ReservationModel extends Reservation {
     @required int startHour,
     @required int endHour,
     @required String description,
-    @required String idParticipants,
+    @required List<String> participants,
     @required int status,
   }) : super(
           idReservation: idReservation,
@@ -26,14 +27,14 @@ class ReservationModel extends Reservation {
           startHour: startHour,
           endHour: endHour,
           description: description,
-          idParticipants: idParticipants,
+          participants: participants,
           status: status,
         );
 
   factory ReservationModel.fromJson(Map<String, dynamic> json) {
     return ReservationModel(
         idReservation: json["idReservation"],
-        reservationDate: json["reservationDate"],
+        reservationDate: (DateTime.parse(json['reservationDate'])),
         idRoom: json["idRoom"],
         idHandler: json["idHandler"],
         freeHandler: json["freeHandler"],
@@ -42,7 +43,24 @@ class ReservationModel extends Reservation {
         startHour: json["startHour"],
         endHour: json["endHour"],
         description: json["description"],
-        idParticipants: json["idParticipants"],
+        participants: json["idParticipants"].split(","),
         status: json["status"]);
   }
+
+  Map<String, dynamic> toJson() => {
+        'idReservation': idReservation,
+        'reservationDate': DateFormat('yyyy-MM-dd').format(reservationDate),
+        'idRoom': idRoom,
+        'idHandler': idHandler,
+        'freeHandler': freeHandler,
+        'startHour': startHour,
+        'startMinutes': startMinutes,
+        'endHour': endHour,
+        'endMinutes': endMinutes,
+        'description': description,
+        'idParticipants': participants.length > 1
+            ? participants.join(",")
+            : participants.first,
+        'status': status,
+      };
 }

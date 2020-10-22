@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 
@@ -25,5 +24,7 @@ final roomLabelStyle = TextStyle(
 );
 
 final reservationLabelStyle = TextStyle(
-  fontSize: 18,fontWeight: FontWeight.bold,color: Colors.black54
+  fontSize: 18,
+  fontWeight: FontWeight.bold,
+  color: Colors.black54,
 );

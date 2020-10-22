@@ -8,3 +8,9 @@ class FetchReservationsList extends ReservationsEvent {
 
   FetchReservationsList({@required this.dateToFetch});
 }
+
+class InsertReservation extends ReservationsEvent {
+  final Reservation reservation;
+
+  InsertReservation({@required this.reservation});
+}

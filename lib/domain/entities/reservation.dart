@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 
 class Reservation extends Equatable {
   final int idReservation;
-  final String reservationDate;
+  final DateTime reservationDate;
   final int idRoom;
   final int idHandler;
   final String freeHandler;
@@ -12,7 +12,7 @@ class Reservation extends Equatable {
   final int startHour;
   final int endHour;
   final String description;
-  final String idParticipants;
+  final List<String> participants;
   final int status;
 
   Reservation({
@@ -26,7 +26,7 @@ class Reservation extends Equatable {
     @required this.startHour,
     @required this.endHour,
     @required this.description,
-    @required this.idParticipants,
+    @required this.participants,
     @required this.status,
   });
 
@@ -42,7 +42,7 @@ class Reservation extends Equatable {
         startHour,
         endHour,
         description,
-        idParticipants,
+        participants,
         status
       ];
 }

@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
+import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 
 class ReservationFormPage extends StatefulWidget {
   final DateTime reservationDate;
+  final int idRoom;
   final Reservation reservation;
 
-  const ReservationFormPage({@required this.reservationDate, this.reservation});
+  const ReservationFormPage({
+    @required this.reservationDate,
+    @required this.idRoom,
+    this.reservation,
+  });
 
   @override
   _ReservationFormPageState createState() => _ReservationFormPageState();
@@ -18,6 +25,7 @@ class ReservationFormPage extends StatefulWidget {
 class _ReservationFormPageState extends State<ReservationFormPage> {
   TimeOfDay reservationStartTime;
   TimeOfDay reservationEndTime;
+
   List<String> participants = [
     "Gianni",
     "Sasa",
@@ -27,17 +35,15 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     "Pierugo",
   ];
 
-  TextEditingController _reservationSubjectTextController = TextEditingController();
+  TextEditingController _subjectTextController = TextEditingController();
   TextEditingController _participantsTextController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  ReservationsBloc _reservationBloc;
 
   @override
   void initState() {
-    _participantsTextController.addListener(() {
-      setState(() {});
-    });
-    reservationStartTime = TimeOfDay.now();
-    reservationEndTime = reservationStartTime.replacing(
-        hour: reservationStartTime.hour + 1, minute: 0);
+    _initTimePickers();
+    _reservationBloc = BlocProvider.of<ReservationsBloc>(context);
     super.initState();
   }
 
@@ -54,97 +60,90 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                'Nuova prenotazione per il giorno:',
-                style: reservationLabelStyle,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                  '${DateFormat('EEEE, MMM d, ' 'yy').format(widget.reservationDate)}'),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                'Referente',
-                style: reservationLabelStyle,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text('CURRENT USER'),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Text(
-                'Oggetto prenotazione*',
-                style: reservationLabelStyle,
-              ),
-            ),
-            _buildReservationSubjectTextField(),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildReservationTimePicker(
-                      'Ora inizio', reservationStartTime),
-                  _buildReservationTimePicker('Ora fine', reservationEndTime)
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Text(
-                'Partecipanti',
-                style: reservationLabelStyle,
-              ),
-            ),
-            _buildAddParticipantsTextField(),
-            _buildParticipantsChips(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                MaterialButton(
-                  color: dncBlue,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: dncBlue)),
-                  child: Text(
-                    'Annulla'.toUpperCase(),
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                SizedBox(width: 16),
-                MaterialButton(
-                  color: dncBlue,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: dncBlue)),
-                  child: Text(
-                    'Conferma'.toUpperCase(),
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () => _insertReservation(),
-                ),
-              ],
-            )
+            ..._buildDateSection(),
+            ..._buildReferentSection(),
+            ..._buildSubjectSection(),
+            _buildDatePickers(),
+            ..._buildParticipantsSection(),
+            ..._buildButtonsSection()
           ],
         ),
       ),
     );
   }
 
-  _buildReservationSubjectTextField() {
-    return TextField(
-      controller: _reservationSubjectTextController,
-      maxLines: 1,
-      decoration: InputDecoration(
-        hintText: "Oggetto",
+  List<Widget> _buildDateSection() {
+    return [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text(
+          'Nuova prenotazione per il giorno:',
+          style: reservationLabelStyle,
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text(
+          '${DateFormat('EEEE, MMM d, ' 'yy').format(widget.reservationDate)}',
+          style: TextStyle(fontSize: 16),
+        ),
+      )
+    ];
+  }
+
+  List<Widget> _buildReferentSection() {
+    return [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text(
+          'Referente',
+          style: reservationLabelStyle,
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Text(
+          'CURRENT USER',
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
+    ];
+  }
+
+  List<Widget> _buildSubjectSection() {
+    return [
+      Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Text(
+          'Oggetto prenotazione*',
+          style: reservationLabelStyle,
+        ),
+      ),
+      Form(
+        key: _formKey,
+        child: TextFormField(
+          controller: _subjectTextController,
+          validator: (value) => value.trim().isEmpty ? "Campo obbligatorio" : null,
+          maxLines: 1,
+          style: TextStyle(fontSize: 16),
+          decoration: InputDecoration(
+            hintText: "Oggetto",
+            errorStyle: TextStyle(),
+          ),
+        ),
+      )
+    ];
+  }
+
+  Widget _buildDatePickers() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildReservationTimePicker('Ora inizio', reservationStartTime),
+          _buildReservationTimePicker('Ora fine', reservationEndTime)
+        ],
       ),
     );
   }
@@ -187,6 +186,17 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
             )),
       ],
     );
+  }
+
+  List<Widget> _buildParticipantsSection() {
+    return [
+      Padding(
+        padding: const EdgeInsets.only(top: 16.0),
+        child: Text('Partecipanti', style: reservationLabelStyle),
+      ),
+      _buildAddParticipantsTextField(),
+      _buildParticipantsChips(),
+    ];
   }
 
   Widget _buildAddParticipantsTextField() {
@@ -245,8 +255,68 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     );
   }
 
-  _insertReservation() {
-    Navigator.pop(context);
+  List<Widget> _buildButtonsSection() {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          MaterialButton(
+            color: dncBlue,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: dncBlue)),
+            child: Text(
+              'Annulla'.toUpperCase(),
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+          SizedBox(width: 16),
+          MaterialButton(
+            color: dncBlue,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: dncBlue)),
+            child: Text(
+              'Conferma'.toUpperCase(),
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () => _validateReservation(),
+          ),
+        ],
+      )
+    ];
   }
 
+  _initTimePickers() {
+    reservationStartTime = TimeOfDay.now();
+    reservationStartTime = reservationStartTime.replacing(
+        hour: reservationStartTime.hour + 1, minute: 0);
+    if (reservationStartTime.hour == 13) {
+      reservationStartTime = reservationStartTime.replacing(hour: 14);
+    }
+    reservationEndTime = reservationStartTime.replacing(
+        hour: reservationStartTime.hour + 1, minute: 0);
+  }
+
+  _validateReservation() {
+    if (_formKey.currentState.validate()) {
+      Reservation newReservation = Reservation(
+          idReservation: null,
+          reservationDate: widget.reservationDate,
+          description: _subjectTextController.text.trim(),
+          participants: participants,
+          idHandler: 276,
+          idRoom: widget.idRoom,
+          freeHandler: null,
+          startMinutes: reservationStartTime.minute,
+          startHour: reservationStartTime.hour,
+          endHour: reservationEndTime.hour,
+          endMinutes: reservationEndTime.minute,
+          status: RESERVATION_PENDING);
+      _reservationBloc.add(InsertReservation(reservation: newReservation));
+    //  Navigator.pop(context);
+    }
+    //_reservationBloc.add(InsertReservation(reservation: newReservation));
+  }
 }
