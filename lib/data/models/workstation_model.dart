@@ -37,18 +37,22 @@ class WorkstationModel extends Workstation {
 
   Map<String, String> toQueryParams() {
     var queryParams = Map<String, String>();
-    idWorkstation != null
-        ? queryParams['idWorkstation'] = idWorkstation.toString()
-        : null;
-    codeWorkstation != null
-        ? queryParams['codeWorkstation'] = codeWorkstation
-        : null;
-    idResource != null ? queryParams['idResource'] = idResource : null;
-    freeName != null ? queryParams['freeName'] = freeName : null;
-    workstationDate != null
-        ? queryParams['workstationDate'] =
-            DateFormat('yyyy-MM-dd').format(workstationDate)
-        : null;
+    if (idWorkstation != null) {
+      queryParams['idWorkstation'] = idWorkstation.toString();
+    }
+    if (codeWorkstation != null) {
+      queryParams['codeWorkstation'] = codeWorkstation;
+    }
+    if (idResource != null) {
+      queryParams['idResource'] = idResource;
+    }
+    if (freeName != null) {
+      queryParams['freeName'] = freeName;
+    }
+    if (workstationDate != null) {
+      queryParams['workstationDate'] =
+          DateFormat('yyyy-MM-dd').format(workstationDate);
+    }
     return queryParams;
   }
 }
