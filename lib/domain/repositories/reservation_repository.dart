@@ -8,7 +8,7 @@ abstract class ReservationRepository {
 
   Future<Either<Failure, Reservation>> updateReservation(Reservation reservation);
 
-  Future<Either<Failure, Reservation>>insertReservation(Reservation reservation);
+  Future<Either<Failure, List<Reservation>>>insertReservation(Reservation reservation);
 
   Future<Either<Failure, void>> deleteReservation(int idReservation);
 

@@ -63,7 +63,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
             ..._buildDateSection(),
             ..._buildReferentSection(),
             ..._buildSubjectSection(),
-            _buildDatePickers(),
+            _buildTimePickersSection(),
             ..._buildParticipantsSection(),
             ..._buildButtonsSection()
           ],
@@ -125,6 +125,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
           controller: _subjectTextController,
           validator: (value) => value.trim().isEmpty ? "Campo obbligatorio" : null,
           maxLines: 1,
+          autofocus: false,
           style: TextStyle(fontSize: 16),
           decoration: InputDecoration(
             hintText: "Oggetto",
@@ -135,7 +136,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     ];
   }
 
-  Widget _buildDatePickers() {
+  Widget _buildTimePickersSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -160,6 +161,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                 borderRadius: BorderRadius.circular(8),
                 side: BorderSide(color: dncBlue)),
             onPressed: () async {
+              FocusScope.of(context).unfocus();
               await showTimePicker(
                   context: context,
                   initialTime: time,
@@ -281,7 +283,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
               'Conferma'.toUpperCase(),
               style: TextStyle(color: Colors.white),
             ),
-            onPressed: () => _validateReservation(),
+            onPressed: () => _insertNewReservation(),
           ),
         ],
       )
@@ -299,7 +301,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         hour: reservationStartTime.hour + 1, minute: 0);
   }
 
-  _validateReservation() {
+  _insertNewReservation() {
     if (_formKey.currentState.validate()) {
       Reservation newReservation = Reservation(
           idReservation: null,
@@ -314,9 +316,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
           endHour: reservationEndTime.hour,
           endMinutes: reservationEndTime.minute,
           status: RESERVATION_PENDING);
-      _reservationBloc.add(InsertReservation(reservation: newReservation));
-    //  Navigator.pop(context);
+      _reservationBloc.add(InsertReservationEvent(reservation: newReservation));
     }
-    //_reservationBloc.add(InsertReservation(reservation: newReservation));
   }
 }

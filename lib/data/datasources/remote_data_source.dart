@@ -18,32 +18,39 @@ const BASE_URL = "test.dncsrl.com";
 //Prod
 //const BASE_URL = "wai.dncsrl.com";
 
-String encryptedPw = "=";
+String encryptedPw =
+    "=";
 
 abstract class RemoteDataSource {
-  Future<AuthenticatedUserModel> performUserAuthentication(String username,
-      String password);
+  //USER
+  Future<AuthenticatedUserModel> performUserAuthentication(
+      String username, String password);
 
-  Future<List<WorkstationModel>> getAllWorkstationsByDate(String token,
-      DateTime date);
+  //WORKSTATIONS
+  Future<List<WorkstationModel>> getAllWorkstationsByDate(
+      String token, DateTime date);
 
-  Future<List<WorkstationModel>> getAllWorkstationsByIdResource(String token,
-      String idResource);
+  Future<List<WorkstationModel>> getAllWorkstationsByIdResource(
+      String token, String idResource);
 
-  Future<WorkstationModel> insertWorkstation(String token,
-      WorkstationModel workstation);
+  Future<WorkstationModel> insertWorkstation(
+      String token, WorkstationModel workstation);
 
-  Future<WorkstationModel> updateWorkstation(String token,
-      WorkstationModel updatedWorkstation);
+  Future<WorkstationModel> updateWorkstation(
+      String token, WorkstationModel updatedWorkstation);
 
   Future<void> deleteWorkstation(String token, int idWorkstation);
 
-  Future<List<ReservationModel>> getAllReservationsByDate(String token,
-      DateTime date);
+  //RESERVATIONS
+  Future<List<ReservationModel>> getAllReservationsByDate(
+      String token, DateTime date);
 
   Future<List<UserModel>> getUsers(String token);
 
   Future<UserModel> updateUser(String token, UserModel userUpdated);
+
+  Future<ReservationModel> insertReservation(
+      String authenticationToken, ReservationModel reservationModel) {}
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -55,8 +62,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       DateFormat('yyyy-MM-dd').format(date);
 
   @override
-  Future<AuthenticatedUserModel> performUserAuthentication(String username,
-      String password) async {
+  Future<AuthenticatedUserModel> performUserAuthentication(
+      String username, String password) async {
     //TODO: replace with password encription
     var uri = Uri.https(BASE_URL, '/WhereAmI/login',
         {'username': username.trim(), 'password': encryptedPw});
@@ -70,8 +77,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<List<WorkstationModel>> getAllWorkstationsByDate(String token,
-      DateTime date) async {
+  Future<List<WorkstationModel>> getAllWorkstationsByDate(
+      String token, DateTime date) async {
     var uri = Uri.https(
         BASE_URL, '/WhereAmI/workstation/${formatDateToString(date)}');
     final response = await http.get(uri, headers: {
@@ -88,8 +95,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<List<WorkstationModel>> getAllWorkstationsByIdResource(String token,
-      String idResource) async {
+  Future<List<WorkstationModel>> getAllWorkstationsByIdResource(
+      String token, String idResource) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/resource/$idResource');
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
@@ -105,8 +112,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<WorkstationModel> insertWorkstation(String token,
-      WorkstationModel workstation) async {
+  Future<WorkstationModel> insertWorkstation(
+      String token, WorkstationModel workstation) async {
     var uri = Uri.https(
       BASE_URL,
       '/WhereAmI/workstation',
@@ -124,8 +131,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<WorkstationModel> updateWorkstation(String token,
-      WorkstationModel updatedWorkstation) async {
+  Future<WorkstationModel> updateWorkstation(
+      String token, WorkstationModel updatedWorkstation) async {
     var uri = Uri.https(
       BASE_URL,
       '/WhereAmI/workstation',
@@ -157,8 +164,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<List<ReservationModel>> getAllReservationsByDate(String token,
-      DateTime date) async {
+  Future<List<ReservationModel>> getAllReservationsByDate(
+      String token, DateTime date) async {
     var uri = Uri.https(
         BASE_URL, '/WhereAmI/reservation/${formatDateToString(date)}');
     final response = await http.get(uri, headers: {
@@ -199,6 +206,25 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     });
     if (response.statusCode == 200) {
       return UserModel.fromJson(json.decode(response.body));
+    } else {
+      throw ServerException(response.body);
+    }
+  }
+
+  @override
+  Future<ReservationModel> insertReservation(
+      String authenticationToken, ReservationModel reservationModel) async {
+    var uri = Uri.https(
+      BASE_URL,
+      '/WhereAmI/reservation',
+      reservationModel.toQueryParams(),
+    );
+    final response = await http.post(uri, headers: {
+      HttpHeaders.authorizationHeader: authenticationToken,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    });
+    if (response.statusCode == 200) {
+      return ReservationModel.fromJson(json.decode(response.body));
     } else {
       throw ServerException(response.body);
     }

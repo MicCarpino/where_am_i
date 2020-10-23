@@ -1,5 +1,6 @@
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
+import 'package:where_am_i/data/models/reservation_model.dart';
 
 class Reservation extends Equatable {
   final int idReservation;
@@ -31,7 +32,8 @@ class Reservation extends Equatable {
   });
 
   @override
-  List<Object> get props => [
+  List<Object> get props =>
+      [
         idReservation,
         reservationDate,
         idRoom,
@@ -45,4 +47,18 @@ class Reservation extends Equatable {
         participants,
         status
       ];
+
+  ReservationModel toReservationModel() =>
+      ReservationModel(idReservation: (idReservation),
+          reservationDate: reservationDate,
+          idRoom: idRoom,
+          idHandler: idHandler,
+          freeHandler: freeHandler,
+          startMinutes: startMinutes,
+          endMinutes: endMinutes,
+          startHour: startHour,
+          endHour: endHour,
+          description: description,
+          participants: participants,
+          status: status);
 }

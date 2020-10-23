@@ -1,21 +1,29 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/error/failure.dart';
 
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/domain/usecases/get_reservations_by_date.dart';
+import 'package:where_am_i/domain/usecases/insert_reservation.dart';
 
 part 'reservation_event.dart';
 
 part 'reservation_state.dart';
 
 class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
-  final GetReservationsByDate getReservations;
+  final GetReservationsByDate _getReservations;
+  final InsertReservation _insertReservation;
 
-  ReservationsBloc({@required GetReservationsByDate getReservations})
-      : assert(getReservations != null),
-        getReservations = getReservations,
+  ReservationsBloc({
+    @required GetReservationsByDate getReservations,
+    @required InsertReservation insertReservation,
+  })  : assert(getReservations != null),
+        assert(insertReservation != null),
+        _getReservations = getReservations,
+        _insertReservation = insertReservation,
         super(ReservationInitial());
 
   @override
@@ -24,7 +32,7 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
   ) async* {
     if (event is FetchReservationsList) {
       yield* _fetchReservationsList(event.dateToFetch);
-    } else if (event is InsertReservation){
+    } else if (event is InsertReservationEvent) {
       yield* _validateAndInsertReservation(event.reservation);
     }
   }
@@ -34,7 +42,7 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
 
     print('fetching reservations for $dateToFetch');
 
-    final reservationsList = await getReservations(dateToFetch);
+    final reservationsList = await _getReservations(dateToFetch);
 
     yield reservationsList.fold((failure) {
       print(
@@ -46,7 +54,30 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
     });
   }
 
-  Stream<ReservationState> _validateAndInsertReservation(Reservation reservation) {
-
+  Stream<ReservationState> _validateAndInsertReservation(
+      Reservation reservation) async* {
+    var reservationStartTime = TimeOfDay(
+        hour: reservation.startHour, minute: reservation.startMinutes);
+    var reservationEndTime =
+        TimeOfDay(hour: reservation.endHour, minute: reservation.endMinutes);
+    if (reservation.startHour < 9) {
+      yield ReservationValidationError(
+          errorMessage:
+              'Non è possibile inserire una prenotazione che inizia prima delle ore 9');
+    } else if (reservation.endHour >= 18 && reservation.endMinutes > 0) {
+      yield ReservationValidationError(
+          errorMessage:
+              'Non è possibile inserire una prenotazione che finisce dopo le ore 18.00');
+    } else if (reservationStartTime.isAfter(reservationEndTime)) {
+      yield ReservationValidationError(
+          errorMessage:
+              ('Non è possibile inserire una prenotazione la cui ora di inizio è maggiore dell\'ora di fine'));
+    } else if (reservationStartTime.isEqual(reservationEndTime)) {
+      yield ReservationValidationError(
+          errorMessage: ('L\'orario di inizio e fine prenotazione coincidono'));
+    } else {
+      final updatedList = await _insertReservation( reservation);
+      var s = "";
+    }
   }
 }

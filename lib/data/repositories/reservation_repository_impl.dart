@@ -34,9 +34,17 @@ class ReservationRepositoryImpl implements ReservationRepository {
   }
 
   @override
-  Future<Either<Failure, Reservation>> insertReservation(
-      Reservation reservation) {
-    throw UnimplementedError();
+  Future<Either<Failure, List<Reservation>>> insertReservation(
+      Reservation reservation)async {
+    try {
+      var loggedUser = await localDataSource.getCachedUser();
+      final insertResult = await remoteDataSource.insertReservation(
+          loggedUser.authenticationToken, reservation.toReservationModel());
+      cachedReservationList.add(insertResult);
+      return Right(cachedReservationList);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    }
   }
 
   @override

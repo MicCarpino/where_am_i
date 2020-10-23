@@ -7,6 +7,7 @@ import 'package:where_am_i/domain/usecases/delete_workstation.dart';
 import 'package:where_am_i/domain/usecases/get_all_users_presences_by_date.dart';
 import 'package:where_am_i/domain/usecases/get_users.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_id_resource.dart';
+import 'package:where_am_i/domain/usecases/insert_reservation.dart';
 import 'package:where_am_i/domain/usecases/insert_workstation.dart';
 import 'package:where_am_i/domain/usecases/update_user.dart';
 import 'package:where_am_i/domain/usecases/update_user_presences.dart';
@@ -41,7 +42,7 @@ Future<void> init() async {
   sl.registerFactory(() => HomeBloc(performLogOut: sl()));
   sl.registerFactory(() =>
       WorkstationBloc(getWorkstationsByDate: sl(), updateWorkstation: sl()));
-  sl.registerFactory(() => ReservationsBloc(getReservations: sl()));
+  sl.registerFactory(() => ReservationsBloc(getReservations: sl(),insertReservation: sl()));
   sl.registerFactory(
       () => UsersManagementBloc(getUsers: sl(), updateUser: sl()));
   sl.registerFactory(() => PresencesManagementBloc(
@@ -70,6 +71,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DeleteWorkstation(sl(), sl()));
   //Reservation
   sl.registerLazySingleton(() => GetReservationsByDate(sl()));
+  sl.registerLazySingleton(() => InsertReservation(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(() => (AuthRepositoryImpl(

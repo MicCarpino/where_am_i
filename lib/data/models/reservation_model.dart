@@ -63,4 +63,42 @@ class ReservationModel extends Reservation {
             : participants.first,
         'status': status,
       };
+
+  Map<String, String> toQueryParams() {
+    var queryParams = Map<String, String>();
+    if (reservationDate != null) {
+      queryParams['reservationDate'] = DateFormat('yyyy-MM-dd').format(reservationDate);
+    }
+    if (idRoom != null) {
+      queryParams['idRoom'] = idRoom.toString();
+    }
+    if (idHandler != null) {
+      queryParams['idHandler'] = idHandler.toString();
+    }
+    if (freeHandler != null) {
+      queryParams['freeHandler'] = freeHandler.toString();
+    }
+    if (startMinutes != null) {
+      queryParams['startMinutes'] = startMinutes.toString();
+    }
+    if (endMinutes != null) {
+      queryParams['endMinutes'] = endMinutes.toString();
+    }
+    if (startHour != null) {
+      startHour.toString();
+    }
+    if (endHour != null) {
+      queryParams['endHour'] = endHour.toString();
+    }
+    if (description != null) {
+      queryParams['description'] = description;
+    }
+    if (status != null) {
+      queryParams['status'] = status.toString();
+    }
+    if (participants != null && participants.isNotEmpty) {
+      queryParams['participants'] = participants.join(",");
+    }
+    return queryParams;
+  }
 }
