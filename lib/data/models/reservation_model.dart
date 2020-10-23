@@ -43,7 +43,7 @@ class ReservationModel extends Reservation {
         startHour: json["startHour"],
         endHour: json["endHour"],
         description: json["description"],
-        participants: json["idParticipants"].split(","),
+        participants: json["idParticipants"]?.split(","),
         status: json["status"]);
   }
 
@@ -85,7 +85,7 @@ class ReservationModel extends Reservation {
       queryParams['endMinutes'] = endMinutes.toString();
     }
     if (startHour != null) {
-      startHour.toString();
+      queryParams['startHour'] =startHour.toString();
     }
     if (endHour != null) {
       queryParams['endHour'] = endHour.toString();

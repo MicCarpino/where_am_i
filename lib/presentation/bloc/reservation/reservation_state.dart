@@ -14,3 +14,14 @@ class ReservationsFetchCompletedState extends ReservationState {
 }
 
 class ReservationsFetchErrorState extends ReservationState {}
+
+class ReservationUpdatingState extends ReservationState {}
+//State forma insert and update operations in progress
+class ReservationUpdateSuccessState extends ReservationState {}
+
+// State for Insert and update operations errors
+class ReservationUpdateErrorState extends ReservationState {
+  final String errorMessage;
+
+  ReservationUpdateErrorState({@required this.errorMessage});
+}
