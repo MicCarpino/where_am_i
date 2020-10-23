@@ -7,6 +7,8 @@ import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 
+enum TimePickerType { inizio, fine }
+
 class ReservationFormPage extends StatefulWidget {
   final DateTime reservationDate;
   final int idRoom;
@@ -27,12 +29,12 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
   TimeOfDay reservationEndTime;
 
   List<String> participants = [
-    "Gianni",
+    /*"Gianni",
     "Sasa",
     "Giansasa",
     "Giangiangiangelo",
     "GianmariaMatteo",
-    "Pierugo",
+    "Pierugo",*/
   ];
 
   TextEditingController _subjectTextController = TextEditingController();
@@ -58,6 +60,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.all(16),
         child: Column(
+          mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ..._buildDateSection(),
@@ -65,7 +68,27 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
             ..._buildSubjectSection(),
             _buildTimePickersSection(),
             ..._buildParticipantsSection(),
-            ..._buildButtonsSection()
+            BlocBuilder(
+                cubit: _reservationBloc,
+                builder: (context, state) {
+                  if (state is ReservationUpdatingState) {
+                    return Center(child: CircularProgressIndicator());
+                  } else {
+                    return _buildButtonsSection();
+                  }
+                }),
+            BlocListener<ReservationsBloc, ReservationState>(
+                child: Container(),
+                cubit: _reservationBloc,
+                listener: (context, state) {
+                  if (state is ReservationUpdateErrorState) {
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(content: Text(state.errorMessage)),
+                    );
+                  } else if (state is ReservationUpdateSuccessState) {
+                    Navigator.of(context).pop();
+                  }
+                })
           ],
         ),
       ),
@@ -123,7 +146,8 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         key: _formKey,
         child: TextFormField(
           controller: _subjectTextController,
-          validator: (value) => value.trim().isEmpty ? "Campo obbligatorio" : null,
+          validator: (value) =>
+              value.trim().isEmpty ? "Campo obbligatorio" : null,
           maxLines: 1,
           autofocus: false,
           style: TextStyle(fontSize: 16),
@@ -142,19 +166,23 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildReservationTimePicker('Ora inizio', reservationStartTime),
-          _buildReservationTimePicker('Ora fine', reservationEndTime)
+          _buildReservationTimePicker(
+              TimePickerType.inizio, reservationStartTime),
+          _buildReservationTimePicker(TimePickerType.fine, reservationEndTime)
         ],
       ),
     );
   }
 
-  Widget _buildReservationTimePicker(String label, TimeOfDay time) {
+  Widget _buildReservationTimePicker(
+      TimePickerType pickerType, TimeOfDay time) {
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-          child: Text(label, style: reservationLabelStyle),
+          child: Text(
+              pickerType == TimePickerType.inizio ? "Ora inizio" : "Ora fine",
+              style: reservationLabelStyle),
         ),
         FlatButton(
             shape: RoundedRectangleBorder(
@@ -173,7 +201,9 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                   }).then((selectedTime) {
                 if (selectedTime != null) {
                   setState(() {
-                    reservationStartTime = selectedTime;
+                    pickerType == TimePickerType.inizio
+                        ? reservationStartTime = selectedTime
+                        : reservationEndTime = selectedTime;
                   });
                 }
               });
@@ -203,6 +233,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
 
   Widget _buildAddParticipantsTextField() {
     return TextField(
+      autofocus: false,
       autofillHints: participants,
       controller: _participantsTextController,
       maxLines: 1,
@@ -257,37 +288,35 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     );
   }
 
-  List<Widget> _buildButtonsSection() {
-    return [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          MaterialButton(
-            color: dncBlue,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: dncBlue)),
-            child: Text(
-              'Annulla'.toUpperCase(),
-              style: TextStyle(color: Colors.white),
-            ),
-            onPressed: () => Navigator.pop(context),
+  Widget _buildButtonsSection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        MaterialButton(
+          color: dncBlue,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide(color: dncBlue)),
+          child: Text(
+            'Annulla'.toUpperCase(),
+            style: TextStyle(color: Colors.white),
           ),
-          SizedBox(width: 16),
-          MaterialButton(
-            color: dncBlue,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: dncBlue)),
-            child: Text(
-              'Conferma'.toUpperCase(),
-              style: TextStyle(color: Colors.white),
-            ),
-            onPressed: () => _insertNewReservation(),
+          onPressed: () => Navigator.pop(context),
+        ),
+        SizedBox(width: 16),
+        MaterialButton(
+          color: dncBlue,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide(color: dncBlue)),
+          child: Text(
+            'Conferma'.toUpperCase(),
+            style: TextStyle(color: Colors.white),
           ),
-        ],
-      )
-    ];
+          onPressed: () => _insertNewReservation(),
+        ),
+      ],
+    );
   }
 
   _initTimePickers() {

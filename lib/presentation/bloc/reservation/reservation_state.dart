@@ -17,7 +17,10 @@ class ReservationsFetchErrorState extends ReservationState {}
 
 class ReservationUpdatingState extends ReservationState {}
 //State forma insert and update operations in progress
-class ReservationUpdateSuccessState extends ReservationState {}
+class ReservationUpdateSuccessState extends ReservationState {
+  final List<Reservation> reservationsList;
+
+  ReservationUpdateSuccessState(this.reservationsList);}
 
 // State for Insert and update operations errors
 class ReservationUpdateErrorState extends ReservationState {

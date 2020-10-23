@@ -33,8 +33,6 @@ class _HomePageState extends State<HomePage> {
       Room26B(_visualizedDate, _onWorkstationTryAgainPressed,
           _onReservationTryAgainPressed),
       Room26A(_onWorkstationTryAgainPressed, _onReservationTryAgainPressed),
-      Room24(_visualizedDate, _onWorkstationTryAgainPressed,
-          _onReservationTryAgainPressed),
     ];
     super.initState();
   }
@@ -54,7 +52,19 @@ class _HomePageState extends State<HomePage> {
           child: PageView.builder(
             scrollDirection: Axis.horizontal,
             itemBuilder: (BuildContext context, int index) {
-              return pages[index];
+              switch (index) {
+                case 0:
+                  return Room26B(_visualizedDate, _onWorkstationTryAgainPressed,
+                      _onReservationTryAgainPressed);
+                case 1:
+                  return Room26A(_onWorkstationTryAgainPressed,
+                      _onReservationTryAgainPressed);
+                case 2:
+                  return Room24(_visualizedDate, _onWorkstationTryAgainPressed,
+                      _onReservationTryAgainPressed);
+                default:
+                  return Container();
+              }
             },
             onPageChanged: (pageIndex) {
               switch (pageIndex) {
@@ -69,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                   break;
               }
             },
-            itemCount: pages.length,
+            itemCount: 3,
           ),
         ),
       )
@@ -77,8 +87,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   _onDateChanged(DateTime newDate) {
-    print("Home onDateChanged ${newDate.toString()}");
-    this._visualizedDate = newDate;
+    setState(() {
+      this._visualizedDate = newDate;
+    });
     _workstationBloc.add(FetchWorkstationsLists(dateToFetch: newDate));
     _reservationsBloc.add(FetchReservationsList(dateToFetch: newDate));
   }

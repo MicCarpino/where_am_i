@@ -64,7 +64,7 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
       yield ReservationUpdateErrorState(
           errorMessage:
               'Non è possibile inserire una prenotazione che inizia prima delle ore 9');
-    } else if (reservation.endHour >= 18 && reservation.endMinutes > 0) {
+    } else if (reservation.endHour > 18 || reservation.endHour == 18 && reservation.endMinutes > 0) {
       yield ReservationUpdateErrorState(
           errorMessage:
               'Non è possibile inserire una prenotazione che finisce dopo le ore 18.00');
@@ -76,15 +76,15 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
       yield ReservationUpdateErrorState(
           errorMessage: ('L\'orario di inizio e fine prenotazione coincidono'));
     } else {
-      yield ReservationUpdateSuccessState();
+      yield ReservationUpdatingState();
       final updateReservationResult = await _insertReservation(reservation);
       yield updateReservationResult.fold((failure) {
         return ReservationUpdateErrorState(
             errorMessage: (failure is ServerFailure)
                 ? failure.errorMessage
                 : "Boh, no so");
-      }, (reservationsList) {
-        return ReservationsFetchCompletedState(reservationsList);
+      }, (reservationsList)  {
+        return ReservationUpdateSuccessState(reservationsList);
       });
     }
   }
