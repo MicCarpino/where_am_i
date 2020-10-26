@@ -6,6 +6,7 @@ import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/error/failure.dart';
 
 import 'package:where_am_i/domain/entities/reservation.dart';
+import 'package:where_am_i/domain/usecases/delete_reservation.dart';
 import 'package:where_am_i/domain/usecases/get_reservations_by_date.dart';
 import 'package:where_am_i/domain/usecases/insert_reservation.dart';
 import 'package:where_am_i/domain/usecases/update_reservation_status.dart';
@@ -18,16 +19,21 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
   final GetReservationsByDate _getReservations;
   final InsertReservation _insertReservation;
   final UpdateReservationStatus _updateReservationStatus;
+  final DeleteReservation _deleteReservation;
 
   ReservationsBloc({
     @required GetReservationsByDate getReservations,
     @required InsertReservation insertReservation,
     @required UpdateReservationStatus updateReservationStatus,
+    @required DeleteReservation deleteReservation,
   })  : assert(getReservations != null),
         assert(insertReservation != null),
+        assert(updateReservationStatus != null),
+        assert(deleteReservation != null),
         _getReservations = getReservations,
         _insertReservation = insertReservation,
         _updateReservationStatus = updateReservationStatus,
+        _deleteReservation = deleteReservation,
         super(ReservationInitial());
 
   @override
@@ -40,6 +46,8 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
       yield* _validateAndInsertReservation(event.reservation);
     } else if (event is UpdateReservationStatusEvent){
       yield* _performStatusUpdate(event);
+    } else if (event is DeleteReservationEvent){
+      yield* _performDeleteReservation(event.idReservation);
     }
   }
 
@@ -107,4 +115,18 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
       return ReservationsFetchCompletedState(reservations);
     });
   }
+
+  Stream<ReservationState> _performDeleteReservation(int idReservation) async* {
+    final updatedList  = await _deleteReservation(idReservation);
+    yield updatedList.fold((failure) {
+      return ReservationUpdateErrorState(
+          errorMessage: (failure is ServerFailure)
+              ? failure.errorMessage
+              : "Boh, no so");
+    }, (reservations) {
+      print('reservations : ${reservations.toList()}');
+      return ReservationsFetchCompletedState(reservations);
+    });
+  }
 }
+

@@ -16,7 +16,8 @@ class ReservationsCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ReservationsBloc bloc= BlocProvider.of<ReservationsBloc>(context);
+    ReservationsBloc reservationBloc =
+        BlocProvider.of<ReservationsBloc>(context);
     return DayView(
       userZoomable: false,
       style: _getDayViewStyle(),
@@ -30,14 +31,14 @@ class ReservationsCalendar extends StatelessWidget {
       maximumTime: HourMinute(hour: 18, minute: 10),
       events: reservationsList != null
           ? reservationsList
-              .map((e) => _mapReservationToEvent(e, context,bloc))
+              .map((e) => _mapReservationToEvent(e, context, reservationBloc))
               .toList()
           : [],
     );
   }
 
   FlutterWeekViewEvent _mapReservationToEvent(
-      Reservation reservation, BuildContext context,ReservationsBloc bloc) {
+      Reservation reservation, BuildContext context, ReservationsBloc bloc) {
     var date = DateTime.now();
     return FlutterWeekViewEvent(
       decoration: BoxDecoration(
@@ -50,10 +51,11 @@ class ReservationsCalendar extends StatelessWidget {
                   : dncOrange),
           borderRadius: BorderRadius.circular(5)),
       textStyle: TextStyle(
-          color: reservation.status == RESERVATION_PENDING
-              ? Colors.white
-              : Colors.black54,
-          fontWeight: FontWeight.bold),
+        color: reservation.status == RESERVATION_PENDING
+            ? Colors.white
+            : Colors.black54,
+        fontWeight: FontWeight.bold,
+      ),
       title: reservation.description,
       description: "",
       start: DateTime(date.year, date.month, date.day, reservation.startHour,
@@ -68,7 +70,7 @@ class ReservationsCalendar extends StatelessWidget {
       onLongPress: () => showDialog(
           context: context,
           builder: (BuildContext context) {
-            return _showEditReservationOptions(reservation, context,bloc);
+            return _showEditReservationOptions(reservation, context, bloc);
           }),
     );
   }
@@ -90,7 +92,7 @@ class ReservationsCalendar extends StatelessWidget {
   }
 
   Dialog _showEditReservationOptions(
-      Reservation reservation, BuildContext context,ReservationsBloc bloc) {
+      Reservation reservation, BuildContext context, ReservationsBloc bloc) {
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -110,23 +112,22 @@ class ReservationsCalendar extends StatelessWidget {
                   ),
                 ]),
                 onTap: () {
-                  bloc.add(
-                      UpdateReservationStatusEvent(
-                          updatedReservation: Reservation(
-                              idReservation: reservation.idReservation,
-                              startHour: reservation.startHour,
-                              startMinutes: reservation.startMinutes,
-                              endHour: reservation.endHour,
-                              endMinutes: reservation.endMinutes,
-                              participants: reservation.participants,
-                              idRoom: reservation.idRoom,
-                              freeHandler: reservation.freeHandler,
-                              description: reservation.description,
-                              reservationDate: reservation.reservationDate,
-                              idHandler: reservation.idHandler,
-                              status: reservation.status == RESERVATION_PENDING
-                                  ? RESERVATION_CONFIRMED
-                                  : RESERVATION_PENDING)));
+                  bloc.add(UpdateReservationStatusEvent(
+                      updatedReservation: Reservation(
+                          idReservation: reservation.idReservation,
+                          startHour: reservation.startHour,
+                          startMinutes: reservation.startMinutes,
+                          endHour: reservation.endHour,
+                          endMinutes: reservation.endMinutes,
+                          participants: reservation.participants,
+                          idRoom: reservation.idRoom,
+                          freeHandler: reservation.freeHandler,
+                          description: reservation.description,
+                          reservationDate: reservation.reservationDate,
+                          idHandler: reservation.idHandler,
+                          status: reservation.status == RESERVATION_PENDING
+                              ? RESERVATION_CONFIRMED
+                              : RESERVATION_PENDING)));
                   Navigator.of(context).pop();
                 }),
             InkWell(
@@ -147,6 +148,8 @@ class ReservationsCalendar extends StatelessWidget {
                   ),
                 ]),
                 onTap: () {
+                  bloc.add(DeleteReservationEvent(
+                      idReservation: reservation.idReservation));
                   Navigator.of(context).pop();
                 }),
           ],

@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:where_am_i/domain/usecases/delete_reservation.dart';
 import 'data/repositories/user_repository_impl.dart';
 import 'domain/usecases/get_logged_user.dart';
 
@@ -43,7 +44,12 @@ Future<void> init() async {
   sl.registerFactory(() => HomeBloc(performLogOut: sl()));
   sl.registerFactory(() =>
       WorkstationBloc(getWorkstationsByDate: sl(), updateWorkstation: sl()));
-  sl.registerFactory(() => ReservationsBloc(getReservations: sl(),insertReservation: sl(),updateReservationStatus: sl()));
+  sl.registerFactory(() => ReservationsBloc(
+        getReservations: sl(),
+        insertReservation: sl(),
+        updateReservationStatus: sl(),
+        deleteReservation: sl(),
+      ));
   sl.registerFactory(
       () => UsersManagementBloc(getUsers: sl(), updateUser: sl()));
   sl.registerFactory(() => PresencesManagementBloc(
@@ -74,6 +80,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetReservationsByDate(sl()));
   sl.registerLazySingleton(() => InsertReservation(sl()));
   sl.registerLazySingleton(() => UpdateReservationStatus(sl()));
+  sl.registerLazySingleton(() => DeleteReservation(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(() => (AuthRepositoryImpl(

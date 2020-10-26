@@ -20,3 +20,9 @@ class UpdateReservationStatusEvent extends ReservationsEvent {
 
   UpdateReservationStatusEvent({@required this.updatedReservation});
 }
+
+class DeleteReservationEvent extends ReservationsEvent {
+  final int idReservation;
+
+  DeleteReservationEvent({@required this.idReservation});
+}

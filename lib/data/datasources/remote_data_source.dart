@@ -54,6 +54,8 @@ abstract class RemoteDataSource {
 
   Future<ReservationModel> updateReservationStatus(
       String authenticationToken, int idReservation, int newStatus);
+
+  Future<void> deleteReservation(String authenticationToken, int idReservation);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -241,6 +243,21 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     });
     if (response.statusCode == 200) {
       return ReservationModel.fromJson(json.decode(response.body));
+    } else {
+      throw ServerException(response.body);
+    }
+  }
+
+  @override
+  Future<void> deleteReservation(String authenticationToken, int idReservation) async {
+    var uri =
+    Uri.https(BASE_URL, '/WhereAmI/reservation/$idReservation');
+    final response = await http.delete(uri, headers: {
+      HttpHeaders.authorizationHeader: authenticationToken,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    });
+    if (response.statusCode == 200) {
+      return ;
     } else {
       throw ServerException(response.body);
     }

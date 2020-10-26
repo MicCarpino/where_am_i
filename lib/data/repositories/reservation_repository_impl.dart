@@ -54,8 +54,18 @@ class ReservationRepositoryImpl implements ReservationRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteReservation(int idReservation) {
-    throw UnimplementedError();
+  Future<Either<Failure, List<Reservation>>> deleteReservation(
+      int idReservation) async {
+    try {
+      var loggedUser = await localDataSource.getCachedUser();
+      await remoteDataSource.deleteReservation(
+          loggedUser.authenticationToken, idReservation);
+      cachedReservationList
+          .removeWhere((element) => element.idReservation == idReservation);
+      return Right(cachedReservationList);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    }
   }
 
   @override
