@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/presentation/widgets/reservations_details_dialog.dart';
 
@@ -61,7 +62,11 @@ class ReservationsCalendar extends StatelessWidget {
           builder: (BuildContext context) {
             return ReservationDetailsDialog(reservation: reservation);
           }),
-      onLongPress: _showEditOptions(reservation),
+      onLongPress: () => showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return _showEditReservationOptions(reservation);
+          }),
     );
   }
 
@@ -81,5 +86,41 @@ class ReservationsCalendar extends StatelessWidget {
     );
   }
 
-  _showEditOptions(Reservation reservation) {}
+  Dialog _showEditReservationOptions(Reservation reservation) {
+    return Dialog(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            InkWell(
+                onTap: () {},
+                child: Row(children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text('CONFERMA', style: boldStyle),
+                  ),
+                ])),
+            InkWell(
+                onTap: () {},
+                child: Row(children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text('MODIFICA', style: boldStyle),
+                  ),
+                ])),
+            InkWell(
+                onTap: () {},
+                child: Row(children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text('ELIMINA', style: boldStyle),
+                  ),
+                ])),
+          ],
+        ),
+      ),
+    );
+  }
 }

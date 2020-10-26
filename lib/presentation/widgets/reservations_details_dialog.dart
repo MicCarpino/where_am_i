@@ -30,7 +30,7 @@ class ReservationDetailsDialog extends StatelessWidget {
             Divider(),
             Text('Partecipanti', style: reservationLabelStyle),
             SizedBox(height: 8),
-            Text(reservation.participants.join(",")),
+            Text(reservation.participants!= null? reservation.participants.join(","):"Nessun partecipante indicato"),
           ],
         ),
       ),

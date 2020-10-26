@@ -28,3 +28,5 @@ final reservationLabelStyle = TextStyle(
   fontWeight: FontWeight.bold,
   color: Colors.black54,
 );
+
+final boldStyle =  TextStyle(fontWeight: FontWeight.bold);
