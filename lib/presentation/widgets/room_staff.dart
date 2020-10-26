@@ -5,11 +5,11 @@ import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/room_label.dart';
 import 'package:where_am_i/presentation/widgets/workstations.dart';
 
-class Room26A extends StatelessWidget {
+class RoomStaff extends StatelessWidget {
   final Function() onWorkstationTryAgainPressed;
   final Function() onReservationTryAgainPressed;
 
-  Room26A(this.onWorkstationTryAgainPressed, this.onReservationTryAgainPressed);
+  RoomStaff(this.onWorkstationTryAgainPressed, this.onReservationTryAgainPressed);
 
   @override
   Widget build(BuildContext context) {
@@ -26,54 +26,28 @@ class Room26A extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  RoomLabel(labelText: 'Stanza 1'),
+                  RoomLabel(labelText: 'Dirigenza'),
                   Workstations(
-                    quantity: 6,
+                    quantity: 4,
                     columnsNumber: 3,
                     usersWithWorkstations: state.usersWithWorkstations,
                     startingIndex: 50,
                     onWorkstationUpdated: (workstationSelected) =>
                         _workstationBloc.add(
-                      OnWorkstationUpdate(workstation: workstationSelected),
-                    ),
+                          OnWorkstationUpdate(workstation: workstationSelected),
+                        ),
                   ),
-                  RoomLabel(labelText: 'Stanza 2'),
+                  RoomLabel(labelText: 'Amministrazione'),
                   Workstations(
-                    quantity: 8,
-                    columnsNumber: 4,
+                    quantity:3,
+                    columnsNumber: 2,
                     usersWithWorkstations: state.usersWithWorkstations,
                     startingIndex: 56,
                     onWorkstationUpdated: (workstationSelected) =>
                         _workstationBloc.add(
-                      OnWorkstationUpdate(workstation: workstationSelected),
-                    ),
-                  ),
-                  RoomLabel(labelText: 'Stanza 3'),
-                  Workstations(
-                    quantity: 6,
-                    columnsNumber: 3,
-                    usersWithWorkstations: state.usersWithWorkstations,
-                    startingIndex: 64,
-                    onWorkstationUpdated: (workstationSelected) =>
-                        _workstationBloc.add(
-                      OnWorkstationUpdate(workstation: workstationSelected),
-                    ),
-                  ),
-                  RoomLabel(labelText: 'Stanza 4'),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 40),
-                    child: Workstations(
-                      quantity: 6,
-                      columnsNumber: 2,
-                      usersWithWorkstations: state.usersWithWorkstations,
-                      startingIndex: 70,
-                      onWorkstationUpdated: (workstationSelected) =>
-                          _workstationBloc.add(
-                        OnWorkstationUpdate(workstation: workstationSelected),
-                      ),
-                    ),
-                  ),
+                          OnWorkstationUpdate(workstation: workstationSelected),
+                        ),
+                  )
                 ],
               );
             } else if (state is WorkstationsFetchErrorState) {

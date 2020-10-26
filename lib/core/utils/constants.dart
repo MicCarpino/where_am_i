@@ -27,7 +27,8 @@ const String JWT_TOKEN_KEY = 'JWT_TOKEN';
 
 const String BASE_URL = "wai.dncsrl.com";
 const ROOM_24_CODE = 24;
-const ROOM_26_CODE = 26;
+const ROOM_26B_CODE = 26;
+const ROOM_26A_CODE = 261;
 const RESERVATION_PENDING = 0;
 const RESERVATION_CONFIRMED = 1;
 const ROLE_USER = 1;

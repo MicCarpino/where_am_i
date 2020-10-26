@@ -19,22 +19,25 @@ class ReservationsCalendar extends StatelessWidget {
   Widget build(BuildContext context) {
     ReservationsBloc _reservationBloc =
         BlocProvider.of<ReservationsBloc>(context);
-    return DayView(
-      userZoomable: false,
-      style: _getDayViewStyle(),
-      hoursColumnStyle: _getHoursColumnStyle(),
-      /*library display event basing on date displayed on his header. Since the
-       header is disabled the current event date should be set to "today" in
-       order to display the events on screen*/
-      date: DateTime.now(),
-      // +/- 10 minutes to prevent crop
-      minimumTime: HourMinute(hour: 8, minute: 50),
-      maximumTime: HourMinute(hour: 18, minute: 10),
-      events: reservationsList != null
-          ? reservationsList
-              .map((e) => _mapReservationToEvent(e, context, _reservationBloc))
-              .toList()
-          : [],
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: DayView(
+        userZoomable: false,
+        style: _getDayViewStyle(),
+        hoursColumnStyle: _getHoursColumnStyle(),
+        /*library display event basing on date displayed on his header. Since the
+         header is disabled the current event date should be set to "today" in
+         order to display the events on screen*/
+        date: DateTime.now(),
+        // +/- 10 minutes to prevent crop
+        minimumTime: HourMinute(hour: 8, minute: 50),
+        maximumTime: HourMinute(hour: 18, minute: 10),
+        events: reservationsList != null
+            ? reservationsList
+                .map((e) => _mapReservationToEvent(e, context, _reservationBloc))
+                .toList()
+            : [],
+      ),
     );
   }
 

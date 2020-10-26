@@ -28,7 +28,7 @@ class Room26B extends StatelessWidget {
         child: Column(children: [
           _buildRoom26Workstations(_workstationBloc),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            RoomLabel(labelText: "Saletta riunioni - civico 26"),
+            RoomLabel(labelText: "Saletta riunioni 26/B"),
             IconButton(
                 icon: Icon(
                   Icons.add_circle_sharp,
@@ -43,15 +43,11 @@ class Room26B extends StatelessWidget {
                         value: _reservationBloc,
                         child: ReservationFormPage(
                           reservationDate: visualizedDate,
-                          idRoom: ROOM_26_CODE,
+                          idRoom: ROOM_26B_CODE,
                         ),
                       ),
                     ),
-                  ).then((newReservation) {
-                    if (newReservation != null) {
-                      //insert new reservation
-                    }
-                  });
+                  );
                 })
           ]),
           _buildRoom26Events(_reservationBloc),

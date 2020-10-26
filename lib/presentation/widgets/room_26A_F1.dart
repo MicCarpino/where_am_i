@@ -9,12 +9,12 @@ import 'package:where_am_i/presentation/widgets/reservations_calendar.dart';
 import 'package:where_am_i/presentation/widgets/room_label.dart';
 import 'package:where_am_i/presentation/widgets/workstations.dart';
 
-class Room24 extends StatelessWidget {
+class Room26AF1 extends StatelessWidget {
   final DateTime visualizedDate;
   final Function() onWorkstationTryAgainPressed;
   final Function() onReservationTryAgainPressed;
 
-  Room24(this.visualizedDate, this.onWorkstationTryAgainPressed,
+  Room26AF1(this.visualizedDate, this.onWorkstationTryAgainPressed,
       this.onReservationTryAgainPressed);
 
   @override
@@ -26,11 +26,11 @@ class Room24 extends StatelessWidget {
       padding: EdgeInsets.all(16),
       child: Column(
         children: [
-          _buildRoom24Workstations(_workstationBloc),
+          _buildRoom26AF1Workstations(_workstationBloc),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              RoomLabel(labelText: 'Saletta riunioni 24'),
+              RoomLabel(labelText: 'Saletta riunioni 26/A 1°piano'),
               IconButton(
                   icon: Icon(
                     Icons.add_circle_sharp,
@@ -45,7 +45,7 @@ class Room24 extends StatelessWidget {
                           value: _reservationBloc,
                           child: ReservationFormPage(
                             reservationDate: visualizedDate,
-                            idRoom: ROOM_24_CODE,
+                            idRoom: ROOM_26A_CODE,
                           ),
                         ),
                       ),
@@ -53,46 +53,67 @@ class Room24 extends StatelessWidget {
                   }),
             ],
           ),
-          _buildRoom24Events(_reservationBloc)
+          _buildRoom26AEvents(_reservationBloc)
         ],
       ),
     );
   }
 
-  Widget _buildRoom24Workstations(WorkstationBloc _workstationBloc) {
+  Widget _buildRoom26AF1Workstations(WorkstationBloc _workstationBloc) {
     return BlocBuilder<WorkstationBloc, WorkstationState>(
       cubit: _workstationBloc,
       builder: (context, state) {
         if (state is WorkstationsFetchLoadingState) {
           return CircularLoading();
         } else if (state is WorkstationsFetchCompletedState) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                  child: Workstations(
-                quantity: 8,
-                columnsNumber: 2,
-                startingIndex: 19,
-                usersWithWorkstations: state.usersWithWorkstations,
-                onWorkstationUpdated: (workstationSelected) =>
-                    _workstationBloc.add(
-                  OnWorkstationUpdate(workstation: workstationSelected),
+              RoomLabel(labelText: 'Stanza 1'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                      child: Workstations(
+                    quantity: 8,
+                    columnsNumber: 2,
+                    startingIndex: 19,
+                    usersWithWorkstations: state.usersWithWorkstations,
+                    onWorkstationUpdated: (workstationSelected) =>
+                        _workstationBloc.add(
+                      OnWorkstationUpdate(workstation: workstationSelected),
+                    ),
+                  )),
+                  SizedBox(width: 16),
+                  Expanded(
+                      child: Workstations(
+                    quantity: 8,
+                    columnsNumber: 2,
+                    startingIndex: 27,
+                    usersWithWorkstations: state.usersWithWorkstations,
+                    onWorkstationUpdated: (workstationSelected) =>
+                        _workstationBloc.add(
+                      OnWorkstationUpdate(workstation: workstationSelected),
+                    ),
+                  ))
+                ],
+              ),
+              RoomLabel(labelText: 'Stanza 2'),
+              Padding(
+                padding:
+                const EdgeInsets.symmetric(vertical: 0, horizontal: 60),
+                child: Workstations(
+                  quantity: 4,
+                  columnsNumber:2,
+                  usersWithWorkstations: state.usersWithWorkstations,
+                  startingIndex: 56,
+                  onWorkstationUpdated: (workstationSelected) =>
+                      _workstationBloc.add(
+                    OnWorkstationUpdate(workstation: workstationSelected),
+                  ),
                 ),
-              )),
-              SizedBox(width: 16),
-              Expanded(
-                  child: Workstations(
-                quantity: 8,
-                columnsNumber: 2,
-                startingIndex: 27,
-                usersWithWorkstations: state.usersWithWorkstations,
-                onWorkstationUpdated: (workstationSelected) =>
-                    _workstationBloc.add(
-                  OnWorkstationUpdate(workstation: workstationSelected),
-                ),
-              ))
+              ),
             ],
           );
         } else if (state is WorkstationsFetchErrorState) {
@@ -108,7 +129,7 @@ class Room24 extends StatelessWidget {
     );
   }
 
-  Widget _buildRoom24Events(ReservationsBloc _reservationBloc) {
+  Widget _buildRoom26AEvents(ReservationsBloc _reservationBloc) {
     return BlocBuilder<ReservationsBloc, ReservationState>(
         cubit: _reservationBloc,
         builder: (context, state) {
@@ -117,7 +138,7 @@ class Room24 extends StatelessWidget {
           } else if (state is ReservationsFetchCompletedState) {
             return ReservationsCalendar(
                 reservationsList: state.reservationsList
-                    .where((element) => element.idRoom == 24)
+                    .where((element) => element.idRoom == ROOM_26A_CODE)
                     .toList());
           } else if (state is ReservationsFetchErrorState) {
             return Center(

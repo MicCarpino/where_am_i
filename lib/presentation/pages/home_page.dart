@@ -5,8 +5,10 @@ import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
 import 'package:where_am_i/presentation/widgets/room_24.dart';
-import 'package:where_am_i/presentation/widgets/room_26A.dart';
+import 'package:where_am_i/presentation/widgets/room_26A_F1.dart';
+import 'package:where_am_i/presentation/widgets/room_26A_F2.dart';
 import 'package:where_am_i/presentation/widgets/room_26B.dart';
+import 'package:where_am_i/presentation/widgets/room_staff.dart';
 
 final sl = GetIt.instance;
 
@@ -32,7 +34,7 @@ class _HomePageState extends State<HomePage> {
     pages = [
       Room26B(_visualizedDate, _onWorkstationTryAgainPressed,
           _onReservationTryAgainPressed),
-      Room26A(_onWorkstationTryAgainPressed, _onReservationTryAgainPressed),
+      Room26AF2(_onWorkstationTryAgainPressed, _onReservationTryAgainPressed),
     ];
     super.initState();
   }
@@ -57,10 +59,18 @@ class _HomePageState extends State<HomePage> {
                   return Room26B(_visualizedDate, _onWorkstationTryAgainPressed,
                       _onReservationTryAgainPressed);
                 case 1:
-                  return Room26A(_onWorkstationTryAgainPressed,
+                  return Room26AF1(
+                      _visualizedDate,
+                      _onWorkstationTryAgainPressed,
                       _onReservationTryAgainPressed);
                 case 2:
+                  return Room26AF2(_onWorkstationTryAgainPressed,
+                      _onReservationTryAgainPressed);
+                case 3:
                   return Room24(_visualizedDate, _onWorkstationTryAgainPressed,
+                      _onReservationTryAgainPressed);
+                case 4:
+                  return RoomStaff(_onWorkstationTryAgainPressed,
                       _onReservationTryAgainPressed);
                 default:
                   return Container();
@@ -69,17 +79,23 @@ class _HomePageState extends State<HomePage> {
             onPageChanged: (pageIndex) {
               switch (pageIndex) {
                 case 0:
-                  this.widget._setAppBarTitle("CIVICO 26/B");
+                  this.widget._setAppBarTitle("Civico 26/B");
                   break;
                 case 1:
-                  widget._setAppBarTitle("CIVICO 26/A");
+                  widget._setAppBarTitle("Civico 26/A 1°piano");
                   break;
                 case 2:
-                  widget._setAppBarTitle("CIVICO 24");
+                  widget._setAppBarTitle("Civico 26/A 2°piano");
+                  break;
+                case 3:
+                  widget._setAppBarTitle("Civico 24");
+                  break;
+                case 4:
+                  widget._setAppBarTitle("Dirigenza/Amministrazione");
                   break;
               }
             },
-            itemCount: 3,
+            itemCount: 5,
           ),
         ),
       )
