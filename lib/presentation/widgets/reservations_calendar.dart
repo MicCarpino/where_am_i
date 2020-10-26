@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
+import 'package:where_am_i/presentation/widgets/reservations_details_dialog.dart';
 
 //https://pub.dev/packages/flutter_week_view
 
@@ -20,15 +21,19 @@ class ReservationsCalendar extends StatelessWidget {
        header is disabled the current event date should be set to "today" in
        order to display the events on screen*/
       date: DateTime.now(),
+      // +/- 10 minutes to prevent crop
       minimumTime: HourMinute(hour: 8, minute: 50),
       maximumTime: HourMinute(hour: 18, minute: 10),
       events: reservationsList != null
-          ? reservationsList.map((e) => _mapReservationToEvent(e)).toList()
+          ? reservationsList
+              .map((e) => _mapReservationToEvent(e, context))
+              .toList()
           : [],
     );
   }
 
-  FlutterWeekViewEvent _mapReservationToEvent(Reservation reservation) {
+  FlutterWeekViewEvent _mapReservationToEvent(
+      Reservation reservation, BuildContext context) {
     var date = DateTime.now();
     return FlutterWeekViewEvent(
       decoration: BoxDecoration(
@@ -51,6 +56,12 @@ class ReservationsCalendar extends StatelessWidget {
           reservation.startMinutes, 0, 0, 0),
       end: DateTime(date.year, date.month, date.day, reservation.endHour,
           reservation.endMinutes, 0, 0, 0),
+      onTap: () => showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return ReservationDetailsDialog(reservation: reservation);
+          }),
+      onLongPress: _showEditOptions(reservation),
     );
   }
 
@@ -58,14 +69,17 @@ class ReservationsCalendar extends StatelessWidget {
     return HoursColumnStyle(
         color: Colors.transparent,
         decoration: BoxDecoration(
-            border:
-                Border(right: BorderSide(color: Colors.black54, width: 1))));
+          border: Border(right: BorderSide(color: Colors.black54, width: 1)),
+        ));
   }
 
   DayViewStyle _getDayViewStyle() {
     return DayViewStyle(
-        headerSize: 0,
-        backgroundColor: Colors.transparent,
-        backgroundRulesColor: Colors.black26);
+      headerSize: 0,
+      backgroundColor: Colors.transparent,
+      backgroundRulesColor: Colors.black26,
+    );
   }
+
+  _showEditOptions(Reservation reservation) {}
 }
