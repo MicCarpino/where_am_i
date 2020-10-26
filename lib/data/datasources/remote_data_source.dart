@@ -50,7 +50,10 @@ abstract class RemoteDataSource {
   Future<UserModel> updateUser(String token, UserModel userUpdated);
 
   Future<ReservationModel> insertReservation(
-      String authenticationToken, ReservationModel reservationModel) {}
+      String authenticationToken, ReservationModel reservationModel);
+
+  Future<ReservationModel> updateReservationStatus(
+      String authenticationToken, int idReservation, int newStatus);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -215,11 +218,24 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<ReservationModel> insertReservation(
       String authenticationToken, ReservationModel reservationModel) async {
     var uri = Uri.https(
-      BASE_URL,
-      '/WhereAmI/reservation',
-      reservationModel.toQueryParams(),
-    );
+        BASE_URL, '/WhereAmI/reservation', reservationModel.toQueryParams());
     final response = await http.post(uri, headers: {
+      HttpHeaders.authorizationHeader: authenticationToken,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    });
+    if (response.statusCode == 200) {
+      return ReservationModel.fromJson(json.decode(response.body));
+    } else {
+      throw ServerException(response.body);
+    }
+  }
+
+  @override
+  Future<ReservationModel> updateReservationStatus(
+      String authenticationToken, int idReservation, int newStatus) async {
+    var uri =
+        Uri.https(BASE_URL, '/WhereAmI/reservation/$idReservation/$newStatus');
+    final response = await http.put(uri, headers: {
       HttpHeaders.authorizationHeader: authenticationToken,
       HttpHeaders.contentTypeHeader: 'application/json'
     });

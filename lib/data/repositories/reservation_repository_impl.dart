@@ -35,7 +35,7 @@ class ReservationRepositoryImpl implements ReservationRepository {
 
   @override
   Future<Either<Failure, List<Reservation>>> insertReservation(
-      Reservation reservation)async {
+      Reservation reservation) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final insertResult = await remoteDataSource.insertReservation(
@@ -56,5 +56,24 @@ class ReservationRepositoryImpl implements ReservationRepository {
   @override
   Future<Either<Failure, void>> deleteReservation(int idReservation) {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<Either<Failure, List<Reservation>>> updateReservationStatus(
+      Reservation reservation) async {
+    try {
+      var loggedUser = await localDataSource.getCachedUser();
+      final updateResult = await remoteDataSource.updateReservationStatus(
+        loggedUser.authenticationToken,
+        reservation.idReservation,
+        reservation.status,
+      );
+      var indexOfUpdatedReservation = cachedReservationList.indexWhere(
+          (element) => element.idReservation == updateResult.idReservation);
+      cachedReservationList[indexOfUpdatedReservation] = updateResult;
+      return Right(cachedReservationList);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    }
   }
 }

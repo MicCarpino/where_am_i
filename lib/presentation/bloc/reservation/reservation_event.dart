@@ -14,3 +14,9 @@ class InsertReservationEvent extends ReservationsEvent {
 
   InsertReservationEvent({@required this.reservation});
 }
+
+class UpdateReservationStatusEvent extends ReservationsEvent {
+  final Reservation updatedReservation;
+
+  UpdateReservationStatusEvent({@required this.updatedReservation});
+}

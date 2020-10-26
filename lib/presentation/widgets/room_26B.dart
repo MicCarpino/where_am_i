@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/pages/reservation_form_page.dart';
@@ -96,26 +95,19 @@ class Room26B extends StatelessWidget {
           if (state is ReservationsFetchLoadingState) {
             return CircularLoading();
           } else if (state is ReservationsFetchCompletedState) {
-            return ReservationsCalendar(
-                reservationsList: state.reservationsList
-                    .where((element) => element.idRoom == 26)
-                    .toList());
+              return ReservationsCalendar(
+                  reservationsList: state.reservationsList
+                      .where((element) => element.idRoom == 26)
+                      .toList()
+            );
           } else if (state is ReservationsFetchErrorState) {
             return Center(
               child: MaterialButton(
                   child: Text('riprova reservations'),
                   onPressed: () => onReservationTryAgainPressed()),
             );
-          } else if (state is ReservationUpdateSuccessState) {
-            return ReservationsCalendar(
-                reservationsList: state.reservationsList
-                    .where((element) => element.idRoom == 26)
-                    .toList());
-          }else {
-            return ReservationsCalendar(
-                reservationsList: List<Reservation>()
-                    .where((element) => element.idRoom == 26)
-                    .toList());
+          } else {
+            return ReservationsCalendar();
           }
         });
   }

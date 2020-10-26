@@ -8,6 +8,7 @@ import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/domain/usecases/get_reservations_by_date.dart';
 import 'package:where_am_i/domain/usecases/insert_reservation.dart';
+import 'package:where_am_i/domain/usecases/update_reservation_status.dart';
 
 part 'reservation_event.dart';
 
@@ -16,14 +17,17 @@ part 'reservation_state.dart';
 class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
   final GetReservationsByDate _getReservations;
   final InsertReservation _insertReservation;
+  final UpdateReservationStatus _updateReservationStatus;
 
   ReservationsBloc({
     @required GetReservationsByDate getReservations,
     @required InsertReservation insertReservation,
+    @required UpdateReservationStatus updateReservationStatus,
   })  : assert(getReservations != null),
         assert(insertReservation != null),
         _getReservations = getReservations,
         _insertReservation = insertReservation,
+        _updateReservationStatus = updateReservationStatus,
         super(ReservationInitial());
 
   @override
@@ -34,6 +38,8 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
       yield* _fetchReservationsList(event.dateToFetch);
     } else if (event is InsertReservationEvent) {
       yield* _validateAndInsertReservation(event.reservation);
+    } else if (event is UpdateReservationStatusEvent){
+      yield* _performStatusUpdate(event);
     }
   }
 
@@ -46,7 +52,7 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
 
     yield reservationsList.fold((failure) {
       print(
-          'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+          'reservations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
       return ReservationsFetchErrorState();
     }, (reservations) {
       print('reservations : ${reservations.toList()}');
@@ -84,8 +90,21 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
                 ? failure.errorMessage
                 : "Boh, no so");
       }, (reservationsList)  {
-        return ReservationUpdateSuccessState(reservationsList);
+        return ReservationsFetchCompletedState(reservationsList);
       });
     }
+  }
+
+  Stream<ReservationState> _performStatusUpdate(UpdateReservationStatusEvent event) async* {
+    final updatedList = await _updateReservationStatus(event.updatedReservation);
+    yield updatedList.fold((failure) {
+      return ReservationUpdateErrorState(
+          errorMessage: (failure is ServerFailure)
+              ? failure.errorMessage
+              : "Boh, no so");
+    }, (reservations) {
+      print('reservations : ${reservations.toList()}');
+      return ReservationsFetchCompletedState(reservations);
+    });
   }
 }

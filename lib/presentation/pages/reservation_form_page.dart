@@ -85,7 +85,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                     Scaffold.of(context).showSnackBar(
                       SnackBar(content: Text(state.errorMessage)),
                     );
-                  } else if (state is ReservationUpdateSuccessState) {
+                  } else if (state is ReservationsFetchCompletedState) {
                     Navigator.of(context).pop();
                   }
                 })

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
+import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/reservations_details_dialog.dart';
 
 //https://pub.dev/packages/flutter_week_view
@@ -10,10 +12,11 @@ import 'package:where_am_i/presentation/widgets/reservations_details_dialog.dart
 class ReservationsCalendar extends StatelessWidget {
   final List<Reservation> reservationsList;
 
-  ReservationsCalendar({@required this.reservationsList});
+  ReservationsCalendar({this.reservationsList = const []});
 
   @override
   Widget build(BuildContext context) {
+    ReservationsBloc bloc= BlocProvider.of<ReservationsBloc>(context);
     return DayView(
       userZoomable: false,
       style: _getDayViewStyle(),
@@ -27,14 +30,14 @@ class ReservationsCalendar extends StatelessWidget {
       maximumTime: HourMinute(hour: 18, minute: 10),
       events: reservationsList != null
           ? reservationsList
-              .map((e) => _mapReservationToEvent(e, context))
+              .map((e) => _mapReservationToEvent(e, context,bloc))
               .toList()
           : [],
     );
   }
 
   FlutterWeekViewEvent _mapReservationToEvent(
-      Reservation reservation, BuildContext context) {
+      Reservation reservation, BuildContext context,ReservationsBloc bloc) {
     var date = DateTime.now();
     return FlutterWeekViewEvent(
       decoration: BoxDecoration(
@@ -65,7 +68,7 @@ class ReservationsCalendar extends StatelessWidget {
       onLongPress: () => showDialog(
           context: context,
           builder: (BuildContext context) {
-            return _showEditReservationOptions(reservation);
+            return _showEditReservationOptions(reservation, context,bloc);
           }),
     );
   }
@@ -86,7 +89,8 @@ class ReservationsCalendar extends StatelessWidget {
     );
   }
 
-  Dialog _showEditReservationOptions(Reservation reservation) {
+  Dialog _showEditReservationOptions(
+      Reservation reservation, BuildContext context,ReservationsBloc bloc) {
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -95,29 +99,56 @@ class ReservationsCalendar extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             InkWell(
-                onTap: () {},
                 child: Row(children: [
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Text('CONFERMA', style: boldStyle),
+                    child: Text(
+                        reservation.status == RESERVATION_PENDING
+                            ? 'CONFERMA'
+                            : 'REVOCA',
+                        style: boldStyle),
                   ),
-                ])),
+                ]),
+                onTap: () {
+                  bloc.add(
+                      UpdateReservationStatusEvent(
+                          updatedReservation: Reservation(
+                              idReservation: reservation.idReservation,
+                              startHour: reservation.startHour,
+                              startMinutes: reservation.startMinutes,
+                              endHour: reservation.endHour,
+                              endMinutes: reservation.endMinutes,
+                              participants: reservation.participants,
+                              idRoom: reservation.idRoom,
+                              freeHandler: reservation.freeHandler,
+                              description: reservation.description,
+                              reservationDate: reservation.reservationDate,
+                              idHandler: reservation.idHandler,
+                              status: reservation.status == RESERVATION_PENDING
+                                  ? RESERVATION_CONFIRMED
+                                  : RESERVATION_PENDING)));
+                  Navigator.of(context).pop();
+                }),
             InkWell(
-                onTap: () {},
                 child: Row(children: [
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text('MODIFICA', style: boldStyle),
                   ),
-                ])),
+                ]),
+                onTap: () {
+                  Navigator.of(context).pop();
+                }),
             InkWell(
-                onTap: () {},
                 child: Row(children: [
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Text('ELIMINA', style: boldStyle),
                   ),
-                ])),
+                ]),
+                onTap: () {
+                  Navigator.of(context).pop();
+                }),
           ],
         ),
       ),
