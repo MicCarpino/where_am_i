@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
+
 import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/data/models/authenticated_user_model.dart';
 import 'package:where_am_i/data/models/reservation_model.dart';
-
 import 'package:where_am_i/data/models/user_model.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
 import 'package:where_am_i/domain/entities/user.dart';
@@ -25,6 +25,10 @@ abstract class RemoteDataSource {
   //USER
   Future<AuthenticatedUserModel> performUserAuthentication(
       String username, String password);
+
+  Future<List<UserModel>> getUsers(String token);
+
+  Future<UserModel> updateUser(String token, UserModel userUpdated);
 
   //WORKSTATIONS
   Future<List<WorkstationModel>> getAllWorkstationsByDate(
@@ -45,15 +49,11 @@ abstract class RemoteDataSource {
   Future<List<ReservationModel>> getAllReservationsByDate(
       String token, DateTime date);
 
-  Future<List<UserModel>> getUsers(String token);
-
-  Future<UserModel> updateUser(String token, UserModel userUpdated);
-
   Future<ReservationModel> insertReservation(
       String authenticationToken, ReservationModel reservationModel);
 
-  Future<ReservationModel> updateReservationStatus(
-      String authenticationToken, int idReservation, int newStatus);
+  Future<ReservationModel> updateReservation(
+      String authenticationToken, ReservationModel reservation);
 
   Future<void> deleteReservation(String authenticationToken, int idReservation);
 }
@@ -233,10 +233,13 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<ReservationModel> updateReservationStatus(
-      String authenticationToken, int idReservation, int newStatus) async {
-    var uri =
-        Uri.https(BASE_URL, '/WhereAmI/reservation/$idReservation/$newStatus');
+  Future<ReservationModel> updateReservation(
+      String authenticationToken, ReservationModel reservation) async {
+    var uri = Uri.https(
+      BASE_URL,
+      '/WhereAmI/reservation/${reservation.idReservation}',
+      reservation.toQueryParams(),
+    );
     final response = await http.put(uri, headers: {
       HttpHeaders.authorizationHeader: authenticationToken,
       HttpHeaders.contentTypeHeader: 'application/json'
@@ -249,15 +252,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<void> deleteReservation(String authenticationToken, int idReservation) async {
-    var uri =
-    Uri.https(BASE_URL, '/WhereAmI/reservation/$idReservation');
+  Future<void> deleteReservation(
+      String authenticationToken, int idReservation) async {
+    var uri = Uri.https(BASE_URL, '/WhereAmI/reservation/$idReservation');
     final response = await http.delete(uri, headers: {
       HttpHeaders.authorizationHeader: authenticationToken,
       HttpHeaders.contentTypeHeader: 'application/json'
     });
     if (response.statusCode == 200) {
-      return ;
+      return;
     } else {
       throw ServerException(response.body);
     }

@@ -5,6 +5,7 @@ import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
+import 'package:where_am_i/presentation/pages/reservation_form_page.dart';
 import 'package:where_am_i/presentation/widgets/reservations_details_dialog.dart';
 
 //https://pub.dev/packages/flutter_week_view
@@ -16,7 +17,7 @@ class ReservationsCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ReservationsBloc reservationBloc =
+    ReservationsBloc _reservationBloc =
         BlocProvider.of<ReservationsBloc>(context);
     return DayView(
       userZoomable: false,
@@ -31,7 +32,7 @@ class ReservationsCalendar extends StatelessWidget {
       maximumTime: HourMinute(hour: 18, minute: 10),
       events: reservationsList != null
           ? reservationsList
-              .map((e) => _mapReservationToEvent(e, context, reservationBloc))
+              .map((e) => _mapReservationToEvent(e, context, _reservationBloc))
               .toList()
           : [],
     );
@@ -112,7 +113,7 @@ class ReservationsCalendar extends StatelessWidget {
                   ),
                 ]),
                 onTap: () {
-                  bloc.add(UpdateReservationStatusEvent(
+                  bloc.add(UpdateReservationEvent(
                       updatedReservation: Reservation(
                           idReservation: reservation.idReservation,
                           startHour: reservation.startHour,
@@ -139,6 +140,19 @@ class ReservationsCalendar extends StatelessWidget {
                 ]),
                 onTap: () {
                   Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BlocProvider.value(
+                        value: bloc,
+                        child: ReservationFormPage(reservation:reservation),
+                      ),
+                    ),
+                  ).then((newReservation) {
+                    if (newReservation != null) {
+                      //insert new reservation
+                    }
+                  });
                 }),
             InkWell(
                 child: Row(children: [

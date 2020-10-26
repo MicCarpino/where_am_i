@@ -15,10 +15,10 @@ class InsertReservationEvent extends ReservationsEvent {
   InsertReservationEvent({@required this.reservation});
 }
 
-class UpdateReservationStatusEvent extends ReservationsEvent {
+class UpdateReservationEvent extends ReservationsEvent {
   final Reservation updatedReservation;
 
-  UpdateReservationStatusEvent({@required this.updatedReservation});
+  UpdateReservationEvent({@required this.updatedReservation});
 }
 
 class DeleteReservationEvent extends ReservationsEvent {

@@ -5,13 +5,13 @@ import 'package:where_am_i/domain/repositories/reservation_repository.dart';
 import '../../core/error/failure.dart';
 import '../../core/usecases/usecase.dart';
 
-class UpdateReservationStatus extends UseCase<List<Reservation>, Reservation> {
+class UpdateReservation extends UseCase<List<Reservation>, Reservation> {
   final ReservationRepository _reservationRepository;
 
-  UpdateReservationStatus(this._reservationRepository);
+  UpdateReservation(this._reservationRepository);
 
   Future<Either<Failure, List<Reservation>>> call(
       Reservation reservation) async {
-    return await _reservationRepository.updateReservationStatus(reservation);
+    return await _reservationRepository.updateReservation(reservation);
   }
 }

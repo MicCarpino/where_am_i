@@ -79,7 +79,7 @@ Future<void> init() async {
   //Reservation
   sl.registerLazySingleton(() => GetReservationsByDate(sl()));
   sl.registerLazySingleton(() => InsertReservation(sl()));
-  sl.registerLazySingleton(() => UpdateReservationStatus(sl()));
+  sl.registerLazySingleton(() => UpdateReservation(sl()));
   sl.registerLazySingleton(() => DeleteReservation(sl()));
 
   // Repository

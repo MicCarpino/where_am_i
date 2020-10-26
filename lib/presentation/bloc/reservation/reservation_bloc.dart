@@ -18,13 +18,13 @@ part 'reservation_state.dart';
 class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
   final GetReservationsByDate _getReservations;
   final InsertReservation _insertReservation;
-  final UpdateReservationStatus _updateReservationStatus;
+  final UpdateReservation _updateReservationStatus;
   final DeleteReservation _deleteReservation;
 
   ReservationsBloc({
     @required GetReservationsByDate getReservations,
     @required InsertReservation insertReservation,
-    @required UpdateReservationStatus updateReservationStatus,
+    @required UpdateReservation updateReservationStatus,
     @required DeleteReservation deleteReservation,
   })  : assert(getReservations != null),
         assert(insertReservation != null),
@@ -44,7 +44,7 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
       yield* _fetchReservationsList(event.dateToFetch);
     } else if (event is InsertReservationEvent) {
       yield* _validateAndInsertReservation(event.reservation);
-    } else if (event is UpdateReservationStatusEvent){
+    } else if (event is UpdateReservationEvent){
       yield* _performStatusUpdate(event);
     } else if (event is DeleteReservationEvent){
       yield* _performDeleteReservation(event.idReservation);
@@ -103,7 +103,7 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
     }
   }
 
-  Stream<ReservationState> _performStatusUpdate(UpdateReservationStatusEvent event) async* {
+  Stream<ReservationState> _performStatusUpdate(UpdateReservationEvent event) async* {
     final updatedList = await _updateReservationStatus(event.updatedReservation);
     yield updatedList.fold((failure) {
       return ReservationUpdateErrorState(

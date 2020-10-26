@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 
-enum TimePickerType { inizio, fine }
+enum TimePickerType { startPicker, endPicker }
 
 class ReservationFormPage extends StatefulWidget {
   final DateTime reservationDate;
@@ -15,8 +15,8 @@ class ReservationFormPage extends StatefulWidget {
   final Reservation reservation;
 
   const ReservationFormPage({
-    @required this.reservationDate,
-    @required this.idRoom,
+    this.reservationDate,
+    this.idRoom,
     this.reservation,
   });
 
@@ -25,27 +25,25 @@ class ReservationFormPage extends StatefulWidget {
 }
 
 class _ReservationFormPageState extends State<ReservationFormPage> {
-  TimeOfDay reservationStartTime;
-  TimeOfDay reservationEndTime;
-
-  List<String> participants = [
-    /*"Gianni",
-    "Sasa",
-    "Giansasa",
-    "Giangiangiangelo",
-    "GianmariaMatteo",
-    "Pierugo",*/
-  ];
-
   TextEditingController _subjectTextController = TextEditingController();
   TextEditingController _participantsTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   ReservationsBloc _reservationBloc;
 
+  TimeOfDay _reservationStartTime;
+  TimeOfDay _reservationEndTime;
+  List<String> _participants;
+  int _idRoom;
+
   @override
   void initState() {
     _initTimePickers();
+    _participants =
+        widget.reservation != null ? widget.reservation.participants : [];
     _reservationBloc = BlocProvider.of<ReservationsBloc>(context);
+    _subjectTextController.text = widget.reservation?.description;
+    _idRoom =
+        widget.reservation != null ? widget.reservation.idRoom : widget.idRoom;
     super.initState();
   }
 
@@ -100,14 +98,18 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Text(
-          'Nuova prenotazione per il giorno:',
+          widget.reservation != null
+              ? 'Modifica prenotazione per il giorno:'
+              : 'Nuova prenotazione per il giorno:',
           style: reservationLabelStyle,
         ),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Text(
-          '${DateFormat('EEEE, MMM d, ' 'yy').format(widget.reservationDate)}',
+          widget.reservation != null
+              ? '${DateFormat('EEEE, MMM d, ' 'yy').format(widget.reservation.reservationDate)}'
+              : '${DateFormat('EEEE, MMM d, ' 'yy').format(widget.reservationDate)}',
           style: TextStyle(fontSize: 16),
         ),
       )
@@ -118,15 +120,14 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     return [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(
-          'Referente',
-          style: reservationLabelStyle,
-        ),
+        child: Text('Referente', style: reservationLabelStyle),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Text(
-          'CURRENT USER',
+          widget.reservation != null
+              ? widget.reservation.idHandler.toString()
+              : '276',
           style: TextStyle(fontSize: 16),
         ),
       ),
@@ -167,8 +168,9 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildReservationTimePicker(
-              TimePickerType.inizio, reservationStartTime),
-          _buildReservationTimePicker(TimePickerType.fine, reservationEndTime)
+              TimePickerType.startPicker, _reservationStartTime),
+          _buildReservationTimePicker(
+              TimePickerType.endPicker, _reservationEndTime)
         ],
       ),
     );
@@ -181,7 +183,9 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         Padding(
           padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
           child: Text(
-              pickerType == TimePickerType.inizio ? "Ora inizio" : "Ora fine",
+              pickerType == TimePickerType.startPicker
+                  ? "Ora inizio"
+                  : "Ora fine",
               style: reservationLabelStyle),
         ),
         FlatButton(
@@ -201,9 +205,9 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                   }).then((selectedTime) {
                 if (selectedTime != null) {
                   setState(() {
-                    pickerType == TimePickerType.inizio
-                        ? reservationStartTime = selectedTime
-                        : reservationEndTime = selectedTime;
+                    pickerType == TimePickerType.startPicker
+                        ? _reservationStartTime = selectedTime
+                        : _reservationEndTime = selectedTime;
                   });
                 }
               });
@@ -234,7 +238,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
   Widget _buildAddParticipantsTextField() {
     return TextField(
       autofocus: false,
-      autofillHints: participants,
+      autofillHints: _participants,
       controller: _participantsTextController,
       maxLines: 1,
       decoration: InputDecoration(
@@ -250,7 +254,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         suffixIcon: _participantsTextController.text.isNotEmpty
             ? IconButton(
                 onPressed: () {
-                  participants.add(_participantsTextController.text);
+                  _participants.add(_participantsTextController.text);
                   _participantsTextController.clear();
                   FocusScope.of(context).unfocus();
                 },
@@ -266,7 +270,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Wrap(
         children: [
-          for (var name in participants)
+          for (var name in _participants ?? [])
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: Chip(
@@ -278,7 +282,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                 ),
                 onDeleted: () {
                   setState(() {
-                    participants.remove(name);
+                    _participants.remove(name);
                   });
                 },
               ),
@@ -313,39 +317,81 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
             'Conferma'.toUpperCase(),
             style: TextStyle(color: Colors.white),
           ),
-          onPressed: () => _insertNewReservation(),
+          onPressed: () => widget.reservation != null
+              ? _updateReservation()
+              : _insertNewReservation(),
         ),
       ],
     );
   }
 
   _initTimePickers() {
-    reservationStartTime = TimeOfDay.now();
-    reservationStartTime = reservationStartTime.replacing(
-        hour: reservationStartTime.hour + 1, minute: 0);
-    if (reservationStartTime.hour == 13) {
-      reservationStartTime = reservationStartTime.replacing(hour: 14);
-    }
-    reservationEndTime = reservationStartTime.replacing(
-        hour: reservationStartTime.hour + 1, minute: 0);
+    _reservationStartTime = TimeOfDay.now();
+    _reservationStartTime = widget.reservation != null
+        ?
+        //values from existing reservations
+        _reservationStartTime.replacing(
+            hour: widget.reservation.startHour,
+            minute: widget.reservation.startMinutes)
+        :
+        //current hour +1
+        _reservationStartTime.replacing(
+            hour: _reservationStartTime.hour + 1, minute: 0);
+
+    _reservationEndTime = TimeOfDay.now();
+    _reservationEndTime = widget.reservation != null
+        ?
+        //values from existing reservations
+        _reservationEndTime.replacing(
+            hour: widget.reservation.endHour,
+            minute: widget.reservation.endMinutes)
+        :
+        //start hour +1
+        _reservationStartTime.replacing(
+            hour: _reservationStartTime.hour + 1, minute: 0);
   }
 
   _insertNewReservation() {
     if (_formKey.currentState.validate()) {
-      Reservation newReservation = Reservation(
-          idReservation: null,
-          reservationDate: widget.reservationDate,
-          description: _subjectTextController.text.trim(),
-          participants: participants,
-          idHandler: 276,
-          idRoom: widget.idRoom,
-          freeHandler: null,
-          startMinutes: reservationStartTime.minute,
-          startHour: reservationStartTime.hour,
-          endHour: reservationEndTime.hour,
-          endMinutes: reservationEndTime.minute,
-          status: RESERVATION_PENDING);
-      _reservationBloc.add(InsertReservationEvent(reservation: newReservation));
+      _reservationBloc.add(
+        InsertReservationEvent(
+          reservation: Reservation(
+              idReservation: null,
+              reservationDate: widget.reservationDate,
+              description: _subjectTextController.text.trim(),
+              participants: _participants,
+              idHandler: 276,
+              idRoom: widget.idRoom,
+              freeHandler: null,
+              startMinutes: _reservationStartTime.minute,
+              startHour: _reservationStartTime.hour,
+              endHour: _reservationEndTime.hour,
+              endMinutes: _reservationEndTime.minute,
+              status: RESERVATION_PENDING),
+        ),
+      );
+    }
+  }
+
+  _updateReservation() {
+    if (_formKey.currentState.validate()) {
+      _reservationBloc.add(
+        UpdateReservationEvent(
+          updatedReservation: Reservation(
+              idReservation: widget.reservation.idReservation,
+              reservationDate: widget.reservation.reservationDate,
+              description: _subjectTextController.text.trim().capitalize(),
+              participants: _participants,
+              idHandler: 276,
+              idRoom: _idRoom,
+              freeHandler: widget.reservation?.freeHandler,
+              startMinutes: _reservationStartTime.minute,
+              startHour: _reservationStartTime.hour,
+              endHour: _reservationEndTime.hour,
+              endMinutes: _reservationEndTime.minute,
+              status: RESERVATION_PENDING),
+        ),
+      );
     }
   }
 }

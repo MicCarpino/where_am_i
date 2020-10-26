@@ -48,9 +48,19 @@ class ReservationRepositoryImpl implements ReservationRepository {
   }
 
   @override
-  Future<Either<Failure, Reservation>> updateReservation(
-      Reservation reservation) {
-    throw UnimplementedError();
+  Future<Either<Failure, List<Reservation>>> updateReservation(
+      Reservation reservation) async {
+    try {
+      var loggedUser = await localDataSource.getCachedUser();
+      final updateResult = await remoteDataSource.updateReservation(
+          loggedUser.authenticationToken, reservation.toReservationModel());
+      var indexOfUpdatedReservation = cachedReservationList.indexWhere(
+              (element) => element.idReservation == updateResult.idReservation);
+      cachedReservationList[indexOfUpdatedReservation] = updateResult;
+      return Right(cachedReservationList);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    }
   }
 
   @override
@@ -62,25 +72,6 @@ class ReservationRepositoryImpl implements ReservationRepository {
           loggedUser.authenticationToken, idReservation);
       cachedReservationList
           .removeWhere((element) => element.idReservation == idReservation);
-      return Right(cachedReservationList);
-    } on ServerException catch (error) {
-      return Left(ServerFailure(error.errorMessage));
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<Reservation>>> updateReservationStatus(
-      Reservation reservation) async {
-    try {
-      var loggedUser = await localDataSource.getCachedUser();
-      final updateResult = await remoteDataSource.updateReservationStatus(
-        loggedUser.authenticationToken,
-        reservation.idReservation,
-        reservation.status,
-      );
-      var indexOfUpdatedReservation = cachedReservationList.indexWhere(
-          (element) => element.idReservation == updateResult.idReservation);
-      cachedReservationList[indexOfUpdatedReservation] = updateResult;
       return Right(cachedReservationList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
