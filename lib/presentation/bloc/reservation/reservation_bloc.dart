@@ -18,7 +18,7 @@ part 'reservation_state.dart';
 class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
   final GetReservationsByDate _getReservations;
   final InsertReservation _insertReservation;
-  final UpdateReservation _updateReservationStatus;
+  final UpdateReservation _updateReservation;
   final DeleteReservation _deleteReservation;
 
   ReservationsBloc({
@@ -32,7 +32,7 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
         assert(deleteReservation != null),
         _getReservations = getReservations,
         _insertReservation = insertReservation,
-        _updateReservationStatus = updateReservationStatus,
+        _updateReservation = updateReservationStatus,
         _deleteReservation = deleteReservation,
         super(ReservationInitial());
 
@@ -45,7 +45,7 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
     } else if (event is InsertReservationEvent) {
       yield* _validateAndInsertReservation(event.reservation);
     } else if (event is UpdateReservationEvent){
-      yield* _performStatusUpdate(event);
+      yield* _performReservationUpdate(event.updatedReservation);
     } else if (event is DeleteReservationEvent){
       yield* _performDeleteReservation(event.idReservation);
     }
@@ -103,8 +103,8 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
     }
   }
 
-  Stream<ReservationState> _performStatusUpdate(UpdateReservationEvent event) async* {
-    final updatedList = await _updateReservationStatus(event.updatedReservation);
+  Stream<ReservationState> _performReservationUpdate(Reservation updatedReservation) async* {
+    final updatedList = await _updateReservation(updatedReservation);
     yield updatedList.fold((failure) {
       return ReservationUpdateErrorState(
           errorMessage: (failure is ServerFailure)

@@ -38,12 +38,14 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
   @override
   void initState() {
     _initTimePickers();
-    _participants =
-        widget.reservation != null ? widget.reservation.participants : [];
+    _participants = widget.reservation?.participants != null ? widget.reservation.participants : List<String>();
     _reservationBloc = BlocProvider.of<ReservationsBloc>(context);
     _subjectTextController.text = widget.reservation?.description;
     _idRoom =
-        widget.reservation != null ? widget.reservation.idRoom : widget.idRoom;
+    widget.reservation != null ? widget.reservation.idRoom : widget.idRoom;
+    _participantsTextController.addListener(() {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -108,8 +110,10 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Text(
           widget.reservation != null
-              ? '${DateFormat('EEEE, MMM d, ' 'yy').format(widget.reservation.reservationDate)}'
-              : '${DateFormat('EEEE, MMM d, ' 'yy').format(widget.reservationDate)}',
+              ? '${DateFormat('EEEE, MMM d, ' 'yy').format(
+              widget.reservation.reservationDate)}'
+              : '${DateFormat('EEEE, MMM d, ' 'yy').format(
+              widget.reservationDate)}',
           style: TextStyle(fontSize: 16),
         ),
       )
@@ -148,7 +152,9 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         child: TextFormField(
           controller: _subjectTextController,
           validator: (value) =>
-              value.trim().isEmpty ? "Campo obbligatorio" : null,
+          value
+              .trim()
+              .isEmpty ? "Campo obbligatorio" : null,
           maxLines: 1,
           autofocus: false,
           style: TextStyle(fontSize: 16),
@@ -176,8 +182,8 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     );
   }
 
-  Widget _buildReservationTimePicker(
-      TimePickerType pickerType, TimeOfDay time) {
+  Widget _buildReservationTimePicker(TimePickerType pickerType,
+      TimeOfDay time) {
     return Column(
       children: [
         Padding(
@@ -214,7 +220,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
             },
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(vertical: 16, horizontal: 24.0),
+              const EdgeInsets.symmetric(vertical: 16, horizontal: 24.0),
               child: Text(
                 time.format(context),
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -245,21 +251,23 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         //delete icon, clears textfield
         prefixIcon: _participantsTextController.text.isNotEmpty
             ? IconButton(
-                onPressed: () => _participantsTextController.clear(),
-                icon: Icon(Icons.clear, color: Colors.black),
-              )
+          onPressed: () => _participantsTextController.clear(),
+          icon: Icon(Icons.clear, color: Colors.black),
+        )
             : null,
         hintText: "Aggiungi partecipante",
         //add icon, add participant chip
         suffixIcon: _participantsTextController.text.isNotEmpty
             ? IconButton(
-                onPressed: () {
-                  _participants.add(_participantsTextController.text);
-                  _participantsTextController.clear();
-                  FocusScope.of(context).unfocus();
-                },
-                icon: Icon(Icons.person_add_rounded, color: dncBlue),
-              )
+          onPressed: () {
+            setState(() {
+              _participants.add(_participantsTextController.text);
+              _participantsTextController.clear();
+              FocusScope.of(context).unfocus();
+            });
+          },
+          icon: Icon(Icons.person_add_rounded, color: dncBlue),
+        )
             : null,
       ),
     );
@@ -317,7 +325,8 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
             'Conferma'.toUpperCase(),
             style: TextStyle(color: Colors.white),
           ),
-          onPressed: () => widget.reservation != null
+          onPressed: () =>
+          widget.reservation != null
               ? _updateReservation()
               : _insertNewReservation(),
         ),
@@ -329,26 +338,26 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     _reservationStartTime = TimeOfDay.now();
     _reservationStartTime = widget.reservation != null
         ?
-        //values from existing reservations
-        _reservationStartTime.replacing(
-            hour: widget.reservation.startHour,
-            minute: widget.reservation.startMinutes)
+    //values from existing reservations
+    _reservationStartTime.replacing(
+        hour: widget.reservation.startHour,
+        minute: widget.reservation.startMinutes)
         :
-        //current hour +1
-        _reservationStartTime.replacing(
-            hour: _reservationStartTime.hour + 1, minute: 0);
+    //current hour +1
+    _reservationStartTime.replacing(
+        hour: _reservationStartTime.hour + 1, minute: 0);
 
     _reservationEndTime = TimeOfDay.now();
     _reservationEndTime = widget.reservation != null
         ?
-        //values from existing reservations
-        _reservationEndTime.replacing(
-            hour: widget.reservation.endHour,
-            minute: widget.reservation.endMinutes)
+    //values from existing reservations
+    _reservationEndTime.replacing(
+        hour: widget.reservation.endHour,
+        minute: widget.reservation.endMinutes)
         :
-        //start hour +1
-        _reservationStartTime.replacing(
-            hour: _reservationStartTime.hour + 1, minute: 0);
+    //start hour +1
+    _reservationStartTime.replacing(
+        hour: _reservationStartTime.hour + 1, minute: 0);
   }
 
   _insertNewReservation() {
