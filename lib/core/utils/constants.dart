@@ -74,4 +74,20 @@ const getOldWorkstationCodeFor24 = {
   30: "32",
   32: "33",
   34: "34"
+};//left current code, right old code
+const getOldWorkstationCodeFor26AF1Room1 = {
+  76: "76",
+  77: "77",
+  78: "80",
+  79: "81",
+  80: "84",
+  81: "85",
+  82: "78",
+  83: "79",
+  84: "82",
+  85: "83",
+  86: "86",
+  87: "87",
 };
+
+

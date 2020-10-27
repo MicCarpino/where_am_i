@@ -76,9 +76,9 @@ class Room26AF1 extends StatelessWidget {
                 children: [
                   Expanded(
                       child: Workstations(
-                    quantity: 8,
+                    quantity: 6,
                     columnsNumber: 2,
-                    startingIndex: 19,
+                    startingIndex: 76,
                     usersWithWorkstations: state.usersWithWorkstations,
                     onWorkstationUpdated: (workstationSelected) =>
                         _workstationBloc.add(
@@ -88,9 +88,9 @@ class Room26AF1 extends StatelessWidget {
                   SizedBox(width: 16),
                   Expanded(
                       child: Workstations(
-                    quantity: 8,
+                    quantity: 6,
                     columnsNumber: 2,
-                    startingIndex: 27,
+                    startingIndex: 82,
                     usersWithWorkstations: state.usersWithWorkstations,
                     onWorkstationUpdated: (workstationSelected) =>
                         _workstationBloc.add(
@@ -107,7 +107,7 @@ class Room26AF1 extends StatelessWidget {
                   quantity: 4,
                   columnsNumber:2,
                   usersWithWorkstations: state.usersWithWorkstations,
-                  startingIndex: 56,
+                  startingIndex: 88,
                   onWorkstationUpdated: (workstationSelected) =>
                       _workstationBloc.add(
                     OnWorkstationUpdate(workstation: workstationSelected),
