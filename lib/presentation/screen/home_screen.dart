@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/data/datasources/local_data_source.dart';
+import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
 import 'package:where_am_i/presentation/pages/home_page.dart';
 import 'package:where_am_i/presentation/pages/my_presences_page.dart';
@@ -17,6 +19,7 @@ enum Pages {
 }
 
 final sl = GetIt.instance;
+final sp = sl<LocalDataSource>();
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -27,12 +30,16 @@ class _HomeScreenState extends State<HomeScreen> {
   HomeBloc _homeBloc = sl<HomeBloc>();
   Pages _bodyContent;
   String _title;
+  User loggedUser;
 
   @override
   void initState() {
     _bodyContent = Pages.home_page;
     _title = "CIVICO 26/B";
     super.initState();
+    sl<LocalDataSource>().getCachedUser().then((authenticatedUser) {
+      setState(() => loggedUser = authenticatedUser.user);
+    });
   }
 
   @override
@@ -86,16 +93,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.event_available,
                 text: 'Le mie presenze',
               ),
-              _createDrawerItem(
-                itemPage: Pages.presences_management_page,
-                icon: Icons.supervisor_account,
-                text: 'Gestione presenze',
-              ),
-              _createDrawerItem(
-                itemPage: Pages.users_management_page,
-                icon: Icons.lock_open,
-                text: 'Gestione utenze',
-              ),
+              loggedUser.idRole >= 2
+                  ? _createDrawerItem(
+                      itemPage: Pages.presences_management_page,
+                      icon: Icons.supervisor_account,
+                      text: 'Gestione presenze',
+                    )
+                  : Container(),
+              loggedUser.idRole == 3
+                  ? _createDrawerItem(
+                      itemPage: Pages.users_management_page,
+                      icon: Icons.lock_open,
+                      text: 'Gestione utenze',
+                    )
+                  : Container(),
             ])),
             Container(
                 child: Align(
@@ -166,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Image(image: AssetImage('assets/dnc_def_logo.png'), width: 200),
-        Text('Ciao Giangianni',
+        Text('Ciao ${loggedUser?.name}',
             style: TextStyle(
                 color: dncBlue, fontSize: 20, fontWeight: FontWeight.bold)),
         Text('Oggi lavori al ',
