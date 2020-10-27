@@ -41,13 +41,14 @@ class Room26AF1 extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BlocProvider.value(
-                          value: _reservationBloc,
-                          child: ReservationFormPage(
-                            reservationDate: visualizedDate,
-                            idRoom: ROOM_26A_CODE,
-                          ),
-                        ),
+                        builder: (context) =>
+                            BlocProvider.value(
+                              value: _reservationBloc,
+                              child: ReservationFormPage(
+                                reservationDate: visualizedDate,
+                                idRoom: ROOM_26A_CODE,
+                              ),
+                            ),
                       ),
                     );
                   }),
@@ -75,44 +76,70 @@ class Room26AF1 extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
-                      child: Workstations(
-                    quantity: 6,
-                    columnsNumber: 2,
-                    startingIndex: 76,
-                    usersWithWorkstations: state.usersWithWorkstations,
-                    onWorkstationUpdated: (workstationSelected) =>
-                        _workstationBloc.add(
-                      OnWorkstationUpdate(workstation: workstationSelected),
-                    ),
-                  )),
+                      child: GridView.count(
+                          physics: ScrollPhysics(),
+                          shrinkWrap: true,
+                          childAspectRatio: 1 / 1,
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 0,
+                          crossAxisSpacing: 0,
+                          children: List.generate(6, (index) {
+                            return Workstations(
+                              usersWithWorkstations:
+                              state.usersWithWorkstations,
+                              workstationCode: 76+index,
+                              onWorkstationUpdated: (workstationSelected) =>
+                                  _workstationBloc.add(
+                                    OnWorkstationUpdate(
+                                        workstation: workstationSelected),
+                                  ),
+                            );
+                          }))),
                   SizedBox(width: 16),
                   Expanded(
-                      child: Workstations(
-                    quantity: 6,
-                    columnsNumber: 2,
-                    startingIndex: 82,
-                    usersWithWorkstations: state.usersWithWorkstations,
-                    onWorkstationUpdated: (workstationSelected) =>
-                        _workstationBloc.add(
-                      OnWorkstationUpdate(workstation: workstationSelected),
-                    ),
-                  ))
+                      child: GridView.count(
+                          physics: ScrollPhysics(),
+                          shrinkWrap: true,
+                          childAspectRatio: 1 / 1,
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 0,
+                          crossAxisSpacing: 0,
+                          children: List.generate(6, (index) {
+                            return Workstations(
+                              usersWithWorkstations:
+                              state.usersWithWorkstations,
+                              workstationCode: 82+index,
+                              onWorkstationUpdated: (workstationSelected) =>
+                                  _workstationBloc.add(
+                                    OnWorkstationUpdate(
+                                        workstation: workstationSelected),
+                                  ),
+                            );
+                          })))
                 ],
               ),
               RoomLabel(labelText: 'Stanza 2'),
               Padding(
                 padding:
                 const EdgeInsets.symmetric(vertical: 0, horizontal: 60),
-                child: Workstations(
-                  quantity: 4,
-                  columnsNumber:2,
-                  usersWithWorkstations: state.usersWithWorkstations,
-                  startingIndex: 88,
-                  onWorkstationUpdated: (workstationSelected) =>
-                      _workstationBloc.add(
-                    OnWorkstationUpdate(workstation: workstationSelected),
-                  ),
-                ),
+                child: GridView.count(
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    childAspectRatio: 1 / 1,
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 0,
+                    crossAxisSpacing: 0,
+                    children: List.generate(4, (index) {
+                      return Workstations(
+                        usersWithWorkstations: state.usersWithWorkstations,
+                        workstationCode: 88 + index,
+                        onWorkstationUpdated: (workstationSelected) =>
+                            _workstationBloc.add(
+                              OnWorkstationUpdate(
+                                  workstation: workstationSelected),
+                            ),
+                      );
+                    })),
               ),
             ],
           );

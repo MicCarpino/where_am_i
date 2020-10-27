@@ -9,7 +9,8 @@ class Room26AF2 extends StatelessWidget {
   final Function() onWorkstationTryAgainPressed;
   final Function() onReservationTryAgainPressed;
 
-  Room26AF2(this.onWorkstationTryAgainPressed, this.onReservationTryAgainPressed);
+  Room26AF2(
+      this.onWorkstationTryAgainPressed, this.onReservationTryAgainPressed);
 
   @override
   Widget build(BuildContext context) {
@@ -27,53 +28,85 @@ class Room26AF2 extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   RoomLabel(labelText: 'Stanza 1'),
-                  Workstations(
-                    quantity: 6,
-                    columnsNumber: 3,
-                    usersWithWorkstations: state.usersWithWorkstations,
-                    startingIndex: 50,
-                    onWorkstationUpdated: (workstationSelected) =>
-                        _workstationBloc.add(
-                      OnWorkstationUpdate(workstation: workstationSelected),
-                    ),
-                  ),
+                  GridView.count(
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
+                      childAspectRatio: 1 / 1,
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 0,
+                      crossAxisSpacing: 0,
+                      children: List.generate(6, (index) {
+                        return Workstations(
+                          usersWithWorkstations: state.usersWithWorkstations,
+                          workstationCode: 50 + index,
+                          onWorkstationUpdated: (workstationSelected) =>
+                              _workstationBloc.add(
+                            OnWorkstationUpdate(
+                                workstation: workstationSelected),
+                          ),
+                        );
+                      })),
                   RoomLabel(labelText: 'Stanza 2'),
-                  Workstations(
-                    quantity: 8,
-                    columnsNumber: 4,
-                    usersWithWorkstations: state.usersWithWorkstations,
-                    startingIndex: 56,
-                    onWorkstationUpdated: (workstationSelected) =>
-                        _workstationBloc.add(
-                      OnWorkstationUpdate(workstation: workstationSelected),
-                    ),
-                  ),
+                  GridView.count(
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
+                      childAspectRatio: 1 / 1,
+                      crossAxisCount: 4,
+                      mainAxisSpacing: 0,
+                      crossAxisSpacing: 0,
+                      children: List.generate(8, (index) {
+                        return Workstations(
+                          usersWithWorkstations: state.usersWithWorkstations,
+                          workstationCode: 56 + index,
+                          onWorkstationUpdated: (workstationSelected) =>
+                              _workstationBloc.add(
+                            OnWorkstationUpdate(
+                                workstation: workstationSelected),
+                          ),
+                        );
+                      })),
                   RoomLabel(labelText: 'Stanza 3'),
-                  Workstations(
-                    quantity: 6,
-                    columnsNumber: 3,
-                    usersWithWorkstations: state.usersWithWorkstations,
-                    startingIndex: 64,
-                    onWorkstationUpdated: (workstationSelected) =>
-                        _workstationBloc.add(
-                      OnWorkstationUpdate(workstation: workstationSelected),
-                    ),
-                  ),
+                  GridView.count(
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
+                      childAspectRatio: 1 / 1,
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 0,
+                      crossAxisSpacing: 0,
+                      children: List.generate(6, (index) {
+                        return Workstations(
+                          usersWithWorkstations: state.usersWithWorkstations,
+                          workstationCode: 64 + index,
+                          onWorkstationUpdated: (workstationSelected) =>
+                              _workstationBloc.add(
+                            OnWorkstationUpdate(
+                                workstation: workstationSelected),
+                          ),
+                        );
+                      })),
                   RoomLabel(labelText: 'Stanza 4'),
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(vertical: 0, horizontal: 50),
-                    child: Workstations(
-                      quantity: 6,
-                      columnsNumber: 2,
-                      usersWithWorkstations: state.usersWithWorkstations,
-                      startingIndex: 70,
-                      onWorkstationUpdated: (workstationSelected) =>
-                          _workstationBloc.add(
-                        OnWorkstationUpdate(workstation: workstationSelected),
-                      ),
-                    ),
-                  ),
+                    child: GridView.count(
+                        physics: ScrollPhysics(),
+                        shrinkWrap: true,
+                        childAspectRatio: 1 / 1,
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 0,
+                        crossAxisSpacing: 0,
+                        children: List.generate(6, (index) {
+                          return Workstations(
+                            usersWithWorkstations: state.usersWithWorkstations,
+                            workstationCode: 70 + index,
+                            onWorkstationUpdated: (workstationSelected) =>
+                                _workstationBloc.add(
+                              OnWorkstationUpdate(
+                                  workstation: workstationSelected),
+                            ),
+                          );
+                        })),
+                  )
                 ],
               );
             } else if (state is WorkstationsFetchErrorState) {

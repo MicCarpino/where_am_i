@@ -61,7 +61,25 @@ class Room26B extends StatelessWidget {
         if (state is WorkstationsFetchLoadingState) {
           return CircularLoading();
         } else if (state is WorkstationsFetchCompletedState) {
-          return Workstations(
+          return GridView.count(
+              physics: ScrollPhysics(),
+              shrinkWrap: true,
+              childAspectRatio: 1 / 1,
+              crossAxisCount: 3,
+              mainAxisSpacing: 0,
+              crossAxisSpacing:15,
+              children: List.generate(18, (index) {
+                return Workstations(
+                  usersWithWorkstations: state.usersWithWorkstations,
+                  workstationCode: index,
+                  onWorkstationUpdated: (workstationSelected) =>
+                      _workstationBloc.add(
+                    OnWorkstationUpdate(workstation: workstationSelected),
+                  ),
+                );
+              }));
+        }
+        /* return Workstations(
             quantity: 18,
             columnsNumber: 3,
             columnsSpacing: 15,
@@ -70,8 +88,8 @@ class Room26B extends StatelessWidget {
             onWorkstationUpdated: (workstationSelected) => _workstationBloc.add(
               OnWorkstationUpdate(workstation: workstationSelected),
             ),
-          );
-        } else if (state is WorkstationsFetchErrorState) {
+          );*/
+        else if (state is WorkstationsFetchErrorState) {
           return Center(
             child: MaterialButton(
                 child: Text('riprova'),
@@ -91,11 +109,10 @@ class Room26B extends StatelessWidget {
           if (state is ReservationsFetchLoadingState) {
             return CircularLoading();
           } else if (state is ReservationsFetchCompletedState) {
-              return ReservationsCalendar(
-                  reservationsList: state.reservationsList
-                      .where((element) => element.idRoom == 26)
-                      .toList()
-            );
+            return ReservationsCalendar(
+                reservationsList: state.reservationsList
+                    .where((element) => element.idRoom == 26)
+                    .toList());
           } else if (state is ReservationsFetchErrorState) {
             return Center(
               child: MaterialButton(

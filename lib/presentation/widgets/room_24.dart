@@ -71,28 +71,44 @@ class Room24 extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                  child: Workstations(
-                quantity: 8,
-                columnsNumber: 2,
-                startingIndex: 19,
-                usersWithWorkstations: state.usersWithWorkstations,
-                onWorkstationUpdated: (workstationSelected) =>
-                    _workstationBloc.add(
-                  OnWorkstationUpdate(workstation: workstationSelected),
-                ),
-              )),
+                child: GridView.count(
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    childAspectRatio: 1 / 1,
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 0,
+                    crossAxisSpacing: 0,
+                    children: List.generate(8, (index) {
+                      return Workstations(
+                        usersWithWorkstations: state.usersWithWorkstations,
+                        workstationCode: 19 + index,
+                        onWorkstationUpdated: (workstationSelected) =>
+                            _workstationBloc.add(
+                          OnWorkstationUpdate(workstation: workstationSelected),
+                        ),
+                      );
+                    })),
+              ),
               SizedBox(width: 16),
               Expanded(
-                  child: Workstations(
-                quantity: 8,
-                columnsNumber: 2,
-                startingIndex: 27,
-                usersWithWorkstations: state.usersWithWorkstations,
-                onWorkstationUpdated: (workstationSelected) =>
-                    _workstationBloc.add(
-                  OnWorkstationUpdate(workstation: workstationSelected),
-                ),
-              ))
+                child: GridView.count(
+                    physics: ScrollPhysics(),
+                    shrinkWrap: true,
+                    childAspectRatio: 1 / 1,
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 0,
+                    crossAxisSpacing: 0,
+                    children: List.generate(8, (index) {
+                      return Workstations(
+                        usersWithWorkstations: state.usersWithWorkstations,
+                        workstationCode: 27 + index,
+                        onWorkstationUpdated: (workstationSelected) =>
+                            _workstationBloc.add(
+                          OnWorkstationUpdate(workstation: workstationSelected),
+                        ),
+                      );
+                    })),
+              )
             ],
           );
         } else if (state is WorkstationsFetchErrorState) {
