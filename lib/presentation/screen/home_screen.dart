@@ -11,15 +11,14 @@ import 'package:where_am_i/presentation/pages/users_management_page.dart';
 
 import 'login_screen.dart';
 
+final sl = GetIt.instance;
+
 enum Pages {
   home_page,
   my_presences_page,
   presences_management_page,
   users_management_page
 }
-
-final sl = GetIt.instance;
-final sp = sl<LocalDataSource>();
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -93,14 +92,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.event_available,
                 text: 'Le mie presenze',
               ),
-              loggedUser.idRole >= 2
+              loggedUser.idRole >= ROLE_STAFF
                   ? _createDrawerItem(
                       itemPage: Pages.presences_management_page,
                       icon: Icons.supervisor_account,
                       text: 'Gestione presenze',
                     )
                   : Container(),
-              loggedUser.idRole == 3
+              loggedUser.idRole == ROLE_ADMIN
                   ? _createDrawerItem(
                       itemPage: Pages.users_management_page,
                       icon: Icons.lock_open,
