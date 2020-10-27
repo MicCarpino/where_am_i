@@ -74,7 +74,7 @@ class _WorkstationsState extends State<Workstations> {
     //room 26b
     if (newWorkstationCode < 18) {
       workstationCode = getOldWorkstationCodeFor26b[
-          newWorkstationCode + widget.workstationCode];
+          newWorkstationCode];
     }
     //room 24
     if (newWorkstationCode >= 19 && newWorkstationCode <= 34) {
