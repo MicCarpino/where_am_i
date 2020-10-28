@@ -12,17 +12,16 @@ import 'package:where_am_i/presentation/widgets/room_staff.dart';
 
 final sl = GetIt.instance;
 
-class HomePage extends StatefulWidget {
-  final void Function(String title) _setAppBarTitle;
+class WorkplacesPage extends StatefulWidget {
+  final Function(String) setTitle;
 
-  HomePage(this._setAppBarTitle);
+  WorkplacesPage(this.setTitle);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _WorkplacesPageState createState() => _WorkplacesPageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  List<Widget> pages;
+class _WorkplacesPageState extends State<WorkplacesPage> {
   DateTime _visualizedDate = DateTime.now();
   WorkstationBloc _workstationBloc = sl<WorkstationBloc>();
   ReservationsBloc _reservationsBloc = sl<ReservationsBloc>();
@@ -31,11 +30,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _workstationBloc..add(FetchWorkstationsLists(dateToFetch: DateTime.now()));
     _reservationsBloc..add(FetchReservationsList(dateToFetch: DateTime.now()));
-    pages = [
-      Room26B(_visualizedDate, _onWorkstationTryAgainPressed,
-          _onReservationTryAgainPressed),
-      Room26AF2(_onWorkstationTryAgainPressed, _onReservationTryAgainPressed),
-    ];
     super.initState();
   }
 
@@ -79,19 +73,19 @@ class _HomePageState extends State<HomePage> {
             onPageChanged: (pageIndex) {
               switch (pageIndex) {
                 case 0:
-                  this.widget._setAppBarTitle("Civico 26/B");
+                  widget.setTitle("Civico 26/B");
                   break;
                 case 1:
-                  widget._setAppBarTitle("Civico 26/A 1°piano");
+                  widget.setTitle("Civico 26/A 1°piano");
                   break;
                 case 2:
-                  widget._setAppBarTitle("Civico 26/A 2°piano");
+                  widget.setTitle("Civico 26/A 2°piano");
                   break;
                 case 3:
-                  widget._setAppBarTitle("Civico 24");
+                  widget.setTitle("Civico 24");
                   break;
                 case 4:
-                  widget._setAppBarTitle("Dirigenza/Amministrazione");
+                  widget.setTitle("Dirigenza/Amministrazione");
                   break;
               }
             },

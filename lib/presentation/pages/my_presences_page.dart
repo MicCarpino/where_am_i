@@ -10,9 +10,6 @@ import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 final sl = GetIt.instance;
 
 class MyPresencesPage extends StatefulWidget {
-  final void Function(String title) _setAppBarTitle;
-
-  MyPresencesPage(this._setAppBarTitle);
 
   @override
   _MyPresencesPageState createState() => _MyPresencesPageState();

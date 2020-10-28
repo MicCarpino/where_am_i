@@ -10,32 +10,19 @@ import 'package:where_am_i/presentation/widgets/edit_role_dialog.dart';
 final sl = GetIt.instance;
 
 class UsersManagementPage extends StatefulWidget {
-  final void Function(String title) _setAppBarTitle;
-
-  UsersManagementPage(this._setAppBarTitle);
 
   @override
   _UsersManagementPageState createState() => _UsersManagementPageState();
 }
 
 class _UsersManagementPageState extends State<UsersManagementPage> {
-  UsersManagementBloc _usersBloc;
+  UsersManagementBloc _usersBloc = sl<UsersManagementBloc>();
   TextEditingController _textFieldController = TextEditingController();
 
   @override
   void initState() {
     _textFieldController.addListener(() {
       _filterList(_textFieldController.text);
-    });
-
-    _usersBloc = sl<UsersManagementBloc>();
-    _usersBloc.listen((state) {
-      if (state is UserUpdateErrorState) {
-        Scaffold.of(context).showSnackBar(SnackBar(
-            content: new Text(
-                'Si è verificato un errore. Il ruolo non è stato aggiornato'),
-            duration: new Duration(seconds: 3)));
-      }
     });
     super.initState();
   }
@@ -49,8 +36,16 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UsersManagementBloc, UsersManagementState>(
+    return BlocConsumer<UsersManagementBloc, UsersManagementState>(
         cubit: _usersBloc,
+        listener: (context, state) {
+          if (state is UserUpdateErrorState) {
+            Scaffold.of(context).showSnackBar(SnackBar(
+                content: new Text(
+                    'Si è verificato un errore. Il ruolo non è stato aggiornato'),
+                duration: new Duration(seconds: 3)));
+          }
+        },
         builder: (context, state) {
           if (state is UsersInitial) {
             _usersBloc.add(OnUsersListFetchRequested());
