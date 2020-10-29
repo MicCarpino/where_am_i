@@ -24,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    //default view
+    _bodyContent = Pages.workplaces_page;
     setState(() {
       _title = widget.title;
     });

@@ -13,9 +13,6 @@ import 'package:where_am_i/presentation/widgets/text_input_dialog.dart';
 final sl = GetIt.instance;
 
 class PresencesManagementPage extends StatefulWidget {
-  final void Function(String title) _setAppBarTitle;
-
-  PresencesManagementPage(this._setAppBarTitle);
 
   @override
   _PresencesManagementPageState createState() =>

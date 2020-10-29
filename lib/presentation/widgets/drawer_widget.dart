@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
@@ -82,8 +81,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                 Icon(Icons.exit_to_app, color: Colors.black87),
                             title: Text('Logout'),
                             onTap: () async {
-                              BlocProvider.of<HomeBloc>(context)
-                                  .add(OnLogoutButtonClick());
+                              sl<HomeBloc>().add(OnLogoutButtonClick());
                               Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(

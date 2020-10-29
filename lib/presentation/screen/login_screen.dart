@@ -32,14 +32,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: true,
       extendBodyBehindAppBar: false,
       backgroundColor: Colors.white,
       body: BlocConsumer<LoginBloc, LoginState>(
         cubit: loginBloc,
         listener: (context, state) {
-          if(state is LoadingState){
+          if (state is LoadingState) {
             _isLoading = true;
           }
           if (state is FailureState) {
@@ -69,62 +70,44 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget phoneLayout(BuildContext context) {
-    SizeConfig().init(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
-      child: Stack(
-        children: <Widget>[
-          SingleChildScrollView(
-            controller: _scrollController,
-            physics: AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: 40, vertical: 100),
-            child: Center(
-              child: Column(
-                children: <Widget>[
-                  Image(image: AssetImage('assets/dnc_def_logo.png')),
-                  Form(key: _formKey, child: _formFields())
-                ],
+      padding: EdgeInsets.only(top: SizeConfig.statusBarHeight),
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        physics: AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: 40),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 100.0),
+                child: Image(image: AssetImage('assets/dnc_def_logo.png')),
               ),
-            ),
+              Form(key: _formKey, child: _formFields()),
+              LoginButton(
+                'Log In',
+                isLoading: _isLoading,
+                onTap: () => _login(context),
+              ),
+            ],
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              color: Colors.white,
-              child: Padding(
-                padding: EdgeInsets.only(
-                    bottom: SizeConfig.safeBlockVertical * 4,
-                    left: 2.0,
-                    right: 2.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    LoginButton(
-                      'Log In',
-                      isLoading: _isLoading,
-                      onTap: () => _login(context),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          )
-        ],
+        ),
       ),
     );
   }
 
   Widget _formFields() {
     return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(height: SizeConfig.safeBlockVertical * 10),
-          _buildUsernameTF(),
-          SizedBox(height: SizeConfig.safeBlockVertical * 3),
-          _buildPasswordTF(),
-          SizedBox(height: SizeConfig.safeBlockVertical * 3),
-          _buildRememberMeCheckbox()
-        ],
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        SizedBox(height: SizeConfig.safeBlockVertical * 10),
+        _buildUsernameTF(),
+        SizedBox(height: SizeConfig.safeBlockVertical * 3),
+        _buildPasswordTF(),
+        SizedBox(height: SizeConfig.safeBlockVertical * 3),
+        //_buildRememberMeCheckbox()
+      ],
     );
   }
 
