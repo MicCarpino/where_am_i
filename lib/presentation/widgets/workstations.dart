@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/constants.dart';
@@ -7,6 +8,7 @@ import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
+import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/pages/assignable_users_page.dart';
 
 final sl = GetIt.instance;
@@ -14,12 +16,10 @@ final sl = GetIt.instance;
 class Workstations extends StatefulWidget {
   final List<UserWithWorkstation> usersWithWorkstations;
   final int workstationCode;
-  final Function(Workstation workstationAssigned) onWorkstationUpdated;
 
   const Workstations({
     @required this.usersWithWorkstations,
     @required this.workstationCode,
-    @required this.onWorkstationUpdated,
   });
 
   @override
@@ -28,9 +28,11 @@ class Workstations extends StatefulWidget {
 
 class _WorkstationsState extends State<Workstations> {
   User loggedUser;
+  WorkstationBloc _workstationBloc;
 
   @override
   void initState() {
+    _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
     super.initState();
     sl<LocalDataSource>().getCachedUser().then((authenticatedUser) {
       setState(() => loggedUser = authenticatedUser.user);
@@ -109,12 +111,13 @@ class _WorkstationsState extends State<Workstations> {
       ),
     ).then((selectedWorkstation) {
       if (selectedWorkstation != null) {
-        widget.onWorkstationUpdated(selectedWorkstation);
+        _workstationBloc.add(OnWorkstationUpdate(workstation: selectedWorkstation));
       }
     });
   }
 
   _onWorkstationLongClick(Workstation selectedWorkstation) {
+    //Clone of selected workstation with codeWorkstation set to null
     var clearedWorkstation = Workstation(
       idWorkstation: selectedWorkstation.idWorkstation,
       idResource: selectedWorkstation.idResource,
@@ -122,7 +125,7 @@ class _WorkstationsState extends State<Workstations> {
       workstationDate: selectedWorkstation.workstationDate,
       freeName: selectedWorkstation.freeName,
     );
-    widget.onWorkstationUpdated(clearedWorkstation);
+    _workstationBloc.add(OnWorkstationUpdate(workstation: clearedWorkstation));
     Navigator.pop(context);
   }
 

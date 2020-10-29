@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
-import 'package:where_am_i/domain/entities/workstation.dart';
-import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/room_label.dart';
 import 'package:where_am_i/presentation/widgets/workstations.dart';
 
@@ -28,8 +25,6 @@ class Room26AF2 extends StatelessWidget {
               return Workstations(
                 usersWithWorkstations: workstations,
                 workstationCode: 50 + index,
-                onWorkstationUpdated: (workstationSelected) =>
-                    _onWorkstationUpdate(context, workstationSelected),
               );
             })),
         RoomLabel(labelText: 'Stanza 2'),
@@ -44,8 +39,6 @@ class Room26AF2 extends StatelessWidget {
               return Workstations(
                 usersWithWorkstations: workstations,
                 workstationCode: 56 + index,
-                onWorkstationUpdated: (workstationSelected) =>
-                    _onWorkstationUpdate(context, workstationSelected),
               );
             })),
         RoomLabel(labelText: 'Stanza 3'),
@@ -60,8 +53,6 @@ class Room26AF2 extends StatelessWidget {
               return Workstations(
                 usersWithWorkstations: workstations,
                 workstationCode: 64 + index,
-                onWorkstationUpdated: (workstationSelected) =>
-                    _onWorkstationUpdate(context, workstationSelected),
               );
             })),
         RoomLabel(labelText: 'Stanza 4'),
@@ -78,17 +69,10 @@ class Room26AF2 extends StatelessWidget {
                 return Workstations(
                   usersWithWorkstations: workstations,
                   workstationCode: 70 + index,
-                  onWorkstationUpdated: (workstationSelected) =>
-                      _onWorkstationUpdate(context, workstationSelected),
                 );
               })),
         )
       ],
     );
-  }
-
-  _onWorkstationUpdate(BuildContext context, Workstation workstationSelected) {
-    BlocProvider.of<WorkstationBloc>(context)
-        .add(OnWorkstationUpdate(workstation: workstationSelected));
   }
 }

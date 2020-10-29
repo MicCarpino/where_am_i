@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
-import 'package:where_am_i/domain/entities/workstation.dart';
-import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/room_label.dart';
 import 'package:where_am_i/presentation/widgets/workstations.dart';
 
@@ -38,8 +35,6 @@ class RoomStaff extends StatelessWidget {
                       child: Workstations(
                         usersWithWorkstations: workstations,
                         workstationCode: 48,
-                        onWorkstationUpdated: (workstationSelected) =>
-                            _onWorkstationUpdate(context, workstationSelected),
                       ),
                     ),
                     SizedBox(
@@ -48,8 +43,6 @@ class RoomStaff extends StatelessWidget {
                       child: Workstations(
                         usersWithWorkstations: workstations,
                         workstationCode: 49,
-                        onWorkstationUpdated: (workstationSelected) =>
-                            _onWorkstationUpdate(context, workstationSelected),
                       ),
                     ),
                   ],
@@ -68,8 +61,6 @@ class RoomStaff extends StatelessWidget {
                       child: Workstations(
                         usersWithWorkstations: workstations,
                         workstationCode: 47,
-                        onWorkstationUpdated: (workstationSelected) =>
-                            _onWorkstationUpdate(context, workstationSelected),
                       ),
                     ),
                   ],
@@ -92,8 +83,6 @@ class RoomStaff extends StatelessWidget {
                     child: Workstations(
                       usersWithWorkstations: workstations,
                       workstationCode: 43,
-                      onWorkstationUpdated: (workstationSelected) =>
-                          _onWorkstationUpdate(context, workstationSelected),
                     ),
                   ),
                   SizedBox(
@@ -102,8 +91,6 @@ class RoomStaff extends StatelessWidget {
                     child: Workstations(
                       usersWithWorkstations: workstations,
                       workstationCode: 44,
-                      onWorkstationUpdated: (workstationSelected) =>
-                          _onWorkstationUpdate(context, workstationSelected),
                     ),
                   ),
                 ],
@@ -117,8 +104,6 @@ class RoomStaff extends StatelessWidget {
                     child: Workstations(
                       usersWithWorkstations: workstations,
                       workstationCode: 46,
-                      onWorkstationUpdated: (workstationSelected) =>
-                          _onWorkstationUpdate(context, workstationSelected),
                     ),
                   ),
                 ],
@@ -132,8 +117,6 @@ class RoomStaff extends StatelessWidget {
                     child: Workstations(
                       usersWithWorkstations: workstations,
                       workstationCode: 45,
-                      onWorkstationUpdated: (workstationSelected) =>
-                          _onWorkstationUpdate(context, workstationSelected),
                     ),
                   ),
                 ],
@@ -143,10 +126,5 @@ class RoomStaff extends StatelessWidget {
         )
       ],
     );
-  }
-
-  _onWorkstationUpdate(BuildContext context, Workstation workstationSelected) {
-    BlocProvider.of<WorkstationBloc>(context)
-        .add(OnWorkstationUpdate(workstation: workstationSelected));
   }
 }

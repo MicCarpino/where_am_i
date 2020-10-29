@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
-import 'package:where_am_i/domain/entities/workstation.dart';
-import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/room_label.dart';
 import 'package:where_am_i/presentation/widgets/workstations.dart';
 
@@ -31,11 +28,9 @@ class Room26AF1 extends StatelessWidget {
                     crossAxisSpacing: 0,
                     children: List.generate(6, (index) {
                       return Workstations(
-                          usersWithWorkstations: workstations,
-                          workstationCode: 76 + index,
-                          onWorkstationUpdated: (workstationSelected) =>
-                              _onWorkstationUpdate(
-                                  context, workstationSelected));
+                        usersWithWorkstations: workstations,
+                        workstationCode: 76 + index,
+                      );
                     }))),
             SizedBox(width: 16),
             Expanded(
@@ -48,11 +43,9 @@ class Room26AF1 extends StatelessWidget {
                     crossAxisSpacing: 0,
                     children: List.generate(6, (index) {
                       return Workstations(
-                          usersWithWorkstations: workstations,
-                          workstationCode: 82 + index,
-                          onWorkstationUpdated: (workstationSelected) =>
-                              _onWorkstationUpdate(
-                                  context, workstationSelected));
+                        usersWithWorkstations: workstations,
+                        workstationCode: 82 + index,
+                      );
                     })))
           ],
         ),
@@ -68,18 +61,12 @@ class Room26AF1 extends StatelessWidget {
               crossAxisSpacing: 0,
               children: List.generate(4, (index) {
                 return Workstations(
-                    usersWithWorkstations: workstations,
-                    workstationCode: 88 + index,
-                    onWorkstationUpdated: (workstationSelected) =>
-                        _onWorkstationUpdate(context, workstationSelected));
+                  usersWithWorkstations: workstations,
+                  workstationCode: 88 + index,
+                );
               })),
         ),
       ],
     );
-  }
-
-  _onWorkstationUpdate(BuildContext context, Workstation workstationSelected) {
-    BlocProvider.of<WorkstationBloc>(context)
-        .add(OnWorkstationUpdate(workstation: workstationSelected));
   }
 }

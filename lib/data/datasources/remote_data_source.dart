@@ -19,7 +19,7 @@ const BASE_URL = "test.dncsrl.com";
 //const BASE_URL = "wai.dncsrl.com";
 
 String encryptedPw =
-    "=";
+    "YmQ2YzdlNDc0N2EyOTYyZTM4Y2ZkY2RmNTg2Y2Q3Yjk6Ojk2N2M5NmYzNDRmODhlM2NjYWE1MTJiNmFlNGQ0MjQ3OjpjWkZrT25lUEtoOHlSSndhMm0zbFNRPT0=";
 
 abstract class RemoteDataSource {
   //USER
