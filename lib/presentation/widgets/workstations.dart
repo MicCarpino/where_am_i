@@ -15,6 +15,7 @@ class Workstations extends StatefulWidget {
   final List<UserWithWorkstation> usersWithWorkstations;
   final int workstationCode;
   final Function(Workstation workstationAssigned) onWorkstationUpdated;
+
   const Workstations({
     @required this.usersWithWorkstations,
     @required this.workstationCode,

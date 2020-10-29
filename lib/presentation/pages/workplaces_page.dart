@@ -4,13 +4,42 @@ import 'package:get_it/get_it.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
-import 'package:where_am_i/presentation/widgets/room_24.dart';
-import 'package:where_am_i/presentation/widgets/room_26A_F1.dart';
-import 'package:where_am_i/presentation/widgets/room_26A_F2.dart';
-import 'package:where_am_i/presentation/widgets/room_26B.dart';
-import 'package:where_am_i/presentation/widgets/room_staff.dart';
+import 'package:where_am_i/presentation/widgets/workplace.dart';
 
 final sl = GetIt.instance;
+
+enum Rooms { room_26B, room_26A_Floor1, room_26A_Floor2, room_24, room_staff }
+
+extension RoomsTitles on Rooms {
+  // ignore: missing_return
+  String get roomTitle {
+    switch (this) {
+      case Rooms.room_26B:
+        return 'Civico 26/B';
+      case Rooms.room_26A_Floor1:
+        return 'Civico 26/A 1°piano';
+      case Rooms.room_26A_Floor2:
+        return 'Civico 26/A 2°piano';
+      case Rooms.room_24:
+        return 'Civico 24';
+      case Rooms.room_staff:
+        return 'Amministrazione/Dirigenza';
+    }
+  }
+
+  int get roomId {
+    switch (this) {
+      case Rooms.room_26B:
+        return 26;
+      case Rooms.room_26A_Floor1:
+        return 262;
+      case Rooms.room_24:
+        return 24;
+      default:
+        return null;
+    }
+  }
+}
 
 class WorkplacesPage extends StatefulWidget {
   final Function(String) setTitle;
@@ -50,22 +79,17 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
             itemBuilder: (BuildContext context, int index) {
               switch (index) {
                 case 0:
-                  return Room26B(_visualizedDate, _onWorkstationTryAgainPressed,
-                      _onReservationTryAgainPressed);
+                  return WorkplaceBuilder(_visualizedDate, Rooms.room_26B);
                 case 1:
-                  return Room26AF1(
-                      _visualizedDate,
-                      _onWorkstationTryAgainPressed,
-                      _onReservationTryAgainPressed);
+                  return WorkplaceBuilder(
+                      _visualizedDate, Rooms.room_26A_Floor1);
                 case 2:
-                  return Room26AF2(_onWorkstationTryAgainPressed,
-                      _onReservationTryAgainPressed);
+                  return WorkplaceBuilder(
+                      _visualizedDate, Rooms.room_26A_Floor2);
                 case 3:
-                  return Room24(_visualizedDate, _onWorkstationTryAgainPressed,
-                      _onReservationTryAgainPressed);
+                  return WorkplaceBuilder(_visualizedDate, Rooms.room_24);
                 case 4:
-                  return RoomStaff(_onWorkstationTryAgainPressed,
-                      _onReservationTryAgainPressed);
+                  return WorkplaceBuilder(_visualizedDate, Rooms.room_staff);
                 default:
                   return Container();
               }
@@ -102,16 +126,6 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
     });
     _workstationBloc.add(FetchWorkstationsLists(dateToFetch: newDate));
     _reservationsBloc.add(FetchReservationsList(dateToFetch: newDate));
-  }
-
-  _onWorkstationTryAgainPressed() {
-    _workstationBloc
-        .add(FetchWorkstationsLists(dateToFetch: this._visualizedDate));
-  }
-
-  _onReservationTryAgainPressed() {
-    _reservationsBloc
-        .add(FetchReservationsList(dateToFetch: this._visualizedDate));
   }
 
   @override
