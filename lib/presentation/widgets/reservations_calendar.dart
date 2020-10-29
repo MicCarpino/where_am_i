@@ -47,7 +47,7 @@ class ReservationsCalendar extends StatelessWidget {
     return FlutterWeekViewEvent(
       decoration: BoxDecoration(
           color: reservation.status == RESERVATION_PENDING
-              ? dncTransparentBlue
+              ? dncLightBlue
               : dncOrangeTransparent,
           border: Border.all(
               color: reservation.status == RESERVATION_PENDING
@@ -151,11 +151,7 @@ class ReservationsCalendar extends StatelessWidget {
                         child: ReservationFormPage(reservation:reservation),
                       ),
                     ),
-                  ).then((newReservation) {
-                    if (newReservation != null) {
-                      //insert new reservation
-                    }
-                  });
+                  );
                 }),
             InkWell(
                 child: Row(children: [
