@@ -6,11 +6,11 @@ import '../../core/error/failure.dart';
 import '../../core/usecases/usecase.dart';
 
 class GetReservationsByDate extends UseCase<List<Reservation>, DateTime> {
-  final ReservationRepository reservationRepository;
+  final ReservationRepository _reservationRepository;
 
-  GetReservationsByDate(this.reservationRepository);
+  GetReservationsByDate(this._reservationRepository);
 
   Future<Either<Failure, List<Reservation>>> call(DateTime date) async {
-    return await reservationRepository.getAllReservationsByDate(date);
+    return await _reservationRepository.getAllReservationsByDate(date);
   }
 }

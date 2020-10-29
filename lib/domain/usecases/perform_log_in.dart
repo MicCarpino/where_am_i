@@ -8,12 +8,12 @@ import 'package:where_am_i/domain/entities/authenticated_user.dart';
 import '../repositories/auth_repository.dart';
 
 class PerformLogIn extends UseCase<AuthenticatedUser, LoginParams> {
-  final AuthRepository loginRepository;
+  final AuthRepository _loginRepository;
 
-  PerformLogIn(this.loginRepository);
+  PerformLogIn(this._loginRepository);
 
   Future<Either<Failure, AuthenticatedUser>> call(LoginParams params) async {
-    return loginRepository.performUserAuthentication(
+    return _loginRepository.performUserAuthentication(
       params.username,
       params.password,
     );

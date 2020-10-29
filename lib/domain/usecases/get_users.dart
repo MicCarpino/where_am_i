@@ -6,11 +6,11 @@ import '../../core/error/failure.dart';
 import '../../core/usecases/usecase.dart';
 
 class GetAllUsers extends UseCase<List<User>, NoParams> {
-  final UserRepository userRepository;
+  final UserRepository _userRepository;
 
-  GetAllUsers(this.userRepository);
+  GetAllUsers(this._userRepository);
 
   Future<Either<Failure, List<User>>> call(NoParams params) async {
-    return await userRepository.getAllUsers();
+    return await _userRepository.getAllUsers();
   }
 }

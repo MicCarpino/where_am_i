@@ -10,12 +10,12 @@ import '../../core/usecases/usecase.dart';
 
 class DeleteWorkstation extends UseCase<List<UserWithWorkstation>, int> {
   final WorkstationRepository _workstationRepository;
-  final UserRepository userRepository;
+  final UserRepository _userRepository;
 
-  DeleteWorkstation(this._workstationRepository,this.userRepository);
+  DeleteWorkstation(this._workstationRepository,this._userRepository);
 
   Future<Either<Failure, List<UserWithWorkstation>>> call(int idWorkstation) async {
-    var usersList = await userRepository.getAllUsers();
+    var usersList = await _userRepository.getAllUsers();
     var workstationsList =   await _workstationRepository.deleteWorkstation(idWorkstation);
     List<Workstation> workstations = workstationsList.getOrElse(() => null);
     List<User> users = usersList.getOrElse(() => null);

@@ -5,11 +5,11 @@ import '../../core/usecases/usecase.dart';
 import '../repositories/auth_repository.dart';
 
 class PerformLogOut extends UseCase<void, void> {
-  final AuthRepository loginRepository;
+  final AuthRepository _loginRepository;
 
-  PerformLogOut(this.loginRepository);
+  PerformLogOut(this._loginRepository);
 
   Future<Either<Failure, void>> call(void params) async {
-    return loginRepository.removeLoggedUser();
+    return _loginRepository.removeLoggedUser();
   }
 }

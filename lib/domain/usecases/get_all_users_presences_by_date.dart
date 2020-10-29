@@ -11,15 +11,15 @@ import '../../core/usecases/usecase.dart';
 
 class GetAllUserPresencesByDate
     extends UseCase<List<UserWithWorkstation>, DateTime> {
-  final WorkstationRepository workstationRepository;
-  final UserRepository userRepository;
+  final WorkstationRepository _workstationRepository;
+  final UserRepository _userRepository;
 
-  GetAllUserPresencesByDate(this.workstationRepository, this.userRepository);
+  GetAllUserPresencesByDate(this._workstationRepository, this._userRepository);
 
   Future<Either<Failure, List<UserWithWorkstation>>> call(DateTime date) async {
-    var usersList = await userRepository.getAllUsers();
+    var usersList = await _userRepository.getAllUsers();
     var workstationsModelsList =
-        await workstationRepository.getAllWorkstationsByDate(date);
+        await _workstationRepository.getAllWorkstationsByDate(date);
     List<WorkstationModel> workstations =
         workstationsModelsList.getOrElse(() => null);
     List<User> users = usersList.getOrElse(() => null);

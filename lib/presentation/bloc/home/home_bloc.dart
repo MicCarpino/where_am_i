@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:where_am_i/core/usecases/usecase.dart';
 
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
 
@@ -29,7 +30,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (event is OnLogoutButtonClick) {
       yield HomeLoadingState();
       final logoutResult =
-          await performLogOut.loginRepository.removeLoggedUser();
+          await performLogOut(NoParams());
       yield logoutResult.fold((failure) {
         //TODO: shows error message returned from server
         /*if (failure is ServerFailure) {

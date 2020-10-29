@@ -43,8 +43,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
     print('fetching workstations for $dateToFetch');
     final workstationsList = await getWorkstationsByDate(dateToFetch);
     yield workstationsList.fold((failure) {
-      print(
-          'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+      print('workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
       return WorkstationsFetchErrorState();
     }, (workstations) {
       //saving last fetch result to perform update without needing to download a new list

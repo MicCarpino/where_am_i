@@ -11,13 +11,13 @@ import '../../core/usecases/usecase.dart';
 class InsertWorkstation
     extends UseCase<List<UserWithWorkstation>, Workstation> {
   final WorkstationRepository _workstationRepository;
-  final UserRepository userRepository;
+  final UserRepository _userRepository;
 
-  InsertWorkstation(this._workstationRepository, this.userRepository);
+  InsertWorkstation(this._workstationRepository, this._userRepository);
 
   Future<Either<Failure, List<UserWithWorkstation>>> call(
       Workstation workstation) async {
-    var usersList = await userRepository.getAllUsers();
+    var usersList = await _userRepository.getAllUsers();
     var workstationsList = await _workstationRepository.insertWorkstation(workstation);
     List<Workstation> workstations =
     workstationsList.getOrElse(() => null);

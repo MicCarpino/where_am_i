@@ -6,11 +6,11 @@ import '../entities/authenticated_user.dart';
 import '../repositories/auth_repository.dart';
 
 class GetLoggedUser implements UseCase<AuthenticatedUser, NoParams> {
-  final AuthRepository loginRepository;
-  GetLoggedUser(this.loginRepository);
+  final AuthRepository _loginRepository;
+  GetLoggedUser(this._loginRepository);
 
   @override
   Future<Either<Failure, AuthenticatedUser>> call(NoParams params) async{
-    return await loginRepository.getLoggedUser();
+    return await _loginRepository.getLoggedUser();
   }
 }

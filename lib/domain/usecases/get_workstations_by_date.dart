@@ -10,15 +10,15 @@ import '../../core/usecases/usecase.dart';
 
 class GetWorkstationsByDate
     extends UseCase<List<UserWithWorkstation>, DateTime> {
-  final WorkstationRepository workstationRepository;
-  final UserRepository userRepository;
+  final WorkstationRepository _workstationRepository;
+  final UserRepository _userRepository;
 
-  GetWorkstationsByDate(this.workstationRepository, this.userRepository);
+  GetWorkstationsByDate(this._workstationRepository, this._userRepository);
 
   Future<Either<Failure, List<UserWithWorkstation>>> call(DateTime date) async {
-    var foldedUsersList = await userRepository.getAllUsers();
+    var foldedUsersList = await _userRepository.getAllUsers();
     var foldedWorkstationsList =
-        await workstationRepository.getAllWorkstationsByDate(date);
+        await _workstationRepository.getAllWorkstationsByDate(date);
     var workstationsWithUserNames = List<UserWithWorkstation>();
 
     //merging user names and surnames in workstations by idResource

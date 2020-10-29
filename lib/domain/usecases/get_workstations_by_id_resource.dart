@@ -6,11 +6,11 @@ import '../../core/error/failure.dart';
 import '../../core/usecases/usecase.dart';
 
 class GetWorkstationsByIdResource extends UseCase<List<Workstation>, NoParams> {
-  final WorkstationRepository workstationRepository;
+  final WorkstationRepository _workstationRepository;
 
-  GetWorkstationsByIdResource(this.workstationRepository);
+  GetWorkstationsByIdResource(this._workstationRepository);
 
   Future<Either<Failure, List<Workstation>>> call(NoParams params) async {
-    return await workstationRepository.getAllWorkstationsByIdResource();
+    return await _workstationRepository.getAllWorkstationsByIdResource();
   }
 }
