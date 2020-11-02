@@ -23,6 +23,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
       sl<PresencesManagementBloc>();
   TextEditingController _textFieldController = TextEditingController();
   DateTime visualizedDate;
+  bool isPresencesEditAllowed = false;
 
   @override
   void initState() {
@@ -32,6 +33,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     _presencesManagementBloc
         .add(OnUsersPresencesFetchRequested(dateToFetch: DateTime.now()));
     visualizedDate = DateTime.now();
+    isPresencesEditAllowed = DateTime.now().isAfter(visualizedDate);
     super.initState();
   }
 
@@ -76,29 +78,32 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                             ),
                           ),
                           IconButton(
-                              icon: Icon(Icons.person_add),
-                              onPressed: () {
-                                return showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return TextInputDialog(
-                                        messageText:
-                                            "Aggiungi risorsa non presente in elenco",
-                                        onAddButtonPressed:
-                                            (String externalUser) =>
-                                                _presencesManagementBloc.add(
-                                          OnInsertWorkstation(
-                                              workstation: Workstation(
-                                            idWorkstation: null,
-                                            codeWorkstation: null,
-                                            freeName: externalUser,
-                                            workstationDate:
-                                                this.visualizedDate,
-                                          )),
-                                        ),
-                                      );
-                                    });
-                              })
+                              icon: Icon(Icons.person_add,
+                                  color: isPresencesEditAllowed
+                                      ? Colors.black87
+                                      : Colors.grey),
+                              onPressed: () => isPresencesEditAllowed
+                                  ? showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return TextInputDialog(
+                                          messageText:
+                                              "Aggiungi risorsa non presente in elenco",
+                                          onAddButtonPressed:
+                                              (String externalUser) =>
+                                                  _presencesManagementBloc.add(
+                                            OnInsertWorkstation(
+                                                workstation: Workstation(
+                                              idWorkstation: null,
+                                              codeWorkstation: null,
+                                              freeName: externalUser,
+                                              workstationDate:
+                                                  this.visualizedDate,
+                                            )),
+                                          ),
+                                        );
+                                      })
+                                  : null)
                         ],
                       ),
                       Expanded(
@@ -148,12 +153,22 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   }
 
   _onDateChanged(DateTime newDate) {
-    this.visualizedDate = newDate;
-    _presencesManagementBloc
-        .add(OnUsersPresencesFetchRequested(dateToFetch: newDate));
+    setState(() {
+      this.visualizedDate = newDate;
+      var today = DateTime.now();
+      var todayToZero = DateTime(today.year, today.month, today.day);
+      this.isPresencesEditAllowed =
+          newDate.isAfter(todayToZero) || newDate.isAtSameMomentAs(todayToZero);
+      _presencesManagementBloc
+          .add(OnUsersPresencesFetchRequested(dateToFetch: newDate));
+    });
   }
 
   _onUserLongClick(UserWithWorkstation userWithWorkstation) {
+    //TODO:once back end date check is active this could be removed (?)
+    if (!isPresencesEditAllowed) {
+      return null;
+    }
     if (userWithWorkstation.workstation == null) {
       _presencesManagementBloc.add(OnInsertWorkstation(
         workstation: Workstation(
