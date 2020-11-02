@@ -20,9 +20,9 @@ class _DatePickerState extends State<DatePicker> {
 
   @override
   void initState() {
-    //when initialized set date to current date and invoke callback function
-    //which demand data updates
-    visualizedDate = DateTime.now();
+    //set date to current date
+    var today = DateTime.now();
+    visualizedDate = DateTime(today.year, today.month, today.day);
     super.initState();
   }
 
@@ -52,8 +52,7 @@ class _DatePickerState extends State<DatePicker> {
             ),
           ),
           GestureDetector(
-              child: Text(
-                  DateFormat('EEE, MMM d').format(visualizedDate),
+              child: Text(DateFormat('EEE, MMM d').format(visualizedDate),
                   style: TextStyle(color: Colors.white, fontSize: 16)),
               onTap: () {
                 _showCalendar(context);
