@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
+import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/domain/usecases/get_users.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 
 enum TimePickerType { startPicker, endPicker }
+
+final serviceLocator = GetIt.instance;
 
 class ReservationFormPage extends StatefulWidget {
   final DateTime reservationDate;
@@ -26,9 +33,13 @@ class ReservationFormPage extends StatefulWidget {
 }
 
 class _ReservationFormPageState extends State<ReservationFormPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _autocompleteTextFieldKey =
+      GlobalKey<AutoCompleteTextFieldState<User>>();
   TextEditingController _subjectTextController = TextEditingController();
   TextEditingController _participantsTextController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  List<User> suggestionsList = List();
+
   ReservationsBloc _reservationBloc;
 
   TimeOfDay _reservationStartTime;
@@ -38,58 +49,69 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
 
   @override
   void initState() {
-    _initTimePickers();
-    _participants = widget.reservation?.participants ?? List<String>();
+    //building participants suggestion with name and surname of resources
+    serviceLocator<GetAllUsers>()
+        .call(NoParams())
+        .then((value) => value.fold((l) => null, (r) {
+              suggestionsList.addAll(r);
+              return null;
+            }));
     _reservationBloc = BlocProvider.of<ReservationsBloc>(context);
     _subjectTextController.text = widget.reservation?.description;
-    _idRoom = widget.reservation?.idRoom ?? widget.idRoom;
     _participantsTextController.addListener(() {
       setState(() {});
     });
+    _initTimePickers();
+    _participants = widget.reservation?.participants ?? List<String>();
+    _idRoom = widget.reservation?.idRoom ?? widget.idRoom;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: dncBlue,
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ..._buildDateSection(),
-            ..._buildReferentSection(),
-            ..._buildSubjectSection(),
-            _buildTimePickersSection(),
-            ..._buildParticipantsSection(),
-            BlocBuilder(
-                cubit: _reservationBloc,
-                builder: (context, state) {
-                  if (state is ReservationUpdatingState) {
-                    return Center(child: CircularProgressIndicator());
-                  } else {
-                    return _buildButtonsSection();
-                  }
-                }),
-            BlocListener<ReservationsBloc, ReservationState>(
-                child: Container(),
-                cubit: _reservationBloc,
-                listener: (context, state) {
-                  if (state is ReservationUpdateErrorState) {
-                    Scaffold.of(context).showSnackBar(
-                      SnackBar(content: Text(state.errorMessage)),
-                    );
-                  } else if (state is ReservationsFetchCompletedState) {
-                    Navigator.of(context).pop();
-                  }
-                })
-          ],
+      body: Container(
+        height: double.infinity,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          padding: EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ..._buildDateSection(),
+              ..._buildReferentSection(),
+              ..._buildSubjectSection(),
+              _buildTimePickersSection(),
+              ..._buildParticipantsSection(),
+              BlocBuilder(
+                  cubit: _reservationBloc,
+                  builder: (context, state) {
+                    if (state is ReservationUpdatingState) {
+                      return Center(child: CircularProgressIndicator());
+                    } else {
+                      return _buildButtonsSection();
+                    }
+                  }),
+              BlocListener<ReservationsBloc, ReservationState>(
+                  child: Container(),
+                  cubit: _reservationBloc,
+                  listener: (context, state) {
+                    if (state is ReservationUpdateErrorState) {
+                      Scaffold.of(context).showSnackBar(
+                        SnackBar(content: Text(state.errorMessage)),
+                      );
+                    } else if (state is ReservationsFetchCompletedState) {
+                      Navigator.of(context).pop();
+                    }
+                  })
+            ],
+          ),
         ),
       ),
     );
@@ -238,11 +260,25 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
   }
 
   Widget _buildAddParticipantsTextField() {
-    return TextField(
-      autofocus: false,
-      autofillHints: _participants,
+    return AutoCompleteTextField<User>(
+      itemBuilder: (context, suggestion) => new ListTile(
+          title: new Text('${suggestion.surname} ${suggestion.name}'),
+        ),
+      itemSorter: (a, b) {
+        int surnameResult = a.surname.compareTo(b.surname);
+        return surnameResult != 0 ? surnameResult : a.name.compareTo(b.name);
+      },
+      itemFilter: (suggestion, input) =>
+          suggestion.surname.toLowerCase().contains(input.toLowerCase()) ||
+          suggestion.name.toLowerCase().contains(input.toLowerCase()),
+      itemSubmitted: (item) => setState(() {
+        _participants.add('${item.surname} ${item.name}');
+        suggestionsList.removeWhere((element) => element == item);
+      }),
+      key: _autocompleteTextFieldKey,
       controller: _participantsTextController,
-      maxLines: 1,
+      suggestions: suggestionsList,
+      clearOnSubmit: true,
       decoration: InputDecoration(
         //delete icon, clears textfield
         prefixIcon: _participantsTextController.text.isNotEmpty
