@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
@@ -59,13 +60,23 @@ abstract class RemoteDataSource {
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
-  final http.Client client;
+  final HttpClient client;
 
   RemoteDataSourceImpl({@required this.client});
 
   String formatDateToString(DateTime date) =>
       DateFormat('yyyy-MM-dd').format(date);
 
+  Exception failureResult(Response response ){
+    if(response.statusCode == 401){
+      return UnauthorizedException();
+    }
+    if(response.statusCode == 500) {
+      throw ServerException(response.body);
+    } else {
+      throw UnexpectedException(response.body);
+    }
+  }
   @override
   Future<AuthenticatedUserModel> performUserAuthentication(
       String username, String password) async {
@@ -77,7 +88,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return AuthenticatedUserModel.fromJson(json.decode(response.body));
     } else {
-      throw ServerException(response.body);
+     throw failureResult(response);
     }
   }
 
@@ -95,7 +106,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return List<WorkstationModel>.from(
           workstationsList.map((e) => WorkstationModel.fromJson(e)));
     } else {
-      throw ServerException(response.body);
+      throw failureResult(response);
     }
   }
 
@@ -112,7 +123,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return List<WorkstationModel>.from(
           workstationsList.map((e) => WorkstationModel.fromJson(e)));
     } else {
-      throw ServerException(response.body);
+      throw failureResult(response);
     }
   }
 
@@ -131,7 +142,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(json.decode(response.body));
     } else {
-      throw ServerException(response.body);
+      throw failureResult(response);
     }
   }
 
@@ -150,7 +161,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(jsonDecode(response.body));
     } else {
-      throw ServerException(response.body);
+      throw failureResult(response);
     }
   }
 
@@ -164,7 +175,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return;
     } else {
-      throw ServerException(response.body);
+      throw failureResult(response);
     }
   }
 
@@ -182,7 +193,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return List<ReservationModel>.from(
           reservationsList.map((e) => ReservationModel.fromJson(e)));
     } else {
-      throw ServerException(response.body);
+      throw failureResult(response);
     }
   }
 
@@ -197,7 +208,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       var usersList = json.decode(response.body);
       return List<UserModel>.from(usersList.map((e) => UserModel.fromJson(e)));
     } else {
-      throw ServerException(response.body);
+      throw failureResult(response);
     }
   }
 
@@ -212,7 +223,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return UserModel.fromJson(json.decode(response.body));
     } else {
-      throw ServerException(response.body);
+      throw failureResult(response);
     }
   }
 
@@ -228,7 +239,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return ReservationModel.fromJson(json.decode(response.body));
     } else {
-      throw ServerException(response.body);
+      throw failureResult(response);
     }
   }
 
@@ -247,7 +258,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return ReservationModel.fromJson(json.decode(response.body));
     } else {
-      throw ServerException(response.body);
+      throw failureResult(response);
     }
   }
 
@@ -262,7 +273,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return;
     } else {
-      throw ServerException(response.body);
+      throw failureResult(response);
     }
   }
 }
