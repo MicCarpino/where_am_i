@@ -72,25 +72,28 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget phoneLayout(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(top: SizeConfig.statusBarHeight),
-      child: SingleChildScrollView(
-        controller: _scrollController,
-        physics: AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 40),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 100.0),
-                child: Image(image: AssetImage('assets/dnc_def_logo.png')),
-              ),
-              Form(key: _formKey, child: _formFields()),
-              LoginButton(
-                'Log In',
-                isLoading: _isLoading,
-                onTap: () => _login(context),
-              ),
-            ],
+      child: Container(
+        height: double.infinity,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          physics: AlwaysScrollableScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 40),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 100.0),
+                  child: Image(image: AssetImage('assets/dnc_def_logo.png')),
+                ),
+                Form(key: _formKey, child: _formFields()),
+                LoginButton(
+                  'Log In',
+                  isLoading: _isLoading,
+                  onTap: () => _login(context),
+                ),
+              ],
+            ),
           ),
         ),
       ),
