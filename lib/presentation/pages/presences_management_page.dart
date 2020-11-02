@@ -13,7 +13,6 @@ import 'package:where_am_i/presentation/widgets/text_input_dialog.dart';
 final sl = GetIt.instance;
 
 class PresencesManagementPage extends StatefulWidget {
-
   @override
   _PresencesManagementPageState createState() =>
       _PresencesManagementPageState();
@@ -112,11 +111,9 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                           itemBuilder: (context, index) {
                             var userWithWorkstation =
                                 state.allUsersPresences[index];
-                            //TODO: workstation.idResource for free name is "null"
                             return ListTile(
                                 title: Text(
-                                  userWithWorkstation.user !=
-                                          null
+                                  userWithWorkstation.user != null
                                       ? "${userWithWorkstation.user?.surname} ${userWithWorkstation.user?.name}"
                                       : userWithWorkstation
                                           .workstation.freeName,
@@ -157,17 +154,44 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   }
 
   _onUserLongClick(UserWithWorkstation userWithWorkstation) {
-    userWithWorkstation.workstation == null
-        ? _presencesManagementBloc.add(OnInsertWorkstation(
-            workstation: Workstation(
-            idWorkstation: null,
-            codeWorkstation: null,
-            idResource: userWithWorkstation.user.idResource,
-            workstationDate: this.visualizedDate,
-          )))
-        : _presencesManagementBloc.add(OnDeleteWorkstation(
-            idWorkstation: userWithWorkstation.workstation.idWorkstation));
-    _textFieldController.clear();
+    if (userWithWorkstation.workstation == null) {
+      _presencesManagementBloc.add(OnInsertWorkstation(
+        workstation: Workstation(
+          idWorkstation: null,
+          codeWorkstation: null,
+          idResource: userWithWorkstation.user.idResource,
+          workstationDate: this.visualizedDate,
+        ),
+      ));
+    } else {
+      userWithWorkstation.workstation.codeWorkstation == null
+          ? _presencesManagementBloc.add(OnDeleteWorkstation(
+              idWorkstation: userWithWorkstation.workstation.idWorkstation))
+          : showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Attenzione"),
+                  content: Text(
+                      "La risorsa risulta già essere assegnata ad una postazione. Continuare?"),
+                  actions: [
+                    FlatButton(
+                        child: Text("Annulla"),
+                        onPressed: () => Navigator.pop(context)),
+                    FlatButton(
+                        child: Text("OK"),
+                        onPressed: () {
+                          _presencesManagementBloc.add(OnDeleteWorkstation(
+                              idWorkstation: userWithWorkstation
+                                  .workstation.idWorkstation));
+                          Navigator.pop(context);
+                        })
+                  ],
+                );
+              },
+            );
+      _textFieldController.clear();
+    }
   }
 
   _showSnackbarWithMessage(String message) {

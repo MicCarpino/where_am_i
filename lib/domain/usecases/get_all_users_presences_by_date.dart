@@ -33,15 +33,19 @@ class GetAllUserPresencesByDate
 
   List<UserWithWorkstation> mergeAndSortUsersWithWorkstations(
       List<Workstation> workstations, List<User> users) {
+    //Assigning workstation ot each user
     List<UserWithWorkstation> usersWithWorkstations = users.map((user) {
       Workstation relatedWorkstation = workstations.firstWhere(
           (workstation) => workstation.idResource == user.idResource,
           orElse: () => null);
       return UserWithWorkstation(user: user, workstation: relatedWorkstation);
     }).toList();
-    usersWithWorkstations
-        .sort((a, b) => a.user.surname.compareTo(b.user.surname));
-    //Free name users
+    //Sorting users list firstly by surname, then by name
+    usersWithWorkstations.sort((a, b) {
+      int surnameResult = a.user.surname.compareTo(b.user.surname);
+      return surnameResult != 0 ? surnameResult : a.user.name.compareTo(b.user.name);
+    });
+    //Sorting free name users
     List<UserWithWorkstation> freeNamesWorkstations = workstations
         .where((workstation) => workstation.freeName != null)
         .map((workstation) =>
@@ -49,6 +53,7 @@ class GetAllUserPresencesByDate
         .toList();
     freeNamesWorkstations.sort(
         (a, b) => a.workstation.freeName.compareTo(b.workstation.freeName));
+    //add users to free names list and return the list
     return List.of(freeNamesWorkstations..addAll(usersWithWorkstations));
   }
 }

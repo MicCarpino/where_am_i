@@ -31,7 +31,8 @@ class PresencesManagementBloc
         deleteWorkstation = deleteWorkstation,
         super(PresencesManagementInitial());
 
-  List<UserWithWorkstation> originalUsersPresencesList = List<UserWithWorkstation>();
+  List<UserWithWorkstation> originalUsersPresencesList =
+      List<UserWithWorkstation>();
 
   @override
   Stream<PresencesManagementState> mapEventToState(
@@ -64,8 +65,9 @@ class PresencesManagementBloc
     });
   }
 
-  Stream<PresencesManagementState> _insertWorkstation(Workstation workstation) async* {
-    var insertResult = await  insertWorkstation(workstation);
+  Stream<PresencesManagementState> _insertWorkstation(
+      Workstation workstation) async* {
+    var insertResult = await insertWorkstation(workstation);
     yield insertResult.fold((failure) {
       return UserPresencesErrorState();
     }, (updatedList) {
@@ -74,8 +76,9 @@ class PresencesManagementBloc
     });
   }
 
-  Stream<PresencesManagementState> _deleteWorkstation(int workstationId) async* {
-    var deleteResult = await  deleteWorkstation(workstationId);
+  Stream<PresencesManagementState> _deleteWorkstation(
+      int workstationId) async* {
+    var deleteResult = await deleteWorkstation(workstationId);
     yield deleteResult.fold((failure) {
       return UserPresencesErrorState();
     }, (updatedList) {
@@ -90,12 +93,18 @@ class PresencesManagementBloc
       yield UsersPresencesReadyState(originalUsersPresencesList);
     } else {
       var filteredList = originalUsersPresencesList
-          .where((user) =>
-              user.user.name.toLowerCase().contains(filterInput.toLowerCase()) ||
-              user.user.surname.toLowerCase().contains(filterInput.toLowerCase()))
+          .where((user) => user.user != null
+              ? user.user.name
+                      .toLowerCase()
+                      .contains(filterInput.toLowerCase()) ||
+                  user.user.surname
+                      .toLowerCase()
+                      .contains(filterInput.toLowerCase())
+              : user.workstation.freeName
+                  .toLowerCase()
+                  .contains(filterInput.toLowerCase()))
           .toList();
       yield UsersPresencesReadyState(filteredList);
     }
   }
-
 }
