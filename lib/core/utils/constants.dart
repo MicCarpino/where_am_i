@@ -25,7 +25,12 @@ const String LOGIN_SCREEN_KEY = 'LOGIN_SCREEN';
 const String HOME_SCREEN_KEY = 'HOME_SCREEN';
 const String JWT_TOKEN_KEY = 'JWT_TOKEN';
 
-const String BASE_URL = "wai.dncsrl.com";
+//LocalHost
+//const BASE_URL = "10.0.2.2:8080";
+//Test
+const BASE_URL = "test.dncsrl.com";
+//Prod
+//const BASE_URL = "wai.dncsrl.com";
 const ROOM_24_CODE = 24;
 const ROOM_26B_CODE = 26;
 const ROOM_26A_CODE = 261;

@@ -4,20 +4,13 @@ import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:where_am_i/core/error/exceptions.dart';
+import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/models/authenticated_user_model.dart';
 import 'package:where_am_i/data/models/reservation_model.dart';
 import 'package:where_am_i/data/models/user_model.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
 import 'package:where_am_i/domain/entities/user.dart';
-
-//LocalHost
-//const BASE_URL = "10.0.2.2:8080";
-//Test
-const BASE_URL = "test.dncsrl.com";
-//Prod
-//const BASE_URL = "wai.dncsrl.com";
 
 String encryptedPw =
     "=";
