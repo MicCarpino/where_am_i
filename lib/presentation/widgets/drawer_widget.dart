@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
 import 'package:where_am_i/presentation/screen/login_screen.dart';
+import 'package:where_am_i/user_service.dart';
 
 enum Pages {
   workplaces_page,
@@ -19,22 +19,14 @@ class DrawerWidget extends StatefulWidget {
   final Function(String, Pages) setTitleAndPage;
   final Pages currentPage;
 
-  DrawerWidget(this.setTitleAndPage,this.currentPage);
+  DrawerWidget(this.setTitleAndPage, this.currentPage);
 
   @override
   _DrawerWidgetState createState() => _DrawerWidgetState();
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  User loggedUser;
-
-  @override
-  void initState() {
-    sl<LocalDataSource>().getCachedUser().then((authenticatedUser) {
-      setState(() => loggedUser = authenticatedUser.user);
-    });
-    super.initState();
-  }
+  User loggedUser = sl<UserService>().getLoggedUser;
 
   @override
   Widget build(BuildContext context) {
@@ -105,30 +97,33 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           children: <Widget>[
             Icon(
               icon,
-              color: drawerItemRelatedPage == widget.currentPage ? Colors.white : Colors.black87,
+              color: drawerItemRelatedPage == widget.currentPage
+                  ? Colors.white
+                  : Colors.black87,
             ),
             Padding(
                 padding: EdgeInsets.only(left: 8.0),
-                child: Text(
-                  text,
-                  style: TextStyle(
-                      color: drawerItemRelatedPage == widget.currentPage
-                          ? Colors.white
-                          : Colors.black87)
-                ))
+                child: Text(text,
+                    style: TextStyle(
+                        color: drawerItemRelatedPage == widget.currentPage
+                            ? Colors.white
+                            : Colors.black87)))
           ],
         ),
         onTap: () {
           setState(() {
             switch (drawerItemRelatedPage) {
               case Pages.my_presences_page:
-                widget.setTitleAndPage('Le mie presenze', drawerItemRelatedPage);
+                widget.setTitleAndPage(
+                    'Le mie presenze', drawerItemRelatedPage);
                 break;
               case Pages.presences_management_page:
-                widget.setTitleAndPage('Gestione presenze', drawerItemRelatedPage);
+                widget.setTitleAndPage(
+                    'Gestione presenze', drawerItemRelatedPage);
                 break;
               case Pages.users_management_page:
-                widget.setTitleAndPage('Gestione utenze', drawerItemRelatedPage);
+                widget.setTitleAndPage(
+                    'Gestione utenze', drawerItemRelatedPage);
                 break;
               case Pages.workplaces_page:
                 widget.setTitleAndPage('Civico 26B', drawerItemRelatedPage);

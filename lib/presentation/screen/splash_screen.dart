@@ -4,6 +4,7 @@ import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/domain/usecases/get_logged_user.dart';
 import 'package:where_am_i/presentation/screen/login_screen.dart';
 import 'package:where_am_i/presentation/screen/home_screen.dart';
+import 'package:where_am_i/user_service.dart';
 
 final sl = GetIt.instance;
 
@@ -37,13 +38,14 @@ class SplashScreenState extends State<SplashScreen> {
   void autoLogin() {
     Future.delayed(Duration(seconds: 2), () async {
       var loggedUser = await sl<GetLoggedUser>().call(NoParams());
-      loggedUser.fold((userNotFound) =>
-          Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LoginScreen())), (
-          loggedUser) =>
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomeScreen())));
+      loggedUser.fold(
+          (userNotFound) => Navigator.push(
+              context, MaterialPageRoute(builder: (context) => LoginScreen())),
+          (loggedUser) {
+        GetIt.instance<UserService>().setLoggedUser(loggedUser.user);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+      });
     });
   }
 }
