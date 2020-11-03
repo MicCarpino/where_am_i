@@ -9,6 +9,8 @@ class UserService {
 
   setLoggedUser(User gg) => loggedUser = gg;
 
+  removeLoggedUser() => loggedUser = null;
+
   //Workstation code assigned for current day
   int assignedWorkstationCode;
 

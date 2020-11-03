@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:where_am_i/domain/usecases/delete_reservation.dart';
-import 'package:where_am_i/user_service.dart';
 import 'data/repositories/user_repository_impl.dart';
 import 'domain/usecases/get_logged_user.dart';
 
@@ -119,5 +118,4 @@ Future<void> init() async {
   final client = new HttpClient();
   client.connectionTimeout = const Duration(seconds: 5);
   sl.registerLazySingleton(() => client);
-  sl.registerLazySingleton(() => UserService());
 }
