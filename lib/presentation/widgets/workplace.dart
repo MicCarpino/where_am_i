@@ -27,8 +27,8 @@ class WorkplaceBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool areChangesAllowed = visualizedDate.isAfter(DateTime.now().zeroed()) ||
-        visualizedDate.isAtSameMomentAs(DateTime.now().zeroed());
+    bool allowChangesForCurrentDate =
+        visualizedDate.isAtSameMomentOrAfter(DateTime.now().zeroed());
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.all(16),
@@ -40,48 +40,49 @@ class WorkplaceBuilder extends StatelessWidget {
                   return CircularLoading();
                 } else if (state is WorkstationsFetchCompletedState) {
                   return _buildWorkstations(
-                      state.usersWithWorkstations, areChangesAllowed);
+                      state.usersWithWorkstations, allowChangesForCurrentDate);
                 }
                 //show empty workstations
-                return _buildWorkstations(List(), areChangesAllowed);
+                return _buildWorkstations(List(), false);
               }),
           SizedBox(height: 10),
-          ..._buildReservationsSection(context, areChangesAllowed)
+          ..._buildReservationsSection(context, allowChangesForCurrentDate)
         ]));
   }
 
-  _buildWorkstations(
-      List<UserWithWorkstation> usersWithWorkstations, bool areChangesAllowed) {
+  _buildWorkstations(List<UserWithWorkstation> usersWithWorkstations,
+      bool allowChangesForCurrentDate) {
     switch (room) {
       case Rooms.room_26B:
         return Room26B(
           workstations: usersWithWorkstations,
-          areChangesAllowed: areChangesAllowed,
+          allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
       case Rooms.room_26A_Floor1:
         return Room26AF1(
           workstations: usersWithWorkstations,
-          areChangesAllowed: areChangesAllowed,
+          allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
       case Rooms.room_26A_Floor2:
         return Room26AF2(
           workstations: usersWithWorkstations,
-          areChangesAllowed: areChangesAllowed,
+          allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
       case Rooms.room_24:
         return Room24(
           workstations: usersWithWorkstations,
-          areChangesAllowed: areChangesAllowed,
+          allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
       case Rooms.room_staff:
         return RoomStaff(
           workstations: usersWithWorkstations,
-          areChangesAllowed: areChangesAllowed,
+          allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
     }
   }
 
-  _buildReservationsSection(BuildContext context, bool areChangesAllowed) {
+  _buildReservationsSection(
+      BuildContext context, bool allowChangesForCurrentDate) {
     // ignore: close_sinks
     var reservationsBloc = BlocProvider.of<ReservationsBloc>(context);
     if (room == Rooms.room_26B ||
@@ -91,9 +92,10 @@ class WorkplaceBuilder extends StatelessWidget {
         //Reservation section title
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Text('Saletta riunioni', style: roomLabelStyle),
+          //show/hide "add reservation" button for past days
           Visibility(
-            visible: visualizedDate.isAfter(DateTime.now().zeroed()) ||
-                visualizedDate.isAtSameMomentAs(DateTime.now().zeroed()),
+            visible:
+                visualizedDate.isAtSameMomentOrAfter(DateTime.now().zeroed()),
             child: IconButton(
                 icon: Icon(Icons.add_circle_sharp,
                     color: Colors.black54, size: 32),
@@ -121,9 +123,11 @@ class WorkplaceBuilder extends StatelessWidget {
                 return CircularLoading();
               } else if (state is ReservationsFetchCompletedState) {
                 return ReservationsCalendar(
-                    reservationsList: state.reservationsList
-                        .where((element) => element.idRoom == room.roomId)
-                        .toList());
+                  reservationsList: state.reservationsList
+                      .where((element) => element.idRoom == room.roomId)
+                      .toList(),
+                  allowChangesForCurrentDate: allowChangesForCurrentDate,
+                );
               }
               return ReservationsCalendar();
             })

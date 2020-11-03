@@ -5,9 +5,9 @@ import 'package:where_am_i/presentation/widgets/workstations.dart';
 
 class Room26AF1 extends StatelessWidget {
   final List<UserWithWorkstation> workstations;
-  final bool areChangesAllowed;
+  final bool allowChangesForCurrentDate;
 
-  Room26AF1({this.workstations = const [], this.areChangesAllowed});
+  Room26AF1({this.workstations = const [], this.allowChangesForCurrentDate});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class Room26AF1 extends StatelessWidget {
                       return Workstations(
                         usersWithWorkstations: workstations,
                         workstationCode: 76 + index,
-                        isEditable: areChangesAllowed,
+                        allowChangesForCurrentDate: allowChangesForCurrentDate,
                       );
                     }))),
             SizedBox(width: 16),
@@ -47,7 +47,7 @@ class Room26AF1 extends StatelessWidget {
                       return Workstations(
                         usersWithWorkstations: workstations,
                         workstationCode: 82 + index,
-                        isEditable: areChangesAllowed,
+                        allowChangesForCurrentDate: allowChangesForCurrentDate,
                       );
                     })))
           ],
@@ -66,7 +66,7 @@ class Room26AF1 extends StatelessWidget {
                 return Workstations(
                   usersWithWorkstations: workstations,
                   workstationCode: 88 + index,
-                  isEditable: areChangesAllowed,
+                  allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );
               })),
         ),

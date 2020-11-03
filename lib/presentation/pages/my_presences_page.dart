@@ -49,7 +49,7 @@ class _MyPresencesPageState extends State<MyPresencesPage> {
         });
   }
 
-  Widget _buildSFCalendar(List<DateTime> userPresences) => SfDateRangePicker(
+  SfDateRangePicker _buildSFCalendar(List<DateTime> userPresences) => SfDateRangePicker(
         showNavigationArrow: true,
         headerHeight: 100,
         selectionColor: dncOrange,
@@ -58,7 +58,7 @@ class _MyPresencesPageState extends State<MyPresencesPage> {
         selectionMode: DateRangePickerSelectionMode.multiple,
         headerStyle: DateRangePickerHeaderStyle(textAlign: TextAlign.center),
         initialSelectedDates: userPresences != null ? userPresences : [],
-        onSelectionChanged: _onSelectionChanged,
+        onSelectionChanged: _onSelectionChanged,enablePastDates: false,toggleDaySelection: true,
       );
 
   _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {

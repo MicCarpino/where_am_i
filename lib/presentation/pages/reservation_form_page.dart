@@ -25,8 +25,8 @@ class ReservationFormPage extends StatefulWidget {
     this.reservationDate,
     this.idRoom,
     this.reservation,
-  })  : assert(reservationDate != null),
-        assert(idRoom != null);
+  }) : assert(
+            reservation != null || (reservationDate != null && idRoom != null));
 
   @override
   _ReservationFormPageState createState() => _ReservationFormPageState();
@@ -34,8 +34,7 @@ class ReservationFormPage extends StatefulWidget {
 
 class _ReservationFormPageState extends State<ReservationFormPage> {
   final _formKey = GlobalKey<FormState>();
-  final _autocompleteTextFieldKey =
-      GlobalKey<AutoCompleteTextFieldState>();
+  final _autocompleteTextFieldKey = GlobalKey<AutoCompleteTextFieldState>();
 
   TextEditingController _subjectTextController = TextEditingController();
   TextEditingController _participantsTextController = TextEditingController();
@@ -261,8 +260,8 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
   Widget _buildAddParticipantsTextField() {
     return AutoCompleteTextField(
       itemBuilder: (context, suggestion) => new ListTile(
-          title: new Text('${suggestion.surname} ${suggestion.name}'),
-        ),
+        title: new Text('${suggestion.surname} ${suggestion.name}'),
+      ),
       itemSorter: (a, b) {
         int surnameResult = a.surname.compareTo(b.surname);
         return surnameResult != 0 ? surnameResult : a.name.compareTo(b.name);

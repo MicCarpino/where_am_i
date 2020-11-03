@@ -17,12 +17,12 @@ final sl = GetIt.instance;
 class Workstations extends StatefulWidget {
   final List<UserWithWorkstation> usersWithWorkstations;
   final int workstationCode;
-  final bool isEditable;
+  final bool allowChangesForCurrentDate;
 
   const Workstations({
     @required this.usersWithWorkstations,
     @required this.workstationCode,
-    @required this.isEditable,
+    @required this.allowChangesForCurrentDate,
   });
 
   @override
@@ -56,12 +56,13 @@ class _WorkstationsState extends State<Workstations> {
             borderRadius: BorderRadius.circular(5),
             side: BorderSide(color: Colors.black54)),
         //allow edit
-        onPressed: () => loggedUser.idRole >= ROLE_STAFF && widget.isEditable
-            ? _onWorkstationClick(widget.workstationCode)
-            : null,
+        onPressed: () =>
+            loggedUser.idRole >= ROLE_STAFF && widget.allowChangesForCurrentDate
+                ? _onWorkstationClick(widget.workstationCode)
+                : null,
         onLongPress: () => loggedUser.idRole >= ROLE_STAFF &&
                 userWithWorkstation != null &&
-                widget.isEditable
+                widget.allowChangesForCurrentDate
             ? showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -88,9 +89,10 @@ class _WorkstationsState extends State<Workstations> {
           maxLines: resourceLabel.split(" ").length,
           wrapWords: true,
           overflow: TextOverflow.clip,
-          //disabled text style
           style: TextStyle(
-              color: widget.isEditable ? Colors.black : Colors.black45),
+              color: widget.allowChangesForCurrentDate
+                  ? Colors.black
+                  : Colors.black45),
         ));
   }
 
