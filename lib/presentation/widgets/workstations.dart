@@ -4,22 +4,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/pages/assignable_users_page.dart';
 
+import '../../user_service.dart';
+
 final sl = GetIt.instance;
 
 class Workstations extends StatefulWidget {
   final List<UserWithWorkstation> usersWithWorkstations;
   final int workstationCode;
+  final bool isEditable;
 
   const Workstations({
     @required this.usersWithWorkstations,
     @required this.workstationCode,
+    @required this.isEditable,
   });
 
   @override
@@ -33,10 +36,8 @@ class _WorkstationsState extends State<Workstations> {
   @override
   void initState() {
     _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
+    loggedUser = sl<UserService>().getLoggedUser;
     super.initState();
-    sl<LocalDataSource>().getCachedUser().then((authenticatedUser) {
-      setState(() => loggedUser = authenticatedUser.user);
-    });
   }
 
   @override
@@ -54,10 +55,13 @@ class _WorkstationsState extends State<Workstations> {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
             side: BorderSide(color: Colors.black54)),
-        onPressed: () => loggedUser.idRole >= ROLE_STAFF
+        //allow edit
+        onPressed: () => loggedUser.idRole >= ROLE_STAFF && widget.isEditable
             ? _onWorkstationClick(widget.workstationCode)
             : null,
-        onLongPress: () => loggedUser.idRole >= ROLE_STAFF
+        onLongPress: () => loggedUser.idRole >= ROLE_STAFF &&
+                userWithWorkstation != null &&
+                widget.isEditable
             ? showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -71,10 +75,8 @@ class _WorkstationsState extends State<Workstations> {
                           onPressed: () => Navigator.pop(context)),
                       FlatButton(
                           child: Text("OK"),
-                          onPressed: () => userWithWorkstation != null
-                              ? _onWorkstationLongClick(
-                                  userWithWorkstation.workstation)
-                              : null)
+                          onPressed: () => _onWorkstationLongClick(
+                              userWithWorkstation.workstation))
                     ],
                   );
                 },
@@ -86,6 +88,9 @@ class _WorkstationsState extends State<Workstations> {
           maxLines: resourceLabel.split(" ").length,
           wrapWords: true,
           overflow: TextOverflow.clip,
+          //disabled text style
+          style: TextStyle(
+              color: widget.isEditable ? Colors.black : Colors.black45),
         ));
   }
 
@@ -111,7 +116,8 @@ class _WorkstationsState extends State<Workstations> {
       ),
     ).then((selectedWorkstation) {
       if (selectedWorkstation != null) {
-        _workstationBloc.add(OnWorkstationUpdate(workstation: selectedWorkstation));
+        _workstationBloc
+            .add(OnWorkstationUpdate(workstation: selectedWorkstation));
       }
     });
   }

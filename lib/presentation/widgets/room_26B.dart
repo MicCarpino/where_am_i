@@ -5,8 +5,9 @@ import 'package:where_am_i/presentation/widgets/workstations.dart';
 
 class Room26B extends StatelessWidget {
   final List<UserWithWorkstation> workstations;
+  final bool areChangesAllowed;
 
-  Room26B({this.workstations = const []});
+  Room26B({this.workstations = const [], this.areChangesAllowed});
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +22,7 @@ class Room26B extends StatelessWidget {
           return Workstations(
             usersWithWorkstations: workstations,
             workstationCode: index,
+            isEditable: areChangesAllowed,
           );
         }));
   }

@@ -34,3 +34,11 @@ extension TimeOfDayExtension on TimeOfDay {
   }
 
 }
+
+extension DateTimeToZero on DateTime {
+  //Date with only year, month and day valorized.
+  //Minutes,seconds and milliseconds are set to zero
+  DateTime zeroed(){
+    return DateTime(this.year, this.month, this.day);
+  }
+}

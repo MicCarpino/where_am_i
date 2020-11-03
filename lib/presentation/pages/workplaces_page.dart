@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
@@ -51,7 +52,8 @@ class WorkplacesPage extends StatefulWidget {
 }
 
 class _WorkplacesPageState extends State<WorkplacesPage> {
-  DateTime _visualizedDate = DateTime.now();
+  DateTime _visualizedDate;
+  bool areModificationsAllowed = false;
   WorkstationBloc _workstationBloc = sl<WorkstationBloc>();
   ReservationsBloc _reservationsBloc = sl<ReservationsBloc>();
 
@@ -59,6 +61,8 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
   void initState() {
     _workstationBloc..add(FetchWorkstationsLists(dateToFetch: DateTime.now()));
     _reservationsBloc..add(FetchReservationsList(dateToFetch: DateTime.now()));
+    _visualizedDate = DateTime.now().zeroed();
+    areModificationsAllowed = DateTime.now().isAfter(_visualizedDate);
     super.initState();
   }
 

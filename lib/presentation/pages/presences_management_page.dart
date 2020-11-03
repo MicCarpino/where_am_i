@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/presences_management_bloc.dart';
@@ -23,7 +24,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
       sl<PresencesManagementBloc>();
   TextEditingController _textFieldController = TextEditingController();
   DateTime visualizedDate;
-  bool isPresencesEditAllowed = false;
+  bool areModificationsAllowed = false;
 
   @override
   void initState() {
@@ -32,8 +33,8 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     });
     _presencesManagementBloc
         .add(OnUsersPresencesFetchRequested(dateToFetch: DateTime.now()));
-    visualizedDate = DateTime.now();
-    isPresencesEditAllowed = DateTime.now().isAfter(visualizedDate);
+    visualizedDate = DateTime.now().zeroed();
+    areModificationsAllowed = DateTime.now().isAfter(visualizedDate);
     super.initState();
   }
 
@@ -79,10 +80,10 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                           ),
                           IconButton(
                               icon: Icon(Icons.person_add,
-                                  color: isPresencesEditAllowed
+                                  color: areModificationsAllowed
                                       ? Colors.black87
                                       : Colors.grey),
-                              onPressed: () => isPresencesEditAllowed
+                              onPressed: () => areModificationsAllowed
                                   ? showDialog(
                                       context: context,
                                       builder: (BuildContext context) {
@@ -155,9 +156,8 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   _onDateChanged(DateTime newDate) {
     setState(() {
       this.visualizedDate = newDate;
-      var today = DateTime.now();
-      var todayToZero = DateTime(today.year, today.month, today.day);
-      this.isPresencesEditAllowed =
+      var todayToZero = DateTime.now().zeroed();
+      this.areModificationsAllowed =
           newDate.isAfter(todayToZero) || newDate.isAtSameMomentAs(todayToZero);
       _presencesManagementBloc
           .add(OnUsersPresencesFetchRequested(dateToFetch: newDate));
@@ -166,7 +166,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
 
   _onUserLongClick(UserWithWorkstation userWithWorkstation) {
     //TODO:once back end date check is active this could be removed (?)
-    if (!isPresencesEditAllowed) {
+    if (!areModificationsAllowed) {
       return null;
     }
     if (userWithWorkstation.workstation == null) {

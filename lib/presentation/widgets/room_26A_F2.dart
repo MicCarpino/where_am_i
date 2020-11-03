@@ -5,8 +5,9 @@ import 'package:where_am_i/presentation/widgets/workstations.dart';
 
 class Room26AF2 extends StatelessWidget {
   final List<UserWithWorkstation> workstations;
+  final bool areChangesAllowed;
 
-  Room26AF2({this.workstations = const []});
+  Room26AF2({this.workstations = const [], this.areChangesAllowed});
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +26,7 @@ class Room26AF2 extends StatelessWidget {
               return Workstations(
                 usersWithWorkstations: workstations,
                 workstationCode: 50 + index,
+                isEditable: areChangesAllowed,
               );
             })),
         RoomLabel(labelText: 'Stanza 2'),
@@ -39,6 +41,7 @@ class Room26AF2 extends StatelessWidget {
               return Workstations(
                 usersWithWorkstations: workstations,
                 workstationCode: 56 + index,
+                isEditable: areChangesAllowed,
               );
             })),
         RoomLabel(labelText: 'Stanza 3'),
@@ -53,6 +56,7 @@ class Room26AF2 extends StatelessWidget {
               return Workstations(
                 usersWithWorkstations: workstations,
                 workstationCode: 64 + index,
+                isEditable: areChangesAllowed,
               );
             })),
         RoomLabel(labelText: 'Stanza 4'),
@@ -69,6 +73,7 @@ class Room26AF2 extends StatelessWidget {
                 return Workstations(
                   usersWithWorkstations: workstations,
                   workstationCode: 70 + index,
+                  isEditable: areChangesAllowed,
                 );
               })),
         )

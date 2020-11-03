@@ -6,8 +6,9 @@ import 'package:where_am_i/presentation/widgets/workstations.dart';
 
 class RoomStaff extends StatelessWidget {
   final List<UserWithWorkstation> workstations;
+  final bool areChangesAllowed;
 
-  RoomStaff({this.workstations = const []});
+  RoomStaff({this.workstations = const [], this.areChangesAllowed});
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +36,7 @@ class RoomStaff extends StatelessWidget {
                       child: Workstations(
                         usersWithWorkstations: workstations,
                         workstationCode: 48,
+                        isEditable: areChangesAllowed,
                       ),
                     ),
                     SizedBox(
@@ -43,6 +45,7 @@ class RoomStaff extends StatelessWidget {
                       child: Workstations(
                         usersWithWorkstations: workstations,
                         workstationCode: 49,
+                        isEditable: areChangesAllowed,
                       ),
                     ),
                   ],
@@ -61,6 +64,7 @@ class RoomStaff extends StatelessWidget {
                       child: Workstations(
                         usersWithWorkstations: workstations,
                         workstationCode: 47,
+                        isEditable: areChangesAllowed,
                       ),
                     ),
                   ],
@@ -83,6 +87,7 @@ class RoomStaff extends StatelessWidget {
                     child: Workstations(
                       usersWithWorkstations: workstations,
                       workstationCode: 43,
+                      isEditable: areChangesAllowed,
                     ),
                   ),
                   SizedBox(
@@ -91,6 +96,7 @@ class RoomStaff extends StatelessWidget {
                     child: Workstations(
                       usersWithWorkstations: workstations,
                       workstationCode: 44,
+                      isEditable: areChangesAllowed,
                     ),
                   ),
                 ],
@@ -104,6 +110,7 @@ class RoomStaff extends StatelessWidget {
                     child: Workstations(
                       usersWithWorkstations: workstations,
                       workstationCode: 46,
+                      isEditable: areChangesAllowed,
                     ),
                   ),
                 ],
@@ -117,6 +124,7 @@ class RoomStaff extends StatelessWidget {
                     child: Workstations(
                       usersWithWorkstations: workstations,
                       workstationCode: 45,
+                      isEditable: areChangesAllowed,
                     ),
                   ),
                 ],

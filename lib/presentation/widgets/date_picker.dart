@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 
 class DatePicker extends StatefulWidget {
@@ -20,9 +21,8 @@ class _DatePickerState extends State<DatePicker> {
 
   @override
   void initState() {
-    //set date to current date
-    var today = DateTime.now();
-    visualizedDate = DateTime(today.year, today.month, today.day);
+    //set date to current date where minutes,seconds,milliseconds are '0'
+    visualizedDate = DateTime.now().zeroed();
     super.initState();
   }
 
@@ -96,7 +96,7 @@ class _DatePickerState extends State<DatePicker> {
         }).then((selectedDate) {
       if (selectedDate != null) {
         setState(() {
-          visualizedDate = selectedDate;
+          visualizedDate = selectedDate.zeroed();
           onDateChanged(visualizedDate);
         });
       }
