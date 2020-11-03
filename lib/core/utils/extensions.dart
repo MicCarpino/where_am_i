@@ -41,4 +41,8 @@ extension DateTimeToZero on DateTime {
   DateTime zeroed(){
     return DateTime(this.year, this.month, this.day);
   }
+
+  bool isAtSameMomentOrAfter(DateTime otherDate){
+    return this.isAfter(otherDate) || this.isAtSameMomentAs(otherDate);
+  }
 }

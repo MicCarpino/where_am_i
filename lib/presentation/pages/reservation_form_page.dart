@@ -10,7 +10,7 @@ import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/usecases/get_users.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+import 'package:where_am_i/presentation/widgets/autocomplete.dart';
 
 enum TimePickerType { startPicker, endPicker }
 
@@ -35,13 +35,12 @@ class ReservationFormPage extends StatefulWidget {
 class _ReservationFormPageState extends State<ReservationFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _autocompleteTextFieldKey =
-      GlobalKey<AutoCompleteTextFieldState<User>>();
+      GlobalKey<AutoCompleteTextFieldState>();
+
   TextEditingController _subjectTextController = TextEditingController();
   TextEditingController _participantsTextController = TextEditingController();
-  List<User> suggestionsList = List();
-
   ReservationsBloc _reservationBloc;
-
+  List<User> resources = List();
   TimeOfDay _reservationStartTime;
   TimeOfDay _reservationEndTime;
   List<String> _participants;
@@ -53,7 +52,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     serviceLocator<GetAllUsers>()
         .call(NoParams())
         .then((value) => value.fold((l) => null, (r) {
-              suggestionsList.addAll(r);
+              resources.addAll(r);
               return null;
             }));
     _reservationBloc = BlocProvider.of<ReservationsBloc>(context);
@@ -260,7 +259,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
   }
 
   Widget _buildAddParticipantsTextField() {
-    return AutoCompleteTextField<User>(
+    return AutoCompleteTextField(
       itemBuilder: (context, suggestion) => new ListTile(
           title: new Text('${suggestion.surname} ${suggestion.name}'),
         ),
@@ -273,11 +272,11 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
           suggestion.name.toLowerCase().contains(input.toLowerCase()),
       itemSubmitted: (item) => setState(() {
         _participants.add('${item.surname} ${item.name}');
-        suggestionsList.removeWhere((element) => element == item);
+        resources.removeWhere((element) => element == item);
       }),
       key: _autocompleteTextFieldKey,
       controller: _participantsTextController,
-      suggestions: suggestionsList,
+      suggestions: resources,
       clearOnSubmit: true,
       decoration: InputDecoration(
         //delete icon, clears textfield
