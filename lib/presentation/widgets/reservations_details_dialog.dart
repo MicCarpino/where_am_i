@@ -28,13 +28,14 @@ class ReservationDetailsDialog extends StatelessWidget {
             SizedBox(height: 8),
             FutureBuilder<User>(
                 future: _getUserName(),
-                builder: (context, snapshot) => snapshot.hasData
-                    ? Text('${snapshot.data.surname} ${snapshot.data.name}')
-                    : Text('ID risorsa: ${reservation.idHandler}')),
+                builder: (context, snapshot) =>
+                    snapshot.hasData && snapshot.data != null
+                        ? Text('${snapshot.data.surname} ${snapshot.data.name}')
+                        : Text('ID risorsa: ${reservation.idHandler}')),
             Divider(),
             Text('Orario', style: reservationLabelStyle),
             SizedBox(height: 8),
-            Text(formatTime()),
+            Text(formatReservationTime()),
             Divider(),
             Text('Partecipanti', style: reservationLabelStyle),
             SizedBox(height: 8),
@@ -47,29 +48,21 @@ class ReservationDetailsDialog extends StatelessWidget {
     );
   }
 
-  String formatTime() {
-    return '${formatSingleDigitTime(reservation.startHour)}.${formatSingleDigitTime(reservation.startMinutes)} - ${formatSingleDigitTime(reservation.endHour)}.${formatSingleDigitTime(reservation.endMinutes)}';
+  String formatReservationTime() {
+    String startHour = formatDigitTime(reservation.startHour);
+    String startMinutes = formatDigitTime(reservation.startMinutes);
+    String endHour = formatDigitTime(reservation.endHour);
+    String endMinutes = formatDigitTime(reservation.endMinutes);
+    return '$startHour.$startMinutes-$endHour.$endMinutes';
   }
 
-  String formatSingleDigitTime(int digit) {
-    if (digit == 0) {
-      return "00";
-    } else if (digit < 10) {
-      return "0$digit";
-    } else {
-      return digit.toString();
-    }
+  String formatDigitTime(int digit) {
+    return digit < 10 ? "0$digit" : digit.toString();
   }
 
   Future<User> _getUserName() async {
-    var c = await serviceLocator<GetUserById>()
+    final userFetchResult = await serviceLocator<GetUserById>()
         .call(reservation.idHandler.toString());
-    return c.fold((l) {
-      print('left');
-      return null;
-    }, (r) {
-      print(r.toString());
-      return r;
-    });
+    return userFetchResult.fold((l) => null, (user) => user);
   }
 }
