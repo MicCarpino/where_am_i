@@ -12,6 +12,19 @@ final sl = GetIt.instance;
 enum Rooms { room_26B, room_26A_Floor1, room_26A_Floor2, room_24, room_staff }
 
 extension RoomsTitles on Rooms {
+  String roomIdTitle() {
+    switch (this) {
+      case Rooms.room_26B:
+        return "Civico 26/B";
+      case Rooms.room_26A_Floor1:
+        return "Civico 26/A";
+      case Rooms.room_24:
+        return "Civico 24";
+      default:
+        return null;
+    }
+  }
+
   // ignore: missing_return
   String get roomTitle {
     switch (this) {
@@ -28,7 +41,7 @@ extension RoomsTitles on Rooms {
     }
   }
 
-  int get roomId {
+  int get reservationRoomId {
     switch (this) {
       case Rooms.room_26B:
         return 26;
@@ -39,6 +52,15 @@ extension RoomsTitles on Rooms {
       default:
         return null;
     }
+  }
+
+  String get reservationRoomTitle{
+    Map<int, String> reservationsRoomTitles = {
+      26: "Civico 26/B",
+      262: "Civico 26/A",
+      24: "Civico 24",
+    };
+    return reservationsRoomTitles[this.reservationRoomId];
   }
 }
 

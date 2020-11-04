@@ -107,7 +107,7 @@ class WorkplaceBuilder extends StatelessWidget {
                         value: reservationsBloc,
                         child: ReservationFormPage(
                           reservationDate: visualizedDate,
-                          idRoom: room.roomId,
+                          idRoom: room.reservationRoomId,
                         ),
                       ),
                     ),
@@ -124,7 +124,7 @@ class WorkplaceBuilder extends StatelessWidget {
               } else if (state is ReservationsFetchCompletedState) {
                 return ReservationsCalendar(
                   reservationsList: state.reservationsList
-                      .where((element) => element.idRoom == room.roomId)
+                      .where((element) => element.idRoom == room.reservationRoomId)
                       .toList(),
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );

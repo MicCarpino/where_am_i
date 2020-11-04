@@ -10,7 +10,11 @@ import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/usecases/get_users.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
+import 'package:where_am_i/presentation/pages/workplaces_page.dart';
 import 'package:where_am_i/presentation/widgets/autocomplete.dart';
+import 'package:where_am_i/presentation/widgets/circular_loading.dart';
+
+import '../../user_service.dart';
 
 enum TimePickerType { startPicker, endPicker }
 
@@ -44,14 +48,25 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
   TimeOfDay _reservationEndTime;
   List<String> _participants;
   int _idRoom;
+  String referentName;
+  User loggedUser;
 
   @override
   void initState() {
-    //building participants suggestion with name and surname of resources
+    loggedUser = serviceLocator<UserService>().getLoggedUser;
+    //building referent string and participants suggestion with name and surname of resources
     serviceLocator<GetAllUsers>()
         .call(NoParams())
         .then((value) => value.fold((l) => null, (r) {
-              resources.addAll(r);
+              User referent = r.singleWhere((element) =>
+                  widget.reservation != null
+                      ? element.idResource ==
+                          widget.reservation.idHandler.toString()
+                      : element.idResource == loggedUser.idResource);
+              setState(() {
+                resources.addAll(r);
+                referentName = '${referent.surname} ${referent.name}';
+              });
               return null;
             }));
     _reservationBloc = BlocProvider.of<ReservationsBloc>(context);
@@ -83,6 +98,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ..._buildDateSection(),
+              _buildIdRoomSection(),
               ..._buildReferentSection(),
               ..._buildSubjectSection(),
               _buildTimePickersSection(),
@@ -91,7 +107,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                   cubit: _reservationBloc,
                   builder: (context, state) {
                     if (state is ReservationUpdatingState) {
-                      return Center(child: CircularProgressIndicator());
+                      return Center(child: CircularLoading());
                     } else {
                       return _buildButtonsSection();
                     }
@@ -146,12 +162,12 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
       ),
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Text(
-          widget.reservation != null
-              ? widget.reservation.idHandler.toString()
-              : '276',
-          style: TextStyle(fontSize: 16),
-        ),
+        child: referentName != null
+            ? Text(
+                referentName,
+                style: TextStyle(fontSize: 16),
+              )
+            : CircularLoading(),
       ),
     ];
   }
@@ -396,9 +412,9 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
           reservation: Reservation(
               idReservation: null,
               reservationDate: widget.reservationDate,
-              description: _subjectTextController.text.trim(),
+              description: _subjectTextController.text.trim().capitalize(),
               participants: _participants,
-              idHandler: 276,
+              idHandler: int.parse(loggedUser.idResource),
               idRoom: widget.idRoom,
               freeHandler: null,
               startMinutes: _reservationStartTime.minute,
@@ -420,7 +436,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
               reservationDate: widget.reservation.reservationDate,
               description: _subjectTextController.text.trim().capitalize(),
               participants: _participants,
-              idHandler: 276,
+              idHandler: widget.reservation.idHandler,
               idRoom: _idRoom,
               freeHandler: widget.reservation?.freeHandler,
               startMinutes: _reservationStartTime.minute,
@@ -431,5 +447,27 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         ),
       );
     }
+  }
+
+  Widget _buildIdRoomSection() {
+    List<int> c = Rooms.values.map((e) => e.reservationRoomId).toList();
+    c.removeWhere((element) => element == null);
+    return widget.reservation != null && loggedUser.idRole >= ROLE_STAFF
+        ? DropdownButton(
+            value: _idRoom,
+            items: c
+                .map((roomId) => DropdownMenuItem(
+                      value: roomId,
+                      child: Text(Rooms.values
+                          .singleWhere(
+                              (element) => element.reservationRoomId == roomId)
+                          .reservationRoomTitle),
+                    ))
+                .toList(),
+            onChanged: (selection) => setState(() {
+                  print('selected: $selection');
+                  _idRoom = selection;
+                }))
+        : Container();
   }
 }
