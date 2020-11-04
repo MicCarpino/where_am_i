@@ -8,7 +8,7 @@ import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/domain/entities/user.dart';
-import 'package:where_am_i/domain/usecases/get_users.dart';
+import 'package:where_am_i/domain/usecases/get_all_users.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/pages/workplaces_page.dart';
 import 'package:where_am_i/presentation/widgets/autocomplete.dart';

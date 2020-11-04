@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
+import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/domain/usecases/get_user_by_id.dart';
 
 class ReservationDetailsDialog extends StatelessWidget {
   final Reservation reservation;
+  final serviceLocator = GetIt.instance;
 
   ReservationDetailsDialog({@required this.reservation});
 
@@ -22,7 +26,11 @@ class ReservationDetailsDialog extends StatelessWidget {
             Divider(),
             Text('Referente', style: reservationLabelStyle),
             SizedBox(height: 8),
-            Text(reservation.idHandler.toString()),
+            FutureBuilder<User>(
+                future: _getUserName(),
+                builder: (context, snapshot) => snapshot.hasData
+                    ? Text('${snapshot.data.surname} ${snapshot.data.name}')
+                    : Text('ID risorsa: ${reservation.idHandler}')),
             Divider(),
             Text('Orario', style: reservationLabelStyle),
             SizedBox(height: 8),
@@ -30,7 +38,9 @@ class ReservationDetailsDialog extends StatelessWidget {
             Divider(),
             Text('Partecipanti', style: reservationLabelStyle),
             SizedBox(height: 8),
-            Text(reservation.participants!= null? reservation.participants.join(","):"Nessun partecipante indicato"),
+            Text(reservation.participants != null
+                ? reservation.participants.join(",")
+                : "Nessun partecipante indicato"),
           ],
         ),
       ),
@@ -38,11 +48,7 @@ class ReservationDetailsDialog extends StatelessWidget {
   }
 
   String formatTime() {
-    return
-      '${formatSingleDigitTime(reservation.startHour)}.${formatSingleDigitTime(
-          reservation.startMinutes)} - ${formatSingleDigitTime(
-          reservation.endHour)}.${formatSingleDigitTime(reservation
-          .endMinutes)}';
+    return '${formatSingleDigitTime(reservation.startHour)}.${formatSingleDigitTime(reservation.startMinutes)} - ${formatSingleDigitTime(reservation.endHour)}.${formatSingleDigitTime(reservation.endMinutes)}';
   }
 
   String formatSingleDigitTime(int digit) {
@@ -53,5 +59,17 @@ class ReservationDetailsDialog extends StatelessWidget {
     } else {
       return digit.toString();
     }
+  }
+
+  Future<User> _getUserName() async {
+    var c = await serviceLocator<GetUserById>()
+        .call(reservation.idHandler.toString());
+    return c.fold((l) {
+      print('left');
+      return null;
+    }, (r) {
+      print(r.toString());
+      return r;
+    });
   }
 }

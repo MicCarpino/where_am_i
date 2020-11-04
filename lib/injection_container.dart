@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:where_am_i/domain/usecases/delete_reservation.dart';
+import 'package:where_am_i/domain/usecases/get_user_by_id.dart';
 import 'data/repositories/user_repository_impl.dart';
 import 'domain/usecases/get_logged_user.dart';
 
@@ -21,7 +22,7 @@ import 'package:where_am_i/domain/usecases/perform_log_in.dart';
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
 import 'package:where_am_i/domain/usecases/delete_workstation.dart';
 import 'package:where_am_i/domain/usecases/get_all_users_presences_by_date.dart';
-import 'package:where_am_i/domain/usecases/get_users.dart';
+import 'package:where_am_i/domain/usecases/get_all_users.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_id_resource.dart';
 import 'package:where_am_i/domain/usecases/insert_reservation.dart';
 import 'package:where_am_i/domain/usecases/insert_workstation.dart';
@@ -68,6 +69,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => PerformLogOut(sl()));
   sl.registerLazySingleton(() => GetLoggedUser(sl()));
   sl.registerLazySingleton(() => GetAllUsers(sl()));
+  sl.registerLazySingleton(() => GetUserById(sl()));
   sl.registerLazySingleton(() => UpdateUser(sl()));
   //Workstation
   sl.registerLazySingleton(() => GetWorkstationsByDate(sl(), sl()));

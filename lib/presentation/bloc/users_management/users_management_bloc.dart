@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/domain/entities/user.dart';
-import 'package:where_am_i/domain/usecases/get_users.dart';
+import 'package:where_am_i/domain/usecases/get_all_users.dart';
 import 'package:where_am_i/domain/usecases/update_user.dart';
 
 part 'users_management_event.dart';
