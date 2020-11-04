@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:where_am_i/core/usecases/usecase.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/domain/entities/user.dart';
-import 'package:where_am_i/domain/usecases/get_all_users.dart';
+import 'package:where_am_i/domain/usecases/get_all_user_by_filter.dart';
+import 'package:where_am_i/domain/usecases/get_user_by_id.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/pages/workplaces_page.dart';
-import 'package:where_am_i/presentation/widgets/autocomplete.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 
 import '../../user_service.dart';
@@ -38,7 +38,6 @@ class ReservationFormPage extends StatefulWidget {
 
 class _ReservationFormPageState extends State<ReservationFormPage> {
   final _formKey = GlobalKey<FormState>();
-  final _autocompleteTextFieldKey = GlobalKey<AutoCompleteTextFieldState>();
 
   TextEditingController _subjectTextController = TextEditingController();
   TextEditingController _participantsTextController = TextEditingController();
@@ -54,21 +53,6 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
   @override
   void initState() {
     loggedUser = serviceLocator<UserService>().getLoggedUser;
-    //building referent string and participants suggestion with name and surname of resources
-    serviceLocator<GetAllUsers>()
-        .call(NoParams())
-        .then((value) => value.fold((l) => null, (r) {
-              User referent = r.singleWhere((element) =>
-                  widget.reservation != null
-                      ? element.idResource ==
-                          widget.reservation.idHandler.toString()
-                      : element.idResource == loggedUser.idResource);
-              setState(() {
-                resources.addAll(r);
-                referentName = '${referent.surname} ${referent.name}';
-              });
-              return null;
-            }));
     _reservationBloc = BlocProvider.of<ReservationsBloc>(context);
     _subjectTextController.text = widget.reservation?.description;
     _participantsTextController.addListener(() {
@@ -161,14 +145,18 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         child: Text('Referente', style: reservationLabelStyle),
       ),
       Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: referentName != null
-            ? Text(
-                referentName,
-                style: TextStyle(fontSize: 16),
-              )
-            : CircularLoading(),
-      ),
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: widget.reservation != null
+              ? FutureBuilder<User>(
+                  future: _getReferentName(),
+                  builder: (context, snapshot) => snapshot.hasData &&
+                          snapshot.data != null
+                      ? Text('${snapshot.data.surname} ${snapshot.data.name}',
+                          style: TextStyle(fontSize: 16))
+                      : Text('ID risorsa: ${widget.reservation.idHandler}',
+                          style: TextStyle(fontSize: 16)))
+              : Text('${loggedUser.surname} ${loggedUser.name}',
+                  style: TextStyle(fontSize: 16))),
     ];
   }
 
@@ -273,49 +261,53 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     ];
   }
 
+  //https://pub.dev/packages/flutter_typeahead
+//TODO:fix clear/add icons showing/hiding or replace with TypeAheadFormField
   Widget _buildAddParticipantsTextField() {
-    return AutoCompleteTextField(
+    return TypeAheadField(
+      suggestionsBoxController: SuggestionsBoxController(),
+      textFieldConfiguration: TextFieldConfiguration(
+          autofocus: false,
+          decoration: InputDecoration(
+            //delete icon, clears textfield
+            prefixIcon: _participantsTextController.text.isNotEmpty
+                ? IconButton(
+                    onPressed: () => _participantsTextController.clear(),
+                    icon: Icon(Icons.clear, color: Colors.black),
+                  )
+                : null,
+            hintText: "Aggiungi partecipante",
+            //add icon, add participant chip
+            suffixIcon: _participantsTextController.text.isNotEmpty
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _participants.add(_participantsTextController.text);
+                        _participantsTextController.clear();
+                        FocusScope.of(context).unfocus();
+                      });
+                    },
+                    icon: Icon(Icons.person_add_rounded, color: dncBlue),
+                  )
+                : null,
+          )),
+      suggestionsCallback: (pattern) async {
+        if (pattern.isNotEmpty) {
+          var users = await serviceLocator<GetAllUserByFilter>().call(pattern);
+          return users.fold((l) => null, (r) => r);
+        } else {
+          return null;
+        }
+      },
       itemBuilder: (context, suggestion) => new ListTile(
         title: new Text('${suggestion.surname} ${suggestion.name}'),
       ),
-      itemSorter: (a, b) {
-        int surnameResult = a.surname.compareTo(b.surname);
-        return surnameResult != 0 ? surnameResult : a.name.compareTo(b.name);
-      },
-      itemFilter: (suggestion, input) =>
-          suggestion.surname.toLowerCase().contains(input.toLowerCase()) ||
-          suggestion.name.toLowerCase().contains(input.toLowerCase()),
-      itemSubmitted: (item) => setState(() {
-        _participants.add('${item.surname} ${item.name}');
-        resources.removeWhere((element) => element == item);
+      onSuggestionSelected: (suggestion) => setState(() {
+        print(suggestion.toString());
+        _participants.add(suggestion);
       }),
-      key: _autocompleteTextFieldKey,
-      controller: _participantsTextController,
-      suggestions: resources,
-      clearOnSubmit: true,
-      decoration: InputDecoration(
-        //delete icon, clears textfield
-        prefixIcon: _participantsTextController.text.isNotEmpty
-            ? IconButton(
-                onPressed: () => _participantsTextController.clear(),
-                icon: Icon(Icons.clear, color: Colors.black),
-              )
-            : null,
-        hintText: "Aggiungi partecipante",
-        //add icon, add participant chip
-        suffixIcon: _participantsTextController.text.isNotEmpty
-            ? IconButton(
-                onPressed: () {
-                  setState(() {
-                    _participants.add(_participantsTextController.text);
-                    _participantsTextController.clear();
-                    FocusScope.of(context).unfocus();
-                  });
-                },
-                icon: Icon(Icons.person_add_rounded, color: dncBlue),
-              )
-            : null,
-      ),
+      autoFlipDirection: true,
+      direction: AxisDirection.down,
     );
   }
 
@@ -469,5 +461,11 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                   _idRoom = selection;
                 }))
         : Container();
+  }
+
+  Future<User> _getReferentName() async {
+    final userFetchResult = await serviceLocator<GetUserById>()
+        .call(widget.reservation.idHandler.toString());
+    return userFetchResult.fold((l) => null, (user) => user);
   }
 }

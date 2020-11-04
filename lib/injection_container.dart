@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:where_am_i/domain/usecases/delete_reservation.dart';
+import 'package:where_am_i/domain/usecases/get_all_user_by_filter.dart';
 import 'package:where_am_i/domain/usecases/get_user_by_id.dart';
 import 'data/repositories/user_repository_impl.dart';
 import 'domain/usecases/get_logged_user.dart';
@@ -70,6 +71,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetLoggedUser(sl()));
   sl.registerLazySingleton(() => GetAllUsers(sl()));
   sl.registerLazySingleton(() => GetUserById(sl()));
+  sl.registerLazySingleton(() => GetAllUserByFilter(sl()));
   sl.registerLazySingleton(() => UpdateUser(sl()));
   //Workstation
   sl.registerLazySingleton(() => GetWorkstationsByDate(sl(), sl()));

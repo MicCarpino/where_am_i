@@ -46,6 +46,8 @@ dependencies:
   syncfusion_flutter_datepicker: ^18.3.35-beta7
   # List comparison
   diffutil_dart: ^1.0.2
+  # AutoCompleteTestView
+  flutter_typeahead: ^1.8.8
 
 dev_dependencies:
   flutter_test:

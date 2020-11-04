@@ -27,7 +27,7 @@ class ReservationDetailsDialog extends StatelessWidget {
             Text('Referente', style: reservationLabelStyle),
             SizedBox(height: 8),
             FutureBuilder<User>(
-                future: _getUserName(),
+                future: _getReferentName(),
                 builder: (context, snapshot) =>
                     snapshot.hasData && snapshot.data != null
                         ? Text('${snapshot.data.surname} ${snapshot.data.name}')
@@ -60,7 +60,7 @@ class ReservationDetailsDialog extends StatelessWidget {
     return digit < 10 ? "0$digit" : digit.toString();
   }
 
-  Future<User> _getUserName() async {
+  Future<User> _getReferentName() async {
     final userFetchResult = await serviceLocator<GetUserById>()
         .call(reservation.idHandler.toString());
     return userFetchResult.fold((l) => null, (user) => user);
