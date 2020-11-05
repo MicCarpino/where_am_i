@@ -3,10 +3,12 @@ import 'package:meta/meta.dart';
 
 import 'package:bloc/bloc.dart';
 import 'package:where_am_i/core/error/failure.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_date.dart';
 import 'package:where_am_i/domain/usecases/update_workstation.dart';
+import 'package:where_am_i/user_service.dart';
 
 part 'workstation_event.dart';
 
@@ -15,15 +17,20 @@ part 'workstation_state.dart';
 class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   final GetWorkstationsByDate getWorkstationsByDate;
   final UpdateWorkstation _updateWorkstation;
+  final UserService _userService;
 
   WorkstationBloc({
     @required GetWorkstationsByDate getWorkstationsByDate,
     @required UpdateWorkstation updateWorkstation,
+    @required UserService userService,
   })  : assert(getWorkstationsByDate != null),
         assert(updateWorkstation != null),
+        assert(userService != null),
         getWorkstationsByDate = getWorkstationsByDate,
         _updateWorkstation = updateWorkstation,
+        _userService = userService,
         super(WorkstationInitial());
+
   List<UserWithWorkstation> currentWorkstationList =
       List<UserWithWorkstation>();
 
@@ -43,11 +50,25 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
     print('fetching workstations for $dateToFetch');
     final workstationsList = await getWorkstationsByDate(dateToFetch);
     yield workstationsList.fold((failure) {
-      print('workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+      print(
+          'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
       return WorkstationsFetchErrorState();
     }, (workstations) {
       //saving last fetch result to perform update without needing to download a new list
       currentWorkstationList = workstations;
+      //retrieving user's workstation code for current day
+      if (dateToFetch.zeroed().isAtSameMomentAs(DateTime.now().zeroed())) {
+        String workstationCodeForCurrentDay = workstations
+            .singleWhere((element) =>
+                element.workstation.idResource ==
+                _userService.loggedUser.idResource)
+            .workstation
+            .codeWorkstation;
+        _userService.setAssignedWorkstationCode(
+            workstationCodeForCurrentDay != null
+                ? int.parse(workstationCodeForCurrentDay)
+                : null);
+      }
       print('workstations : ${workstations.toList()}');
       return WorkstationsFetchCompletedState(workstations);
     });
@@ -65,6 +86,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
           (element) =>
               element.workstation.codeWorkstation ==
               updatedWorkstation.codeWorkstation);
+      _userService.setAssignedWorkstationCode(indexOfCurrentUserAssigned);
       //if there's a result means it has been replaced so his workstationCode is cleared
       if (indexOfCurrentUserAssigned != -1) {
         var currentUser = currentWorkstationList[indexOfCurrentUserAssigned];

@@ -45,8 +45,8 @@ Future<void> init() async {
   // Bloc
   sl.registerFactory(() => LoginBloc(performLogIn: sl()));
   sl.registerFactory(() => HomeBloc(performLogOut: sl()));
-  sl.registerFactory(() =>
-      WorkstationBloc(getWorkstationsByDate: sl(), updateWorkstation: sl()));
+  sl.registerFactory(() => WorkstationBloc(
+      getWorkstationsByDate: sl(), updateWorkstation: sl(), userService: sl()));
   sl.registerFactory(() => ReservationsBloc(
         getReservations: sl(),
         insertReservation: sl(),

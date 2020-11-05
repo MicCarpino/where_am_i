@@ -1,4 +1,3 @@
-import 'package:where_am_i/domain/entities/authenticated_user.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 
 class UserService {
@@ -12,10 +11,11 @@ class UserService {
   removeLoggedUser() => loggedUser = null;
 
   //Workstation code assigned for current day
-  int assignedWorkstationCode;
 
-  int get getAssignedWorkstationCode => assignedWorkstationCode;
+  int _assignedWorkstationCode;
+
+  int get getAssignedWorkstationCode => _assignedWorkstationCode;
 
   setAssignedWorkstationCode(int workstationCode) =>
-      assignedWorkstationCode = workstationCode;
+      _assignedWorkstationCode = workstationCode;
 }

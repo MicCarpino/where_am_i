@@ -149,10 +149,34 @@ class _DrawerWidgetState extends State<DrawerWidget> {
         Text('Ciao ${loggedUser?.name}',
             style: TextStyle(
                 color: dncBlue, fontSize: 20, fontWeight: FontWeight.bold)),
-        Text('Oggi lavori al ',
-            style: TextStyle(
-                color: dncBlue, fontSize: 16, fontWeight: FontWeight.bold)),
+        _buildAssignedWorkplaceSection()
       ],
     ));
+  }
+
+  Widget _buildAssignedWorkplaceSection() {
+    int assignedWorkstation = sl<UserService>().getAssignedWorkstationCode;
+    String workplaceIndicationLabel;
+    if (assignedWorkstation == null) {
+      return Container();
+    } else if (assignedWorkstation >= 1 && assignedWorkstation <= 18) {
+      workplaceIndicationLabel = 'al 26/B';
+    } else if (assignedWorkstation >= 76 && assignedWorkstation <= 91) {
+      workplaceIndicationLabel = 'al 26/A 1°piano';
+    } else if (assignedWorkstation >= 50 && assignedWorkstation <= 75) {
+      workplaceIndicationLabel = 'al 26/A 2°piano';
+    } else if (assignedWorkstation >= 19 && assignedWorkstation <= 34) {
+      workplaceIndicationLabel = 'al 24';
+    } else if (assignedWorkstation >= 43 && assignedWorkstation <= 46) {
+      workplaceIndicationLabel = 'in amministrazione';
+    } else if (assignedWorkstation >= 47 && assignedWorkstation <= 49) {
+      workplaceIndicationLabel = 'in dirigenza';
+    }
+    return Text('Oggi lavori $workplaceIndicationLabel',
+        style: TextStyle(
+          color: dncBlue,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ));
   }
 }
