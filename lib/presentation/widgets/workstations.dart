@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
@@ -32,6 +31,7 @@ class Workstations extends StatefulWidget {
 class _WorkstationsState extends State<Workstations> {
   User loggedUser;
   WorkstationBloc _workstationBloc;
+  int assignedWorkstation;
 
   @override
   void initState() {
@@ -45,17 +45,23 @@ class _WorkstationsState extends State<Workstations> {
     var userWithWorkstation = _getWorkstationForIndex(widget.workstationCode);
     String resourceLabel = "";
     if (userWithWorkstation?.user != null) {
-      resourceLabel = userWithWorkstation.user.surname +
+      resourceLabel = userWithWorkstation.user.surname.toUpperCase() +
           " \n" +
-          userWithWorkstation.user.name;
+          userWithWorkstation.user.name.toUpperCase();
     } else if (userWithWorkstation?.workstation?.freeName != null) {
-      resourceLabel = userWithWorkstation.workstation.freeName.capitalize();
+      resourceLabel = userWithWorkstation.workstation.freeName.toUpperCase();
     }
+    bool isLoggedUserWorkstation =
+        userWithWorkstation?.user?.idResource != null &&
+            userWithWorkstation.user.idResource == loggedUser.idResource;
     return FlatButton(
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-            side: BorderSide(color: Colors.black54)),
-        //allow edit
+          borderRadius: BorderRadius.circular(5),
+          side: BorderSide(
+              color: isLoggedUserWorkstation ? dncOrange : Colors.black54,
+              width: isLoggedUserWorkstation ? 2.5 : 1.0),
+        ),
+        //allow edit if user's role is staff or higher
         onPressed: () =>
             loggedUser.idRole >= ROLE_STAFF && widget.allowChangesForCurrentDate
                 ? _onWorkstationClick(widget.workstationCode)
