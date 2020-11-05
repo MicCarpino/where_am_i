@@ -261,12 +261,12 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     ];
   }
 
-  //https://pub.dev/packages/flutter_typeahead
-//TODO:fix clear/add icons showing/hiding or replace with TypeAheadFormField
   Widget _buildAddParticipantsTextField() {
     return TypeAheadField(
-      suggestionsBoxController: SuggestionsBoxController(),
+      hideOnEmpty: true,
+      autoFlipDirection: true,
       textFieldConfiguration: TextFieldConfiguration(
+        controller: _participantsTextController,
           autofocus: false,
           decoration: InputDecoration(
             //delete icon, clears textfield
@@ -302,12 +302,10 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
       itemBuilder: (context, suggestion) => new ListTile(
         title: new Text('${suggestion.surname} ${suggestion.name}'),
       ),
-      onSuggestionSelected: (suggestion) => setState(() {
-        print(suggestion.toString());
-        _participants.add(suggestion);
+      onSuggestionSelected: (User suggestion) => setState(() {
+        _participants.add('${suggestion.surname} ${suggestion.name}');
+        _participantsTextController.clear();
       }),
-      autoFlipDirection: true,
-      direction: AxisDirection.down,
     );
   }
 
