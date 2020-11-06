@@ -13,9 +13,6 @@ import 'package:where_am_i/data/models/user_model.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 
-String encryptedPw =
-    "=";
-
 abstract class RemoteDataSource {
   //USER
   Future<AuthenticatedUserModel> performUserAuthentication(
@@ -77,9 +74,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<AuthenticatedUserModel> performUserAuthentication(
       String username, String password) async {
-    //TODO: replace with password encription
     var uri = Uri.https(BASE_URL, '/WhereAmI/login',
-        {'username': username.trim(), 'password': encryptedPw});
+        {'username': username.trim(), 'password': password});
     final response = await http.post(uri,
         headers: {HttpHeaders.contentTypeHeader: 'application/json'});
     if (response.statusCode == 200) {
