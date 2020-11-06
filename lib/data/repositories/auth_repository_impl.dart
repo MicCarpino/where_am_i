@@ -6,9 +6,9 @@ import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
+import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/authenticated_user.dart';
 import 'package:where_am_i/domain/repositories/auth_repository.dart';
-import '../../user_service.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final RemoteDataSource remoteDataSource;
@@ -27,7 +27,7 @@ class AuthRepositoryImpl implements AuthRepository {
       final loggedUser =
           await remoteDataSource.performUserAuthentication(username, password);
       localDataSource.cacheLoggedUser(loggedUser);
-      serviceLocator.registerSingleton(UserService());
+     // serviceLocator.registerSingleton(UserService());
       serviceLocator<UserService>().setLoggedUser(loggedUser.user);
       return Right(loggedUser);
     } on ServerException catch (e) {
@@ -41,7 +41,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, AuthenticatedUser>> getLoggedUser() async {
     try {
       final cachedUser = await localDataSource.getCachedUser();
-      serviceLocator.registerSingleton(UserService());
+     // serviceLocator.registerSingleton(UserService());
       serviceLocator<UserService>().setLoggedUser(cachedUser.user);
       return Right(cachedUser);
     } on CacheException {
@@ -53,8 +53,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, void>> removeLoggedUser() async {
     try {
       final result = await localDataSource.deleteLoggedUser();
-      var userServiceInstance = serviceLocator<UserService>();
-      serviceLocator.unregister(instance: userServiceInstance);
+      serviceLocator<UserService>().removeLoggedUser();
       return Right(result);
     } on CacheException {
       return Left(CacheFailure());

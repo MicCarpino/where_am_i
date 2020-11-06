@@ -12,7 +12,7 @@ class AuthenticatedUserModel extends AuthenticatedUser {
             authenticationToken: authenticationToken,
             expiration: expiration);
 
-  factory AuthenticatedUserModel.fromJson(Map<String, dynamic> json) {
+  factory AuthenticatedUserModel.fromJson(dynamic json) {
     return AuthenticatedUserModel(
       user: UserModel.fromJson(json['user']),
       authenticationToken: json['token'],

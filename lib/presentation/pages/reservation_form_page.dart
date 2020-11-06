@@ -13,8 +13,7 @@ import 'package:where_am_i/domain/usecases/get_user_by_id.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/pages/workplaces_page.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
-
-import '../../user_service.dart';
+import 'package:where_am_i/data/user_service.dart';
 
 enum TimePickerType { startPicker, endPicker }
 

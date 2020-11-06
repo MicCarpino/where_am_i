@@ -1,22 +1,20 @@
 import 'dart:io';
-
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:where_am_i/domain/usecases/delete_reservation.dart';
-import 'package:where_am_i/domain/usecases/get_all_user_by_filter.dart';
-import 'package:where_am_i/domain/usecases/get_user_by_id.dart';
-import 'data/repositories/user_repository_impl.dart';
-import 'domain/usecases/get_logged_user.dart';
+import 'package:where_am_i/data/user_service.dart';
 
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/data/repositories/workstation_repository_impl.dart';
 import 'package:where_am_i/data/repositories/auth_repository_impl.dart';
 import 'package:where_am_i/data/repositories/reservation_repository_impl.dart';
+import 'package:where_am_i/data/repositories/user_repository_impl.dart';
+import 'package:where_am_i/data/repositories/apk_version_repository_impl.dart';
 import 'package:where_am_i/domain/repositories/reservation_repository.dart';
 import 'package:where_am_i/domain/repositories/auth_repository.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
+import 'package:where_am_i/domain/repositories/apk_version_repository.dart';
 import 'package:where_am_i/domain/usecases/get_reservations_by_date.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_date.dart';
 import 'package:where_am_i/domain/usecases/perform_log_in.dart';
@@ -31,6 +29,11 @@ import 'package:where_am_i/domain/usecases/update_reservation_status.dart';
 import 'package:where_am_i/domain/usecases/update_user.dart';
 import 'package:where_am_i/domain/usecases/update_user_presences.dart';
 import 'package:where_am_i/domain/usecases/update_workstation.dart';
+import 'package:where_am_i/domain/usecases/delete_reservation.dart';
+import 'package:where_am_i/domain/usecases/get_all_user_by_filter.dart';
+import 'package:where_am_i/domain/usecases/get_user_by_id.dart';
+import 'package:where_am_i/domain/usecases/get_last_apk_version.dart';
+import 'package:where_am_i/domain/usecases/get_logged_user.dart';
 import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
@@ -42,11 +45,15 @@ import 'package:where_am_i/presentation/bloc/users_management/users_management_b
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  sl.registerLazySingleton(() => UserService());
   // Bloc
   sl.registerFactory(() => LoginBloc(performLogIn: sl()));
   sl.registerFactory(() => HomeBloc(performLogOut: sl()));
   sl.registerFactory(() => WorkstationBloc(
-      getWorkstationsByDate: sl(), updateWorkstation: sl(), userService: sl()));
+        getWorkstationsByDate: sl(),
+        updateWorkstation: sl(),
+        userService: sl(),
+      ));
   sl.registerFactory(() => ReservationsBloc(
         getReservations: sl(),
         insertReservation: sl(),
@@ -86,6 +93,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => InsertReservation(sl()));
   sl.registerLazySingleton(() => UpdateReservation(sl()));
   sl.registerLazySingleton(() => DeleteReservation(sl()));
+  //Apk version
+  sl.registerLazySingleton(() => GetLastApkVersion(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(() => (AuthRepositoryImpl(
@@ -103,6 +112,11 @@ Future<void> init() async {
           )));
   sl.registerLazySingleton<ReservationRepository>(
       () => (ReservationRepositoryImpl(
+            localDataSource: sl(),
+            remoteDataSource: sl(),
+          )));
+  sl.registerLazySingleton<ApkVersionRepository>(
+      () => (ApkVersionRepositoryImpl(
             localDataSource: sl(),
             remoteDataSource: sl(),
           )));

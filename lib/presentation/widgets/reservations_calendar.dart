@@ -4,12 +4,12 @@ import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/styles.dart';
+import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/pages/reservation_form_page.dart';
 import 'package:where_am_i/presentation/widgets/reservations_details_dialog.dart';
-import 'package:where_am_i/user_service.dart';
 
 //https://pub.dev/packages/flutter_week_view
 

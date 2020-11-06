@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
 import 'package:where_am_i/presentation/screen/login_screen.dart';
-import 'package:where_am_i/user_service.dart';
 
 enum Pages {
   workplaces_page,

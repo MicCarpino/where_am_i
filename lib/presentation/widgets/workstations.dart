@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/pages/assignable_users_page.dart';
 
-import '../../user_service.dart';
 
 final sl = GetIt.instance;
 

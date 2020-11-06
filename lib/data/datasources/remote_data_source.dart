@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/data/models/apk_version_model.dart';
 import 'package:where_am_i/data/models/authenticated_user_model.dart';
 import 'package:where_am_i/data/models/reservation_model.dart';
 import 'package:where_am_i/data/models/user_model.dart';
@@ -50,6 +51,9 @@ abstract class RemoteDataSource {
       String authenticationToken, ReservationModel reservation);
 
   Future<void> deleteReservation(String authenticationToken, int idReservation);
+
+  //APK VERSION
+ Future<ApkVersionModel> getLastApkVersion(String authenticationToken);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -265,6 +269,20 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     });
     if (response.statusCode == 200) {
       return;
+    } else {
+      throw failureResult(response);
+    }
+  }
+
+  @override
+  Future<ApkVersionModel> getLastApkVersion(String authenticationToken)  async {
+    var uri = Uri.https(BASE_URL, '/WhereAmI/apkVersion');
+    final response = await http.get(uri, headers: {
+      HttpHeaders.authorizationHeader: authenticationToken,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    });
+    if (response.statusCode == 200) {
+      return ApkVersionModel.fromJson(json.decode(response.body));
     } else {
       throw failureResult(response);
     }
