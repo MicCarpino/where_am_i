@@ -58,16 +58,17 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
       currentWorkstationList = workstations;
       //retrieving user's workstation code for current day
       if (dateToFetch.zeroed().isAtSameMomentAs(DateTime.now().zeroed())) {
-        String workstationCodeForCurrentDay = workstations
-            .singleWhere((element) =>
+        UserWithWorkstation workstationForCurrentDay = workstations.singleWhere(
+            (element) =>
                 element.workstation.idResource ==
-                _userService.loggedUser.idResource)
-            .workstation
-            .codeWorkstation;
-        _userService.setAssignedWorkstationCode(
-            workstationCodeForCurrentDay != null
-                ? int.parse(workstationCodeForCurrentDay)
-                : null);
+                _userService.loggedUser.idResource,
+            orElse: () => null);
+        int workstationCodeForCurrentDay = workstationForCurrentDay
+                    ?.workstation?.codeWorkstation !=
+                null
+            ? int.tryParse(workstationForCurrentDay.workstation.codeWorkstation)
+            : null;
+        _userService.setAssignedWorkstationCode(workstationCodeForCurrentDay);
       }
       print('workstations : ${workstations.toList()}');
       return WorkstationsFetchCompletedState(workstations);
