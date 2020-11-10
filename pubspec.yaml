@@ -48,6 +48,10 @@ dependencies:
   diffutil_dart: ^1.0.2
   # AutoCompleteTestView
   flutter_typeahead: ^1.8.8
+  # Criptography
+  cryptography: ^1.4.1
+  # Plugin added just to fix a build error
+  #flutter_keyboard_visibility: ^3.2.2
 
 dev_dependencies:
   flutter_test:
