@@ -31,9 +31,10 @@ const String JWT_TOKEN_KEY = 'JWT_TOKEN';
 const BASE_URL = "test.dncsrl.com";
 //Prod
 //const BASE_URL = "wai.dncsrl.com";
+const HTTP_TIMEOUT = Duration(seconds: 20);
 const ROOM_24_CODE = 24;
 const ROOM_26B_CODE = 26;
-const ROOM_26A_CODE = 261;
+const ROOM_26A_CODE = 262;
 const RESERVATION_PENDING = 0;
 const RESERVATION_CONFIRMED = 1;
 const ROLE_USER = 1;

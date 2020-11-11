@@ -24,7 +24,6 @@ class PerformLogIn extends UseCase<AuthenticatedUser, LoginParams> {
     String aesPassword = (iv +"::"+salt+"::"+base64Encode(cipherText));
     var bytes = utf8.encode(aesPassword);
     String encryptedPassword = base64.encode(bytes);
-    print(encryptedPassword);
     return _loginRepository.performUserAuthentication(
       params.username,
      encryptedPassword,

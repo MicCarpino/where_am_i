@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:where_am_i/data/user_service.dart';
@@ -125,7 +124,7 @@ Future<void> init() async {
       () => LocalDataSourceImpl(sharedPreferences: sl()));
 
   sl.registerLazySingleton<RemoteDataSource>(
-      () => RemoteDataSourceImpl(client: sl()));
+      () => RemoteDataSourceImpl());
   // Core
 /*  sl.registerLazySingleton(() => InputConverter());
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));*/
@@ -133,7 +132,4 @@ Future<void> init() async {
   // External
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
-  final client = new HttpClient();
-  client.connectionTimeout = const Duration(seconds: 5);
-  sl.registerLazySingleton(() => client);
 }

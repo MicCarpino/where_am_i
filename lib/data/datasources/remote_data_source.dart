@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart';
 import 'package:intl/intl.dart';
-import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/utils/constants.dart';
@@ -50,38 +48,37 @@ abstract class RemoteDataSource {
   Future<void> deleteReservation(String authenticationToken, int idReservation);
 
   //APK VERSION
- Future<ApkVersionModel> getLastApkVersion(String authenticationToken);
+  Future<ApkVersionModel> getLastApkVersion(String authenticationToken);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
-  final HttpClient client;
-
-  RemoteDataSourceImpl({@required this.client});
 
   String formatDateToString(DateTime date) =>
       DateFormat('yyyy-MM-dd').format(date);
 
-  Exception failureResult(Response response ){
-    if(response.statusCode == 401){
+  Exception failureResult(http.Response response) {
+    if (response.statusCode == 401) {
       return UnauthorizedException();
     }
-    if(response.statusCode == 500) {
+    if (response.statusCode == 500) {
       throw ServerException(response.body);
     } else {
       throw UnexpectedException(response.body);
     }
   }
+
   @override
   Future<AuthenticatedUserModel> performUserAuthentication(
       String username, String password) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/login',
         {'username': username.trim(), 'password': password});
-    final response = await http.post(uri,
-        headers: {HttpHeaders.contentTypeHeader: 'application/json'});
+    final response = await http.post(uri, headers: {
+      HttpHeaders.contentTypeHeader: 'application/json'
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return AuthenticatedUserModel.fromJson(json.decode(response.body));
     } else {
-     throw failureResult(response);
+      throw failureResult(response);
     }
   }
 
@@ -93,7 +90,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
-    });
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       List<dynamic> workstationsList = json.decode(response.body);
       return List<WorkstationModel>.from(
@@ -110,7 +107,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
-    });
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       List<dynamic> workstationsList = json.decode(response.body);
       return List<WorkstationModel>.from(
@@ -131,7 +128,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final response = await http.post(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
-    });
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(json.decode(response.body));
     } else {
@@ -150,7 +147,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final response = await http.put(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
-    });
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(jsonDecode(response.body));
     } else {
@@ -164,7 +161,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final response = await http.delete(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
-    });
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return;
     } else {
@@ -180,7 +177,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
-    });
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       List<dynamic> reservationsList = json.decode(response.body);
       return List<ReservationModel>.from(
@@ -196,7 +193,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
-    });
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       var usersList = json.decode(response.body);
       return List<UserModel>.from(usersList.map((e) => UserModel.fromJson(e)));
@@ -212,7 +209,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final response = await http.put(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
-    });
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return UserModel.fromJson(json.decode(response.body));
     } else {
@@ -228,7 +225,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final response = await http.post(uri, headers: {
       HttpHeaders.authorizationHeader: authenticationToken,
       HttpHeaders.contentTypeHeader: 'application/json'
-    });
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return ReservationModel.fromJson(json.decode(response.body));
     } else {
@@ -247,7 +244,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final response = await http.put(uri, headers: {
       HttpHeaders.authorizationHeader: authenticationToken,
       HttpHeaders.contentTypeHeader: 'application/json'
-    });
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return ReservationModel.fromJson(json.decode(response.body));
     } else {
@@ -262,7 +259,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     final response = await http.delete(uri, headers: {
       HttpHeaders.authorizationHeader: authenticationToken,
       HttpHeaders.contentTypeHeader: 'application/json'
-    });
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return;
     } else {
@@ -271,12 +268,12 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<ApkVersionModel> getLastApkVersion(String authenticationToken)  async {
+  Future<ApkVersionModel> getLastApkVersion(String authenticationToken) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/apkVersion');
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: authenticationToken,
       HttpHeaders.contentTypeHeader: 'application/json'
-    });
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return ApkVersionModel.fromJson(json.decode(response.body));
     } else {
