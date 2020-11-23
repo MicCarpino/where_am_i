@@ -42,8 +42,8 @@ dependencies:
   auto_size_text: ^2.1.0
   # Date format
   intl: ^0.16.1
-  # Widget for calendar with multi selection
-  syncfusion_flutter_datepicker: ^18.3.35-beta7
+  # Customizable calendar
+  table_calendar: ^2.3.0
   # List comparison
   diffutil_dart: ^1.0.2
   # AutoCompleteTestView

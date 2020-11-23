@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:where_am_i/core/utils/constants.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'injection_container.dart' as di;
 
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/presentation/screen/splash_screen.dart';
+import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/presentation/screen/splash_screen.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
