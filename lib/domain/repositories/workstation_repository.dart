@@ -9,8 +9,7 @@ abstract class WorkstationRepository {
 
   Future<Either<Failure, List<Workstation>>> getAllWorkstationsByIdResource();
 
-  Future<Either<Failure, List<Workstation>>> updateUserWorkstations(
-      List<DateTime> userPresences);
+  List<Workstation> getCachedUserPresences();
 
   Future<Either<Failure, List<Workstation>>> insertWorkstation(
       Workstation workstation);

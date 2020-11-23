@@ -5,10 +5,10 @@ import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import '../../core/error/failure.dart';
 import '../../core/usecases/usecase.dart';
 
-class GetWorkstationsByIdResource extends UseCase<List<Workstation>, NoParams> {
+class GetUserPresences extends UseCase<List<Workstation>, NoParams> {
   final WorkstationRepository _workstationRepository;
 
-  GetWorkstationsByIdResource(this._workstationRepository);
+  GetUserPresences(this._workstationRepository);
 
   Future<Either<Failure, List<Workstation>>> call(NoParams params) async {
     return await _workstationRepository.getAllWorkstationsByIdResource();

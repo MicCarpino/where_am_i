@@ -22,7 +22,7 @@ class Workstation extends Equatable {
     @required this.codeWorkstation,
     @required this.startTime,
     @required this.endTime,
-    @required this.status,
+    this.status,
     this.hasMoreForCurrentMoth,
   });
 

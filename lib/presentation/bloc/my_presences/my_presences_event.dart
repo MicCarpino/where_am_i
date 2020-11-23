@@ -10,3 +10,17 @@ class OnCurrentUserPresencesUpdate extends MyPresencesEvent {
 
   OnCurrentUserPresencesUpdate(this.updatedPresences);
 }
+
+class OnPresenceAdded extends MyPresencesEvent {
+  final DateTime date;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
+
+  OnPresenceAdded(this.date, this.startTime, this.endTime);
+}
+
+class OnPresenceRemoved extends MyPresencesEvent {
+  final int idWorkstation;
+
+  OnPresenceRemoved(this.idWorkstation);
+}

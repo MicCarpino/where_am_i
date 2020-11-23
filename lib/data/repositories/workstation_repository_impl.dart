@@ -1,12 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
-import 'package:diffutil_dart/diffutil.dart' as diffutil;
 
 import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
-import 'package:where_am_i/data/models/workstation_model.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 
@@ -21,6 +19,8 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     @required this.remoteDataSource,
     @required this.localDataSource,
   });
+
+  List<Workstation> getCachedUserPresences() =>  cachedCurrentUserPresences;
 
   @override
   Future<Either<Failure, List<Workstation>>> getAllWorkstationsByDate(
@@ -53,56 +53,6 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, List<Workstation>>> updateUserWorkstations(
-      List<DateTime> newUserPresences) async {
-    try {
-      var currentUser = await localDataSource.getCachedUser();
-      var oldUserPresences =
-          cachedCurrentUserPresences.map((e) => e.workstationDate).toList();
-      var listDiff = diffutil
-          .calculateListDiff(oldUserPresences, newUserPresences,
-              detectMoves: false)
-          .getUpdates();
-      for (final update in listDiff) {
-        update.when(
-          insert: (pos, count) async {
-            var dateToAdd = newUserPresences[pos];
-            var newWorkstation = WorkstationModel(
-                idResource: currentUser.user.idResource,
-                idWorkstation: null,
-                freeName: null,
-                codeWorkstation: null,
-                workstationDate: dateToAdd);
-            var insertResult = await remoteDataSource.insertWorkstation(
-                currentUser.authenticationToken, newWorkstation);
-            cachedCurrentUserPresences.add(insertResult);
-            print("DATE ADDED $dateToAdd");
-          },
-          remove: (pos, count) async {
-            var dateToRemove = oldUserPresences[pos];
-            var idWorkstation = cachedCurrentUserPresences
-                .firstWhere(
-                    (element) => element.workstationDate == dateToRemove)
-                .idWorkstation;
-            await remoteDataSource.deleteWorkstation(
-                currentUser.authenticationToken, idWorkstation);
-            cachedCurrentUserPresences.removeWhere(
-                (element) => element.idWorkstation == idWorkstation);
-            print("DATE REMOVED $dateToRemove");
-          },
-        );
-      }
-      return Right(cachedCurrentUserPresences);
-    } on ServerException catch (error) {
-      print("PRESENCES UPDATE SERVER ERROR " + error.errorMessage);
-      return Left(ServerFailure(error.errorMessage));
-    } catch (e) {
-      print("PRESENCES UPDATE UNEXP ERROR " + e.toString());
-      return Left(UnexpectedFailure(e.toString()));
-    }
-  }
-
-  @override
   Future<Either<Failure, List<Workstation>>> insertWorkstation(
       Workstation workstation) async {
     try {
@@ -110,6 +60,9 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       final insertResult = await remoteDataSource.insertWorkstation(
           loggedUser.authenticationToken, workstation.toWorkstationModel());
       cachedWorkstationsList.add(insertResult);
+      if(insertResult.idResource == loggedUser.user.idResource){
+
+      }
       return Right(cachedWorkstationsList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
