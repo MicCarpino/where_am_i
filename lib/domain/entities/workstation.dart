@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
 
@@ -8,6 +9,9 @@ class Workstation extends Equatable {
   final DateTime workstationDate;
   final String freeName;
   final String codeWorkstation;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
+  final bool hasMoreForCurrentMoth;
 
   Workstation({
     @required this.idWorkstation,
@@ -15,16 +19,31 @@ class Workstation extends Equatable {
     @required this.workstationDate,
     this.freeName,
     @required this.codeWorkstation,
+    @required this.startTime,
+    @required this.endTime,
+    this.hasMoreForCurrentMoth,
   });
 
   @override
-  List<Object> get props =>
-      [idWorkstation, idResource, workstationDate, freeName, codeWorkstation];
+  List<Object> get props => [
+        idWorkstation,
+        idResource,
+        workstationDate,
+        freeName,
+        codeWorkstation,
+        startTime,
+        endTime,
+        hasMoreForCurrentMoth,
+      ];
 
   WorkstationModel toWorkstationModel() => WorkstationModel(
-      idWorkstation: idWorkstation,
-      idResource: idResource,
-      workstationDate: workstationDate,
-      freeName: freeName,
-      codeWorkstation: codeWorkstation);
+        idWorkstation: idWorkstation,
+        idResource: idResource,
+        workstationDate: workstationDate,
+        freeName: freeName,
+        codeWorkstation: codeWorkstation,
+        startTime: startTime,
+        endTime: endTime,
+        hasMoreForCurrentMoth: hasMoreForCurrentMoth,
+      );
 }

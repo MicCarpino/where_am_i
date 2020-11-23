@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:meta/meta.dart';
@@ -10,21 +11,36 @@ class WorkstationModel extends Workstation {
     @required workstationDate,
     @required freeName,
     @required codeWorkstation,
+    @required startTime,
+    @required endTime,
+    @required hasMoreForCurrentMoth,
   }) : super(
-            idWorkstation: idWorkstation,
-            idResource: idResource,
-            workstationDate: workstationDate,
-            freeName: freeName,
-            codeWorkstation: codeWorkstation);
+          idWorkstation: idWorkstation,
+          idResource: idResource,
+          workstationDate: workstationDate,
+          freeName: freeName,
+          codeWorkstation: codeWorkstation,
+          startTime: startTime,
+          endTime: endTime,
+          hasMoreForCurrentMoth: hasMoreForCurrentMoth,
+        );
 
   factory WorkstationModel.fromJson(Map<String, dynamic> json) {
+    final format = DateFormat.Hms();
     return WorkstationModel(
         idWorkstation: json['idWorkstation'],
         idResource:
             json['idResource'] is int ? json['idResource'].toString() : null,
         workstationDate: (DateTime.parse(json['workstationDate'])),
         freeName: json['freeName'],
-        codeWorkstation: json['codeWorkstation']);
+        codeWorkstation: json['codeWorkstation'],
+        startTime: json['startTime'] != null
+            ? TimeOfDay.fromDateTime(format.parse(json['startTime']))
+            : null,
+        endTime: json['endTime'] != null
+            ? TimeOfDay.fromDateTime(format.parse(json['endTime']))
+            : null,
+        hasMoreForCurrentMoth: json['hasMoreForCurrentMoth'] ?? null);
   }
 
   Map<String, dynamic> toJson() => {
@@ -33,6 +49,9 @@ class WorkstationModel extends Workstation {
         'workstationDate': DateFormat('yyyy-MM-dd').format(workstationDate),
         'freeName': freeName,
         'codeWorkstation': codeWorkstation,
+        'startTime': startTime.toString(),
+        'endTime': endTime.toString(),
+        'hasMoreForCurrentMoth': hasMoreForCurrentMoth,
       };
 
   Map<String, String> toQueryParams() {

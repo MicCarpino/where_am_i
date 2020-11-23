@@ -52,7 +52,6 @@ abstract class RemoteDataSource {
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
-
   String formatDateToString(DateTime date) =>
       DateFormat('yyyy-MM-dd').format(date);
 
@@ -86,15 +85,16 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<List<WorkstationModel>> getAllWorkstationsByDate(
       String token, DateTime date) async {
     var uri = Uri.https(
-        BASE_URL, '/WhereAmI/workstation/${formatDateToString(date)}');
+        BASE_URL, '/WhereAmI/workstation/byDate/${formatDateToString(date)}');
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
     }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       List<dynamic> workstationsList = json.decode(response.body);
-      return List<WorkstationModel>.from(
+      var abc = List<WorkstationModel>.from(
           workstationsList.map((e) => WorkstationModel.fromJson(e)));
+      return abc;
     } else {
       throw failureResult(response);
     }
@@ -103,7 +103,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<List<WorkstationModel>> getAllWorkstationsByIdResource(
       String token, String idResource) async {
-    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/resource/$idResource');
+    var uri =
+        Uri.https(BASE_URL, '/WhereAmI/workstation/byIdResource/$idResource');
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
@@ -120,15 +121,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<WorkstationModel> insertWorkstation(
       String token, WorkstationModel workstation) async {
-    var uri = Uri.https(
-      BASE_URL,
-      '/WhereAmI/workstation',
-      workstation.toQueryParams(),
-    );
-    final response = await http.post(uri, headers: {
-      HttpHeaders.authorizationHeader: token,
-      HttpHeaders.contentTypeHeader: 'application/json'
-    }).timeout(HTTP_TIMEOUT);
+    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation');
+    final response = await http
+        .post(uri,
+            headers: {
+              HttpHeaders.authorizationHeader: token,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: workstation.toJson())
+        .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(json.decode(response.body));
     } else {
@@ -139,15 +140,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<WorkstationModel> updateWorkstation(
       String token, WorkstationModel updatedWorkstation) async {
-    var uri = Uri.https(
-      BASE_URL,
-      '/WhereAmI/workstation',
-      updatedWorkstation.toQueryParams(),
-    );
-    final response = await http.put(uri, headers: {
-      HttpHeaders.authorizationHeader: token,
-      HttpHeaders.contentTypeHeader: 'application/json'
-    }).timeout(HTTP_TIMEOUT);
+    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation');
+    final response = await http
+        .put(uri,
+            headers: {
+              HttpHeaders.authorizationHeader: token,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: updatedWorkstation.toJson())
+        .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(jsonDecode(response.body));
     } else {
