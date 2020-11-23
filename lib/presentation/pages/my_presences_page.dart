@@ -20,9 +20,9 @@ class MyPresencesPage extends StatefulWidget {
 class _MyPresencesPageState extends State<MyPresencesPage>
     with TickerProviderStateMixin {
   MyPresencesBloc _myPresencesBloc = serviceLocator<MyPresencesBloc>();
-  Map<DateTime, List> _userPresences = new Map<DateTime, List>();
   AnimationController _animationController;
   CalendarController _calendarController;
+  Map<DateTime, List> _userPresences = new Map<DateTime, List>();
 
   @override
   void initState() {
@@ -42,11 +42,9 @@ class _MyPresencesPageState extends State<MyPresencesPage>
         cubit: _myPresencesBloc,
         builder: (context, state) {
           if (state is CurrentUserPresencesFetchCompleted) {
-            int index = 0;
-            state.currentUserPresences.forEach((element) {
-              index ++;
-              fasciaOraria c = index % 2 == 0? fasciaOraria.mattina: index%3 ==0? fasciaOraria.pomeriggio : fasciaOraria.full;
-              _userPresences.putIfAbsent(element.workstationDate, () => [c]);
+            state.currentUserPresences.forEach((workstation) {
+              _userPresences.putIfAbsent(
+                  workstation.workstationDate, () => [workstation]);
             });
             return _buildCalendar();
           } else if (state is CurrentUserPresencesFetchErrorState) {
@@ -62,82 +60,82 @@ class _MyPresencesPageState extends State<MyPresencesPage>
           }
         });
   }
- var calendarBuild = 0;
+
+  var calendarBuild = 0;
+
   Widget _buildCalendar() {
-    calendarBuild++;
-    print('calendar built $calendarBuild times');
     return TableCalendar(
-      locale: 'en_US',
-      calendarController: _calendarController,
-      //holidays: _holidays,
-      initialCalendarFormat: CalendarFormat.month,
-      formatAnimation: FormatAnimation.slide,
-      startingDayOfWeek: StartingDayOfWeek.monday,
-      availableGestures: AvailableGestures.all,
-      availableCalendarFormats: const {CalendarFormat.month: ''},
-      calendarStyle: CalendarStyle(
-        outsideDaysVisible: false,
-        weekendStyle: TextStyle().copyWith(color: Colors.red[800]),
-        holidayStyle: TextStyle().copyWith(color: Colors.yellow[800]),
-      ),
-      daysOfWeekStyle: DaysOfWeekStyle(
-        weekendStyle: TextStyle().copyWith(color: Colors.red[600]),
-      ),
-      headerStyle:
-      HeaderStyle(centerHeaderTitle: true, formatButtonVisible: false),
-      builders: CalendarBuilders(
-        selectedDayBuilder: (context, date, _) {
-          return Center(
-            child: Text(
-              '${date.day}',
-              style: TextStyle().copyWith(fontSize: 16.0),
-            ),
-          );
+        locale: 'en_US',
+        calendarController: _calendarController,
+        //holidays: _holidays,
+        initialCalendarFormat: CalendarFormat.month,
+        formatAnimation: FormatAnimation.slide,
+        startingDayOfWeek: StartingDayOfWeek.monday,
+        availableGestures: AvailableGestures.all,
+        availableCalendarFormats: const {CalendarFormat.month: ''},
+        calendarStyle: CalendarStyle(
+          outsideDaysVisible: false,
+          weekendStyle: TextStyle().copyWith(color: Colors.red[800]),
+          holidayStyle: TextStyle().copyWith(color: Colors.yellow[800]),
+        ),
+        daysOfWeekStyle: DaysOfWeekStyle(
+          weekendStyle: TextStyle().copyWith(color: Colors.red[600]),
+        ),
+        headerStyle:
+            HeaderStyle(centerHeaderTitle: true, formatButtonVisible: false),
+        builders: CalendarBuilders(
+          selectedDayBuilder: (context, date, _) {
+            return Center(
+              child: Text(
+                '${date.day}',
+                style: TextStyle().copyWith(fontSize: 16.0),
+              ),
+            );
+          },
+          markersBuilder: (context, date, events, _) =>
+              _buildMarkers(date, events),
+          todayDayBuilder: (context, date, _) {
+            return Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: dncBlue),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                '${date.day}',
+                style: TextStyle(fontSize: 16.0, color: dncBlue),
+              ),
+            );
+          },
+        ),
+        onDaySelected: (date, events, holidays) {
+          _onDaySelected(date, events, holidays);
+          _animationController.forward(from: 0.0);
         },
-        markersBuilder: (context, date, events, _) =>
-            _buildMarkers(date,events),
-        todayDayBuilder: (context, date, _) {
-          return Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: dncBlue),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              '${date.day}',
-              style: TextStyle(fontSize: 16.0, color: dncBlue),
-            ),
-          );
-        },
-      ),
-      onDaySelected: (date, events, holidays) {
-        _onDaySelected(date, events, holidays);
-        _animationController.forward(from: 0.0);
-      },
-      onVisibleDaysChanged: _onVisibleDaysChanged,
-      //onCalendarCreated: _onCalendarCreated,
-      events: _userPresences
-    );
+        onVisibleDaysChanged: _onVisibleDaysChanged,
+        //onCalendarCreated: _onCalendarCreated,
+        events: _userPresences);
   }
 
   void _onDaySelected(DateTime day, List events, List holidays) {
     print('CALLBACK: _onDaySelected');
     setState(() {
-      _userPresences.putIfAbsent(DateTime.now().add(Duration(days: 1)),() => [fasciaOraria.mattina]);
+      _userPresences.putIfAbsent(
+          DateTime.now().add(Duration(days: 1)), () => [fasciaOraria.mattina]);
       _userPresences.removeWhere((key, value) => key.day == DateTime.monday);
     });
   }
 
-  void _onVisibleDaysChanged(DateTime first, DateTime last,
-      CalendarFormat format) {
+  void _onVisibleDaysChanged(
+      DateTime first, DateTime last, CalendarFormat format) {
     setState(() {});
   }
 
-  _buildMarkers(DateTime date, List eventsForDate) {
-    print('buil  marker');
+  _buildMarkers(DateTime date, List workstationsForDate) {
+    print('build  markers');
     final children = <Widget>[];
-    if (eventsForDate.length == 1 && eventsForDate.first is fasciaOraria) {
-      children.add(PresencesMarker(date: date,status: true,fa: eventsForDate.first));
+    if (workstationsForDate.length == 1) {
+      children.add(PresencesMarker(workstation: workstationsForDate.first));
     }
     return children;
   }
@@ -148,19 +146,4 @@ class _MyPresencesPageState extends State<MyPresencesPage>
     _calendarController.dispose();
     super.dispose();
   }
-/*SfDateRangePicker _buildSFCalendar(List<DateTime> userPresences) => SfDateRangePicker(
-        showNavigationArrow: true,
-        headerHeight: 100,
-        selectionColor: dncOrange,
-        minDate: DateTime.now().subtract(Duration(days: 365)),
-        maxDate: DateTime.now().add(Duration(days: 365)),
-        selectionMode: DateRangePickerSelectionMode.multiple,
-        headerStyle: DateRangePickerHeaderStyle(textAlign: TextAlign.center),
-        initialSelectedDates: userPresences != null ? userPresences : [],
-        onSelectionChanged: _onSelectionChanged,enablePastDates: false,toggleDaySelection: true,
-      );
-
-  _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    _myPresencesBloc.add(OnCurrentUserPresencesUpdate(args.value));
-  }*/
 }

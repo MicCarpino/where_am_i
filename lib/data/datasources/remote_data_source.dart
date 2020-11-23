@@ -92,9 +92,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       List<dynamic> workstationsList = json.decode(response.body);
-      var abc = List<WorkstationModel>.from(
+      return List<WorkstationModel>.from(
           workstationsList.map((e) => WorkstationModel.fromJson(e)));
-      return abc;
     } else {
       throw failureResult(response);
     }
@@ -128,7 +127,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
               HttpHeaders.authorizationHeader: token,
               HttpHeaders.contentTypeHeader: 'application/json'
             },
-            body: workstation.toJson())
+            body: json.encode(workstation.toJson()))
         .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(json.decode(response.body));
@@ -141,13 +140,14 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<WorkstationModel> updateWorkstation(
       String token, WorkstationModel updatedWorkstation) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/workstation');
+    var body = json.encode(updatedWorkstation.toJson());
     final response = await http
         .put(uri,
             headers: {
               HttpHeaders.authorizationHeader: token,
               HttpHeaders.contentTypeHeader: 'application/json'
             },
-            body: updatedWorkstation.toJson())
+            body: body)
         .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(jsonDecode(response.body));

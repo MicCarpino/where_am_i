@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/presentation/pages/my_presences_page.dart';
+import 'package:where_am_i/domain/entities/workstation.dart';
 
 class PresencesMarker extends StatelessWidget {
-  final fasciaOraria fa ;
-  final bool status;
-  final DateTime date;
+  final Workstation workstation;
 
-  PresencesMarker({this.fa,this.date,this.status});
+  PresencesMarker({this.workstation});
 
   @override
   Widget build(BuildContext context) {
@@ -16,36 +14,38 @@ class PresencesMarker extends StatelessWidget {
         height: 100,
         child: CustomPaint(
           child: Center(
-            child: Text(
-              '${date.day}',
-              style: TextStyle().copyWith(color: Colors.black, fontSize: 14.0)
-            ),
+            child: Text('${workstation.workstationDate.day}',
+                style:
+                    TextStyle().copyWith(color: Colors.black, fontSize: 14.0)),
           ),
-          painter: MarkerPainter(fa,status),
+          painter: MarkerPainter(
+              workstation.startTime, workstation.endTime, workstation.status),
         ));
   }
 }
 
 class MarkerPainter extends CustomPainter {
-  final bool status;
-  final fasciaOraria fa;
-  MarkerPainter(this.fa,this.status);
+  final int status;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
+
+  MarkerPainter(this.startTime, this.endTime, this.status);
 
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint();
-    paint.color = status? dncBlue :dncOrange;
+    paint.color = status == WORKSTATION_STATUS_PENDING ? dncBlue : dncOrange;
     paint.style = PaintingStyle.fill;
-
     var path = Path();
-    if(fa == fasciaOraria.full){
-      canvas.drawCircle(Offset(size.width/2,size.height/2), size.width/2, paint);
-      canvas.drawCircle(Offset(size.width/2,size.height/2), size.width/4, Paint()..color = Colors.white);
+    //full day, drawing full circle
+    if (startTime == TIME_SLOT_NINE && endTime == TIME_SLOT_EIGHTEEN) {
+      canvas.drawCircle(
+          Offset(size.width / 2, size.height / 2), size.width / 2, paint);
+      canvas.drawCircle(Offset(size.width / 2, size.height / 2),
+          size.width / 3.5, Paint()..color = Colors.white);
     } else {
-      _drawHalfCenterAngled(path,size);
+      _drawHalfCenterAngled(path, size);
       canvas.drawPath(path, paint);
-     // canvas.drawCircle(Offset(size.width/2,size.height/2), size.width/2, Paint()..color = dncOrange ..style=PaintingStyle.stroke..strokeWidth =1);
-     // canvas.drawCircle(Offset(size.width/2,size.height/2), size.width/4, Paint()..color = dncOrange ..style=PaintingStyle.stroke..strokeWidth =1);
     }
   }
 
@@ -54,34 +54,16 @@ class MarkerPainter extends CustomPainter {
     return true;
   }
 
-  _drawFullCenterAngled(Path path, Size size){
+  _drawHalfCenterAngled(Path path, Size size) {
+    //establishing if should draw arcs clockwise (half circle top left)
+    bool isMorningSlot =
+        startTime == TIME_SLOT_NINE && endTime == TIME_SLOT_THIRTEEN;
     path.moveTo(size.width * 0.15, size.height * 0.85);
-    path.arcToPoint(Offset(size.width * 0.85, size.height * 0.15), radius: Radius.circular(size.width /10),clockwise: fa == fasciaOraria.mattina);
+    path.arcToPoint(Offset(size.width * 0.85, size.height * 0.15),
+        radius: Radius.circular(size.width / 10), clockwise: isMorningSlot);
     path.lineTo(size.width * 0.7, size.height * 0.30);
-    path.arcToPoint(Offset(size.width * 0.30, size.height * 0.7), radius: Radius.circular(size.width / 10),clockwise: fa == fasciaOraria.mattina);
+    path.arcToPoint(Offset(size.width * 0.30, size.height * 0.7),
+        radius: Radius.circular(size.width / 10), clockwise: !isMorningSlot);
     path.lineTo(size.width * 0.15, size.height * 0.85);
   }
-  _drawHalfCenterAngled(Path path, Size size){
-    path.moveTo(size.width * 0.15, size.height * 0.85);
-    path.arcToPoint(Offset(size.width * 0.85, size.height * 0.15), radius: Radius.circular(size.width /10),clockwise: fa == fasciaOraria.mattina);
-    path.lineTo(size.width * 0.7, size.height * 0.30);
-    path.arcToPoint(Offset(size.width * 0.30, size.height * 0.7), radius: Radius.circular(size.width / 10),clockwise: fa != fasciaOraria.mattina);
-    path.lineTo(size.width * 0.15, size.height * 0.85);
-  }
-  _drawHalfCenterStraight(Path path, Size size){
-    path.moveTo(0, size.height/2);
-    path.arcToPoint(Offset(size.width, size.height/2), radius: Radius.circular(size.width /10),clockwise: fa == fasciaOraria.mattina);
-    path.lineTo(size.width * 0.7, size.height/2);
-    path.arcToPoint(Offset(size.width * 0.30, size.height/2), radius: Radius.circular(size.width / 10),clockwise: fa != fasciaOraria.mattina);
-    path.lineTo(0, size.height /2);
-  }
- _drawFullCenterStraight(Path path, Size size){
-    path.moveTo(0, size.height/2);
-    path.arcToPoint(Offset(size.width, size.height/2), radius: Radius.circular(size.width/2),clockwise: fa == fasciaOraria.mattina);
-    path.lineTo(size.width * 0.8, size.height/2);
-    path.arcToPoint(Offset(size.width * 0.20, size.height/2), radius: Radius.circular(size.width/4),clockwise: fa == fasciaOraria.mattina);
-    path.lineTo(0, size.height /2);
-  }
-
-
 }

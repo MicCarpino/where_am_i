@@ -32,14 +32,23 @@ const BASE_URL = "test.dncsrl.com";
 //Prod
 //const BASE_URL = "wai.dncsrl.com";
 const HTTP_TIMEOUT = Duration(seconds: 20);
+//reservations constamts
 const ROOM_24_CODE = 24;
 const ROOM_26B_CODE = 26;
 const ROOM_26A_CODE = 262;
 const RESERVATION_PENDING = 0;
 const RESERVATION_CONFIRMED = 1;
+//roles constants
 const ROLE_USER = 1;
 const ROLE_STAFF = 2;
 const ROLE_ADMIN = 3;
+// workstations constants
+const WORKSTATION_STATUS_PENDING = 0;
+const WORKSTATION_STATUS_CONFIRMED = 1;
+const TIME_SLOT_NINE = TimeOfDay(hour: 9, minute: 0);
+const TIME_SLOT_THIRTEEN = TimeOfDay(hour: 13, minute: 0);
+const TIME_SLOT_FOURTEEN = TimeOfDay(hour: 14, minute: 0);
+const TIME_SLOT_EIGHTEEN = TimeOfDay(hour: 18, minute: 0);
 
 //left current code, right old code
 const getOldWorkstationCodeFor26b = {

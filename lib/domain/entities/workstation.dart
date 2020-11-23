@@ -11,6 +11,7 @@ class Workstation extends Equatable {
   final String codeWorkstation;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
+  final int status;
   final bool hasMoreForCurrentMoth;
 
   Workstation({
@@ -21,6 +22,7 @@ class Workstation extends Equatable {
     @required this.codeWorkstation,
     @required this.startTime,
     @required this.endTime,
+    @required this.status,
     this.hasMoreForCurrentMoth,
   });
 
@@ -33,6 +35,7 @@ class Workstation extends Equatable {
         codeWorkstation,
         startTime,
         endTime,
+        status,
         hasMoreForCurrentMoth,
       ];
 
@@ -44,6 +47,7 @@ class Workstation extends Equatable {
         codeWorkstation: codeWorkstation,
         startTime: startTime,
         endTime: endTime,
+        status: status,
         hasMoreForCurrentMoth: hasMoreForCurrentMoth,
       );
 }
