@@ -5,12 +5,18 @@ abstract class MyPresencesState {}
 
 class MyPresencesInitial extends MyPresencesState {}
 
-class CurrentUserPresencesFetchCompleted extends MyPresencesState {
+class PresencesFetchCompletedState extends MyPresencesState {
   final List<Workstation> currentUserPresences;
 
-  CurrentUserPresencesFetchCompleted(this.currentUserPresences);
+  PresencesFetchCompletedState(this.currentUserPresences);
 }
 
-class CurrentUserPresencesFetchErrorState extends MyPresencesState {}
+class PresencesFetchErrorState extends MyPresencesState {}
 
-class CurrentUserFetchLoadingState extends MyPresencesState {}
+class PresencesErrorMessageState extends MyPresencesState {
+  final String errorMessage;
+
+  PresencesErrorMessageState(this.errorMessage);
+}
+
+class PresencesFetchLoadingState extends MyPresencesState {}

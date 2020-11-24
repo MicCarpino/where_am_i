@@ -39,17 +39,20 @@ class _MyPresencesPageState extends State<MyPresencesPage>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MyPresencesBloc, MyPresencesState>(
+    return BlocConsumer<MyPresencesBloc, MyPresencesState>(
         cubit: _myPresencesBloc,
         builder: (context, state) {
-          if (state is CurrentUserPresencesFetchCompleted) {
+          if (state is PresencesFetchLoadingState){
+            return CircularProgressIndicator();
+          }
+          if (state is PresencesFetchCompletedState) {
             //converting list to map{Date:List<Workstation>}
             _userPresences = {
               for (Workstation v in state.currentUserPresences)
                 v.workstationDate: [v]
             };
             return _buildCalendar();
-          } else if (state is CurrentUserPresencesFetchErrorState) {
+          } else if (state is PresencesFetchErrorState) {
             return Center(
               child: MaterialButton(
                   child: Text('riprova'),
@@ -58,9 +61,17 @@ class _MyPresencesPageState extends State<MyPresencesPage>
                   }),
             );
           } else {
-            return Center(child: CircularLoading());
+            return _buildCalendar();
           }
-        });
+        },
+      listener: (context, state) {
+      if (state is PresencesErrorMessageState) {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(content: Text(state.errorMessage)),
+        );
+      }
+    },
+    );
   }
 
   var calendarBuild = 0;
