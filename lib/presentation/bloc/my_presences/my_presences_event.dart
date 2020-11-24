@@ -24,3 +24,11 @@ class OnPresenceRemoved extends MyPresencesEvent {
 
   OnPresenceRemoved(this.idWorkstation);
 }
+
+class OnPresenceUpdate extends MyPresencesEvent {
+  final idWorkstation;
+final TimeOfDay startTime;
+final TimeOfDay endTime;
+
+OnPresenceUpdate(this.idWorkstation, this.startTime, this.endTime);
+}

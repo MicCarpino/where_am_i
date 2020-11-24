@@ -52,6 +52,8 @@ dependencies:
   cryptography: ^1.4.1
   # Plugin added just to fix a build error
   #flutter_keyboard_visibility: ^3.2.2
+  #tuples
+  tuple: ^1.0.3
 
 dev_dependencies:
   flutter_test:

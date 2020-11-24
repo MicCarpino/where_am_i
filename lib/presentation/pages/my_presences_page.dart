@@ -2,13 +2,14 @@ import 'package:get_it/get_it.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:tuple/tuple.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/my_presences/my_presences_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/presences_marker.dart';
+import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -42,6 +43,7 @@ class _MyPresencesPageState extends State<MyPresencesPage>
         cubit: _myPresencesBloc,
         builder: (context, state) {
           if (state is CurrentUserPresencesFetchCompleted) {
+            //converting list to map{Date:List<Workstation>}
             _userPresences = {
               for (Workstation v in state.currentUserPresences)
                 v.workstationDate: [v]
@@ -98,7 +100,7 @@ class _MyPresencesPageState extends State<MyPresencesPage>
         ),
         onDaySelected: (date, events, _) {
           _onDaySelected(date, events);
-          _animationController.forward(from: 0.0);
+          //_animationController.forward(from: 0.0);
         },
         onDayLongPressed: (day, events, _) => _onDayLongPress(day, events),
         onVisibleDaysChanged: null,
@@ -116,7 +118,20 @@ class _MyPresencesPageState extends State<MyPresencesPage>
     }
   }
 
-  _onDayLongPress(DateTime day, List events) {}
+  _onDayLongPress(DateTime day, List events) {
+      return showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return TimeSlotDialog(events);
+          }).then((value) {
+        if (value != null && value is Tuple2<TimeOfDay, TimeOfDay>) {
+          if(events.isEmpty)
+          _myPresencesBloc.add(OnPresenceAdded(day, value.item1, value.item2));
+          else
+            _myPresencesBloc.add(OnPresenceUpdate(events.first.idWorkstation, value.item1, value.item2));
+        }
+      });
+  }
 
   _buildMarkers(DateTime date, List workstationsForDate) {
     print('build  markers');
