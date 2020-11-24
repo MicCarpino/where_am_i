@@ -30,6 +30,8 @@ class ReservationRepositoryImpl implements ReservationRepository {
       return Right(reservationsList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -44,6 +46,8 @@ class ReservationRepositoryImpl implements ReservationRepository {
       return Right(cachedReservationList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -60,6 +64,8 @@ class ReservationRepositoryImpl implements ReservationRepository {
       return Right(cachedReservationList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -75,6 +81,8 @@ class ReservationRepositoryImpl implements ReservationRepository {
       return Right(cachedReservationList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 }

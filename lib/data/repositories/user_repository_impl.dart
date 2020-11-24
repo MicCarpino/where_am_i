@@ -42,6 +42,8 @@ class UserRepositoryImpl implements UserRepository {
       return Right(cachedUsersList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -65,6 +67,8 @@ class UserRepositoryImpl implements UserRepository {
       return Right(cachedUsersList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 }

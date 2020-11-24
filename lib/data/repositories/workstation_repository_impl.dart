@@ -20,7 +20,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     @required this.localDataSource,
   });
 
-  List<Workstation> getCachedPresences() =>cachedUserPresences;
+  List<Workstation> getCachedPresences() => cachedUserPresences;
 
   @override
   Future<Either<Failure, List<Workstation>>> getAllWorkstationsByDate(
@@ -33,6 +33,8 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       return Right(workstationsList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -48,6 +50,8 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       return Right(userPresences);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -61,6 +65,8 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       return Right(insertResult);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -75,6 +81,8 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       return Right(updateResult);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -87,6 +95,8 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       return Right(idWorkstation);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 }

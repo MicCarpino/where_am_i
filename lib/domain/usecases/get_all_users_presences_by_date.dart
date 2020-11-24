@@ -18,14 +18,16 @@ class GetAllUserPresencesByDate
 
   Future<Either<Failure, List<UserWithWorkstation>>> call(DateTime date) async {
     var usersList = await _userRepository.getAllUsers();
-    var workstationsModelsList =
+    var workstationsList =
         await _workstationRepository.getAllWorkstationsByDate(date);
-    List<WorkstationModel> workstations =
-        workstationsModelsList.getOrElse(() => null);
+    List<Workstation> workstations =
+        workstationsList.getOrElse(() => null);
     List<User> users = usersList.getOrElse(() => null);
     //assigning workstation (if present) at each user in list
     if (usersList != null && workstations != null) {
-      return Right(mergeAndSortUsersWithWorkstations(workstations, users));
+      List<UserWithWorkstation> usersWithWorkstations =
+          mergeAndSortUsersWithWorkstations(workstations, users);
+      return Right(usersWithWorkstations);
     } else {
       return Left(ServerFailure(""));
     }
@@ -43,7 +45,9 @@ class GetAllUserPresencesByDate
     //Sorting users list firstly by surname, then by name
     usersWithWorkstations.sort((a, b) {
       int surnameResult = a.user.surname.compareTo(b.user.surname);
-      return surnameResult != 0 ? surnameResult : a.user.name.compareTo(b.user.name);
+      return surnameResult != 0
+          ? surnameResult
+          : a.user.name.compareTo(b.user.name);
     });
     //Sorting free name users
     List<UserWithWorkstation> freeNamesWorkstations = workstations

@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/data/models/apk_version_model.dart';
 import 'package:where_am_i/data/models/authenticated_user_model.dart';
 import 'package:where_am_i/data/models/reservation_model.dart';
 import 'package:where_am_i/data/models/user_model.dart';
@@ -47,8 +46,6 @@ abstract class RemoteDataSource {
 
   Future<void> deleteReservation(String authenticationToken, int idReservation);
 
-  //APK VERSION
-  Future<ApkVersionModel> getLastApkVersion(String authenticationToken);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -58,13 +55,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Exception failureResult(http.Response response) {
     if (response.statusCode == 401) {
       return UnauthorizedException();
-    }
-    if (response.statusCode == 500) {
-      print(response.body);
-      throw ServerException(response.body);
     } else {
-      print(response.body);
-      throw UnexpectedException(response.body);
+      throw ServerException(response.body);
     }
   }
 
@@ -270,17 +262,4 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     }
   }
 
-  @override
-  Future<ApkVersionModel> getLastApkVersion(String authenticationToken) async {
-    var uri = Uri.https(BASE_URL, '/WhereAmI/apkVersion');
-    final response = await http.get(uri, headers: {
-      HttpHeaders.authorizationHeader: authenticationToken,
-      HttpHeaders.contentTypeHeader: 'application/json'
-    }).timeout(HTTP_TIMEOUT);
-    if (response.statusCode == 200) {
-      return ApkVersionModel.fromJson(json.decode(response.body));
-    } else {
-      throw failureResult(response);
-    }
-  }
 }

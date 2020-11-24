@@ -32,7 +32,7 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(loggedUser);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.errorMessage));
-    } catch (e) {
+    } on Exception catch (e) {
       return Left(UnexpectedFailure(e.toString()));
     }
   }
@@ -46,6 +46,8 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(cachedUser);
     } on CacheException {
       return Left(CacheFailure());
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 
@@ -57,6 +59,8 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(result);
     } on CacheException {
       return Left(CacheFailure());
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
     }
   }
 }
