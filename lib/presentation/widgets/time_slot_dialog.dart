@@ -26,8 +26,10 @@ class TimeSlotDialog extends StatelessWidget {
   }
 
   List<Widget> _drawButtons(BuildContext context) {
+    //there's already a presence
     if (events.isNotEmpty && events.first is Workstation) {
       Workstation workstation = events.first;
+      //current slot = morning slot, showing evening/full day options
       if (workstation.startTime == TIME_SLOT_NINE &&
           workstation.endTime == TIME_SLOT_THIRTEEN) {
         return [
@@ -36,17 +38,20 @@ class TimeSlotDialog extends StatelessWidget {
         ];
       } else if (workstation.startTime == TIME_SLOT_FOURTEEN &&
           workstation.endTime == TIME_SLOT_EIGHTEEN) {
+        //current slot = evening, showing morning/full day options
         return [
           _buildTimeSlotButton(context, TimeSlot.fullDay),
-          _buildTimeSlotButton(context, TimeSlot.evening)
+          _buildTimeSlotButton(context, TimeSlot.morning)
         ];
       } else {
+        // current slot = fullDay, showing morning/evening options
         return [
           _buildTimeSlotButton(context, TimeSlot.morning),
           _buildTimeSlotButton(context, TimeSlot.evening)
         ];
       }
     } else {
+      //not presences yet, so showing morning/evening option
       return [
         _buildTimeSlotButton(context, TimeSlot.morning),
         _buildTimeSlotButton(context, TimeSlot.evening)

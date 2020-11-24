@@ -26,9 +26,7 @@ class OnPresenceRemoved extends MyPresencesEvent {
 }
 
 class OnPresenceUpdate extends MyPresencesEvent {
-  final idWorkstation;
-final TimeOfDay startTime;
-final TimeOfDay endTime;
+  final Workstation updatedWorkstation;
 
-OnPresenceUpdate(this.idWorkstation, this.startTime, this.endTime);
+  OnPresenceUpdate(this.updatedWorkstation);
 }

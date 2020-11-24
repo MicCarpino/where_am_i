@@ -7,7 +7,8 @@ abstract class WorkstationRepository {
   Future<Either<Failure, List<Workstation>>> getAllWorkstationsByDate(
       DateTime date);
 
-  Future<Either<Failure, List<Workstation>>> getAllWorkstationsByIdResource(int idResource);
+  Future<Either<Failure, List<Workstation>>> getAllWorkstationsByIdResource(
+      int idResource);
 
   List<Workstation> getCachedPresences();
 
@@ -17,6 +18,5 @@ abstract class WorkstationRepository {
   Future<Either<Failure, Workstation>> updateWorkstation(
       Workstation updatedWorkstation);
 
-  Future<Either<Failure, int>> deleteWorkstation(
-      int idWorkstation);
+  Future<Either<Failure, int>> deleteWorkstation(int idWorkstation);
 }

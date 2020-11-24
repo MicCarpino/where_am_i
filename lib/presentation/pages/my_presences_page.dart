@@ -40,37 +40,37 @@ class _MyPresencesPageState extends State<MyPresencesPage>
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<MyPresencesBloc, MyPresencesState>(
-        cubit: _myPresencesBloc,
-        builder: (context, state) {
-          if (state is PresencesFetchLoadingState){
-            return CircularProgressIndicator();
-          }
-          if (state is PresencesFetchCompletedState) {
-            //converting list to map{Date:List<Workstation>}
-            _userPresences = {
-              for (Workstation v in state.currentUserPresences)
-                v.workstationDate: [v]
-            };
-            return _buildCalendar();
-          } else if (state is PresencesFetchErrorState) {
-            return Center(
-              child: MaterialButton(
-                  child: Text('riprova'),
-                  onPressed: () {
-                    _myPresencesBloc.add(FetchCurrentUserPresences());
-                  }),
-            );
-          } else {
-            return _buildCalendar();
-          }
-        },
+      cubit: _myPresencesBloc,
+      builder: (context, state) {
+        if (state is PresencesFetchLoadingState) {
+          return CircularLoading();
+        }
+        if (state is PresencesFetchCompletedState) {
+          //converting list to map{Date:List<Workstation>}
+          _userPresences = {
+            for (Workstation v in state.currentUserPresences)
+              v.workstationDate: [v]
+          };
+          return _buildCalendar();
+        } else if (state is PresencesFetchErrorState) {
+          return Center(
+            child: MaterialButton(
+                child: Text('riprova'),
+                onPressed: () {
+                  _myPresencesBloc.add(FetchCurrentUserPresences());
+                }),
+          );
+        } else {
+          return _buildCalendar();
+        }
+      },
       listener: (context, state) {
-      if (state is PresencesErrorMessageState) {
-        Scaffold.of(context).showSnackBar(
-          SnackBar(content: Text(state.errorMessage)),
-        );
-      }
-    },
+        if (state is PresencesErrorMessageState) {
+          Scaffold.of(context).showSnackBar(
+            SnackBar(content: Text(state.errorMessage)),
+          );
+        }
+      },
     );
   }
 
@@ -123,25 +123,55 @@ class _MyPresencesPageState extends State<MyPresencesPage>
     if (events.isEmpty) {
       _myPresencesBloc
           .add(OnPresenceAdded(date, TIME_SLOT_NINE, TIME_SLOT_EIGHTEEN));
-    } else if (events.isNotEmpty && events.first is WorkstationModel) {
+    } else if (events.isNotEmpty && events.first is Workstation) {
       WorkstationModel workstation = events.first;
-      _myPresencesBloc.add(OnPresenceRemoved(workstation.idWorkstation));
+      if (workstation.status == WORKSTATION_STATUS_CONFIRMED) {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  "Non è possibile effettuare modifiche a presenze già confermate")),
+        );
+      } else {
+        _myPresencesBloc.add(OnPresenceRemoved(workstation.idWorkstation));
+      }
     }
   }
 
   _onDayLongPress(DateTime day, List events) {
+    if (events.isNotEmpty &&
+        (events.first as Workstation).status == WORKSTATION_STATUS_PENDING) {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                "Non è possibile effettuare modifiche a presenze già confermate")),
+      );
+    } else {
       return showDialog(
           context: context,
           builder: (BuildContext context) {
             return TimeSlotDialog(events);
           }).then((value) {
+            //checking if callback resulta contains a value
         if (value != null && value is Tuple2<TimeOfDay, TimeOfDay>) {
-          if(events.isEmpty)
-          _myPresencesBloc.add(OnPresenceAdded(day, value.item1, value.item2));
-          else
-            _myPresencesBloc.add(OnPresenceUpdate(events.first.idWorkstation, value.item1, value.item2));
+          //presence already inserted, performing update
+          if (events.isNotEmpty && events.first is Workstation) {
+            Workstation currentWorkstation = events.first;
+            var updatedWorkstation = Workstation(
+                idWorkstation: currentWorkstation.idWorkstation,
+                idResource: currentWorkstation.idResource,
+                workstationDate: currentWorkstation.workstationDate,
+                codeWorkstation: currentWorkstation.codeWorkstation,
+                startTime: value.item1,
+                endTime: value.item2);
+            _myPresencesBloc.add(OnPresenceUpdate(updatedWorkstation));
+          } else {
+            //no presence yet, performing insert
+            _myPresencesBloc.add(OnPresenceAdded(day, value.item1, value.item2));
+          }
         }
+        return;
       });
+    }
   }
 
   _buildMarkers(DateTime date, List workstationsForDate) {
