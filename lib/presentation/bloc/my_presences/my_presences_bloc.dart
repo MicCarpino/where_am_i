@@ -24,12 +24,14 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     @required InsertUserPresence insertUserPresence,
     @required RemoveUserPresence removeUserPresence,
   })  : assert(getUserPresences != null),
-        assert(_insertUserPresence != null),
-        assert(_removeUserPresence != null),
+        assert(insertUserPresence != null),
+        assert(removeUserPresence != null),
         _getUserPresences = getUserPresences,
         _insertUserPresence = insertUserPresence,
         _removeUserPresence = removeUserPresence,
         super(MyPresencesInitial());
+
+  List<Workstation> cachedPresences;
 
   @override
   Stream<MyPresencesState> mapEventToState(MyPresencesEvent event) async* {
@@ -56,6 +58,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
           'user presences fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
       return CurrentUserPresencesFetchErrorState();
     }, (userPresences) {
+      cachedPresences = userPresences;
       print('user presences : ${userPresences.length}');
       return CurrentUserPresencesFetchCompleted(userPresences);
     });
@@ -66,12 +69,19 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     print('inserting user presence');
     final insertResult = await _insertUserPresence(newPresenceParams);
     yield insertResult.fold((failure) {
-      print(
-          'insert presence fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+      print('insert presence failure');
       return CurrentUserPresencesFetchErrorState();
-    }, (updatedUserPresences) {
-      print('insert presence success : ${updatedUserPresences.length}');
-      return CurrentUserPresencesFetchCompleted(updatedUserPresences);
+    }, (insertedPresence) {
+      print('insert presence success');
+      if (cachedPresences != null) {
+        print('valid  presences cache');
+        cachedPresences.add(insertedPresence);
+        return CurrentUserPresencesFetchCompleted(cachedPresences);
+      } else {
+        print('invalid  presences cache');
+        _fetchCurrentUserPresences();
+        return null;
+      }
     });
   }
 
@@ -79,12 +89,20 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     print('removing user presence');
     final removeResult = await _removeUserPresence(idWorkstation);
     yield removeResult.fold((failure) {
-      print(
-          'remove presence fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+      print('remove presence failure');
       return CurrentUserPresencesFetchErrorState();
-    }, (updatedUserPresences) {
-      print('delete presence success : ${updatedUserPresences.length}');
-      return CurrentUserPresencesFetchCompleted(updatedUserPresences);
+    }, (deletedPresenceId) {
+      print('delete presence success');
+      if (cachedPresences != null) {
+        print('valid  presences cache');
+        cachedPresences.removeWhere(
+            (element) => element.idWorkstation == deletedPresenceId);
+        return CurrentUserPresencesFetchCompleted(cachedPresences);
+      } else {
+        print('invalid  presences cache');
+        _fetchCurrentUserPresences();
+        return null;
+      }
     });
   }
 }

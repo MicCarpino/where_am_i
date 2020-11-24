@@ -8,13 +8,18 @@ import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import '../../core/error/failure.dart';
 import '../../core/usecases/usecase.dart';
 
-class DeleteWorkstation extends UseCase<List<UserWithWorkstation>, int> {
+class DeleteWorkstation extends UseCase<int, int> {
   final WorkstationRepository _workstationRepository;
   final UserRepository _userRepository;
 
-  DeleteWorkstation(this._workstationRepository,this._userRepository);
+  DeleteWorkstation(this._workstationRepository, this._userRepository);
 
-  Future<Either<Failure, List<UserWithWorkstation>>> call(int idWorkstation) async {
+  Future<Either<Failure, int>> call(int idWorkstation) async {
+    return await _workstationRepository.deleteWorkstation(idWorkstation);
+  }
+}
+
+/*Future<Either<Failure, List<UserWithWorkstation>>> call(int idWorkstation) async {
     var usersList = await _userRepository.getAllUsers();
     var workstationsList =   await _workstationRepository.deleteWorkstation(idWorkstation);
     List<Workstation> workstations = workstationsList.getOrElse(() => null);
@@ -43,4 +48,4 @@ class DeleteWorkstation extends UseCase<List<UserWithWorkstation>, int> {
     freeNamesWorkstations.sort((a, b) => a.workstation.freeName.compareTo(b.workstation.freeName));
     return List.of(freeNamesWorkstations..addAll(usersWithWorkstations));
   }
-}
+}*/

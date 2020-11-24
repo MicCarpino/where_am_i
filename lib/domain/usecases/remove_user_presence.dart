@@ -9,18 +9,20 @@ import '../../core/error/failure.dart';
 import '../../core/usecases/usecase.dart';
 
 class RemoveUserPresence
-    extends UseCase<List<Workstation>, int> {
+    extends UseCase<int, int> {
   final WorkstationRepository _workstationRepository;
   final AuthRepository _authRepository;
 
   RemoveUserPresence(this._workstationRepository, this._authRepository);
 
-  Future<Either<Failure, List<Workstation>>> call(
+  Future<Either<Failure, int>> call(
      int idWorkstation) async {
     var currentUser = await _authRepository.getLoggedUser();
     User loggedUser = currentUser.getOrElse(() => null)?.user;
     if (loggedUser != null) {
-      var removeResult = await _workstationRepository.deleteWorkstation(idWorkstation);
+      return  await _workstationRepository.deleteWorkstation(idWorkstation);
+    }else {
+      return Left(CacheFailure());
     }
   }
 }

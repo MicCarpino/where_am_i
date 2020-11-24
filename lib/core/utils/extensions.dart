@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 extension StringExtension on String {
   String capitalize() {
@@ -31,6 +32,13 @@ extension TimeOfDayExtension on TimeOfDay {
     } else {
       return false;
     }
+  }
+
+  String toJson(){
+    final now = new DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, this.hour, this.minute);
+    final format = DateFormat.Hms();  //"6:00 AM"
+    return format.format(dt);
   }
 
 }

@@ -13,14 +13,14 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   final LocalDataSource localDataSource;
 
   static var cachedWorkstationsList = List<Workstation>();
-  static var cachedCurrentUserPresences = List<Workstation>();
+  static var cachedUserPresences = List<Workstation>();
 
   WorkstationRepositoryImpl({
     @required this.remoteDataSource,
     @required this.localDataSource,
   });
 
-  List<Workstation> getCachedUserPresences() =>  cachedCurrentUserPresences;
+  List<Workstation> getCachedPresences() =>cachedUserPresences;
 
   @override
   Future<Either<Failure, List<Workstation>>> getAllWorkstationsByDate(
@@ -37,15 +37,14 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, List<Workstation>>>
-      getAllWorkstationsByIdResource() async {
+  Future<Either<Failure, List<Workstation>>> getAllWorkstationsByIdResource(
+      int idResource) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final userPresences =
           await remoteDataSource.getAllWorkstationsByIdResource(
-              loggedUser.authenticationToken,
-              loggedUser.user.idResource.toString());
-      cachedCurrentUserPresences = userPresences;
+              loggedUser.authenticationToken, idResource.toString());
+      cachedUserPresences = userPresences;
       return Right(userPresences);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
@@ -53,17 +52,13 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, List<Workstation>>> insertWorkstation(
+  Future<Either<Failure, Workstation>> insertWorkstation(
       Workstation workstation) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final insertResult = await remoteDataSource.insertWorkstation(
           loggedUser.authenticationToken, workstation.toWorkstationModel());
-      cachedWorkstationsList.add(insertResult);
-      if(insertResult.idResource == loggedUser.user.idResource){
-
-      }
-      return Right(cachedWorkstationsList);
+      return Right(insertResult);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
     }
@@ -84,15 +79,12 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, List<Workstation>>> deleteWorkstation(
-      int idWorkstation) async {
+  Future<Either<Failure, int>> deleteWorkstation(int idWorkstation) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       await remoteDataSource.deleteWorkstation(
           loggedUser.authenticationToken, idWorkstation);
-      cachedWorkstationsList.removeWhere(
-          (workstation) => workstation.idWorkstation == idWorkstation);
-      return Right(cachedWorkstationsList);
+      return Right(idWorkstation);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
     }

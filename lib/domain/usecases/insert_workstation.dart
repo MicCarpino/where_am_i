@@ -9,13 +9,17 @@ import '../../core/error/failure.dart';
 import '../../core/usecases/usecase.dart';
 
 class InsertWorkstation
-    extends UseCase<List<UserWithWorkstation>, Workstation> {
+    extends UseCase<Workstation, Workstation> {
   final WorkstationRepository _workstationRepository;
   final UserRepository _userRepository;
 
   InsertWorkstation(this._workstationRepository, this._userRepository);
 
-  Future<Either<Failure, List<UserWithWorkstation>>> call(
+  Future<Either<Failure, Workstation>> call(
+      Workstation workstation) async {
+    return  _workstationRepository.insertWorkstation(workstation);
+  }
+  /*Future<Either<Failure, List<UserWithWorkstation>>> call(
       Workstation workstation) async {
     var usersList = await _userRepository.getAllUsers();
     var workstationsList = await _workstationRepository.insertWorkstation(workstation);
@@ -45,6 +49,6 @@ class InsertWorkstation
         .toList();
     freeNamesWorkstations.sort((a, b) => a.workstation.freeName.compareTo(b.workstation.freeName));
     return List.of(freeNamesWorkstations..addAll(usersWithWorkstations));
-  }
+  }*/
 
 }

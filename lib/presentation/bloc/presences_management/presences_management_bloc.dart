@@ -71,7 +71,8 @@ class PresencesManagementBloc
     yield insertResult.fold((failure) {
       return UserPresencesErrorState();
     }, (updatedList) {
-      originalUsersPresencesList = updatedList;
+      //TODO:cache list and fix insert
+      originalUsersPresencesList = List();
       return UsersPresencesReadyState(originalUsersPresencesList);
     });
   }
@@ -82,7 +83,8 @@ class PresencesManagementBloc
     yield deleteResult.fold((failure) {
       return UserPresencesErrorState();
     }, (updatedList) {
-      originalUsersPresencesList = updatedList;
+      //TODO:cache list and fix delete
+      originalUsersPresencesList =  List();
       return UsersPresencesReadyState(originalUsersPresencesList);
     });
   }

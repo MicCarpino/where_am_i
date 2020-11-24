@@ -60,8 +60,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return UnauthorizedException();
     }
     if (response.statusCode == 500) {
+      print(response.body);
       throw ServerException(response.body);
     } else {
+      print(response.body);
       throw UnexpectedException(response.body);
     }
   }

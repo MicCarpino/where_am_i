@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
+import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/my_presences/my_presences_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/presences_marker.dart';
@@ -41,10 +42,10 @@ class _MyPresencesPageState extends State<MyPresencesPage>
         cubit: _myPresencesBloc,
         builder: (context, state) {
           if (state is CurrentUserPresencesFetchCompleted) {
-            state.currentUserPresences.forEach((workstation) {
-              _userPresences.putIfAbsent(
-                  workstation.workstationDate, () => [workstation]);
-            });
+            _userPresences = {
+              for (Workstation v in state.currentUserPresences)
+                v.workstationDate: [v]
+            };
             return _buildCalendar();
           } else if (state is CurrentUserPresencesFetchErrorState) {
             return Center(
@@ -96,18 +97,20 @@ class _MyPresencesPageState extends State<MyPresencesPage>
           todayDayBuilder: (context, date, _) => _buildTodayMarker(date),
         ),
         onDaySelected: (date, events, _) {
-          _onDaySelected(date,events);
+          _onDaySelected(date, events);
           _animationController.forward(from: 0.0);
-        },onDayLongPressed:(day, events, _) => _onDayLongPress(day,events) ,
+        },
+        onDayLongPressed: (day, events, _) => _onDayLongPress(day, events),
         onVisibleDaysChanged: null,
         //onCalendarCreated: _onCalendarCreated,
         events: _userPresences);
   }
 
-   _onDaySelected(DateTime date, List events) {
-    if(events.isEmpty){
-      _myPresencesBloc.add(OnPresenceAdded(date,TIME_SLOT_NINE,TIME_SLOT_THIRTEEN));
-    } else if( events.isNotEmpty && events.first is WorkstationModel){
+  _onDaySelected(DateTime date, List events) {
+    if (events.isEmpty) {
+      _myPresencesBloc
+          .add(OnPresenceAdded(date, TIME_SLOT_NINE, TIME_SLOT_EIGHTEEN));
+    } else if (events.isNotEmpty && events.first is WorkstationModel) {
       WorkstationModel workstation = events.first;
       _myPresencesBloc.add(OnPresenceRemoved(workstation.idWorkstation));
     }
