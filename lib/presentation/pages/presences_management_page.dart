@@ -10,6 +10,7 @@ import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/presences_management_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
+import 'package:where_am_i/presentation/widgets/presences_management_tile.dart';
 import 'package:where_am_i/presentation/widgets/text_input_dialog.dart';
 import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
 
@@ -26,7 +27,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
       serviceLocator<PresencesManagementBloc>();
   TextEditingController _textFieldController = TextEditingController();
   DateTime visualizedDate;
-  bool areModificationsAllowed = false;
+  bool canEditForVisualizedDate = false;
 
   @override
   void initState() {
@@ -36,7 +37,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     _presencesManagementBloc
         .add(OnUsersPresencesFetchRequested(dateToFetch: DateTime.now()));
     visualizedDate = DateTime.now().zeroed();
-    areModificationsAllowed = DateTime.now().isAfter(visualizedDate);
+    canEditForVisualizedDate = DateTime.now().isAfter(visualizedDate);
     super.initState();
   }
 
@@ -95,34 +96,6 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     );
   }
 
-  Widget _buildListView(List<UserWithWorkstation> presences) {
-    return Expanded(
-      child: ListView.separated(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        separatorBuilder: (context, index) => Divider(
-          color: Colors.black26,
-        ),
-        itemBuilder: (context, index) {
-          var userWithWorkstation = presences[index];
-          return ListTile(
-              title: Text(
-                userWithWorkstation.user != null
-                    ? "${userWithWorkstation.user?.surname} ${userWithWorkstation.user?.name}"
-                    : userWithWorkstation.workstation.freeName,
-                style: TextStyle(
-                    color: userWithWorkstation.workstation != null
-                        ? Colors.black
-                        : Colors.black38),
-              ),
-              onTap: () => _onUserClick(userWithWorkstation),
-              onLongPress: () => _onUserLongClick(userWithWorkstation));
-        },
-        itemCount: presences.length,
-      ),
-    );
-  }
-
   Widget _buildSearchBar() {
     return Expanded(
       child: TextField(
@@ -146,8 +119,8 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   Widget _buildAddExternalUserButton() {
     return IconButton(
         icon: Icon(Icons.person_add,
-            color: areModificationsAllowed ? Colors.black87 : Colors.grey),
-        onPressed: () => areModificationsAllowed
+            color: canEditForVisualizedDate ? Colors.black87 : Colors.grey),
+        onPressed: () => canEditForVisualizedDate
             ? showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -168,11 +141,28 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
             : null);
   }
 
+  Widget _buildListView(List<UserWithWorkstation> presences) {
+    return Expanded(
+      child: ListView.separated(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        separatorBuilder: (context, index) => Divider(color: Colors.black26),
+        itemBuilder: (context, index) => CustomListItem(
+          userWithWorkstation: presences[index],
+          /*onSingleClick: _onUserClick(presences[index]),
+          onLongClick: _onUserLongClick(presences[index]),
+          onStatusButtonClick: _onStatusChange,*/
+        ),
+        itemCount: presences.length,
+      ),
+    );
+  }
+
   _onDateChanged(DateTime newDate) {
     setState(() {
       this.visualizedDate = newDate;
       var todayToZero = DateTime.now().zeroed();
-      this.areModificationsAllowed =
+      this.canEditForVisualizedDate =
           newDate.isAfter(todayToZero) || newDate.isAtSameMomentAs(todayToZero);
       _presencesManagementBloc
           .add(OnUsersPresencesFetchRequested(dateToFetch: newDate));
@@ -244,6 +234,10 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     });
   }
 
+  _onStatusChange(int status) {
+    print('NEW STATUS: ${status.toString()}');
+}
+
   _showSnackbarWithMessage(String message) {
     Scaffold.of(context).showSnackBar(SnackBar(
         content: new Text(message), duration: new Duration(seconds: 3)));
@@ -254,3 +248,4 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
         .add(OnUsersPresencesFilterUpdate(filterInput: input));
   }
 }
+
