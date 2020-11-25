@@ -3,6 +3,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tuple/tuple.dart';
+import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
@@ -121,8 +122,9 @@ class _MyPresencesPageState extends State<MyPresencesPage>
 
   _onDaySelected(DateTime date, List events) {
     if (events.isEmpty) {
-      _myPresencesBloc
-          .add(OnPresenceAdded(date, TIME_SLOT_NINE, TIME_SLOT_EIGHTEEN));
+      //performing insert
+      _myPresencesBloc.add(OnPresenceAdded(PresenceNewParameters(
+          date: date, startTime: TIME_SLOT_NINE, endTime: TIME_SLOT_EIGHTEEN)));
     } else if (events.isNotEmpty && events.first is Workstation) {
       WorkstationModel workstation = events.first;
       if (workstation.status == WORKSTATION_STATUS_CONFIRMED) {
@@ -132,6 +134,7 @@ class _MyPresencesPageState extends State<MyPresencesPage>
                   "Non è possibile effettuare modifiche a presenze già confermate")),
         );
       } else {
+        //performing delete
         _myPresencesBloc.add(OnPresenceRemoved(workstation.idWorkstation));
       }
     }
@@ -139,7 +142,7 @@ class _MyPresencesPageState extends State<MyPresencesPage>
 
   _onDayLongPress(DateTime day, List events) {
     if (events.isNotEmpty &&
-        (events.first as Workstation).status == WORKSTATION_STATUS_PENDING) {
+        (events.first as Workstation).status == WORKSTATION_STATUS_CONFIRMED) {
       Scaffold.of(context).showSnackBar(
         SnackBar(
             content: Text(
@@ -151,22 +154,21 @@ class _MyPresencesPageState extends State<MyPresencesPage>
           builder: (BuildContext context) {
             return TimeSlotDialog(events);
           }).then((value) {
-            //checking if callback resulta contains a value
+        //checking if callback resulta contains a value
         if (value != null && value is Tuple2<TimeOfDay, TimeOfDay>) {
+          PresenceNewParameters newParams = PresenceNewParameters(
+            date: day,
+            startTime: value.item1,
+            endTime: value.item2,
+          );
           //presence already inserted, performing update
           if (events.isNotEmpty && events.first is Workstation) {
-            Workstation currentWorkstation = events.first;
-            var updatedWorkstation = Workstation(
-                idWorkstation: currentWorkstation.idWorkstation,
-                idResource: currentWorkstation.idResource,
-                workstationDate: currentWorkstation.workstationDate,
-                codeWorkstation: currentWorkstation.codeWorkstation,
-                startTime: value.item1,
-                endTime: value.item2);
-            _myPresencesBloc.add(OnPresenceUpdate(updatedWorkstation));
+            Workstation workstationToUpdate = events.first;
+            _myPresencesBloc
+                .add(OnPresenceUpdate(workstationToUpdate, newParams));
           } else {
             //no presence yet, performing insert
-            _myPresencesBloc.add(OnPresenceAdded(day, value.item1, value.item2));
+            _myPresencesBloc.add(OnPresenceAdded(newParams));
           }
         }
         return;

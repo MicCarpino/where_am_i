@@ -12,11 +12,9 @@ class OnCurrentUserPresencesUpdate extends MyPresencesEvent {
 }
 
 class OnPresenceAdded extends MyPresencesEvent {
-  final DateTime date;
-  final TimeOfDay startTime;
-  final TimeOfDay endTime;
+  final PresenceNewParameters newPresenceParams;
 
-  OnPresenceAdded(this.date, this.startTime, this.endTime);
+  OnPresenceAdded(this.newPresenceParams);
 }
 
 class OnPresenceRemoved extends MyPresencesEvent {
@@ -26,7 +24,8 @@ class OnPresenceRemoved extends MyPresencesEvent {
 }
 
 class OnPresenceUpdate extends MyPresencesEvent {
-  final Workstation updatedWorkstation;
+  final Workstation workstationToUpdate;
+  final PresenceNewParameters newPresenceParams;
 
-  OnPresenceUpdate(this.updatedWorkstation);
+  OnPresenceUpdate(this.workstationToUpdate,this.newPresenceParams);
 }

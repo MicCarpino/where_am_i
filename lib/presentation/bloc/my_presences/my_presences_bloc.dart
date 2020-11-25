@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
+import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/usecases/presences/get_user_presences.dart';
 import 'package:where_am_i/domain/usecases/presences/insert_user_presence.dart';
@@ -26,8 +27,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     @required InsertUserPresence insertUserPresence,
     @required RemoveUserPresence removeUserPresence,
     @required UpdateUserPresence updateUserPresence,
-  })
-      : assert(getUserPresences != null),
+  })  : assert(getUserPresences != null),
         assert(insertUserPresence != null),
         assert(removeUserPresence != null),
         assert(updateUserPresence != null),
@@ -44,16 +44,12 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     if (event is FetchCurrentUserPresences) {
       yield* _fetchCurrentUserPresences();
     } else if (event is OnPresenceAdded) {
-      yield* _insertPresence(
-        NewPresenceParams(
-            date: event.date,
-            startTime: event.startTime,
-            endTime: event.endTime),
-      );
+      yield* _insertPresence(event.newPresenceParams);
     } else if (event is OnPresenceRemoved) {
       yield* _removePresence(event.idWorkstation);
     } else if (event is OnPresenceUpdate) {
-      yield* _updatePresence(event.updatedWorkstation);
+      yield* _updatePresence(
+          event.workstationToUpdate, event.newPresenceParams);
     }
   }
 
@@ -72,7 +68,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
   }
 
   Stream<MyPresencesState> _insertPresence(
-      NewPresenceParams newPresenceParams) async* {
+      PresenceNewParameters newPresenceParams) async* {
     print('inserting user presence');
     final insertResult = await _insertUserPresence(newPresenceParams);
     yield insertResult.fold((failure) {
@@ -93,7 +89,15 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
   }
 
   Stream<MyPresencesState> _updatePresence(
-      Workstation updatedWorkstation) async* {
+      Workstation currentWorkstation, PresenceNewParameters newParams) async* {
+    Workstation updatedWorkstation = Workstation(
+        idWorkstation: currentWorkstation.idWorkstation,
+        idResource: currentWorkstation.idResource,
+        workstationDate: currentWorkstation.workstationDate,
+        codeWorkstation: currentWorkstation.codeWorkstation,
+        status: WORKSTATION_STATUS_PENDING,
+        startTime: newParams.startTime,
+        endTime: newParams.endTime);
     print('updating user presence');
     final updateResult = await _updateUserPresence(updatedWorkstation);
     yield updateResult.fold((failure) {
@@ -104,7 +108,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
       if (cachedPresences != null) {
         print('valid  presences cache');
         cachedPresences[cachedPresences.indexWhere((element) =>
-        element.idWorkstation == updatedPresence.idWorkstation)] =
+                element.idWorkstation == updatedPresence.idWorkstation)] =
             updatedPresence;
         return PresencesFetchCompletedState(cachedPresences);
       } else {
@@ -126,7 +130,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
       if (cachedPresences != null) {
         print('valid  presences cache');
         cachedPresences.removeWhere(
-                (element) => element.idWorkstation == deletedPresenceId);
+            (element) => element.idWorkstation == deletedPresenceId);
         return PresencesFetchCompletedState(cachedPresences);
       } else {
         print('invalid  presences cache');

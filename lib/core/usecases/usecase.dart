@@ -13,13 +13,19 @@ class NoParams extends Equatable {
   List<Object> get props => [];
 }
 
-class NewPresenceParams extends Equatable {
+class PresenceNewParameters extends Equatable {
   final DateTime date;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
+  final int idResource;
 
-  NewPresenceParams({this.date, this.startTime, this.endTime});
+  PresenceNewParameters({
+    @required this.date,
+    @required this.startTime,
+    @required this.endTime,
+    this.idResource,
+  });
 
   @override
-  List<Object> get props => [date,startTime,endTime];
+  List<Object> get props => [date, startTime, endTime];
 }
