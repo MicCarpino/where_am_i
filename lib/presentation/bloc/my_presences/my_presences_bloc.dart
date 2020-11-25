@@ -73,7 +73,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     final insertResult = await _insertUserPresence(newPresenceParams);
     yield insertResult.fold((failure) {
       print('insert presence failure');
-      return PresencesErrorMessageState(_getErrorMessage(failure));
+      return PresencesErrorMessageState(_getErrorMessageFromFailure(failure));
     }, (insertedPresence) {
       print('insert presence success');
       if (cachedPresences != null) {
@@ -102,7 +102,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     final updateResult = await _updateUserPresence(updatedWorkstation);
     yield updateResult.fold((failure) {
       print('remove presence failure');
-      return PresencesErrorMessageState(_getErrorMessage(failure));
+      return PresencesErrorMessageState(_getErrorMessageFromFailure(failure));
     }, (updatedPresence) {
       print('update presence success');
       if (cachedPresences != null) {
@@ -124,7 +124,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     final removeResult = await _removeUserPresence(idWorkstation);
     yield removeResult.fold((failure) {
       print('remove presence failure');
-      return PresencesErrorMessageState(_getErrorMessage(failure));
+      return PresencesErrorMessageState(_getErrorMessageFromFailure(failure));
     }, (deletedPresenceId) {
       print('delete presence success');
       if (cachedPresences != null) {
@@ -140,7 +140,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     });
   }
 
-  String _getErrorMessage(Failure failure) {
+  String _getErrorMessageFromFailure(Failure failure) {
     String message = "Si è verificato un errore";
     if (failure is ServerFailure) {
       message = failure.errorMessage;

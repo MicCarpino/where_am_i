@@ -25,8 +25,8 @@ class InsertUserPresence extends UseCase<Workstation, PresenceNewParameters> {
         codeWorkstation: null,
         startTime: newWorkstationParams.startTime,
         endTime: newWorkstationParams.endTime,
-        //no idResource means it's inserted by the logged user, otherwise is a
-        //staff operation and status is already set to confirmed
+        //no idResource in new params means it's inserted by the logged user,
+        // otherwise it's a staff operation and status is already set to confirmed
         status: newWorkstationParams.idResource == null? WORKSTATION_STATUS_PENDING:WORKSTATION_STATUS_CONFIRMED,
         idResource: newWorkstationParams.idResource ?? loggedUser?.idResource,
       );

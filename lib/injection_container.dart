@@ -61,9 +61,11 @@ Future<void> init() async {
   sl.registerFactory(
       () => UsersManagementBloc(getUsers: sl(), updateUser: sl()));
   sl.registerFactory(() => PresencesManagementBloc(
-      getAllUserPresencesByDate: sl(),
-      insertWorkstation: sl(),
-      deleteWorkstation: sl()));
+        getAllUserPresencesByDate: sl(),
+        insertUserPresence: sl(),
+        updateUserPresence: sl(),
+        removeUserPresence: sl(),
+      ));
   sl.registerFactory(() => MyPresencesBloc(
         getUserPresences: sl(),
         insertUserPresence: sl(),
@@ -88,8 +90,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DeleteWorkstation(sl(), sl()));
   //User Presences
 
-  sl.registerLazySingleton(() => GetUserPresences(sl(),sl()));
-  sl.registerLazySingleton(() => InsertUserPresence(sl(),sl()));
+  sl.registerLazySingleton(() => GetUserPresences(sl(), sl()));
+  sl.registerLazySingleton(() => InsertUserPresence(sl(), sl()));
   sl.registerLazySingleton(() => UpdateUserPresence(sl()));
   sl.registerLazySingleton(() => RemoveUserPresence(sl()));
   //Reservation

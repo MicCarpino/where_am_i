@@ -17,15 +17,17 @@ class PresenceNewParameters extends Equatable {
   final DateTime date;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
-  final int idResource;
+  final String idResource;
+  final String freeName;
 
   PresenceNewParameters({
     @required this.date,
     @required this.startTime,
     @required this.endTime,
     this.idResource,
+    this.freeName,
   });
 
   @override
-  List<Object> get props => [date, startTime, endTime];
+  List<Object> get props => [date, startTime, endTime,idResource,freeName];
 }

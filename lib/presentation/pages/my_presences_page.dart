@@ -44,7 +44,7 @@ class _MyPresencesPageState extends State<MyPresencesPage>
       cubit: _myPresencesBloc,
       builder: (context, state) {
         if (state is PresencesFetchLoadingState) {
-          return CircularLoading();
+          return Center(child: CircularLoading());
         }
         if (state is PresencesFetchCompletedState) {
           //converting list to map{Date:List<Workstation>}
@@ -141,8 +141,11 @@ class _MyPresencesPageState extends State<MyPresencesPage>
   }
 
   _onDayLongPress(DateTime day, List events) {
-    if (events.isNotEmpty &&
-        (events.first as Workstation).status == WORKSTATION_STATUS_CONFIRMED) {
+    Workstation workstation;
+    if (events.isNotEmpty) {
+      workstation = events.first as Workstation;
+    }
+    if (workstation?.status == WORKSTATION_STATUS_CONFIRMED) {
       Scaffold.of(context).showSnackBar(
         SnackBar(
             content: Text(
@@ -152,27 +155,22 @@ class _MyPresencesPageState extends State<MyPresencesPage>
       return showDialog(
           context: context,
           builder: (BuildContext context) {
-            return TimeSlotDialog(events);
-          }).then((value) {
-        //checking if callback resulta contains a value
-        if (value != null && value is Tuple2<TimeOfDay, TimeOfDay>) {
-          PresenceNewParameters newParams = PresenceNewParameters(
-            date: day,
-            startTime: value.item1,
-            endTime: value.item2,
-          );
-          //presence already inserted, performing update
-          if (events.isNotEmpty && events.first is Workstation) {
-            Workstation workstationToUpdate = events.first;
-            _myPresencesBloc
-                .add(OnPresenceUpdate(workstationToUpdate, newParams));
-          } else {
-            //no presence yet, performing insert
-            _myPresencesBloc.add(OnPresenceAdded(newParams));
+            return TimeSlotDialog(workstation);
+          }).then(
+        (value) {
+          //checking if callback result contains a value
+          if (value != null && value is Tuple2<TimeOfDay, TimeOfDay>) {
+            PresenceNewParameters newParams = PresenceNewParameters(
+              date: day,
+              startTime: value.item1,
+              endTime: value.item2,
+            );
+            _myPresencesBloc.add(workstation != null
+                ? OnPresenceUpdate(workstation, newParams)
+                : OnPresenceAdded(newParams));
           }
-        }
-        return;
-      });
+        },
+      );
     }
   }
 

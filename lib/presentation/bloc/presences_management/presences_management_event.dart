@@ -4,9 +4,9 @@ part of 'presences_management_bloc.dart';
 abstract class PresencesManagementEvent {}
 
 class OnExternalUserAdded extends PresencesManagementEvent {
-  final Workstation externalUser;
+  final PresenceNewParameters externalUserParams;
 
-  OnExternalUserAdded({@required this.externalUser});
+  OnExternalUserAdded({@required this.externalUserParams});
 }
 
 class OnUsersPresencesFetchRequested extends PresencesManagementEvent {
@@ -21,13 +21,21 @@ class OnUsersPresencesFilterUpdate extends PresencesManagementEvent {
   OnUsersPresencesFilterUpdate({@required this.filterInput});
 }
 
-class OnInsertWorkstation extends PresencesManagementEvent {
-  final Workstation workstation;
+class OnPresenceAddedByManagement extends PresencesManagementEvent {
+  final PresenceNewParameters newPresenceParams;
 
-  OnInsertWorkstation({@required this.workstation});
+  OnPresenceAddedByManagement(this.newPresenceParams);
 }
-class OnDeleteWorkstation extends PresencesManagementEvent {
+
+class OnPresenceRemovedByManagement extends PresencesManagementEvent {
   final int idWorkstation;
 
-  OnDeleteWorkstation({@required this.idWorkstation});
+  OnPresenceRemovedByManagement(this.idWorkstation);
+}
+
+class OnPresenceUpdatedByManagement extends PresencesManagementEvent {
+  final Workstation workstationToUpdate;
+  final PresenceNewParameters updatedPresenceParams;
+
+  OnPresenceUpdatedByManagement(this.workstationToUpdate,this.updatedPresenceParams);
 }

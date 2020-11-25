@@ -5,12 +5,18 @@ abstract class PresencesManagementState {}
 
 class PresencesManagementInitial extends PresencesManagementState {}
 
-class UsersPresencesLoadingState extends PresencesManagementState {}
-
-class UserPresencesErrorState extends PresencesManagementState {}
-
-class UsersPresencesReadyState extends PresencesManagementState {
+class PresencesManagementFetchCompletedState extends PresencesManagementState {
   final List<UserWithWorkstation> allUsersPresences;
 
-  UsersPresencesReadyState(this.allUsersPresences);
+  PresencesManagementFetchCompletedState(this.allUsersPresences);
 }
+
+class PresencesManagementFetchErrorState extends PresencesManagementState {}
+
+class PresencesManagementErrorMessageState extends PresencesManagementState {
+  final String errorMessage;
+
+  PresencesManagementErrorMessageState(this.errorMessage);
+}
+
+class PresencesManagementFetchLoadingState extends PresencesManagementState {}

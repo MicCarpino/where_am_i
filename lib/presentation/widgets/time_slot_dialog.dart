@@ -6,11 +6,10 @@ import 'package:where_am_i/domain/entities/workstation.dart';
 enum TimeSlot { morning, evening, fullDay }
 
 class TimeSlotDialog extends StatelessWidget {
-  final List<dynamic> events;
+  final Workstation workstation;
 
-  TimeSlotDialog(this.events);
+  TimeSlotDialog(this.workstation);
 
-//TODO: show 2 buttons depending on current event
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -27,8 +26,7 @@ class TimeSlotDialog extends StatelessWidget {
 
   List<Widget> _drawButtons(BuildContext context) {
     //there's already a presence
-    if (events.isNotEmpty && events.first is Workstation) {
-      Workstation workstation = events.first;
+    if (workstation != null) {
       //current slot = morning slot, showing evening/full day options
       if (workstation.startTime == TIME_SLOT_NINE &&
           workstation.endTime == TIME_SLOT_THIRTEEN) {

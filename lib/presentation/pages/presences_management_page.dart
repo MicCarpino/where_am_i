@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:tuple/tuple.dart';
+import 'package:where_am_i/core/usecases/usecase.dart';
+import 'package:where_am_i/core/utils/constants.dart';
+
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
-import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/presences_management_bloc.dart';
-
-import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
 import 'package:where_am_i/presentation/widgets/text_input_dialog.dart';
+import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
 
-final sl = GetIt.instance;
+final serviceLocator = GetIt.instance;
 
 class PresencesManagementPage extends StatefulWidget {
   @override
@@ -21,7 +23,7 @@ class PresencesManagementPage extends StatefulWidget {
 
 class _PresencesManagementPageState extends State<PresencesManagementPage> {
   PresencesManagementBloc _presencesManagementBloc =
-      sl<PresencesManagementBloc>();
+      serviceLocator<PresencesManagementBloc>();
   TextEditingController _textFieldController = TextEditingController();
   DateTime visualizedDate;
   bool areModificationsAllowed = false;
@@ -51,106 +53,119 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
       children: [
         DatePicker(_onDateChanged),
         Expanded(
-          child: BlocBuilder<PresencesManagementBloc, PresencesManagementState>(
-              cubit: _presencesManagementBloc,
-              builder: (context, state) {
-                if (state is UsersPresencesReadyState) {
-                  return Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              controller: _textFieldController,
-                              maxLines: 1,
-                              decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.only(top: 14.0),
-                                  border: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.red),
-                                  ),
-                                  prefixIcon: _textFieldController.text.isEmpty
-                                      ? Icon(Icons.search, color: Colors.black)
-                                      : IconButton(
-                                          onPressed: () =>
-                                              _textFieldController.clear(),
-                                          icon: Icon(Icons.clear,
-                                              color: Colors.black),
-                                        )),
-                            ),
-                          ),
-                          IconButton(
-                              icon: Icon(Icons.person_add,
-                                  color: areModificationsAllowed
-                                      ? Colors.black87
-                                      : Colors.grey),
-                              onPressed: () => areModificationsAllowed
-                                  ? showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return TextInputDialog(
-                                          messageText:
-                                              "Aggiungi risorsa non presente in elenco",
-                                          onAddButtonPressed:
-                                              (String externalUser) =>
-                                                  _presencesManagementBloc.add(
-                                            OnInsertWorkstation(
-                                                workstation: Workstation(
-                                              idWorkstation: null,
-                                              codeWorkstation: null,
-                                              freeName: externalUser,
-                                              workstationDate:
-                                                  this.visualizedDate,
-                                            )),
-                                          ),
-                                        );
-                                      })
-                                  : null)
-                        ],
-                      ),
-                      Expanded(
-                        child: ListView.separated(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          separatorBuilder: (context, index) => Divider(
-                            color: Colors.black26,
-                          ),
-                          itemBuilder: (context, index) {
-                            var userWithWorkstation =
-                                state.allUsersPresences[index];
-                            return ListTile(
-                                title: Text(
-                                  userWithWorkstation.user != null
-                                      ? "${userWithWorkstation.user?.surname} ${userWithWorkstation.user?.name}"
-                                      : userWithWorkstation
-                                          .workstation.freeName,
-                                  style: TextStyle(
-                                      color: userWithWorkstation.workstation !=
-                                              null
-                                          ? Colors.black
-                                          : Colors.black38),
-                                ),
-                                onLongPress: () =>
-                                    _onUserLongClick(userWithWorkstation));
-                          },
-                          itemCount: state.allUsersPresences.length,
-                        ),
-                      ),
-                    ],
-                  );
-                } else if (state is WorkstationsFetchErrorState) {
-                  return Center(
-                    child: MaterialButton(
-                        child: Text('riprova'),
-                        onPressed: () => OnUsersPresencesFetchRequested(
-                            dateToFetch: this.visualizedDate)),
-                  );
-                } else {
-                  return Center(child: CircularLoading());
-                }
-              }),
+          child:
+              BlocConsumer<PresencesManagementBloc, PresencesManagementState>(
+            cubit: _presencesManagementBloc,
+            builder: (context, state) {
+              if (state is PresencesManagementFetchCompletedState) {
+                return _buildPageBody(state.allUsersPresences);
+              } else if (state is PresencesManagementFetchErrorState) {
+                return Center(
+                  child: MaterialButton(
+                      child: Text('riprova'),
+                      onPressed: () => OnUsersPresencesFetchRequested(
+                          dateToFetch: this.visualizedDate)),
+                );
+              } else if (state is PresencesManagementFetchLoadingState) {
+                return Center(child: CircularLoading());
+              } else {
+                return Center(child: CircularLoading());
+              }
+            },
+            listener: (context, state) {
+              if (state is PresencesManagementErrorMessageState) {
+                _showSnackbarWithMessage(state.errorMessage);
+              }
+            },
+          ),
         ),
       ],
     );
+  }
+
+  Widget _buildPageBody(List<UserWithWorkstation> presences) {
+    return Column(
+      children: [
+        Row(children: [
+          _buildSearchBar(),
+          _buildAddExternalUserButton(),
+        ]),
+        _buildListView(presences),
+      ],
+    );
+  }
+
+  Widget _buildListView(List<UserWithWorkstation> presences) {
+    return Expanded(
+      child: ListView.separated(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        separatorBuilder: (context, index) => Divider(
+          color: Colors.black26,
+        ),
+        itemBuilder: (context, index) {
+          var userWithWorkstation = presences[index];
+          return ListTile(
+              title: Text(
+                userWithWorkstation.user != null
+                    ? "${userWithWorkstation.user?.surname} ${userWithWorkstation.user?.name}"
+                    : userWithWorkstation.workstation.freeName,
+                style: TextStyle(
+                    color: userWithWorkstation.workstation != null
+                        ? Colors.black
+                        : Colors.black38),
+              ),
+              onTap: () => _onUserClick(userWithWorkstation),
+              onLongPress: () => _onUserLongClick(userWithWorkstation));
+        },
+        itemCount: presences.length,
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Expanded(
+      child: TextField(
+        controller: _textFieldController,
+        maxLines: 1,
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.only(top: 14.0),
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.red),
+            ),
+            prefixIcon: _textFieldController.text.isEmpty
+                ? Icon(Icons.search, color: Colors.black)
+                : IconButton(
+                    onPressed: () => _textFieldController.clear(),
+                    icon: Icon(Icons.clear, color: Colors.black),
+                  )),
+      ),
+    );
+  }
+
+  Widget _buildAddExternalUserButton() {
+    return IconButton(
+        icon: Icon(Icons.person_add,
+            color: areModificationsAllowed ? Colors.black87 : Colors.grey),
+        onPressed: () => areModificationsAllowed
+            ? showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return TextInputDialog(
+                    messageText: "Aggiungi risorsa non presente in elenco",
+                    onAddButtonPressed: (String externalUser) =>
+                        _presencesManagementBloc.add(
+                      OnExternalUserAdded(
+                          externalUserParams: PresenceNewParameters(
+                        date: this.visualizedDate,
+                        startTime: TIME_SLOT_NINE,
+                        endTime: TIME_SLOT_EIGHTEEN,
+                        freeName: externalUser,
+                      )),
+                    ),
+                  );
+                })
+            : null);
   }
 
   _onDateChanged(DateTime newDate) {
@@ -165,23 +180,19 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   }
 
   _onUserLongClick(UserWithWorkstation userWithWorkstation) {
-    //TODO:once back end date check is active this could be removed (?)
-    if (!areModificationsAllowed) {
-      return null;
-    }
     if (userWithWorkstation.workstation == null) {
-      _presencesManagementBloc.add(OnInsertWorkstation(
-        workstation: Workstation(
-          idWorkstation: null,
-          codeWorkstation: null,
-          idResource: userWithWorkstation.user.idResource,
-          workstationDate: this.visualizedDate,
-        ),
+      //inserting workstation for full day, already confirmed
+      _presencesManagementBloc.add(OnPresenceAddedByManagement(
+        PresenceNewParameters(
+            date: this.visualizedDate,
+            idResource: userWithWorkstation.user.idResource,
+            startTime: TIME_SLOT_NINE,
+            endTime: TIME_SLOT_EIGHTEEN),
       ));
     } else {
       userWithWorkstation.workstation.codeWorkstation == null
-          ? _presencesManagementBloc.add(OnDeleteWorkstation(
-              idWorkstation: userWithWorkstation.workstation.idWorkstation))
+          ? _presencesManagementBloc.add(OnPresenceRemovedByManagement(
+              userWithWorkstation.workstation.idWorkstation))
           : showDialog(
               context: context,
               builder: (BuildContext context) {
@@ -196,9 +207,10 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                     FlatButton(
                         child: Text("OK"),
                         onPressed: () {
-                          _presencesManagementBloc.add(OnDeleteWorkstation(
-                              idWorkstation: userWithWorkstation
-                                  .workstation.idWorkstation));
+                          _presencesManagementBloc.add(
+                            OnPresenceRemovedByManagement(
+                                userWithWorkstation.workstation.idWorkstation),
+                          );
                           Navigator.pop(context);
                         })
                   ],
@@ -207,6 +219,29 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
             );
       _textFieldController.clear();
     }
+  }
+
+  _onUserClick(UserWithWorkstation userWithWorkstation) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return TimeSlotDialog(userWithWorkstation.workstation);
+        }).then((value) {
+      //checking if callback result contains a value
+      if (value is Tuple2<TimeOfDay, TimeOfDay>) {
+        PresenceNewParameters newParams = PresenceNewParameters(
+          date: this.visualizedDate,
+          idResource: userWithWorkstation.user.idResource,
+          startTime: value.item1,
+          endTime: value.item2,
+        );
+        //presence already inserted, performing update
+        _presencesManagementBloc.add(userWithWorkstation.workstation != null
+            ? OnPresenceUpdatedByManagement(
+                userWithWorkstation.workstation, newParams)
+            : OnPresenceAddedByManagement(newParams));
+      }
+    });
   }
 
   _showSnackbarWithMessage(String message) {
