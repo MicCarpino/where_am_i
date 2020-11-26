@@ -9,9 +9,9 @@ import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/usecases/get_all_users_presences_by_date.dart';
-import 'package:where_am_i/domain/usecases/presences/insert_user_presence.dart';
-import 'package:where_am_i/domain/usecases/presences/remove_user_presence.dart';
-import 'package:where_am_i/domain/usecases/presences/update_user_presence.dart';
+import 'package:where_am_i/domain/usecases/workstations/insert_workstation.dart';
+import 'package:where_am_i/domain/usecases/workstations/remove_workstation.dart';
+import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
 
 part 'presences_management_event.dart';
 
@@ -20,15 +20,15 @@ part 'presences_management_state.dart';
 class PresencesManagementBloc
     extends Bloc<PresencesManagementEvent, PresencesManagementState> {
   final GetAllUserPresencesByDate getAllUserPresencesByDate;
-  final InsertUserPresence _insertUserPresence;
-  final RemoveUserPresence _removeUserPresence;
-  final UpdateUserPresence _updateUserPresence;
+  final InsertWorkstation _insertUserPresence;
+  final RemoveWorkstation _removeUserPresence;
+  final UpdateWorkstation _updateUserPresence;
 
   PresencesManagementBloc({
     @required GetAllUserPresencesByDate getAllUserPresencesByDate,
-    @required InsertUserPresence insertUserPresence,
-    @required RemoveUserPresence removeUserPresence,
-    @required UpdateUserPresence updateUserPresence,
+    @required InsertWorkstation insertUserPresence,
+    @required RemoveWorkstation removeUserPresence,
+    @required UpdateWorkstation updateUserPresence,
   })  : assert(getAllUserPresencesByDate != null),
         assert(insertUserPresence != null),
         assert(removeUserPresence != null),
@@ -49,8 +49,6 @@ class PresencesManagementBloc
       yield* _fetchAllUsersPresences(event.dateToFetch);
     } else if (event is OnPresenceAddedByManagement) {
       yield* _insertPresence(event.newPresenceParams);
-    } else if (event is OnExternalUserAdded) {
-      yield* _insertExternalUser(event.externalUserParams);
     } else if (event is OnPresenceRemovedByManagement) {
       yield* _removePresence(event.idWorkstation);
     } else if (event is OnPresenceUpdatedByManagement) {
@@ -77,7 +75,17 @@ class PresencesManagementBloc
   Stream<PresencesManagementState> _insertPresence(
       PresenceNewParameters newPresenceParams) async* {
     print('inserting user presence');
-    final insertResult = await _insertUserPresence(newPresenceParams);
+    Workstation newWorkstation = Workstation(
+      idWorkstation: null,
+      idResource: newPresenceParams.idResource,
+      freeName: newPresenceParams.freeName,
+      workstationDate: newPresenceParams.date,
+      codeWorkstation: null,
+      startTime: newPresenceParams.startTime,
+      endTime: newPresenceParams.endTime,
+      status: WORKSTATION_STATUS_CONFIRMED,
+    );
+    final insertResult = await _insertUserPresence(newWorkstation);
     yield insertResult.fold((failure) {
       print('insert presence failure');
       return PresencesManagementErrorMessageState(
@@ -88,7 +96,6 @@ class PresencesManagementBloc
         print('valid presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
             element.user.idResource == insertedPresence.idResource);
-
         originalUsersPresencesList[index] = UserWithWorkstation(
             user: originalUsersPresencesList[index].user,
             workstation: insertedPresence);
@@ -107,6 +114,7 @@ class PresencesManagementBloc
     Workstation updatedWorkstation = Workstation(
         idWorkstation: currentWorkstation.idWorkstation,
         idResource: currentWorkstation.idResource,
+        freeName: currentWorkstation.freeName,
         workstationDate: currentWorkstation.workstationDate,
         codeWorkstation: currentWorkstation.codeWorkstation,
         status: WORKSTATION_STATUS_CONFIRMED,
@@ -217,7 +225,7 @@ class PresencesManagementBloc
     return message;
   }
 
-  _insertExternalUser(PresenceNewParameters externalUserParams)  async* {
+ /* Stream<PresencesManagementState> _insertExternalUser(PresenceNewParameters externalUserParams)  async* {
     print('inserting user presence');
     final insertResult = await _insertUserPresence(externalUserParams);
     yield insertResult.fold((failure) {
@@ -242,6 +250,6 @@ class PresencesManagementBloc
         return null;
       }
     });
-  }
+  }*/
 
 }

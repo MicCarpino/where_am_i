@@ -7,10 +7,11 @@ import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
-import 'package:where_am_i/domain/usecases/presences/get_user_presences.dart';
-import 'package:where_am_i/domain/usecases/presences/insert_user_presence.dart';
-import 'package:where_am_i/domain/usecases/presences/remove_user_presence.dart';
-import 'package:where_am_i/domain/usecases/presences/update_user_presence.dart';
+import 'package:where_am_i/domain/usecases/users/get_logged_user.dart';
+import 'package:where_am_i/domain/usecases/workstations/get_user_presences.dart';
+import 'package:where_am_i/domain/usecases/workstations/insert_workstation.dart';
+import 'package:where_am_i/domain/usecases/workstations/remove_workstation.dart';
+import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
 
 part 'my_presences_event.dart';
 
@@ -18,23 +19,27 @@ part 'my_presences_state.dart';
 
 class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
   final GetUserPresences _getUserPresences;
-  final InsertUserPresence _insertUserPresence;
-  final RemoveUserPresence _removeUserPresence;
-  final UpdateUserPresence _updateUserPresence;
+  final InsertWorkstation _insertUserPresence;
+  final RemoveWorkstation _removeUserPresence;
+  final UpdateWorkstation _updateUserPresence;
+  final GetLoggedUser _getLoggedUser;
 
   MyPresencesBloc({
     @required GetUserPresences getUserPresences,
-    @required InsertUserPresence insertUserPresence,
-    @required RemoveUserPresence removeUserPresence,
-    @required UpdateUserPresence updateUserPresence,
+    @required InsertWorkstation insertUserPresence,
+    @required RemoveWorkstation removeUserPresence,
+    @required UpdateWorkstation updateUserPresence,
+    @required GetLoggedUser getLoggedUser,
   })  : assert(getUserPresences != null),
         assert(insertUserPresence != null),
         assert(removeUserPresence != null),
         assert(updateUserPresence != null),
+        assert(getLoggedUser != null),
         _getUserPresences = getUserPresences,
         _insertUserPresence = insertUserPresence,
         _removeUserPresence = removeUserPresence,
         _updateUserPresence = updateUserPresence,
+        _getLoggedUser = getLoggedUser,
         super(MyPresencesInitial());
 
   List<Workstation> cachedPresences;
@@ -44,11 +49,11 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     if (event is FetchCurrentUserPresences) {
       yield* _fetchCurrentUserPresences();
     } else if (event is OnPresenceAdded) {
-      yield* _insertPresence(event.newPresenceParams);
+      yield* _insertLoggedUserPresence(event.newPresenceParams);
     } else if (event is OnPresenceRemoved) {
-      yield* _removePresence(event.idWorkstation);
+      yield* _removeLoggedUserPresence(event.idWorkstation);
     } else if (event is OnPresenceUpdate) {
-      yield* _updatePresence(
+      yield* _updateLoggedUserPresence(
           event.workstationToUpdate, event.newPresenceParams);
     }
   }
@@ -67,28 +72,48 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     });
   }
 
-  Stream<MyPresencesState> _insertPresence(
+  Stream<MyPresencesState> _insertLoggedUserPresence(
       PresenceNewParameters newPresenceParams) async* {
     print('inserting user presence');
-    final insertResult = await _insertUserPresence(newPresenceParams);
-    yield insertResult.fold((failure) {
-      print('insert presence failure');
-      return PresencesErrorMessageState(_getErrorMessageFromFailure(failure));
-    }, (insertedPresence) {
-      print('insert presence success');
-      if (cachedPresences != null) {
-        print('valid presences cache');
-        cachedPresences.add(insertedPresence);
-        return PresencesFetchCompletedState(cachedPresences);
-      } else {
-        print('invalid  presences cache');
-        _fetchCurrentUserPresences();
-        return null;
-      }
-    });
+    var loggedUser = await _getLoggedUser(NoParams());
+    var idResourceOrFailure = loggedUser.fold(
+      (failure) => failure,
+      (authenticatedUser) => authenticatedUser.user.idResource,
+    );
+    if (idResourceOrFailure is String) {
+      Workstation newWorkstation = Workstation(
+        idWorkstation: null,
+        idResource: idResourceOrFailure,
+        freeName: newPresenceParams.freeName,
+        workstationDate: newPresenceParams.date,
+        codeWorkstation: null,
+        startTime: newPresenceParams.startTime,
+        endTime: newPresenceParams.endTime,
+        status: WORKSTATION_STATUS_PENDING,
+      );
+      final insertResult = await _insertUserPresence(newWorkstation);
+      yield insertResult.fold((failure) {
+        print('insert presence failure');
+        return PresencesErrorMessageState(_getErrorMessageFromFailure(failure));
+      }, (insertedPresence) {
+        print('insert presence success');
+        if (cachedPresences != null) {
+          print('valid presences cache');
+          cachedPresences.add(insertedPresence);
+          return PresencesFetchCompletedState(cachedPresences);
+        } else {
+          print('invalid  presences cache');
+          _fetchCurrentUserPresences();
+          return null;
+        }
+      });
+    } else {
+      yield PresencesErrorMessageState(
+          _getErrorMessageFromFailure(idResourceOrFailure));
+    }
   }
 
-  Stream<MyPresencesState> _updatePresence(
+  Stream<MyPresencesState> _updateLoggedUserPresence(
       Workstation currentWorkstation, PresenceNewParameters newParams) async* {
     Workstation updatedWorkstation = Workstation(
         idWorkstation: currentWorkstation.idWorkstation,
@@ -119,7 +144,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     });
   }
 
-  Stream<MyPresencesState> _removePresence(int idWorkstation) async* {
+  Stream<MyPresencesState> _removeLoggedUserPresence(int idWorkstation) async* {
     print('removing user presence');
     final removeResult = await _removeUserPresence(idWorkstation);
     yield removeResult.fold((failure) {
@@ -151,4 +176,5 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     }
     return message;
   }
+
 }

@@ -12,26 +12,23 @@ import 'package:where_am_i/domain/repositories/reservation_repository.dart';
 import 'package:where_am_i/domain/repositories/auth_repository.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
-import 'package:where_am_i/domain/usecases/get_reservations_by_date.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_date.dart';
 import 'package:where_am_i/domain/usecases/perform_log_in.dart';
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
-import 'package:where_am_i/domain/usecases/delete_workstation.dart';
 import 'package:where_am_i/domain/usecases/get_all_users_presences_by_date.dart';
-import 'package:where_am_i/domain/usecases/get_all_users.dart';
-import 'package:where_am_i/domain/usecases/insert_reservation.dart';
-import 'package:where_am_i/domain/usecases/insert_workstation.dart';
-import 'package:where_am_i/domain/usecases/presences/get_user_presences.dart';
-import 'package:where_am_i/domain/usecases/presences/insert_user_presence.dart';
-import 'package:where_am_i/domain/usecases/presences/remove_user_presence.dart';
-import 'package:where_am_i/domain/usecases/presences/update_user_presence.dart';
-import 'package:where_am_i/domain/usecases/update_reservation_status.dart';
-import 'package:where_am_i/domain/usecases/update_user.dart';
-import 'package:where_am_i/domain/usecases/update_workstation.dart';
-import 'package:where_am_i/domain/usecases/delete_reservation.dart';
-import 'package:where_am_i/domain/usecases/get_all_user_by_filter.dart';
-import 'package:where_am_i/domain/usecases/get_user_by_id.dart';
-import 'package:where_am_i/domain/usecases/get_logged_user.dart';
+import 'package:where_am_i/domain/usecases/reservations/delete_reservation.dart';
+import 'package:where_am_i/domain/usecases/reservations/get_reservations_by_date.dart';
+import 'package:where_am_i/domain/usecases/reservations/insert_reservation.dart';
+import 'package:where_am_i/domain/usecases/reservations/update_reservation_status.dart';
+import 'package:where_am_i/domain/usecases/users/get_all_user_by_filter.dart';
+import 'package:where_am_i/domain/usecases/users/get_all_users.dart';
+import 'package:where_am_i/domain/usecases/users/get_logged_user.dart';
+import 'package:where_am_i/domain/usecases/users/get_user_by_id.dart';
+import 'package:where_am_i/domain/usecases/users/update_user.dart';
+import 'package:where_am_i/domain/usecases/workstations/get_user_presences.dart';
+import 'package:where_am_i/domain/usecases/workstations/insert_workstation.dart';
+import 'package:where_am_i/domain/usecases/workstations/remove_workstation.dart';
+import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
 import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
@@ -71,6 +68,7 @@ Future<void> init() async {
         insertUserPresence: sl(),
         updateUserPresence: sl(),
         removeUserPresence: sl(),
+        getLoggedUser: sl(),
       ));
 
   // Use Cases
@@ -85,15 +83,10 @@ Future<void> init() async {
   //Workstation
   sl.registerLazySingleton(() => GetWorkstationsByDate(sl(), sl()));
   sl.registerLazySingleton(() => GetAllUserPresencesByDate(sl(), sl()));
-  sl.registerLazySingleton(() => InsertWorkstation(sl(), sl()));
   sl.registerLazySingleton(() => UpdateWorkstation(sl()));
-  sl.registerLazySingleton(() => DeleteWorkstation(sl(), sl()));
-  //User Presences
-
   sl.registerLazySingleton(() => GetUserPresences(sl(), sl()));
-  sl.registerLazySingleton(() => InsertUserPresence(sl(), sl()));
-  sl.registerLazySingleton(() => UpdateUserPresence(sl()));
-  sl.registerLazySingleton(() => RemoveUserPresence(sl()));
+  sl.registerLazySingleton(() => InsertWorkstation(sl()));
+  sl.registerLazySingleton(() => RemoveWorkstation(sl()));
   //Reservation
   sl.registerLazySingleton(() => GetReservationsByDate(sl()));
   sl.registerLazySingleton(() => InsertReservation(sl()));

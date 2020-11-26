@@ -4,12 +4,15 @@ import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 
 class CustomListItem extends StatelessWidget {
   final UserWithWorkstation userWithWorkstation;
+  final Function onSingleClick;
+  final Function onLongClick;
+  final Function(int status) onStatusButtonClick;
 
   const CustomListItem({
     @required this.userWithWorkstation,
-    /* @required this.onSingleClick,
+     @required this.onSingleClick,
     @required this.onLongClick,
-    @required this.onStatusButtonClick,*/
+    @required this.onStatusButtonClick,
   });
 
   @override
@@ -35,6 +38,7 @@ class CustomListItem extends StatelessWidget {
                             : Colors.black38,
                         fontSize: 16),
                   ),
+                  SizedBox(height: 8),
                   Text(
                     userWithWorkstation.workstation != null
                         ? "${userWithWorkstation.workstation?.startTime?.format(context)} - ${userWithWorkstation.workstation?.endTime?.format(context)}"

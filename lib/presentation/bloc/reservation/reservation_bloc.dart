@@ -6,10 +6,10 @@ import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/error/failure.dart';
 
 import 'package:where_am_i/domain/entities/reservation.dart';
-import 'package:where_am_i/domain/usecases/delete_reservation.dart';
-import 'package:where_am_i/domain/usecases/get_reservations_by_date.dart';
-import 'package:where_am_i/domain/usecases/insert_reservation.dart';
-import 'package:where_am_i/domain/usecases/update_reservation_status.dart';
+import 'package:where_am_i/domain/usecases/reservations/delete_reservation.dart';
+import 'package:where_am_i/domain/usecases/reservations/get_reservations_by_date.dart';
+import 'package:where_am_i/domain/usecases/reservations/insert_reservation.dart';
+import 'package:where_am_i/domain/usecases/reservations/update_reservation_status.dart';
 
 part 'reservation_event.dart';
 
