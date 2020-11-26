@@ -5,14 +5,13 @@ import 'package:meta/meta.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/usecases/get_all_users_presences_by_date.dart';
 import 'package:where_am_i/domain/usecases/workstations/insert_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/remove_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
-
 part 'presences_management_event.dart';
 
 part 'presences_management_state.dart';
@@ -52,8 +51,9 @@ class PresencesManagementBloc
     } else if (event is OnPresenceRemovedByManagement) {
       yield* _removePresence(event.idWorkstation);
     } else if (event is OnPresenceUpdatedByManagement) {
-      yield* _updatePresence(
-          event.workstationToUpdate, event.updatedPresenceParams);
+      yield* _updatePresence(event.workstationToUpdate, event.updatedPresenceParams);
+    }else if (event is OnUsersPresencesFilterUpdate) {
+      yield* _applyFilterToList(event.filterInput);
     }
   }
 
@@ -68,7 +68,8 @@ class PresencesManagementBloc
     }, (allUserPresences) {
       print('all users user presences');
       originalUsersPresencesList = allUserPresences;
-      return PresencesManagementFetchCompletedState(allUserPresences);
+      var sortedList = _sortAndPublish(originalUsersPresencesList);
+      return PresencesManagementFetchCompletedState(sortedList);
     });
   }
 
@@ -176,8 +177,7 @@ class PresencesManagementBloc
         } else {
           originalUsersPresencesList.removeAt(index);
         }
-        return PresencesManagementFetchCompletedState(
-            originalUsersPresencesList);
+        return PresencesManagementFetchCompletedState(originalUsersPresencesList);
       } else {
         print('invalid  presences cache');
         //TODO: refetch
@@ -209,7 +209,7 @@ class PresencesManagementBloc
     }
   }
 
-  List<UserWithWorkstation> mergeAndSortUsersWithWorkstations(
+  /*List<UserWithWorkstation> mergeAndSortUsersWithWorkstations(
       List<Workstation> workstations, List<User> users) {
     List<UserWithWorkstation> usersWithWorkstations = users.map((user) {
       Workstation relatedWorkstation = workstations.firstWhere(
@@ -228,6 +228,26 @@ class PresencesManagementBloc
     freeNamesWorkstations.sort(
             (a, b) => a.workstation.freeName.compareTo(b.workstation.freeName));
     return List.of(freeNamesWorkstations..addAll(usersWithWorkstations));
+  }*/
+
+  _sortAndPublish(List<UserWithWorkstation> list){
+    List<UserWithWorkstation> resourcesPending = list.where((element) => element.workstation?.status == WORKSTATION_STATUS_PENDING && element.user != null).toList();
+    resourcesPending.sortBySurnameAndName();
+    List<UserWithWorkstation> freeNamePending = list.where((element) => element.workstation?.status == WORKSTATION_STATUS_PENDING && element.workstation?.freeName != null).toList();
+    freeNamePending.sortByFreeName();
+    List<UserWithWorkstation> resourcesConfirmed = list.where((element) => element.workstation?.status == WORKSTATION_STATUS_CONFIRMED && element.user != null).toList();
+    resourcesConfirmed.sortBySurnameAndName();
+    List<UserWithWorkstation> freeNameConfirmed = list.where((element) => element.workstation?.status == WORKSTATION_STATUS_CONFIRMED  && element.workstation?.freeName != null).toList();
+    freeNameConfirmed.sortByFreeName();
+    List<UserWithWorkstation> resources = list.where((element) => element.workstation == null).toList();
+    resources.sortBySurnameAndName();
+    List<UserWithWorkstation> sortedList = List<UserWithWorkstation>();
+    sortedList.addAll(freeNamePending);
+    sortedList.addAll(resourcesPending);
+    sortedList.addAll(freeNameConfirmed);
+    sortedList.addAll(resourcesConfirmed);
+    sortedList.addAll(resources);
+    return sortedList;
   }
 
   String _getErrorMessageFromFailure(Failure failure) {
@@ -241,32 +261,5 @@ class PresencesManagementBloc
     }
     return message;
   }
-
-/* Stream<PresencesManagementState> _insertExternalUser(PresenceNewParameters externalUserParams)  async* {
-    print('inserting user presence');
-    final insertResult = await _insertUserPresence(externalUserParams);
-    yield insertResult.fold((failure) {
-      print('insert presence failure');
-      return PresencesManagementErrorMessageState(
-          _getErrorMessageFromFailure(failure));
-    }, (insertedPresence) {
-      print('insert presence success');
-      if (originalUsersPresencesList != null) {
-        print('valid presences cache');
-        var index = originalUsersPresencesList.indexWhere((element) =>
-        element.user.idResource == insertedPresence.idResource);
-
-        originalUsersPresencesList[index] = UserWithWorkstation(
-            user: originalUsersPresencesList[index].user,
-            workstation: insertedPresence);
-        return PresencesManagementFetchCompletedState(
-            originalUsersPresencesList);
-      } else {
-        print('invalid  presences cache');
-        _fetchAllUsersPresences(externalUserParams.date);
-        return null;
-      }
-    });
-  }*/
 
 }

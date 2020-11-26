@@ -151,7 +151,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
           userWithWorkstation: presences[index],
           onSingleClick: () => _onUserClick(presences[index]),
           onLongClick:() =>  _onUserLongClick(presences[index]),
-          onStatusButtonClick: _onStatusChange,
+          onStatusButtonClick: (value) =>_onStatusChange(value),
         ),
         itemCount: presences.length,
       ),
