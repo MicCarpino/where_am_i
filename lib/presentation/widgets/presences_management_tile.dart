@@ -4,8 +4,8 @@ import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 
 class CustomListItem extends StatelessWidget {
   final UserWithWorkstation userWithWorkstation;
-  final Function onSingleClick;
-  final Function onLongClick;
+  final Function() onSingleClick;
+  final Function() onLongClick;
   final Function(int status) onStatusButtonClick;
 
   const CustomListItem({
@@ -18,8 +18,8 @@ class CustomListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => print('click'),
-      onLongPress: () => print('long click'),
+      onTap: onSingleClick,
+      onLongPress:  onLongClick,
       child: Row(children: [
         Expanded(
           child: Container(
@@ -66,7 +66,7 @@ class CustomListItem extends StatelessWidget {
                             Icons.check,
                             color: Colors.white,
                           ),
-                          onPressed: () => print('button V')),
+                          onPressed:  onStatusButtonClick(0)),
                       SizedBox(width: 8.0),
                       FloatingActionButton(
                           backgroundColor: Colors.red,
@@ -74,7 +74,7 @@ class CustomListItem extends StatelessWidget {
                             Icons.clear,
                             color: Colors.white,
                           ),
-                          onPressed: () => print('button X'))
+                          onPressed: onStatusButtonClick(0))
                     ],
                   ),
                 ),

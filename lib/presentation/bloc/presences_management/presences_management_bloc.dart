@@ -95,7 +95,7 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-            element.user.idResource == insertedPresence.idResource);
+            element.user?.idResource == insertedPresence.idResource);
         originalUsersPresencesList[index] = UserWithWorkstation(
             user: originalUsersPresencesList[index].user,
             workstation: insertedPresence);
@@ -131,7 +131,7 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
         var index = originalUsersPresencesList.indexWhere(
-            (element) => element.user.idResource == updatedPresence.idResource);
+            (element) => element.user?.idResource == updatedPresence.idResource);
         originalUsersPresencesList[index] = UserWithWorkstation(
             user: originalUsersPresencesList[index].user,
             workstation: updatedPresence);
@@ -157,7 +157,7 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid  presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-            element.workstation.idWorkstation == deletedPresenceId);
+            element.workstation?.idWorkstation == deletedPresenceId);
         originalUsersPresencesList[index] = UserWithWorkstation(
             user: originalUsersPresencesList[index].user, workstation: null);
         return PresencesManagementFetchCompletedState(

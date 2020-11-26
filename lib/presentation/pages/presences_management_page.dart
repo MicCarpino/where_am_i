@@ -149,8 +149,8 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
         separatorBuilder: (context, index) => Divider(color: Colors.black26),
         itemBuilder: (context, index) => CustomListItem(
           userWithWorkstation: presences[index],
-          onSingleClick: _onUserClick(presences[index]),
-          onLongClick: _onUserLongClick(presences[index]),
+          onSingleClick: () => _onUserClick(presences[index]),
+          onLongClick:() =>  _onUserLongClick(presences[index]),
           onStatusButtonClick: _onStatusChange,
         ),
         itemCount: presences.length,
@@ -177,7 +177,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
             date: this.visualizedDate,
             idResource: userWithWorkstation.user.idResource,
             startTime: TIME_SLOT_NINE,
-            endTime: TIME_SLOT_EIGHTEEN),
+            endTime: TIME_SLOT_EIGHTEEN,),
       ));
     } else {
       userWithWorkstation.workstation.codeWorkstation == null
