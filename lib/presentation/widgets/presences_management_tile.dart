@@ -10,77 +10,98 @@ class CustomListItem extends StatelessWidget {
 
   const CustomListItem({
     @required this.userWithWorkstation,
-     @required this.onSingleClick,
+    @required this.onSingleClick,
     @required this.onLongClick,
     @required this.onStatusButtonClick,
   });
 
   @override
   Widget build(BuildContext context) {
+    //this inkwell is just for splash animation
     return InkWell(
-      onTap: onSingleClick,
-      onLongPress:  onLongClick,
+      onTap: () => null,
+      onLongPress: () => null,
       child: Row(children: [
-        Expanded(
+        _buildResourceSection(context),
+        userWithWorkstation?.workstation?.status == WORKSTATION_STATUS_PENDING
+            ? _buildButtons()
+            : Container()
+      ]),
+    );
+  }
+
+  Widget _buildResourceSection(BuildContext context) {
+    return  Expanded(
+        child:GestureDetector(
+          onTap: onSingleClick,
+          onLongPress: onLongClick,
           child: Container(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    userWithWorkstation.user != null
-                        ? "${userWithWorkstation.user?.surname} ${userWithWorkstation.user?.name}"
-                        : userWithWorkstation.workstation.freeName,
-                    style: TextStyle(
-                        color: userWithWorkstation.workstation != null
-                            ? Colors.black
-                            : Colors.black38,
-                        fontSize: 16),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    userWithWorkstation.workstation != null
-                        ? "${userWithWorkstation.workstation?.startTime?.format(context)} - ${userWithWorkstation.workstation?.endTime?.format(context)}"
-                        : "${TIME_SLOT_NINE.format(context)} - ${TIME_SLOT_EIGHTEEN.format(context)}",
-                    style: TextStyle(
-                        color: userWithWorkstation.workstation != null
-                            ? Colors.black
-                            : Colors.black38,
-                        fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildNameSection(),
+              SizedBox(height: 8),
+              userWithWorkstation.workstation != null
+                  ? _buildTimeSlotSection(context)
+                  : Container(),
+            ],
           ),
         ),
-        userWithWorkstation?.workstation?.status == WORKSTATION_STATUS_PENDING
-            ? Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      FloatingActionButton(
-                          backgroundColor: Colors.green,
-                          child: Icon(
-                            Icons.check,
-                            color: Colors.white,
-                          ),
-                          onPressed:  onStatusButtonClick(0)),
-                      SizedBox(width: 8.0),
-                      FloatingActionButton(
-                          backgroundColor: Colors.red,
-                          child: Icon(
-                            Icons.clear,
-                            color: Colors.white,
-                          ),
-                          onPressed: onStatusButtonClick(0))
-                    ],
-                  ),
+      ),
+    );
+  }
+
+  Widget _buildNameSection() {
+    return Text(
+      userWithWorkstation.user != null
+          ? "${userWithWorkstation.user?.surname} ${userWithWorkstation.user?.name}"
+          : userWithWorkstation.workstation.freeName,
+      style: TextStyle(
+          color: userWithWorkstation.workstation != null
+              ? Colors.black
+              : Colors.black38,
+          fontSize: 16),
+    );
+  }
+
+  Widget _buildTimeSlotSection(BuildContext context) {
+    TimeOfDay startTime =
+        userWithWorkstation.workstation?.startTime ?? TIME_SLOT_NINE;
+    TimeOfDay endTime =
+        userWithWorkstation.workstation?.endTime ?? TIME_SLOT_EIGHTEEN;
+    return Text(
+      "${startTime.format(context)} - ${endTime.format(context)}",
+      style: TextStyle(color: Colors.black38, fontSize: 14),
+    );
+  }
+
+  Widget _buildButtons() {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            //accept button
+            FloatingActionButton(
+                backgroundColor: Colors.green,
+                child: Icon(
+                  Icons.check,
+                  color: Colors.white,
                 ),
-              )
-            : Container(),
-      ]),
+                onPressed: () => onStatusButtonClick(1)),
+            SizedBox(width: 8.0),
+            //refuse button
+            FloatingActionButton(
+                backgroundColor: Colors.red,
+                child: Icon(
+                  Icons.clear,
+                  color: Colors.white,
+                ),
+                onPressed: () => onStatusButtonClick(null))
+          ],
+        ),
+      ),
     );
   }
 }
