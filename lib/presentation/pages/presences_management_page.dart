@@ -221,7 +221,8 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
       if (value is Tuple2<TimeOfDay, TimeOfDay>) {
         PresenceNewParameters newParams = PresenceNewParameters(
           date: this.visualizedDate,
-          idResource: userWithWorkstation.user.idResource,
+          idResource: userWithWorkstation.user?.idResource,
+          freeName: userWithWorkstation.workstation?.freeName,
           startTime: value.item1,
           endTime: value.item2,
         );

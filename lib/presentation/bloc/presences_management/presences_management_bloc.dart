@@ -29,7 +29,8 @@ class PresencesManagementBloc
     @required InsertWorkstation insertUserPresence,
     @required RemoveWorkstation removeUserPresence,
     @required UpdateWorkstation updateUserPresence,
-  })  : assert(getAllUserPresencesByDate != null),
+  })
+      : assert(getAllUserPresencesByDate != null),
         assert(insertUserPresence != null),
         assert(removeUserPresence != null),
         assert(updateUserPresence != null),
@@ -43,8 +44,7 @@ class PresencesManagementBloc
 
   @override
   Stream<PresencesManagementState> mapEventToState(
-    PresencesManagementEvent event,
-  ) async* {
+      PresencesManagementEvent event,) async* {
     if (event is OnUsersPresencesFetchRequested) {
       yield* _fetchAllUsersPresences(event.dateToFetch);
     } else if (event is OnPresenceAddedByManagement) {
@@ -95,14 +95,16 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-            insertedPresence.idResource != null
-                ? element.user?.idResource == insertedPresence.idResource
-                : element.workstation?.freeName == insertedPresence.freeName);
+        insertedPresence.idResource != null
+            ? element.user?.idResource == insertedPresence.idResource
+            : element.workstation?.freeName == insertedPresence.freeName);
+        // no element found, inserting new object
         if (index == -1) {
           //TODO: replace insert method with add when implementing list sorting
           originalUsersPresencesList.insert(0,
               UserWithWorkstation(user: null, workstation: insertedPresence));
         } else {
+          // element found, assigning workstation
           originalUsersPresencesList[index] = UserWithWorkstation(
               user: originalUsersPresencesList[index].user,
               workstation: insertedPresence);
@@ -139,9 +141,11 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-            element.user?.idResource == updatedPresence.idResource);
+        updatedPresence.idResource != null
+            ? element.user?.idResource == updatedPresence.idResource
+            : element.workstation?.freeName == updatedPresence.freeName);
         originalUsersPresencesList[index] = UserWithWorkstation(
-            user: originalUsersPresencesList[index].user,
+            user: originalUsersPresencesList[index]?.user,
             workstation: updatedPresence);
         return PresencesManagementFetchCompletedState(
             originalUsersPresencesList);
@@ -165,9 +169,13 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid  presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-            element.workstation?.idWorkstation == deletedPresenceId);
-        originalUsersPresencesList[index] = UserWithWorkstation(
-            user: originalUsersPresencesList[index].user, workstation: null);
+        element.workstation?.idWorkstation == deletedPresenceId);
+        if(originalUsersPresencesList[index].user != null ){
+          originalUsersPresencesList[index] = UserWithWorkstation(
+              user: originalUsersPresencesList[index].user, workstation: null);
+        } else {
+          originalUsersPresencesList.removeAt(index);
+        }
         return PresencesManagementFetchCompletedState(
             originalUsersPresencesList);
       } else {
@@ -185,16 +193,17 @@ class PresencesManagementBloc
       yield PresencesManagementFetchCompletedState(originalUsersPresencesList);
     } else {
       var filteredList = originalUsersPresencesList
-          .where((user) => user.user != null
-              ? user.user.name
-                      .toLowerCase()
-                      .contains(filterInput.toLowerCase()) ||
-                  user.user.surname
-                      .toLowerCase()
-                      .contains(filterInput.toLowerCase())
-              : user.workstation.freeName
-                  .toLowerCase()
-                  .contains(filterInput.toLowerCase()))
+          .where((user) =>
+      user.user != null
+          ? user.user.name
+          .toLowerCase()
+          .contains(filterInput.toLowerCase()) ||
+          user.user.surname
+              .toLowerCase()
+              .contains(filterInput.toLowerCase())
+          : user.workstation.freeName
+          .toLowerCase()
+          .contains(filterInput.toLowerCase()))
           .toList();
       yield PresencesManagementFetchCompletedState(filteredList);
     }
@@ -204,7 +213,7 @@ class PresencesManagementBloc
       List<Workstation> workstations, List<User> users) {
     List<UserWithWorkstation> usersWithWorkstations = users.map((user) {
       Workstation relatedWorkstation = workstations.firstWhere(
-          (workstation) => workstation.idResource == user.idResource,
+              (workstation) => workstation.idResource == user.idResource,
           orElse: () => null);
       return UserWithWorkstation(user: user, workstation: relatedWorkstation);
     }).toList();
@@ -214,10 +223,10 @@ class PresencesManagementBloc
     List<UserWithWorkstation> freeNamesWorkstations = workstations
         .where((workstation) => workstation.freeName != null)
         .map((workstation) =>
-            UserWithWorkstation(user: null, workstation: workstation))
+        UserWithWorkstation(user: null, workstation: workstation))
         .toList();
     freeNamesWorkstations.sort(
-        (a, b) => a.workstation.freeName.compareTo(b.workstation.freeName));
+            (a, b) => a.workstation.freeName.compareTo(b.workstation.freeName));
     return List.of(freeNamesWorkstations..addAll(usersWithWorkstations));
   }
 
