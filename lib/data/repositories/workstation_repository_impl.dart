@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 
 import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/error/failure.dart';
+import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
@@ -87,6 +88,20 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
+  Future<Either<Failure, Workstation>> updateWorkstationStatus(WorkstationStatusParameters workstationStatusParameters)  async {
+    try {
+      var loggedUser = await localDataSource.getCachedUser();
+      final statusUpdateResult = await remoteDataSource.updateWorkstationStatus(
+          loggedUser.authenticationToken,workstationStatusParameters);
+      return Right(statusUpdateResult);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, int>> deleteWorkstation(int idWorkstation) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
@@ -99,4 +114,5 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       return Left(UnexpectedFailure(e.toString()));
     }
   }
+
 }

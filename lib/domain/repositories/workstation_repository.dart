@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 
 import '../../core/error/failure.dart';
@@ -19,4 +20,7 @@ abstract class WorkstationRepository {
       Workstation updatedWorkstation);
 
   Future<Either<Failure, int>> deleteWorkstation(int idWorkstation);
+
+  Future<Either<Failure, Workstation>> updateWorkstationStatus(
+      WorkstationStatusParameters workstationStatusParameters);
 }

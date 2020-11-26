@@ -29,6 +29,7 @@ import 'package:where_am_i/domain/usecases/workstations/get_user_presences.dart'
 import 'package:where_am_i/domain/usecases/workstations/insert_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/remove_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
+import 'package:where_am_i/domain/usecases/workstations/update_workstation_status.dart';
 import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
@@ -62,6 +63,7 @@ Future<void> init() async {
         insertUserPresence: sl(),
         updateUserPresence: sl(),
         removeUserPresence: sl(),
+        updateUserPresenceStatus:sl(),
       ));
   sl.registerFactory(() => MyPresencesBloc(
         getUserPresences: sl(),
@@ -84,6 +86,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetWorkstationsByDate(sl(), sl()));
   sl.registerLazySingleton(() => GetAllUserPresencesByDate(sl(), sl()));
   sl.registerLazySingleton(() => UpdateWorkstation(sl()));
+  sl.registerLazySingleton(() => UpdateWorkstationStatus(sl()));
   sl.registerLazySingleton(() => GetUserPresences(sl(), sl()));
   sl.registerLazySingleton(() => InsertWorkstation(sl()));
   sl.registerLazySingleton(() => RemoveWorkstation(sl()));

@@ -31,5 +31,12 @@ class OnPresenceUpdatedByManagement extends PresencesManagementEvent {
   final Workstation workstationToUpdate;
   final PresenceNewParameters updatedPresenceParams;
 
-  OnPresenceUpdatedByManagement(this.workstationToUpdate,this.updatedPresenceParams);
+  OnPresenceUpdatedByManagement(
+      this.workstationToUpdate, this.updatedPresenceParams);
+}
+
+class OnUserPresenceStatusUpdate extends PresencesManagementEvent {
+  final WorkstationStatusParameters workstationStatusParameters;
+
+  OnUserPresenceStatusUpdate(this.workstationStatusParameters);
 }

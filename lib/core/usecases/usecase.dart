@@ -29,5 +29,18 @@ class PresenceNewParameters extends Equatable {
   });
 
   @override
-  List<Object> get props => [date, startTime, endTime,idResource,freeName];
+  List<Object> get props => [date, startTime, endTime, idResource, freeName];
+}
+
+class WorkstationStatusParameters extends Equatable {
+  final int idWorkstation;
+  final int status;
+
+  WorkstationStatusParameters({
+    @required this.idWorkstation,
+    @required this.status,
+  });
+
+  @override
+  List<Object> get props => [idWorkstation, status];
 }

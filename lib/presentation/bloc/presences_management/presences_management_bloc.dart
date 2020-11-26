@@ -12,6 +12,7 @@ import 'package:where_am_i/domain/usecases/get_all_users_presences_by_date.dart'
 import 'package:where_am_i/domain/usecases/workstations/insert_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/remove_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
+import 'package:where_am_i/domain/usecases/workstations/update_workstation_status.dart';
 part 'presences_management_event.dart';
 
 part 'presences_management_state.dart';
@@ -22,21 +23,25 @@ class PresencesManagementBloc
   final InsertWorkstation _insertUserPresence;
   final RemoveWorkstation _removeUserPresence;
   final UpdateWorkstation _updateUserPresence;
+  final UpdateWorkstationStatus _updateUserPresenceStatus;
 
   PresencesManagementBloc({
     @required GetAllUserPresencesByDate getAllUserPresencesByDate,
     @required InsertWorkstation insertUserPresence,
     @required RemoveWorkstation removeUserPresence,
     @required UpdateWorkstation updateUserPresence,
+    @required UpdateWorkstationStatus updateUserPresenceStatus,
   })
       : assert(getAllUserPresencesByDate != null),
         assert(insertUserPresence != null),
         assert(removeUserPresence != null),
         assert(updateUserPresence != null),
+        assert(updateUserPresenceStatus != null),
         getAllUserPresencesByDate = getAllUserPresencesByDate,
         _insertUserPresence = insertUserPresence,
         _removeUserPresence = removeUserPresence,
         _updateUserPresence = updateUserPresence,
+        _updateUserPresenceStatus = updateUserPresenceStatus,
         super(PresencesManagementInitial());
 
   List<UserWithWorkstation> originalUsersPresencesList;
@@ -52,6 +57,8 @@ class PresencesManagementBloc
       yield* _removePresence(event.idWorkstation);
     } else if (event is OnPresenceUpdatedByManagement) {
       yield* _updatePresence(event.workstationToUpdate, event.updatedPresenceParams);
+    }else if (event is OnUserPresenceStatusUpdate) {
+      yield* _updatePresenceStatus(event.workstationStatusParameters)
     }else if (event is OnUsersPresencesFilterUpdate) {
       yield* _applyFilterToList(event.filterInput);
     }
@@ -157,6 +164,8 @@ class PresencesManagementBloc
       }
     });
   }
+
+
 
   Stream<PresencesManagementState> _removePresence(int idWorkstation) async* {
     print('removing user presence');

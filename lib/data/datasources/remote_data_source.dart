@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:where_am_i/core/error/exceptions.dart';
+import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/models/authenticated_user_model.dart';
 import 'package:where_am_i/data/models/reservation_model.dart';
@@ -46,6 +47,8 @@ abstract class RemoteDataSource {
 
   Future<void> deleteReservation(String authenticationToken, int idReservation);
 
+  Future<WorkstationModel> updateWorkstationStatus(String authenticationToken,
+      WorkstationStatusParameters workstationStatusParameters);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -143,6 +146,22 @@ class RemoteDataSourceImpl implements RemoteDataSource {
             },
             body: body)
         .timeout(HTTP_TIMEOUT);
+    if (response.statusCode == 200) {
+      return WorkstationModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw failureResult(response);
+    }
+  }
+
+  @override
+  Future<WorkstationModel> updateWorkstationStatus(String token,
+      WorkstationStatusParameters workstationStatusParameters) async {
+    var uri = Uri.https(BASE_URL,
+        '/WhereAmI/${workstationStatusParameters.idWorkstation}/${workstationStatusParameters.status}');
+    final response = await http.put(uri, headers: {
+      HttpHeaders.authorizationHeader: token,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(jsonDecode(response.body));
     } else {
@@ -261,5 +280,4 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       throw failureResult(response);
     }
   }
-
 }
