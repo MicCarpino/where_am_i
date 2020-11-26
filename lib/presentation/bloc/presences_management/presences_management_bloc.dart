@@ -95,10 +95,18 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-            element.user?.idResource == insertedPresence.idResource);
-        originalUsersPresencesList[index] = UserWithWorkstation(
-            user: originalUsersPresencesList[index].user,
-            workstation: insertedPresence);
+            insertedPresence.idResource != null
+                ? element.user?.idResource == insertedPresence.idResource
+                : element.workstation?.freeName == insertedPresence.freeName);
+        if (index == -1) {
+          //TODO: replace insert method with add when implementing list sorting
+          originalUsersPresencesList.insert(0,
+              UserWithWorkstation(user: null, workstation: insertedPresence));
+        } else {
+          originalUsersPresencesList[index] = UserWithWorkstation(
+              user: originalUsersPresencesList[index].user,
+              workstation: insertedPresence);
+        }
         return PresencesManagementFetchCompletedState(
             originalUsersPresencesList);
       } else {
@@ -130,8 +138,8 @@ class PresencesManagementBloc
       print('update presence success');
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
-        var index = originalUsersPresencesList.indexWhere(
-            (element) => element.user?.idResource == updatedPresence.idResource);
+        var index = originalUsersPresencesList.indexWhere((element) =>
+            element.user?.idResource == updatedPresence.idResource);
         originalUsersPresencesList[index] = UserWithWorkstation(
             user: originalUsersPresencesList[index].user,
             workstation: updatedPresence);
@@ -225,7 +233,7 @@ class PresencesManagementBloc
     return message;
   }
 
- /* Stream<PresencesManagementState> _insertExternalUser(PresenceNewParameters externalUserParams)  async* {
+/* Stream<PresencesManagementState> _insertExternalUser(PresenceNewParameters externalUserParams)  async* {
     print('inserting user presence');
     final insertResult = await _insertUserPresence(externalUserParams);
     yield insertResult.fold((failure) {

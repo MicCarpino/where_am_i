@@ -3,12 +3,6 @@ part of 'presences_management_bloc.dart';
 @immutable
 abstract class PresencesManagementEvent {}
 
-class OnExternalUserAdded extends PresencesManagementEvent {
-  final PresenceNewParameters externalUserParams;
-
-  OnExternalUserAdded({@required this.externalUserParams});
-}
-
 class OnUsersPresencesFetchRequested extends PresencesManagementEvent {
   final DateTime dateToFetch;
 

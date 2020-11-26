@@ -128,13 +128,13 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                     messageText: "Aggiungi risorsa non presente in elenco",
                     onAddButtonPressed: (String externalUser) =>
                         _presencesManagementBloc.add(
-                      OnExternalUserAdded(
-                          externalUserParams: PresenceNewParameters(
-                        date: this.visualizedDate,
-                        startTime: TIME_SLOT_NINE,
-                        endTime: TIME_SLOT_EIGHTEEN,
-                        freeName: externalUser,
-                      )),
+                          OnPresenceAddedByManagement(
+                            PresenceNewParameters(
+                              date: this.visualizedDate,
+                              freeName: externalUser,
+                              startTime: TIME_SLOT_NINE,
+                              endTime: TIME_SLOT_EIGHTEEN,),
+                          ),
                     ),
                   );
                 })
