@@ -10,7 +10,6 @@ import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/pages/assignable_users_page.dart';
 
-
 final sl = GetIt.instance;
 
 class Workstations extends StatefulWidget {
@@ -32,28 +31,30 @@ class _WorkstationsState extends State<Workstations> {
   User loggedUser;
   WorkstationBloc _workstationBloc;
   int assignedWorkstation;
+  bool isLoggedUserWorkstation;
+  UserWithWorkstation userWithWorkstation;
+
+  String resourceLabel;
 
   @override
   void initState() {
     _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
     loggedUser = sl<UserService>().getLoggedUser;
     super.initState();
+    userWithWorkstation = _getWorkstationForIndex(widget.workstationCode);
+    isLoggedUserWorkstation =
+        userWithWorkstation?.user?.idResource == loggedUser.idResource;
+    // userWithWorkstation?.user?.idResource != null &&
+    if (userWithWorkstation?.user != null) {
+      resourceLabel =
+          '${userWithWorkstation.user.surname.toUpperCase()} ${userWithWorkstation.user.name.toUpperCase()}';
+    } else if (userWithWorkstation?.workstation?.freeName != null) {
+      resourceLabel = userWithWorkstation.workstation.freeName.toUpperCase();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    var userWithWorkstation = _getWorkstationForIndex(widget.workstationCode);
-    String resourceLabel = "";
-    if (userWithWorkstation?.user != null) {
-      resourceLabel = userWithWorkstation.user.surname.toUpperCase() +
-          " \n" +
-          userWithWorkstation.user.name.toUpperCase();
-    } else if (userWithWorkstation?.workstation?.freeName != null) {
-      resourceLabel = userWithWorkstation.workstation.freeName.toUpperCase();
-    }
-    bool isLoggedUserWorkstation =
-        userWithWorkstation?.user?.idResource != null &&
-            userWithWorkstation.user.idResource == loggedUser.idResource;
     return FlatButton(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
@@ -62,44 +63,22 @@ class _WorkstationsState extends State<Workstations> {
               width: isLoggedUserWorkstation ? 2.5 : 1.0),
         ),
         //allow edit if user's role is staff or higher
-        onPressed: () =>
-            loggedUser.idRole >= ROLE_STAFF && widget.allowChangesForCurrentDate
-                ? _onWorkstationClick(widget.workstationCode)
-                : null,
-        onLongPress: () => loggedUser.idRole >= ROLE_STAFF &&
-                userWithWorkstation != null &&
-                widget.allowChangesForCurrentDate
-            ? showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text("Attenzione"),
-                    content: Text(
-                        "Continuando la risorsa verrà rimossa dalla postazione assegnatale"),
-                    actions: [
-                      FlatButton(
-                          child: Text("Annulla"),
-                          onPressed: () => Navigator.pop(context)),
-                      FlatButton(
-                          child: Text("OK"),
-                          onPressed: () => _onWorkstationLongClick(
-                              userWithWorkstation.workstation))
-                    ],
-                  );
-                },
+        onPressed: () => _onWorkstationClick(widget.workstationCode),
+        onLongPress: () =>
+            _onWorkstationLongClick(userWithWorkstation.workstation),
+        child: resourceLabel != null
+            ? AutoSizeText(
+                resourceLabel,
+                textAlign: TextAlign.center,
+                maxLines: resourceLabel.split(" ").length + 1,
+                wrapWords: true,
+                overflow: TextOverflow.clip,
+                style: TextStyle(
+                    color: widget.allowChangesForCurrentDate
+                        ? Colors.black
+                        : Colors.black45),
               )
-            : null,
-        child: AutoSizeText(
-          resourceLabel,
-          textAlign: TextAlign.center,
-          maxLines: resourceLabel.split(" ").length,
-          wrapWords: true,
-          overflow: TextOverflow.clip,
-          style: TextStyle(
-              color: widget.allowChangesForCurrentDate
-                  ? Colors.black
-                  : Colors.black45),
-        ));
+            : Container());
   }
 
   UserWithWorkstation _getWorkstationForIndex(int workstationCode) {
@@ -111,36 +90,67 @@ class _WorkstationsState extends State<Workstations> {
   }
 
   _onWorkstationClick(int workstationCode) {
-    String convertedCode = convertNewToOldWorkstationCode(workstationCode);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AssignableUsersPage(
-          assignableUsers: widget.usersWithWorkstations
-              .where((element) => element.workstation.codeWorkstation == null)
-              .toList(),
-          selectedWorkstationCode: convertedCode,
+    if (loggedUser.idRole >= ROLE_STAFF && widget.allowChangesForCurrentDate) {
+      String convertedCode = convertNewToOldWorkstationCode(workstationCode);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AssignableUsersPage(
+            assignableUsers: widget.usersWithWorkstations
+                .where((element) => element.workstation.codeWorkstation == null)
+                .toList(),
+            selectedWorkstationCode: convertedCode,
+          ),
         ),
-      ),
-    ).then((selectedWorkstation) {
-      if (selectedWorkstation != null) {
-        _workstationBloc
-            .add(OnWorkstationUpdate(workstation: selectedWorkstation));
-      }
-    });
+      ).then((selectedWorkstation) {
+        if (selectedWorkstation != null) {
+          _workstationBloc
+              .add(OnWorkstationUpdate(workstation: selectedWorkstation));
+        }
+      });
+    } else {
+      return null;
+    }
   }
 
   _onWorkstationLongClick(Workstation selectedWorkstation) {
-    //Clone of selected workstation with codeWorkstation set to null
-    var clearedWorkstation = Workstation(
-      idWorkstation: selectedWorkstation.idWorkstation,
-      idResource: selectedWorkstation.idResource,
-      codeWorkstation: null,
-      workstationDate: selectedWorkstation.workstationDate,
-      freeName: selectedWorkstation.freeName,
+    if (loggedUser.idRole >= ROLE_STAFF &&
+        selectedWorkstation != null &&
+        widget.allowChangesForCurrentDate) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) =>
+              _buildRemoveConfirmationDialog(selectedWorkstation));
+    } else {
+      return null;
+    }
+  }
+
+  AlertDialog _buildRemoveConfirmationDialog(Workstation workstation) {
+    return AlertDialog(
+      title: Text("Attenzione"),
+      content: Text(
+          "Continuando la risorsa verrà rimossa dalla postazione assegnatale"),
+      actions: [
+        FlatButton(
+            child: Text("Annulla"), onPressed: () => Navigator.pop(context)),
+        FlatButton(
+            child: Text("OK"),
+            onPressed: () {
+              //Clone of selected workstation with codeWorkstation set to null
+              var clearedWorkstation = Workstation(
+                idWorkstation: workstation.idWorkstation,
+                idResource: workstation.idResource,
+                codeWorkstation: null,
+                workstationDate: workstation.workstationDate,
+                freeName: workstation.freeName,
+              );
+              _workstationBloc
+                  .add(OnWorkstationUpdate(workstation: clearedWorkstation));
+              Navigator.pop(context);
+            })
+      ],
     );
-    _workstationBloc.add(OnWorkstationUpdate(workstation: clearedWorkstation));
-    Navigator.pop(context);
   }
 
   String convertNewToOldWorkstationCode(int newWorkstationCode) {
