@@ -9,7 +9,7 @@ import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/pages/assignable_users_page.dart';
-import 'package:where_am_i/presentation/widgets/wokrstation_marker.dart';
+import 'package:where_am_i/presentation/widgets/workstation_marker.dart';
 
 final sl = GetIt.instance;
 
@@ -33,7 +33,7 @@ class _WorkstationsState extends State<Workstations> {
   WorkstationBloc _workstationBloc;
   int assignedWorkstation;
   bool isLoggedUserWorkstation;
-  UserWithWorkstation userWithWorkstation;
+  List<UserWithWorkstation> presencesForWorkstation;
 
   String resourceLabel;
 
@@ -42,13 +42,46 @@ class _WorkstationsState extends State<Workstations> {
     _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
     loggedUser = sl<UserService>().getLoggedUser;
     super.initState();
-    userWithWorkstation = _getWorkstationForIndex(widget.workstationCode);
-    isLoggedUserWorkstation = userWithWorkstation?.user?.idResource == loggedUser.idResource;
-    // userWithWorkstation?.user?.idResource != null &&
-    if (userWithWorkstation?.user != null) {
-      resourceLabel = '${userWithWorkstation.user.surname.toUpperCase()} ${userWithWorkstation.user.name.toUpperCase()}';
-    } else if (userWithWorkstation?.workstation?.freeName != null) {
-      resourceLabel = userWithWorkstation.workstation.freeName.toUpperCase();
+    presencesForWorkstation = _getWorkstationsForIndex(widget.workstationCode);
+    isLoggedUserWorkstation = presencesForWorkstation?.any(
+        (element) => element.workstation.idResource == loggedUser.idResource);
+    resourceLabel = _getResourceLabel();
+  }
+
+  String _getResourceLabel() {
+    if (presencesForWorkstation == null ||
+        presencesForWorkstation.length == 0) {
+      return null;
+    } else if (presencesForWorkstation?.length == 1) {
+      UserWithWorkstation userWithWorkstation = presencesForWorkstation.first;
+      if (userWithWorkstation.user != null) {
+        return '${userWithWorkstation.user.surname.toUpperCase()} ${userWithWorkstation.user.name.toUpperCase()}';
+      } else if (userWithWorkstation.workstation?.freeName != null) {
+        return userWithWorkstation.workstation.freeName.toUpperCase();
+      } else {
+        return null;
+      }
+    } else {
+      //more then one resource for workstation
+      String label;
+      presencesForWorkstation.forEach((element) {
+        TimeOfDay endTime = element.workstation.endTime;
+        TimeOfDay currentTime = TimeOfDay.now();
+        //from midnight to 13 show resource assigned for morning slot
+        //after 13 to midnight show resource assigned for evening slot
+        if ((currentTime.hour < 13 && endTime == TIME_SLOT_THIRTEEN) ||
+            (currentTime.hour >= 13 && endTime == TIME_SLOT_EIGHTEEN)) {
+          if (element.user != null) {
+            label =
+                '${element.user.surname.toUpperCase()} ${element.user.name.toUpperCase()}';
+          } else if (element.workstation?.freeName != null) {
+            label = element.workstation.freeName.toUpperCase();
+          }
+        } else {
+          return;
+        }
+      });
+      return label;
     }
   }
 
@@ -65,8 +98,8 @@ class _WorkstationsState extends State<Workstations> {
             ),
             //allow edit if user's role is staff or higher
             onPressed: () => _onWorkstationClick(widget.workstationCode),
-            onLongPress: () =>
-                _onWorkstationLongClick(userWithWorkstation.workstation),
+            //TODO: restore onLongPress functionality
+            onLongPress: () => null,
             child: resourceLabel != null
                 ? AutoSizeText(
                     resourceLabel,
@@ -80,16 +113,17 @@ class _WorkstationsState extends State<Workstations> {
                             : Colors.black45),
                   )
                 : Container()),
-        painter:WorkstationMarker(userWithWorkstation?.workstation),
+        painter: WorkstationMarker(
+            presencesForWorkstation.map((e) => e.workstation).toList()),
       ),
     );
   }
 
-  UserWithWorkstation _getWorkstationForIndex(int workstationCode) {
+  List<UserWithWorkstation> _getWorkstationsForIndex(int workstationCode) {
     String convertedCode = convertNewToOldWorkstationCode(workstationCode);
-    var workstationOfIndex = widget.usersWithWorkstations.firstWhere(
-        (element) => element.workstation.codeWorkstation == convertedCode,
-        orElse: () => null);
+    List<UserWithWorkstation> workstationOfIndex = widget.usersWithWorkstations
+        .where(
+            (element) => element.workstation.codeWorkstation == convertedCode).toList();
     return workstationOfIndex;
   }
 

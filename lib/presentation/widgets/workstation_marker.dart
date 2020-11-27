@@ -3,9 +3,9 @@ import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 
 class WorkstationMarker extends CustomPainter {
-  final Workstation workstation;
+  final List<Workstation> workstations;
 
-  WorkstationMarker(this.workstation);
+  WorkstationMarker(this.workstations);
 
   double internalRadiusRatio = 2.5;
   double morningArcPointRatio = 0.4;
@@ -13,18 +13,24 @@ class WorkstationMarker extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (workstation == null ||
-        (workstation.startTime == TIME_SLOT_NINE &&
-            workstation.endTime == TIME_SLOT_EIGHTEEN)) {
+    if (workstations == null ){
       return;
     }
     var paint = Paint();
     paint.color = dncOrange;
     paint.style = PaintingStyle.fill;
     var path = Path();
-    _drawMorningMarker(path, size);
-    _drawAfternoonMarker(path, size);
-    canvas.drawPath(path, paint);
+    workstations.forEach((element) {
+      if (element.startTime == TIME_SLOT_NINE &&
+          element.endTime == TIME_SLOT_THIRTEEN) {
+        _drawMorningMarker(path, size);
+        canvas.drawPath(path, paint);
+      } else if (element.startTime == TIME_SLOT_FOURTEEN &&
+          element.endTime == TIME_SLOT_EIGHTEEN) {
+        _drawAfternoonMarker(path, size);
+        canvas.drawPath(path, paint);
+      }
+    });
   }
 
   @override
@@ -36,10 +42,12 @@ class WorkstationMarker extends CustomPainter {
     path.moveTo(size.width * 0.04, 0);
     path.lineTo(size.width * morningArcPointRatio, 0);
     path.arcToPoint(Offset(0, size.height * morningArcPointRatio),
-        radius: Radius.circular(size.width / internalRadiusRatio), clockwise: false);
+        radius: Radius.circular(size.width / internalRadiusRatio),
+        clockwise: false);
     path.lineTo(0, size.height * 0.04);
     path.arcToPoint(Offset(size.width * 0.04, 0),
-        radius: Radius.circular(size.width / internalRadiusRatio), clockwise: true);
+        radius: Radius.circular(size.width / internalRadiusRatio),
+        clockwise: true);
   }
 
   _drawAfternoonMarker(Path path, Size size) {

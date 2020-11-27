@@ -50,29 +50,31 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
     print('fetching workstations for $dateToFetch');
     final workstationsList = await getWorkstationsByDate(dateToFetch);
     yield workstationsList.fold((failure) {
-      print(
-          'workstations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
+      print('workstations fail');
       return WorkstationsFetchErrorState();
     }, (workstations) {
       //saving last fetch result to perform update without needing to download a new list
       currentWorkstationList = workstations;
       //retrieving user's workstation code for current day
       if (dateToFetch.zeroed().isAtSameMomentAs(DateTime.now().zeroed())) {
-        UserWithWorkstation workstationForCurrentDay = workstations.singleWhere(
-            (element) =>
-                element.workstation.idResource ==
-                _userService.loggedUser.idResource,
-            orElse: () => null);
-        int workstationCodeForCurrentDay = workstationForCurrentDay
-                    ?.workstation?.codeWorkstation !=
-                null
-            ? int.tryParse(workstationForCurrentDay.workstation.codeWorkstation)
-            : null;
-        _userService.setAssignedWorkstationCode(workstationCodeForCurrentDay);
+        _searchForCurrentUserWorkstation(workstations);
       }
       print('workstations : ${workstations.toList()}');
       return WorkstationsFetchCompletedState(workstations);
     });
+  }
+
+  _searchForCurrentUserWorkstation(List<UserWithWorkstation> workstations) {
+    UserWithWorkstation workstationForCurrentDay = workstations.singleWhere(
+        (element) =>
+            element.workstation.idResource ==
+            _userService.loggedUser.idResource,
+        orElse: () => null);
+    if (workstationForCurrentDay != null) {
+      int workstationCodeForCurrentDay =
+          int.tryParse(workstationForCurrentDay?.workstation?.codeWorkstation);
+      _userService.setAssignedWorkstationCode(workstationCodeForCurrentDay);
+    }
   }
 
   Stream<WorkstationState> _performWorkstationUpdate(
