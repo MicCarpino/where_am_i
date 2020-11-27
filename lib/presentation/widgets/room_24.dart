@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:where_am_i/core/utils/workstations_code_converter.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
-import 'package:where_am_i/presentation/widgets/workstations.dart';
+import 'package:where_am_i/presentation/widgets/desk.dart';
 
 class Room24 extends StatelessWidget {
   final List<UserWithWorkstation> workstations;
@@ -23,8 +24,8 @@ class Room24 extends StatelessWidget {
               mainAxisSpacing: 0,
               crossAxisSpacing: 0,
               children: List.generate(8, (index) {
-                return Workstations(
-                  usersWithWorkstations: workstations,
+                return Desk(
+                  usersWithWorkstationForDesk: workstations,
                   workstationCode: 19 + index,
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );
@@ -40,8 +41,15 @@ class Room24 extends StatelessWidget {
               mainAxisSpacing: 0,
               crossAxisSpacing: 0,
               children: List.generate(8, (index) {
-                return Workstations(
-                  usersWithWorkstations: workstations,
+                String newCodeWorkstation = WorkstationCodesConverter()
+                    .convertNewToOldWorkstationCode(
+                    ROOM_24_STARTING_INDEX + index);
+                var workstationsForDesk = workstations
+                    .where((element) =>
+                element.workstation.codeWorkstation == newCodeWorkstation)
+                    .toList();
+                return Desk(
+                  usersWithWorkstationForDesk: workstationsForDesk,
                   workstationCode: 27 + index,
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );

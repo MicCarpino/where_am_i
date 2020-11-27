@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:where_am_i/core/utils/workstations_code_converter.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/widgets/room_label.dart';
-import 'package:where_am_i/presentation/widgets/workstations.dart';
+import 'package:where_am_i/presentation/widgets/desk.dart';
 
 class Room26AF1 extends StatelessWidget {
   final List<UserWithWorkstation> workstations;
@@ -28,8 +29,8 @@ class Room26AF1 extends StatelessWidget {
                     mainAxisSpacing: 0,
                     crossAxisSpacing: 0,
                     children: List.generate(6, (index) {
-                      return Workstations(
-                        usersWithWorkstations: workstations,
+                      return Desk(
+                        usersWithWorkstationForDesk: workstations,
                         workstationCode: 76 + index,
                         allowChangesForCurrentDate: allowChangesForCurrentDate,
                       );
@@ -44,8 +45,8 @@ class Room26AF1 extends StatelessWidget {
                     mainAxisSpacing: 0,
                     crossAxisSpacing: 0,
                     children: List.generate(6, (index) {
-                      return Workstations(
-                        usersWithWorkstations: workstations,
+                      return Desk(
+                        usersWithWorkstationForDesk: workstations,
                         workstationCode: 82 + index,
                         allowChangesForCurrentDate: allowChangesForCurrentDate,
                       );
@@ -63,9 +64,15 @@ class Room26AF1 extends StatelessWidget {
               mainAxisSpacing: 0,
               crossAxisSpacing: 0,
               children: List.generate(4, (index) {
-                return Workstations(
-                  usersWithWorkstations: workstations,
-                  workstationCode: 88 + index,
+                String newCodeWorkstation = WorkstationCodesConverter()
+                    .convertNewToOldWorkstationCode(ROOM_26AF1_STARTING_INDEX + index);
+                var workstationsForDesk = workstations
+                    .where((element) =>
+                        element.workstation.codeWorkstation == newCodeWorkstation)
+                    .toList();
+                return Desk(
+                  usersWithWorkstationForDesk: workstationsForDesk,
+                  workstationCode: ROOM_26AF1_STARTING_INDEX + index,
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );
               })),

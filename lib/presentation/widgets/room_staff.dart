@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/widgets/room_label.dart';
-import 'package:where_am_i/presentation/widgets/workstations.dart';
+import 'package:where_am_i/presentation/widgets/desk.dart';
 
 class RoomStaff extends StatelessWidget {
   final List<UserWithWorkstation> workstations;
@@ -33,8 +33,11 @@ class RoomStaff extends StatelessWidget {
                     SizedBox(
                       width: 100,
                       height: 100,
-                      child: Workstations(
-                        usersWithWorkstations: workstations,
+                      child: Desk(
+                        usersWithWorkstationForDesk: workstations
+                            .where((element) =>
+                                element.workstation.codeWorkstation == "48")
+                            .toList(),
                         workstationCode: 48,
                         allowChangesForCurrentDate: allowChangesForCurrentDate,
                       ),
@@ -42,8 +45,11 @@ class RoomStaff extends StatelessWidget {
                     SizedBox(
                       width: 100,
                       height: 100,
-                      child: Workstations(
-                        usersWithWorkstations: workstations,
+                      child: Desk(
+                        usersWithWorkstationForDesk: workstations
+                            .where((element) =>
+                                element.workstation.codeWorkstation == "49")
+                            .toList(),
                         workstationCode: 49,
                         allowChangesForCurrentDate: allowChangesForCurrentDate,
                       ),
@@ -61,8 +67,11 @@ class RoomStaff extends StatelessWidget {
                     SizedBox(
                       width: 100,
                       height: 100,
-                      child: Workstations(
-                        usersWithWorkstations: workstations,
+                      child: Desk(
+                        usersWithWorkstationForDesk: workstations
+                            .where((element) =>
+                                element.workstation.codeWorkstation == "47")
+                            .toList(),
                         workstationCode: 47,
                         allowChangesForCurrentDate: allowChangesForCurrentDate,
                       ),
@@ -84,8 +93,11 @@ class RoomStaff extends StatelessWidget {
                   SizedBox(
                     width: 100,
                     height: 100,
-                    child: Workstations(
-                      usersWithWorkstations: workstations,
+                    child: Desk(
+                      usersWithWorkstationForDesk: workstations
+                          .where((element) =>
+                              element.workstation.codeWorkstation == "43")
+                          .toList(),
                       workstationCode: 43,
                       allowChangesForCurrentDate: allowChangesForCurrentDate,
                     ),
@@ -93,8 +105,11 @@ class RoomStaff extends StatelessWidget {
                   SizedBox(
                     width: 100,
                     height: 100,
-                    child: Workstations(
-                      usersWithWorkstations: workstations,
+                    child: Desk(
+                      usersWithWorkstationForDesk: workstations
+                          .where((element) =>
+                              element.workstation.codeWorkstation == "44")
+                          .toList(),
                       workstationCode: 44,
                       allowChangesForCurrentDate: allowChangesForCurrentDate,
                     ),
@@ -107,8 +122,11 @@ class RoomStaff extends StatelessWidget {
                   SizedBox(
                     width: 100,
                     height: 100,
-                    child: Workstations(
-                      usersWithWorkstations: workstations,
+                    child: Desk(
+                      usersWithWorkstationForDesk: workstations
+                          .where((element) =>
+                              element.workstation.codeWorkstation == "46")
+                          .toList(),
                       workstationCode: 46,
                       allowChangesForCurrentDate: allowChangesForCurrentDate,
                     ),
@@ -121,8 +139,11 @@ class RoomStaff extends StatelessWidget {
                   SizedBox(
                     width: 100,
                     height: 100,
-                    child: Workstations(
-                      usersWithWorkstations: workstations,
+                    child: Desk(
+                      usersWithWorkstationForDesk: workstations
+                          .where((element) =>
+                              element.workstation.codeWorkstation == "45")
+                          .toList(),
                       workstationCode: 45,
                       allowChangesForCurrentDate: allowChangesForCurrentDate,
                     ),

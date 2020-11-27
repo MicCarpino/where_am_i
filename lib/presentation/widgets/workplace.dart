@@ -54,28 +54,63 @@ class WorkplaceBuilder extends StatelessWidget {
       bool allowChangesForCurrentDate) {
     switch (room) {
       case Rooms.room_26B:
+        var room26BWorkstations = usersWithWorkstations.where((element) {
+          if (element.workstation.codeWorkstation != null) {
+            int parsedCode = int.tryParse(element.workstation.codeWorkstation);
+            return parsedCode >= 1 && parsedCode <= 18;
+          }
+          return false;
+        }).toList();
         return Room26B(
-          workstations: usersWithWorkstations,
+          workstations: room26BWorkstations ?? [],
           allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
       case Rooms.room_26A_Floor1:
+        var room26AF1Workstations = usersWithWorkstations.where((element) {
+          if (element.workstation.codeWorkstation != null) {
+            int parsedCode = int.tryParse(element.workstation.codeWorkstation);
+            return parsedCode >= 76 && parsedCode <= 91;
+          }
+          return false;
+        }).toList();
         return Room26AF1(
-          workstations: usersWithWorkstations,
+          workstations: room26AF1Workstations ?? [],
           allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
       case Rooms.room_26A_Floor2:
+        var room26AF2Workstations = usersWithWorkstations.where((element) {
+          if (element.workstation.codeWorkstation != null) {
+            int parsedCode = int.tryParse(element.workstation.codeWorkstation);
+            return parsedCode >= 50 && parsedCode <= 75;
+          }
+          return false;
+        }).toList();
         return Room26AF2(
-          workstations: usersWithWorkstations,
+          workstations: room26AF2Workstations ?? [],
           allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
       case Rooms.room_24:
+        var room26AF2Workstations = usersWithWorkstations.where((element) {
+          if (element.workstation.codeWorkstation != null) {
+            int parsedCode = int.tryParse(element.workstation.codeWorkstation);
+            return parsedCode >= 19 && parsedCode <= 34;
+          }
+          return false;
+        }).toList();
         return Room24(
-          workstations: usersWithWorkstations,
+          workstations: room26AF2Workstations ?? [],
           allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
       case Rooms.room_staff:
+        var roomStaffWorkstations = usersWithWorkstations.where((element) {
+          if (element.workstation.codeWorkstation != null) {
+            int parsedCode = int.tryParse(element.workstation.codeWorkstation);
+            return parsedCode >= 43 && parsedCode <= 49;
+          }
+          return false;
+        }).toList();
         return RoomStaff(
-          workstations: usersWithWorkstations,
+          workstations: roomStaffWorkstations ?? [],
           allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
     }
@@ -124,7 +159,8 @@ class WorkplaceBuilder extends StatelessWidget {
               } else if (state is ReservationsFetchCompletedState) {
                 return ReservationsCalendar(
                   reservationsList: state.reservationsList
-                      .where((element) => element.idRoom == room.reservationRoomId)
+                      .where(
+                          (element) => element.idRoom == room.reservationRoomId)
                       .toList(),
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );
