@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 
@@ -6,7 +7,8 @@ class CustomListItem extends StatelessWidget {
   final UserWithWorkstation userWithWorkstation;
   final Function() onSingleClick;
   final Function() onLongClick;
-  final Function(int status) onStatusButtonClick;
+  final Function(WorkstationStatusParameters newStatusParams)
+      onStatusButtonClick;
 
   const CustomListItem({
     @required this.userWithWorkstation,
@@ -31,11 +33,11 @@ class CustomListItem extends StatelessWidget {
   }
 
   Widget _buildResourceSection(BuildContext context) {
-    return  Expanded(
-        child:GestureDetector(
-          onTap: onSingleClick,
-          onLongPress: onLongClick,
-          child: Container(
+    return Expanded(
+      child: GestureDetector(
+        onTap: onSingleClick,
+        onLongPress: onLongClick,
+        child: Container(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,7 +74,7 @@ class CustomListItem extends StatelessWidget {
         userWithWorkstation.workstation?.endTime ?? TIME_SLOT_EIGHTEEN;
     return Text(
       "${startTime.format(context)} - ${endTime.format(context)}",
-      style: TextStyle(color: Colors.black38, fontSize: 14),
+      style: TextStyle(color: Colors.black54, fontSize: 14),
     );
   }
 
@@ -84,21 +86,33 @@ class CustomListItem extends StatelessWidget {
           children: [
             //accept button
             FloatingActionButton(
-                backgroundColor: Colors.green,
-                child: Icon(
-                  Icons.check,
-                  color: Colors.white,
+              backgroundColor: Colors.green,
+              child: Icon(
+                Icons.check,
+                color: Colors.white,
+              ),
+              onPressed: () => onStatusButtonClick(
+                WorkstationStatusParameters(
+                  idWorkstation: userWithWorkstation.workstation.idWorkstation,
+                  status: WORKSTATION_STATUS_CONFIRMED,
                 ),
-                onPressed: () => onStatusButtonClick(1)),
+              ),
+            ),
             SizedBox(width: 8.0),
             //refuse button
             FloatingActionButton(
-                backgroundColor: Colors.red,
-                child: Icon(
-                  Icons.clear,
-                  color: Colors.white,
+              backgroundColor: Colors.red,
+              child: Icon(
+                Icons.clear,
+                color: Colors.white,
+              ),
+              onPressed: () => onStatusButtonClick(
+                WorkstationStatusParameters(
+                  idWorkstation: userWithWorkstation.workstation.idWorkstation,
+                  status: null,
                 ),
-                onPressed: () => onStatusButtonClick(null))
+              ),
+            )
           ],
         ),
       ),

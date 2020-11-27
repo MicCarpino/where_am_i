@@ -128,13 +128,14 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                     messageText: "Aggiungi risorsa non presente in elenco",
                     onAddButtonPressed: (String externalUser) =>
                         _presencesManagementBloc.add(
-                          OnPresenceAddedByManagement(
-                            PresenceNewParameters(
-                              date: this.visualizedDate,
-                              freeName: externalUser,
-                              startTime: TIME_SLOT_NINE,
-                              endTime: TIME_SLOT_EIGHTEEN,),
-                          ),
+                      OnPresenceAddedByManagement(
+                        PresenceNewParameters(
+                          date: this.visualizedDate,
+                          freeName: externalUser,
+                          startTime: TIME_SLOT_NINE,
+                          endTime: TIME_SLOT_EIGHTEEN,
+                        ),
+                      ),
                     ),
                   );
                 })
@@ -150,8 +151,8 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
         itemBuilder: (context, index) => CustomListItem(
           userWithWorkstation: presences[index],
           onSingleClick: () => _onUserClick(presences[index]),
-          onLongClick:() =>  _onUserLongClick(presences[index]),
-          onStatusButtonClick: (value) =>_onStatusChange(value),
+          onLongClick: () => _onUserLongClick(presences[index]),
+          onStatusButtonClick: (value) => _onStatusChange(value),
         ),
         itemCount: presences.length,
       ),
@@ -174,10 +175,11 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
       //inserting workstation for full day, already confirmed
       _presencesManagementBloc.add(OnPresenceAddedByManagement(
         PresenceNewParameters(
-            date: this.visualizedDate,
-            idResource: userWithWorkstation.user.idResource,
-            startTime: TIME_SLOT_NINE,
-            endTime: TIME_SLOT_EIGHTEEN,),
+          date: this.visualizedDate,
+          idResource: userWithWorkstation.user.idResource,
+          startTime: TIME_SLOT_NINE,
+          endTime: TIME_SLOT_EIGHTEEN,
+        ),
       ));
     } else {
       userWithWorkstation.workstation.codeWorkstation == null
@@ -235,9 +237,14 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     });
   }
 
-  _onStatusChange(int status) {
-    print('NEW STATUS: ${status.toString()}');
-}
+  _onStatusChange(WorkstationStatusParameters newStatusParams) {
+    newStatusParams.status != null
+        ? _presencesManagementBloc
+            .add(OnUserPresenceStatusUpdate(newStatusParams))
+        : _presencesManagementBloc.add(
+            OnPresenceRemovedByManagement(newStatusParams.idWorkstation),
+          );
+  }
 
   _showSnackbarWithMessage(String message) {
     Scaffold.of(context).showSnackBar(SnackBar(
@@ -249,4 +256,3 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
         .add(OnUsersPresencesFilterUpdate(filterInput: input));
   }
 }
-

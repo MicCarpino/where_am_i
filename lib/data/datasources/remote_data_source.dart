@@ -157,7 +157,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   Future<WorkstationModel> updateWorkstationStatus(String token,
       WorkstationStatusParameters workstationStatusParameters) async {
     var uri = Uri.https(BASE_URL,
-        '/WhereAmI/${workstationStatusParameters.idWorkstation}/${workstationStatusParameters.status}');
+        '/WhereAmI/workstation/${workstationStatusParameters.idWorkstation}/${workstationStatusParameters.status}');
     final response = await http.put(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'

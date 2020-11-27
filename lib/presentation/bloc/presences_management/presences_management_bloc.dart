@@ -58,7 +58,7 @@ class PresencesManagementBloc
     } else if (event is OnPresenceUpdatedByManagement) {
       yield* _updatePresence(event.workstationToUpdate, event.updatedPresenceParams);
     }else if (event is OnUserPresenceStatusUpdate) {
-      yield* _updatePresenceStatus(event.workstationStatusParameters)
+      yield* _updatePresenceStatus(event.workstationStatusParameters);
     }else if (event is OnUsersPresencesFilterUpdate) {
       yield* _applyFilterToList(event.filterInput);
     }
@@ -165,7 +165,31 @@ class PresencesManagementBloc
     });
   }
 
+  Stream<PresencesManagementState> _updatePresenceStatus(WorkstationStatusParameters workstationStatusParameters) async*{
+    final statusUpdateResult = await _updateUserPresenceStatus(workstationStatusParameters);
+    yield statusUpdateResult.fold((failure) => PresencesManagementErrorMessageState(
+        _getErrorMessageFromFailure(failure)),(updatedPresence) {
+      print('update presence success');
+      if (originalUsersPresencesList != null) {
+        print('valid presences cache');
+        var index = originalUsersPresencesList.indexWhere((element) =>
+        updatedPresence.idResource != null
+            ? element.user?.idResource == updatedPresence.idResource
+            : element.workstation?.freeName == updatedPresence.freeName);
+        originalUsersPresencesList[index] = UserWithWorkstation(
+            user: originalUsersPresencesList[index]?.user,
+            workstation: updatedPresence);
+        return PresencesManagementFetchCompletedState(
+            originalUsersPresencesList);
+      } else {
+        print('invalid  presences cache');
+        //TODO: refetch
+        //_fetchAllUsersPresences();
+        return null;
+      }
+    });
 
+  }
 
   Stream<PresencesManagementState> _removePresence(int idWorkstation) async* {
     print('removing user presence');
@@ -268,7 +292,9 @@ class PresencesManagementBloc
     } else if (failure is CacheFailure) {
       message = "Errore cache";
     }
+    print('FAILURE: $message');
     return message;
   }
+
 
 }
