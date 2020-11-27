@@ -9,6 +9,7 @@ import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/pages/assignable_users_page.dart';
+import 'package:where_am_i/presentation/widgets/wokrstation_marker.dart';
 
 final sl = GetIt.instance;
 
@@ -42,12 +43,10 @@ class _WorkstationsState extends State<Workstations> {
     loggedUser = sl<UserService>().getLoggedUser;
     super.initState();
     userWithWorkstation = _getWorkstationForIndex(widget.workstationCode);
-    isLoggedUserWorkstation =
-        userWithWorkstation?.user?.idResource == loggedUser.idResource;
+    isLoggedUserWorkstation = userWithWorkstation?.user?.idResource == loggedUser.idResource;
     // userWithWorkstation?.user?.idResource != null &&
     if (userWithWorkstation?.user != null) {
-      resourceLabel =
-          '${userWithWorkstation.user.surname.toUpperCase()} ${userWithWorkstation.user.name.toUpperCase()}';
+      resourceLabel = '${userWithWorkstation.user.surname.toUpperCase()} ${userWithWorkstation.user.name.toUpperCase()}';
     } else if (userWithWorkstation?.workstation?.freeName != null) {
       resourceLabel = userWithWorkstation.workstation.freeName.toUpperCase();
     }
@@ -55,30 +54,35 @@ class _WorkstationsState extends State<Workstations> {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-          side: BorderSide(
-              color: isLoggedUserWorkstation ? dncOrange : Colors.black54,
-              width: isLoggedUserWorkstation ? 2.5 : 1.0),
-        ),
-        //allow edit if user's role is staff or higher
-        onPressed: () => _onWorkstationClick(widget.workstationCode),
-        onLongPress: () =>
-            _onWorkstationLongClick(userWithWorkstation.workstation),
-        child: resourceLabel != null
-            ? AutoSizeText(
-                resourceLabel,
-                textAlign: TextAlign.center,
-                maxLines: resourceLabel.split(" ").length + 1,
-                wrapWords: true,
-                overflow: TextOverflow.clip,
-                style: TextStyle(
-                    color: widget.allowChangesForCurrentDate
-                        ? Colors.black
-                        : Colors.black45),
-              )
-            : Container());
+    return Container(
+      child: CustomPaint(
+        child: FlatButton(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+              side: BorderSide(
+                  color: isLoggedUserWorkstation ? dncOrange : Colors.black54,
+                  width: isLoggedUserWorkstation ? 2.5 : 1.0),
+            ),
+            //allow edit if user's role is staff or higher
+            onPressed: () => _onWorkstationClick(widget.workstationCode),
+            onLongPress: () =>
+                _onWorkstationLongClick(userWithWorkstation.workstation),
+            child: resourceLabel != null
+                ? AutoSizeText(
+                    resourceLabel,
+                    textAlign: TextAlign.center,
+                    maxLines: resourceLabel.split(" ").length + 1,
+                    wrapWords: true,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        color: widget.allowChangesForCurrentDate
+                            ? Colors.black
+                            : Colors.black45),
+                  )
+                : Container()),
+        painter:WorkstationMarker(userWithWorkstation?.workstation),
+      ),
+    );
   }
 
   UserWithWorkstation _getWorkstationForIndex(int workstationCode) {
