@@ -25,7 +25,7 @@ class Room24 extends StatelessWidget {
               crossAxisSpacing: 0,
               children: List.generate(8, (index) {
                 return Desk(
-                  usersWithWorkstationForDesk: workstations,
+                  allUsersWithWorkstation: workstations,
                   workstationCode: 19 + index,
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );
@@ -49,7 +49,7 @@ class Room24 extends StatelessWidget {
                 element.workstation.codeWorkstation == newCodeWorkstation)
                     .toList();
                 return Desk(
-                  usersWithWorkstationForDesk: workstationsForDesk,
+                  allUsersWithWorkstation: workstationsForDesk,
                   workstationCode: 27 + index,
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );

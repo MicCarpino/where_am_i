@@ -25,7 +25,7 @@ class Room26AF2 extends StatelessWidget {
             crossAxisSpacing: 0,
             children: List.generate(6, (index) {
               return Desk(
-                usersWithWorkstationForDesk: workstations,
+                allUsersWithWorkstation: workstations,
                 workstationCode: 50 + index,
                 allowChangesForCurrentDate: allowChangesForCurrentDate,
               );
@@ -40,7 +40,7 @@ class Room26AF2 extends StatelessWidget {
             crossAxisSpacing: 0,
             children: List.generate(8, (index) {
               return Desk(
-                usersWithWorkstationForDesk: workstations,
+                allUsersWithWorkstation: workstations,
                 workstationCode: 56 + index,
                 allowChangesForCurrentDate: allowChangesForCurrentDate,
               );
@@ -55,7 +55,7 @@ class Room26AF2 extends StatelessWidget {
             crossAxisSpacing: 0,
             children: List.generate(6, (index) {
               return Desk(
-                usersWithWorkstationForDesk: workstations,
+                allUsersWithWorkstation: workstations,
                 workstationCode: 64 + index,
                 allowChangesForCurrentDate: allowChangesForCurrentDate,
               );
@@ -78,7 +78,7 @@ class Room26AF2 extends StatelessWidget {
                         element.workstation.codeWorkstation == newCodeWorkstation)
                     .toList();
                 return Desk(
-                  usersWithWorkstationForDesk: workstationsForDesk,
+                  allUsersWithWorkstation: workstationsForDesk,
                   workstationCode: ROOM_26AF2_STARTING_INDEX + index,
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );

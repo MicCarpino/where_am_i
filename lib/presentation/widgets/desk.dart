@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/workstations_code_converter.dart';
 import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
@@ -14,12 +15,12 @@ import 'package:where_am_i/presentation/widgets/workstation_marker.dart';
 final sl = GetIt.instance;
 
 class Desk extends StatefulWidget {
-  final List<UserWithWorkstation> usersWithWorkstationForDesk;
+  final List<UserWithWorkstation> allUsersWithWorkstation;
   final int workstationCode;
   final bool allowChangesForCurrentDate;
 
   Desk({
-    @required this.usersWithWorkstationForDesk,
+    @required this.allUsersWithWorkstation,
     @required this.workstationCode,
     @required this.allowChangesForCurrentDate,
   });
@@ -31,32 +32,37 @@ class Desk extends StatefulWidget {
 class _DeskState extends State<Desk> {
   User loggedUser;
   WorkstationBloc _workstationBloc;
-  bool isLoggedUserDesk;
+  bool isDeskOfLoggedUser;
   String resourceLabel;
+  List<UserWithWorkstation> workstationsForDesk;
 
   @override
   void initState() {
+    super.initState();
     _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
     loggedUser = sl<UserService>().getLoggedUser;
-    super.initState();
-    isLoggedUserDesk = widget.usersWithWorkstationForDesk?.any(
+    isDeskOfLoggedUser = widget.allUsersWithWorkstation?.any(
         (element) => element.workstation.idResource == loggedUser.idResource);
+    String newCodeWorkstation = WorkstationCodesConverter()
+        .convertNewToOldWorkstationCode( widget.workstationCode);
+    workstationsForDesk =  widget.allUsersWithWorkstation
+        .where((element) =>
+    element.workstation?.codeWorkstation == newCodeWorkstation)
+        .toList();
     resourceLabel = _getResourceLabel();
   }
 
   @override
   Widget build(BuildContext context) {
-    var workstationsForDesk =
-        widget.usersWithWorkstationForDesk.map((e) => e.workstation).toList();
     return Container(
       child: CustomPaint(
-          painter: WorkstationMarker(workstationsForDesk),
+          painter: WorkstationMarker(workstationsForDesk?.map((e) => e.workstation)?.toList()??[]),
           child: FlatButton(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
                 side: BorderSide(
-                    color: isLoggedUserDesk ? dncOrange : Colors.black54,
-                    width: isLoggedUserDesk ? 2.5 : 1.0),
+                    color: isDeskOfLoggedUser ? dncOrange : Colors.black54,
+                    width: isDeskOfLoggedUser ? 2.5 : 1.0),
               ),
               //allow edit if user's role is staff or higher
               onPressed: () => _onWorkstationClick(),
@@ -78,14 +84,13 @@ class _DeskState extends State<Desk> {
     );
   }
 
-
   _onWorkstationClick() {
     if (loggedUser.idRole >= ROLE_STAFF && widget.allowChangesForCurrentDate) {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => AssignableUsersPage(
-            assignableUsers: widget.usersWithWorkstationForDesk
+            assignableUsers: widget.allUsersWithWorkstation
                 .where((element) => element.workstation.codeWorkstation == null)
                 .toList(),
             selectedWorkstationCode: widget.workstationCode.toString(),
@@ -97,7 +102,7 @@ class _DeskState extends State<Desk> {
               .add(OnWorkstationUpdate(workstation: selectedWorkstation));
         }
       });
-    } else {
+    } else if (widget.allUsersWithWorkstation.length > 1) {
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -107,28 +112,29 @@ class _DeskState extends State<Desk> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
-                  children: _generateList(),
+                  children: _generateOccupantsList(),
                 ),
               ),
             );
           });
+    } else {
+      return null;
     }
   }
 
-  List<Widget> _generateList() {
+  List<Widget> _generateOccupantsList() {
     List<Widget> list = [];
     for (var index = 0;
-        index < widget.usersWithWorkstationForDesk.length;
+        index < widget.allUsersWithWorkstation.length;
         index++) {
-      var w = widget.usersWithWorkstationForDesk[index].workstation;
-      var user = widget.usersWithWorkstationForDesk[index].user;
+      var w = widget.allUsersWithWorkstation[index].workstation;
+      var user = widget.allUsersWithWorkstation[index].user;
       String name =
-          user != null ? '${user.surname} ${user.surname}' : w.freeName ?? "";
-      list.add(Text("${w.startTime}:${w.endTime} $name"));
-      if (index != widget.usersWithWorkstationForDesk.length) {
-        list.add(
-          Divider(),
-        );
+          user != null ? '${user.surname} ${user.name}' : w.freeName ?? '';
+      list.add(Text(
+          '${w.startTime.format(context)} - ${w.endTime.format(context)} $name'));
+      if (index + 1 != widget.allUsersWithWorkstation.length) {
+        list.add(Divider());
       }
     }
     return list;
@@ -148,12 +154,10 @@ class _DeskState extends State<Desk> {
   }
 
   String _getResourceLabel() {
-    if (widget.usersWithWorkstationForDesk == null ||
-        widget.usersWithWorkstationForDesk.length == 0) {
+    if (workstationsForDesk == null || workstationsForDesk.isEmpty) {
       return null;
-    } else if (widget.usersWithWorkstationForDesk.length == 1) {
-      UserWithWorkstation userWithWorkstation =
-          widget.usersWithWorkstationForDesk.first;
+    } else if (workstationsForDesk.length == 1) {
+      UserWithWorkstation userWithWorkstation =workstationsForDesk.first;
       if (userWithWorkstation.user != null) {
         return '${userWithWorkstation.user.surname.toUpperCase()} ${userWithWorkstation.user.name.toUpperCase()}';
       } else if (userWithWorkstation.workstation?.freeName != null) {
@@ -164,7 +168,7 @@ class _DeskState extends State<Desk> {
     } else {
       //more then one resource for workstation
       String label;
-      widget.usersWithWorkstationForDesk.forEach((element) {
+      workstationsForDesk.forEach((element) {
         TimeOfDay endTime = element.workstation.endTime;
         TimeOfDay currentTime = TimeOfDay.now();
         //from midnight to 13 show resource assigned for morning slot
@@ -211,5 +215,4 @@ class _DeskState extends State<Desk> {
       ],
     );
   }
-
 }

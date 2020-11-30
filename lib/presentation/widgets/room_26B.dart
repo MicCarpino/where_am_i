@@ -22,12 +22,12 @@ class Room26B extends StatelessWidget {
         children: List.generate(18, (index) {
           String newCodeWorkstation = WorkstationCodesConverter()
               .convertNewToOldWorkstationCode( index);
-          var workstationsForDesk = workstations
+         /* var workstationsForDesk = workstations
               .where((element) =>
                   element.workstation.codeWorkstation == newCodeWorkstation)
-              .toList();
+              .toList();*/
           return Desk(
-            usersWithWorkstationForDesk: workstationsForDesk,
+            allUsersWithWorkstation: workstations,
             workstationCode: index,
             allowChangesForCurrentDate: allowChangesForCurrentDate,
           );

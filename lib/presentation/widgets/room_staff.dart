@@ -34,7 +34,7 @@ class RoomStaff extends StatelessWidget {
                       width: 100,
                       height: 100,
                       child: Desk(
-                        usersWithWorkstationForDesk: workstations
+                        allUsersWithWorkstation: workstations
                             .where((element) =>
                                 element.workstation.codeWorkstation == "48")
                             .toList(),
@@ -46,7 +46,7 @@ class RoomStaff extends StatelessWidget {
                       width: 100,
                       height: 100,
                       child: Desk(
-                        usersWithWorkstationForDesk: workstations
+                        allUsersWithWorkstation: workstations
                             .where((element) =>
                                 element.workstation.codeWorkstation == "49")
                             .toList(),
@@ -68,7 +68,7 @@ class RoomStaff extends StatelessWidget {
                       width: 100,
                       height: 100,
                       child: Desk(
-                        usersWithWorkstationForDesk: workstations
+                        allUsersWithWorkstation: workstations
                             .where((element) =>
                                 element.workstation.codeWorkstation == "47")
                             .toList(),
@@ -94,7 +94,7 @@ class RoomStaff extends StatelessWidget {
                     width: 100,
                     height: 100,
                     child: Desk(
-                      usersWithWorkstationForDesk: workstations
+                      allUsersWithWorkstation: workstations
                           .where((element) =>
                               element.workstation.codeWorkstation == "43")
                           .toList(),
@@ -106,7 +106,7 @@ class RoomStaff extends StatelessWidget {
                     width: 100,
                     height: 100,
                     child: Desk(
-                      usersWithWorkstationForDesk: workstations
+                      allUsersWithWorkstation: workstations
                           .where((element) =>
                               element.workstation.codeWorkstation == "44")
                           .toList(),
@@ -123,7 +123,7 @@ class RoomStaff extends StatelessWidget {
                     width: 100,
                     height: 100,
                     child: Desk(
-                      usersWithWorkstationForDesk: workstations
+                      allUsersWithWorkstation: workstations
                           .where((element) =>
                               element.workstation.codeWorkstation == "46")
                           .toList(),
@@ -140,7 +140,7 @@ class RoomStaff extends StatelessWidget {
                     width: 100,
                     height: 100,
                     child: Desk(
-                      usersWithWorkstationForDesk: workstations
+                      allUsersWithWorkstation: workstations
                           .where((element) =>
                               element.workstation.codeWorkstation == "45")
                           .toList(),
