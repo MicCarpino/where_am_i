@@ -10,6 +10,7 @@ import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation_assignment/workstation_assignement_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
+import 'package:where_am_i/presentation/widgets/custom_expansion_tile.dart';
 
 final sl = GetIt.instance;
 
@@ -29,13 +30,13 @@ class AssignableUsersPage extends StatefulWidget {
 }
 
 class _AssignableUsersPageState extends State<AssignableUsersPage> {
-  int expandedItemIndex;
-  WorkstationAssignementBloc _workstationAssignementBloc;
+  WorkstationAssignementBloc _workstationAssignmentBloc ;
+  ValueNotifier<Key> _expanded = ValueNotifier(null);
 
   @override
   void initState() {
     super.initState();
-    _workstationAssignementBloc = sl<WorkstationAssignementBloc>();
+    _workstationAssignmentBloc = sl<WorkstationAssignementBloc>();
   }
 
   @override
@@ -125,23 +126,21 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
     );
   }
 
-  ExpansionTile _buildExpansionTile(UserWithWorkstation item) {
-    return ExpansionTile(
-      maintainState: false,
-      onExpansionChanged: (isExpanded){
-        if(isExpanded) {
-            expandedItemIndex = item.workstation.idWorkstation;
-          return _fetchPresencesToEndOfMonth(item);
+  CustomExpansionTile _buildExpansionTile(UserWithWorkstation item) {
+    return CustomExpansionTile(
+      expansionCallback: (hasExpanded) {
+        if (hasExpanded) {
+          _fetchPresencesToEndOfMonth(item);
         } else {
-          expandedItemIndex = null;
-          return _clearPresencesFetched();
+          _clearPresencesFetched();
         }
       },
-      initiallyExpanded:false,
+      expandedItem: _expanded,
+      key: Key(item.workstation.idWorkstation.toString()),
       title: Text(item.getResourceLabel()),
-      children: [
+      children: <Widget>[
         BlocBuilder(
-            cubit: _workstationAssignementBloc,
+            cubit: _workstationAssignmentBloc,
             builder: (context, state) {
               if (state is PresencesToEndOfMonthErrorState) {
                 return Text('ERROR');
@@ -149,7 +148,11 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                 var presencesToEndOfMonth = state.presencesToEndOfMonth;
                 return Column(children: [
                   ..._buildCheckBox(presencesToEndOfMonth),
-                  MaterialButton(onPressed: (){},color: Colors.blue,child: Text('conferma'),)
+                  MaterialButton(
+                    onPressed: () {},
+                    color: Colors.blue,
+                    child: Text('conferma'),
+                  )
                 ]);
               } else {
                 return CircularLoading();
@@ -176,16 +179,20 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
   }
 
   _fetchPresencesToEndOfMonth(UserWithWorkstation item) {
+    print('_fetchPresencesToEndOfMonth invoked');
     String formattedDate =
-    DateFormat('yyyy-MM-dd').format(item.workstation.workstationDate);
-    _workstationAssignementBloc.add(
+        DateFormat('yyyy-MM-dd').format(item.workstation.workstationDate);
+    _workstationAssignmentBloc.add(
       OnUserPresencesToEndOfMonthRequest(
         presencesToEndOfMonthParameters: PresencesToEndOfMonthParameters(
             idResource: item.user.idResource, startingDate: formattedDate),
       ),
     );
   }
-   _clearPresencesFetched() {}
+
+  _clearPresencesFetched() {
+    print('_clearPresencesFetched invoked');
+  }
 }
 /*
 
