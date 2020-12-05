@@ -35,7 +35,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
   @override
   void initState() {
     super.initState();
-    _workstationAssignementBloc =  sl<WorkstationAssignementBloc>();
+    _workstationAssignementBloc = sl<WorkstationAssignementBloc>();
   }
 
   @override
@@ -102,42 +102,77 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
     return list;
   }
 
-  ListView _buildAssignableResourcesList() {
-    return ListView.builder(physics:ScrollPhysics() ,scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-        itemCount: widget.assignableUsers.length,
-        itemBuilder: (BuildContext context, int index) {
-          var item = widget.assignableUsers[index];
-          if (item.workstation.hasMoreForCurrentMoth) {
-            return ExpansionTile(
-              initiallyExpanded: false,
-              onExpansionChanged: _fetchPresencesToEndOfMonth(item),
-              key: PageStorageKey<UserWithWorkstation>(item),
-              title: Text(item.getResourceLabel()),
-              children: [
-                BlocBuilder(
-                    cubit: _workstationAssignementBloc,
-                    builder: (context, state) {
-                      if (state is PresencesToEndOfMonthLoadingState) {
-                        return Center(child: CircularLoading());
-                      } else if (state is PresencesToEndOfMonthCompleteState) {
-                        var presencesToEndOfMonth = state.presencesToEndOfMonth;
-                        return Column(children: [
-                          _buildCheckBox(presencesToEndOfMonth),
-                          Container()
-                        ]);
-                      } else
-                        return Container();
-                    })
-              ],
-            );
-          } else {
-            return ListTile(
-              title: Text(item.getResourceLabel()),
-              onTap: () => print("ListTile: ${item.getResourceLabel()}"),
-            );
-          }
-        });
+  Widget _buildAssignableResourcesList() {
+    return Expanded(
+      child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          itemCount: widget.assignableUsers.length,
+          itemBuilder: (BuildContext context, int index) {
+            var item = widget.assignableUsers[index];
+            if (item.workstation.hasMoreForCurrentMoth) {
+              return _buildExpansionTile(item);
+            } else {
+              return _buildSimpleTile(item);
+            }
+          }),
+    );
+  }
+
+  ListTile _buildSimpleTile(UserWithWorkstation item) {
+    return ListTile(
+      title: Text(item.getResourceLabel()),
+      onTap: () => print("ListTile: ${item.getResourceLabel()}"),
+    );
+  }
+
+  ExpansionTile _buildExpansionTile(UserWithWorkstation item) {
+    return ExpansionTile(
+      maintainState: false,
+      onExpansionChanged: (isExpanded){
+        if(isExpanded) {
+            expandedItemIndex = item.workstation.idWorkstation;
+          return _fetchPresencesToEndOfMonth(item);
+        } else {
+          expandedItemIndex = null;
+          return _clearPresencesFetched();
+        }
+      },
+      initiallyExpanded:false,
+      title: Text(item.getResourceLabel()),
+      children: [
+        BlocBuilder(
+            cubit: _workstationAssignementBloc,
+            builder: (context, state) {
+              if (state is PresencesToEndOfMonthErrorState) {
+                return Text('ERROR');
+              } else if (state is PresencesToEndOfMonthCompleteState) {
+                var presencesToEndOfMonth = state.presencesToEndOfMonth;
+                return Column(children: [
+                  ..._buildCheckBox(presencesToEndOfMonth),
+                  MaterialButton(onPressed: (){},color: Colors.blue,child: Text('conferma'),)
+                ]);
+              } else {
+                return CircularLoading();
+              }
+            })
+      ],
+    );
+  }
+
+  List<Widget> _buildCheckBox(List<Workstation> presencesToEndOfMonth) {
+    return List.generate(
+      presencesToEndOfMonth.length,
+      (index) {
+        var item = presencesToEndOfMonth[index];
+        return CheckboxListTile(
+            title:
+                Text(DateFormat.yMMMMd('en_US').format(item.workstationDate)),
+            value: true,
+            onChanged: (value) {
+              print(value.toString());
+            });
+      },
+    );
   }
 
   _fetchPresencesToEndOfMonth(UserWithWorkstation item) {
@@ -150,25 +185,8 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
       ),
     );
   }
-
-  ListView _buildCheckBox(List<Workstation> presencesToEndOfMonth) {
-    return ListView(
-        children: List.generate(
-          presencesToEndOfMonth.length,
-              (index) {
-            var item = presencesToEndOfMonth[index];
-            return CheckboxListTile(
-                title:
-                Text(DateFormat.yMMMMd('en_US').format(item.workstationDate)),
-                value: true,
-                onChanged: (value) {
-                  print(value.toString());
-                });
-          },
-        ));
-  }
+   _clearPresencesFetched() {}
 }
-
 /*
 
   Widget _buildAssignableResourcesList() {
