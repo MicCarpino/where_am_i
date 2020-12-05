@@ -41,14 +41,14 @@ class _DeskState extends State<Desk> {
     super.initState();
     _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
     loggedUser = sl<UserService>().getLoggedUser;
-    isDeskOfLoggedUser = widget.allUsersWithWorkstation?.any(
-        (element) => element.workstation.idResource == loggedUser.idResource);
     String newCodeWorkstation = WorkstationCodesConverter()
-        .convertNewToOldWorkstationCode( widget.workstationCode);
-    workstationsForDesk =  widget.allUsersWithWorkstation
+        .convertNewToOldWorkstationCode(widget.workstationCode);
+    workstationsForDesk = widget.allUsersWithWorkstation
         .where((element) =>
-    element.workstation?.codeWorkstation == newCodeWorkstation)
+            element.workstation?.codeWorkstation == newCodeWorkstation)
         .toList();
+    isDeskOfLoggedUser = workstationsForDesk?.any(
+        (element) => element.workstation.idResource == loggedUser.idResource);
     resourceLabel = _getResourceLabel();
   }
 
@@ -56,7 +56,8 @@ class _DeskState extends State<Desk> {
   Widget build(BuildContext context) {
     return Container(
       child: CustomPaint(
-          painter: WorkstationMarker(workstationsForDesk?.map((e) => e.workstation)?.toList()??[]),
+          painter: WorkstationMarker(
+              workstationsForDesk?.map((e) => e.workstation)?.toList() ?? []),
           child: FlatButton(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
@@ -89,11 +90,14 @@ class _DeskState extends State<Desk> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => AssignableUsersPage(
-            assignableUsers: widget.allUsersWithWorkstation
-                .where((element) => element.workstation.codeWorkstation == null)
-                .toList(),
-            selectedWorkstationCode: widget.workstationCode.toString(),
+          builder: (newContext) => BlocProvider.value( value: _workstationBloc,
+            child: AssignableUsersPage(
+              usersAssignedToWorkstation: workstationsForDesk,
+              assignableUsers: widget.allUsersWithWorkstation
+                  .where((element) => element.workstation.codeWorkstation == null)
+                  .toList(),
+              selectedWorkstationCode: widget.workstationCode.toString(),
+            ),
           ),
         ),
       ).then((selectedWorkstation) {
@@ -157,7 +161,7 @@ class _DeskState extends State<Desk> {
     if (workstationsForDesk == null || workstationsForDesk.isEmpty) {
       return null;
     } else if (workstationsForDesk.length == 1) {
-      UserWithWorkstation userWithWorkstation =workstationsForDesk.first;
+      UserWithWorkstation userWithWorkstation = workstationsForDesk.first;
       if (userWithWorkstation.user != null) {
         return '${userWithWorkstation.user.surname.toUpperCase()} ${userWithWorkstation.user.name.toUpperCase()}';
       } else if (userWithWorkstation.workstation?.freeName != null) {

@@ -27,6 +27,9 @@ abstract class RemoteDataSource {
   Future<List<WorkstationModel>> getAllWorkstationsByIdResource(
       String token, String idResource);
 
+  Future<List<WorkstationModel>> getAllWorkstationsByIdResourceToEndOfMonth(
+      String token, String idResource, String date);
+
   Future<WorkstationModel> insertWorkstation(
       String token, WorkstationModel workstation);
 
@@ -101,6 +104,24 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       String token, String idResource) async {
     var uri =
         Uri.https(BASE_URL, '/WhereAmI/workstation/byIdResource/$idResource');
+    final response = await http.get(uri, headers: {
+      HttpHeaders.authorizationHeader: token,
+      HttpHeaders.contentTypeHeader: 'application/json'
+    }).timeout(HTTP_TIMEOUT);
+    if (response.statusCode == 200) {
+      List<dynamic> workstationsList = json.decode(response.body);
+      return List<WorkstationModel>.from(
+          workstationsList.map((e) => WorkstationModel.fromJson(e)));
+    } else {
+      throw failureResult(response);
+    }
+  }
+
+  @override
+  Future<List<WorkstationModel>> getAllWorkstationsByIdResourceToEndOfMonth(
+      String token, String idResource, String date) async {
+    var uri = Uri.https(BASE_URL,
+        '/WhereAmI/workstation//byIdResourceToEndOfMonth/$idResource/$date');
     final response = await http.get(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'

@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
+import 'package:where_am_i/core/usecases/usecase.dart';
 
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
+import 'package:where_am_i/domain/usecases/get_all_user_presences_to_end_of_month.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_date.dart';
 import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
 
@@ -26,6 +28,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
         assert(updateWorkstation != null),
         assert(userService != null),
         getWorkstationsByDate = getWorkstationsByDate,
+
         _updateWorkstation = updateWorkstation,
         _userService = userService,
         super(WorkstationInitial());
@@ -34,9 +37,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
       List<UserWithWorkstation>();
 
   @override
-  Stream<WorkstationState> mapEventToState(
-    WorkstationEvent event,
-  ) async* {
+  Stream<WorkstationState> mapEventToState(WorkstationEvent event) async* {
     if (event is FetchWorkstationsLists) {
       yield* _fetchWorkstationsList(event.dateToFetch);
     } else if (event is OnWorkstationUpdate) {
@@ -69,9 +70,9 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
             element.workstation.idResource ==
             _userService.loggedUser.idResource,
         orElse: () => null);
-    if (workstationForCurrentDay != null) {
+    if (workstationForCurrentDay?.workstation?.codeWorkstation != null) {
       int workstationCodeForCurrentDay =
-          int.tryParse(workstationForCurrentDay?.workstation?.codeWorkstation);
+          int.tryParse(workstationForCurrentDay.workstation.codeWorkstation);
       _userService.setAssignedWorkstationCode(workstationCodeForCurrentDay);
     }
   }

@@ -57,6 +57,23 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
+  Future<Either<Failure, List<Workstation>>>
+      getAllWorkstationsByIdResourceToEndOfMonth(
+          String idResource, String date) async {
+    try {
+      var loggedUser = await localDataSource.getCachedUser();
+      final userPresencesToEndOfMonth =
+          await remoteDataSource.getAllWorkstationsByIdResourceToEndOfMonth(
+              loggedUser.authenticationToken, idResource, date);
+      return Right(userPresencesToEndOfMonth);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, Workstation>> insertWorkstation(
       Workstation workstation) async {
     try {
@@ -88,11 +105,12 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, Workstation>> updateWorkstationStatus(WorkstationStatusParameters workstationStatusParameters)  async {
+  Future<Either<Failure, Workstation>> updateWorkstationStatus(
+      WorkstationStatusParameters workstationStatusParameters) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final statusUpdateResult = await remoteDataSource.updateWorkstationStatus(
-          loggedUser.authenticationToken,workstationStatusParameters);
+          loggedUser.authenticationToken, workstationStatusParameters);
       return Right(statusUpdateResult);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
@@ -114,5 +132,4 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       return Left(UnexpectedFailure(e.toString()));
     }
   }
-
 }

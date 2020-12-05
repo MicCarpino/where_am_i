@@ -11,6 +11,9 @@ abstract class WorkstationRepository {
   Future<Either<Failure, List<Workstation>>> getAllWorkstationsByIdResource(
       int idResource);
 
+  Future<Either<Failure, List<Workstation>>>
+      getAllWorkstationsByIdResourceToEndOfMonth(String idResource, String date);
+
   List<Workstation> getCachedPresences();
 
   Future<Either<Failure, Workstation>> insertWorkstation(

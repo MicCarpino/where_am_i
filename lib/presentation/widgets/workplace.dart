@@ -54,63 +54,28 @@ class WorkplaceBuilder extends StatelessWidget {
       bool allowChangesForCurrentDate) {
     switch (room) {
       case Rooms.room_26B:
-        var room26BWorkstations = usersWithWorkstations.where((element) {
-          if (element.workstation.codeWorkstation != null) {
-            int parsedCode = int.tryParse(element.workstation.codeWorkstation);
-            return parsedCode >= 1 && parsedCode <= 18;
-          }
-          return false;
-        }).toList();
         return Room26B(
-          workstations: room26BWorkstations ?? [],
+          workstations: usersWithWorkstations ?? [],
           allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
       case Rooms.room_26A_Floor1:
-        var room26AF1Workstations = usersWithWorkstations.where((element) {
-          if (element.workstation.codeWorkstation != null) {
-            int parsedCode = int.tryParse(element.workstation.codeWorkstation);
-            return parsedCode >= 76 && parsedCode <= 91;
-          }
-          return false;
-        }).toList();
         return Room26AF1(
-          workstations: room26AF1Workstations ?? [],
+          workstations: usersWithWorkstations ?? [],
           allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
       case Rooms.room_26A_Floor2:
-        var room26AF2Workstations = usersWithWorkstations.where((element) {
-          if (element.workstation.codeWorkstation != null) {
-            int parsedCode = int.tryParse(element.workstation.codeWorkstation);
-            return parsedCode >= 50 && parsedCode <= 75;
-          }
-          return false;
-        }).toList();
         return Room26AF2(
-          workstations: room26AF2Workstations ?? [],
+          workstations: usersWithWorkstations ?? [],
           allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
       case Rooms.room_24:
-        var room26AF2Workstations = usersWithWorkstations.where((element) {
-          if (element.workstation.codeWorkstation != null) {
-            int parsedCode = int.tryParse(element.workstation.codeWorkstation);
-            return parsedCode >= 19 && parsedCode <= 34;
-          }
-          return false;
-        }).toList();
         return Room24(
-          workstations: room26AF2Workstations ?? [],
+          workstations: usersWithWorkstations ?? [],
           allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
       case Rooms.room_staff:
-        var roomStaffWorkstations = usersWithWorkstations.where((element) {
-          if (element.workstation.codeWorkstation != null) {
-            int parsedCode = int.tryParse(element.workstation.codeWorkstation);
-            return parsedCode >= 43 && parsedCode <= 49;
-          }
-          return false;
-        }).toList();
         return RoomStaff(
-          workstations: roomStaffWorkstations ?? [],
+          workstations: usersWithWorkstations ?? [],
           allowChangesForCurrentDate: allowChangesForCurrentDate,
         );
     }

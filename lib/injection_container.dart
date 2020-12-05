@@ -12,6 +12,7 @@ import 'package:where_am_i/domain/repositories/reservation_repository.dart';
 import 'package:where_am_i/domain/repositories/auth_repository.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
+import 'package:where_am_i/domain/usecases/get_all_user_presences_to_end_of_month.dart';
 import 'package:where_am_i/domain/usecases/get_workstations_by_date.dart';
 import 'package:where_am_i/domain/usecases/perform_log_in.dart';
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
@@ -37,6 +38,7 @@ import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/my_presences/my_presences_bloc.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/presences_management_bloc.dart';
 import 'package:where_am_i/presentation/bloc/users_management/users_management_bloc.dart';
+import 'package:where_am_i/presentation/bloc/workstation_assignment/workstation_assignement_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -49,6 +51,9 @@ Future<void> init() async {
         getWorkstationsByDate: sl(),
         updateWorkstation: sl(),
         userService: sl(),
+      ));
+  sl.registerFactory(() => WorkstationAssignementBloc(
+        getAllUserPresencesToEndOfMonth: sl(),
       ));
   sl.registerFactory(() => ReservationsBloc(
         getReservations: sl(),
@@ -63,7 +68,7 @@ Future<void> init() async {
         insertUserPresence: sl(),
         updateUserPresence: sl(),
         removeUserPresence: sl(),
-        updateUserPresenceStatus:sl(),
+        updateUserPresenceStatus: sl(),
       ));
   sl.registerFactory(() => MyPresencesBloc(
         getUserPresences: sl(),
@@ -85,6 +90,7 @@ Future<void> init() async {
   //Workstation
   sl.registerLazySingleton(() => GetWorkstationsByDate(sl(), sl()));
   sl.registerLazySingleton(() => GetAllUserPresencesByDate(sl(), sl()));
+  sl.registerLazySingleton(() => GetAllUserPresencesToEndOfMonth(sl()));
   sl.registerLazySingleton(() => UpdateWorkstation(sl()));
   sl.registerLazySingleton(() => UpdateWorkstationStatus(sl()));
   sl.registerLazySingleton(() => GetUserPresences(sl(), sl()));

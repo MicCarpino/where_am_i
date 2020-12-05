@@ -44,3 +44,14 @@ class WorkstationStatusParameters extends Equatable {
   @override
   List<Object> get props => [idWorkstation, status];
 }
+
+class PresencesToEndOfMonthParameters extends Equatable {
+  final String idResource;
+  final String startingDate;
+
+  PresencesToEndOfMonthParameters(
+      {@required this.idResource, @required this.startingDate});
+
+  @override
+  List<Object> get props => [idResource, startingDate];
+}
