@@ -55,21 +55,6 @@ extension DateTimeToZero on DateTime {
   }
 }
 
-extension UserWithWorkstationResourceLabel on UserWithWorkstation {
-  String getResourceLabel() {
-    String label;
-    if (this.user != null) {
-      label = "${this.user.surname} ${this.user.name}";
-    } else if (this.workstation.freeName != null) {
-      label = this.workstation.freeName;
-    } else {
-      label = "N/A";
-    }
-    return label;
-  }
-}
-
-
 extension UserWithWorkstationListSorter on List<UserWithWorkstation> {
   List<UserWithWorkstation> sortBySurnameAndName() {
     this.sort((a, b) {
