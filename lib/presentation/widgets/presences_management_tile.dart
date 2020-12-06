@@ -3,14 +3,14 @@ import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 
-class CustomListItem extends StatelessWidget {
+class PresencesManagementTile extends StatelessWidget {
   final UserWithWorkstation userWithWorkstation;
   final Function() onSingleClick;
   final Function() onLongClick;
   final Function(WorkstationStatusParameters newStatusParams)
       onStatusButtonClick;
 
-  const CustomListItem({
+  const PresencesManagementTile({
     @required this.userWithWorkstation,
     @required this.onSingleClick,
     @required this.onLongClick,
@@ -35,6 +35,7 @@ class CustomListItem extends StatelessWidget {
   Widget _buildResourceSection(BuildContext context) {
     return Expanded(
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: onSingleClick,
         onLongPress: onLongClick,
         child: Container(
@@ -56,9 +57,7 @@ class CustomListItem extends StatelessWidget {
 
   Widget _buildNameSection() {
     return Text(
-      userWithWorkstation.user != null
-          ? "${userWithWorkstation.user?.surname} ${userWithWorkstation.user?.name}"
-          : userWithWorkstation.workstation.freeName,
+      userWithWorkstation.getResourceLabel(),
       style: TextStyle(
           color: userWithWorkstation.workstation != null
               ? Colors.black

@@ -148,7 +148,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         separatorBuilder: (context, index) => Divider(color: Colors.black26),
-        itemBuilder: (context, index) => CustomListItem(
+        itemBuilder: (context, index) => PresencesManagementTile(
           userWithWorkstation: presences[index],
           onSingleClick: () => _onUserClick(presences[index]),
           onLongClick: () => _onUserLongClick(presences[index]),
@@ -171,7 +171,9 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   }
 
   _onUserLongClick(UserWithWorkstation userWithWorkstation) {
-    if (userWithWorkstation.workstation == null) {
+    if (userWithWorkstation.workstation?.status == 0) {
+      return null;
+    } else if (userWithWorkstation.workstation == null) {
       //inserting workstation for full day, already confirmed
       _presencesManagementBloc.add(OnPresenceAddedByManagement(
         PresenceNewParameters(
@@ -214,27 +216,30 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   }
 
   _onUserClick(UserWithWorkstation userWithWorkstation) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return TimeSlotDialog(userWithWorkstation.workstation);
-        }).then((value) {
-      //checking if callback result contains a value
-      if (value is Tuple2<TimeOfDay, TimeOfDay>) {
-        PresenceNewParameters newParams = PresenceNewParameters(
-          date: this.visualizedDate,
-          idResource: userWithWorkstation.user?.idResource,
-          freeName: userWithWorkstation.workstation?.freeName,
-          startTime: value.item1,
-          endTime: value.item2,
-        );
-        //presence already inserted, performing update
-        _presencesManagementBloc.add(userWithWorkstation.workstation != null
-            ? OnPresenceUpdatedByManagement(
-                userWithWorkstation.workstation, newParams)
-            : OnPresenceAddedByManagement(newParams));
-      }
-    });
+    return userWithWorkstation?.workstation?.status != 0
+        ? showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return TimeSlotDialog(userWithWorkstation.workstation);
+            }).then((value) {
+            //checking if callback result contains a value
+            if (value is Tuple2<TimeOfDay, TimeOfDay>) {
+              PresenceNewParameters newParams = PresenceNewParameters(
+                date: this.visualizedDate,
+                idResource: userWithWorkstation.user?.idResource,
+                freeName: userWithWorkstation.workstation?.freeName,
+                startTime: value.item1,
+                endTime: value.item2,
+              );
+              //presence already inserted, performing update
+              _presencesManagementBloc.add(
+                  userWithWorkstation.workstation != null
+                      ? OnPresenceUpdatedByManagement(
+                          userWithWorkstation.workstation, newParams)
+                      : OnPresenceAddedByManagement(newParams));
+            }
+          })
+        : null;
   }
 
   _onStatusChange(WorkstationStatusParameters newStatusParams) {
