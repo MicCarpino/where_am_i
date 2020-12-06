@@ -30,13 +30,20 @@ class AssignableUsersPage extends StatefulWidget {
 }
 
 class _AssignableUsersPageState extends State<AssignableUsersPage> {
-  WorkstationAssignementBloc _workstationAssignmentBloc ;
+
+  WorkstationAssignementBloc _workstationAssignmentBloc;
+
+  WorkstationBloc _workstationBloc;
+
   ValueNotifier<Key> _expanded = ValueNotifier(null);
+
+  Map<Workstation, bool> _userPresences = new Map<Workstation, bool>() ;
 
   @override
   void initState() {
     super.initState();
     _workstationAssignmentBloc = sl<WorkstationAssignementBloc>();
+    _workstationBloc = sl<WorkstationBloc>();
   }
 
   @override
@@ -128,6 +135,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
 
   CustomExpansionTile _buildExpansionTile(UserWithWorkstation item) {
     return CustomExpansionTile(
+      onHeaderClick:()=>print('header click') ,
       expansionCallback: (hasExpanded) {
         if (hasExpanded) {
           _fetchPresencesToEndOfMonth(item);
@@ -146,8 +154,11 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                 return Text('ERROR');
               } else if (state is PresencesToEndOfMonthCompleteState) {
                 var presencesToEndOfMonth = state.presencesToEndOfMonth;
+                state.presencesToEndOfMonth.forEach((element) {
+                  _userPresences.putIfAbsent(element, () => true);
+                });
                 return Column(children: [
-                  ..._buildCheckBox(presencesToEndOfMonth),
+                  ..._buildCheckBoxList(presencesToEndOfMonth),
                   MaterialButton(
                     onPressed: () {},
                     color: Colors.blue,
@@ -162,17 +173,19 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
     );
   }
 
-  List<Widget> _buildCheckBox(List<Workstation> presencesToEndOfMonth) {
+  List<Widget> _buildCheckBoxList(List<Workstation> presencesToEndOfMonth) {
     return List.generate(
-      presencesToEndOfMonth.length,
+      _userPresences.length,
       (index) {
-        var item = presencesToEndOfMonth[index];
+        Workstation item = _userPresences.keys.elementAt(index);
         return CheckboxListTile(
             title:
                 Text(DateFormat.yMMMMd('en_US').format(item.workstationDate)),
-            value: true,
-            onChanged: (value) {
-              print(value.toString());
+            value: _userPresences.values.elementAt(index),
+            onChanged: (newValue) {
+              setState(() {
+                _userPresences[item] = newValue ;
+              });
             });
       },
     );
@@ -191,6 +204,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
   }
 
   _clearPresencesFetched() {
+    _userPresences.clear();
     print('_clearPresencesFetched invoked');
   }
 }
