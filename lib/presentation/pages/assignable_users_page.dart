@@ -55,15 +55,15 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
             if (state is WorkstationsFetchCompletedState) {
               var occupants = state.usersWithWorkstations
                   .where((element) =>
-                      element.workstation.codeWorkstation ==
-                      widget.selectedWorkstationCode)
+              element.workstation.codeWorkstation ==
+                  widget.selectedWorkstationCode)
                   .toList();
               var unassignedResources = state.usersWithWorkstations
                   .where(
                       (element) => element.workstation.codeWorkstation == null)
                   .toList();
               var assignableResources =
-                  _filterAssignableResources(occupants, unassignedResources);
+              _filterAssignableResources(occupants, unassignedResources);
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -91,8 +91,8 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
         ));
   }
 
-  List<Widget> _buildOccupantsList(
-      BuildContext context, List<UserWithWorkstation> occupants) {
+  List<Widget> _buildOccupantsList(BuildContext context,
+      List<UserWithWorkstation> occupants) {
     List<Widget> list = [];
     if (occupants.isNotEmpty) {
       list.add(Padding(
@@ -107,19 +107,21 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
       var workstation = occupants[index].workstation;
       list.add(
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            '${workstation.startTime.format(context)} - ${workstation.endTime.format(context)} ${occupants[index].getResourceLabel()}',
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        IconButton(
-          icon: Icon(Icons.highlight_remove),
-          onPressed: () => _clearWorkstation(workstation),
-          color: Colors.grey,
-        )
-      ]));
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                '${workstation.startTime.format(context)} - ${workstation
+                    .endTime.format(context)} ${occupants[index]
+                    .getResourceLabel()}',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.highlight_remove),
+              onPressed: () => _clearWorkstation(workstation),
+              color: Colors.grey,
+            )
+          ]));
       if (index + 1 != occupants.length) {
         list.add(Divider());
       }
@@ -171,7 +173,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
 
   ListTile _buildSimpleTile(UserWithWorkstation item) {
     return ListTile(
-      title: Text(item.getResourceLabel()),
+      title: Text(item.getResourceLabel()), subtitle:_buildTimeSlotLabel(item.workstation),
       onTap: () => _performSingleAssignment(item.workstation),
     );
   }
@@ -185,6 +187,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
           _fetchPresencesToEndOfMonth(item);
         }
       },
+      subtitleWidget: _buildTimeSlotLabel(item.workstation),
       expandedItem: _expanded,
       key: Key(item.workstation.idWorkstation.toString()),
       title: Text(item.getResourceLabel()),
@@ -203,31 +206,31 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                   ..._buildCheckBoxList(presencesToEndOfMonth),
                   isUpdating
                       ? CircularLoading(
-                          width: 50,
-                          height: 50,
-                        )
+                    width: 50,
+                    height: 50,
+                  )
                       : FlatButton(
-                          onPressed: () {
-                            List<Workstation> workstationsToAssign =
-                                _userPresencesChecked.entries.map((e) {
-                              if (e.value) {
-                                return e.key.assignWorkstationCode(
-                                    widget.selectedWorkstationCode);
-                              }
-                            }).toList();
-                            workstationsToAssign
-                                .retainWhere((element) => element != null);
-                            _workstationBloc.add(OnMultipleWorkstationsUpdate(
-                                updatedWorkstations: workstationsToAssign));
-                          },
-                          child: Text(
-                            'CONFERMA',
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              side: BorderSide(color: Colors.blue)),
-                        )
+                    onPressed: () {
+                      List<Workstation> workstationsToAssign =
+                      _userPresencesChecked.entries.map((e) {
+                        if (e.value) {
+                          return e.key.assignWorkstationCode(
+                              widget.selectedWorkstationCode);
+                        }
+                      }).toList();
+                      workstationsToAssign
+                          .retainWhere((element) => element != null);
+                      _workstationBloc.add(OnMultipleWorkstationsUpdate(
+                          updatedWorkstations: workstationsToAssign));
+                    },
+                    child: Text(
+                      'CONFERMA',
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: BorderSide(color: Colors.blue)),
+                  )
                 ]);
               } else {}
               return CircularLoading();
@@ -239,11 +242,11 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
   List<Widget> _buildCheckBoxList(List<Workstation> presencesToEndOfMonth) {
     return List.generate(
       _userPresencesChecked.length,
-      (index) {
+          (index) {
         Workstation item = _userPresencesChecked.keys.elementAt(index);
         return CheckboxListTile(
             title:
-                Text(DateFormat.yMMMMd('en_US').format(item.workstationDate)),
+            Text(DateFormat.yMMMMd('en_US').format(item.workstationDate)),
             value: _userPresencesChecked.values.elementAt(index),
             onChanged: (newValue) {
               setState(() {
@@ -256,7 +259,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
 
   _fetchPresencesToEndOfMonth(UserWithWorkstation item) {
     String formattedDate =
-        DateFormat('yyyy-MM-dd').format(item.workstation.workstationDate);
+    DateFormat('yyyy-MM-dd').format(item.workstation.workstationDate);
     _workstationAssignmentBloc.add(
       OnUserPresencesToEndOfMonthRequest(
         presencesToEndOfMonthParameters: PresencesToEndOfMonthParameters(
@@ -271,7 +274,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
 
   _performSingleAssignment(Workstation workstation) {
     Workstation updatedWorkstation =
-        workstation.assignWorkstationCode(widget.selectedWorkstationCode);
+    workstation.assignWorkstationCode(widget.selectedWorkstationCode);
     _workstationBloc
         .add(OnSingleWorkstationUpdate(workstation: updatedWorkstation));
   }
@@ -286,17 +289,28 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
       List<UserWithWorkstation> occupants,
       List<UserWithWorkstation> allWorkstations) {
     if (occupants.isNotEmpty) {
-      allWorkstations.removeWhere((element) => occupants.any((occupant) =>
+      allWorkstations.removeWhere((element) =>
+          occupants.any((occupant) =>
           element.workstation.startTime == occupant.workstation.startTime ||
-          element.workstation.endTime == occupant.workstation.endTime));
+              element.workstation.endTime == occupant.workstation.endTime));
     }
     var freeNames = allWorkstations
         .where((element) => element.workstation.freeName != null)
         .toList();
     var resources =
-        allWorkstations.where((element) => element.user != null).toList();
+    allWorkstations.where((element) => element.user != null).toList();
     freeNames.sortByFreeName();
     resources.sortBySurnameAndName();
-    return List()..addAll(freeNames)..addAll(resources);
+    return List()
+      ..addAll(freeNames)..addAll(resources);
+  }
+
+  Widget _buildTimeSlotLabel(Workstation workstation) {
+    TimeOfDay startTime = workstation.startTime ?? TIME_SLOT_NINE;
+    TimeOfDay endTime = workstation.endTime ?? TIME_SLOT_EIGHTEEN;
+    return Text(
+      "${startTime.format(context)} - ${endTime.format(context)}",
+      style: TextStyle(color: Colors.black54, fontSize: 14),
+    );
   }
 }

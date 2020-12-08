@@ -13,6 +13,7 @@ class CustomExpansionTile extends StatefulWidget {
     @required this.expandedItem,
     @required this.expansionCallback,
     @required this.onHeaderClick,
+    this.subtitleWidget,
   }) : super(key: key);
 
   /// A widget to display before the title.
@@ -24,6 +25,8 @@ class CustomExpansionTile extends StatefulWidget {
   ///
   /// Typically a [Text] widget.
   final Widget title;
+
+  final Widget subtitleWidget;
 
   /// The widgets that are displayed when the tile expands.
   ///
@@ -142,9 +145,10 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
             iconColor: _iconColor.value,
             textColor: _headerColor.value,
             child: ListTile(
-              onTap:() => _isExpanded? null: widget.onHeaderClick(),
+              onTap: () => _isExpanded ? null : widget.onHeaderClick(),
               leading: widget.leading,
-              title:  widget.title,
+              title: widget.title,
+              subtitle: widget.subtitleWidget,
               trailing: InkWell(
                 onTap: _onExpansionIconClick,
                 child: Container(
