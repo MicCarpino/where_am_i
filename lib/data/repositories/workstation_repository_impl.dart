@@ -105,6 +105,22 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
+  Future<Either<Failure, List<Workstation>>> updateAllWorkstations(
+      List<Workstation> updatedWorkstations) async {
+    try {
+      var loggedUser = await localDataSource.getCachedUser();
+      final updateResult = await remoteDataSource.updateAllWorkstations(
+          loggedUser.authenticationToken,
+          updatedWorkstations.map((e) => e.toWorkstationModel()).toList());
+      return Right(updateResult);
+    } on ServerException catch (error) {
+      return Left(ServerFailure(error.errorMessage));
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, Workstation>> updateWorkstationStatus(
       WorkstationStatusParameters workstationStatusParameters) async {
     try {

@@ -36,6 +36,12 @@ abstract class RemoteDataSource {
   Future<WorkstationModel> updateWorkstation(
       String token, WorkstationModel updatedWorkstation);
 
+  Future<List<WorkstationModel>> updateAllWorkstations(
+      String token, List<WorkstationModel> list);
+
+  Future<WorkstationModel> updateWorkstationStatus(
+      String token, WorkstationStatusParameters workstationStatusParameters);
+
   Future<void> deleteWorkstation(String token, int idWorkstation);
 
   //RESERVATIONS
@@ -43,15 +49,12 @@ abstract class RemoteDataSource {
       String token, DateTime date);
 
   Future<ReservationModel> insertReservation(
-      String authenticationToken, ReservationModel reservationModel);
+      String token, ReservationModel reservationModel);
 
   Future<ReservationModel> updateReservation(
-      String authenticationToken, ReservationModel reservation);
+      String token, ReservationModel reservation);
 
-  Future<void> deleteReservation(String authenticationToken, int idReservation);
-
-  Future<WorkstationModel> updateWorkstationStatus(String authenticationToken,
-      WorkstationStatusParameters workstationStatusParameters);
+  Future<void> deleteReservation(String token, int idReservation);
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
@@ -175,6 +178,29 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
+  Future<List<WorkstationModel>> updateAllWorkstations(
+      String token, List<WorkstationModel> list) async {
+    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/updateAll');
+    var body = json.encode(
+        list.map((workstationModel) => workstationModel.toJson()).toList());
+    final response = await http
+        .put(uri,
+            headers: {
+              HttpHeaders.authorizationHeader: token,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: body)
+        .timeout(HTTP_TIMEOUT);
+    if (response.statusCode == 200) {
+      List<dynamic> workstationsList = json.decode(response.body);
+      return List<WorkstationModel>.from(
+          workstationsList.map((e) => WorkstationModel.fromJson(e)));
+    } else {
+      throw failureResult(response);
+    }
+  }
+
+  @override
   Future<WorkstationModel> updateWorkstationStatus(String token,
       WorkstationStatusParameters workstationStatusParameters) async {
     var uri = Uri.https(BASE_URL,
@@ -254,11 +280,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<ReservationModel> insertReservation(
-      String authenticationToken, ReservationModel reservationModel) async {
+      String token, ReservationModel reservationModel) async {
     var uri = Uri.https(
         BASE_URL, '/WhereAmI/reservation', reservationModel.toQueryParams());
     final response = await http.post(uri, headers: {
-      HttpHeaders.authorizationHeader: authenticationToken,
+      HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
     }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
@@ -270,14 +296,14 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<ReservationModel> updateReservation(
-      String authenticationToken, ReservationModel reservation) async {
+      String token, ReservationModel reservation) async {
     var uri = Uri.https(
       BASE_URL,
       '/WhereAmI/reservation/${reservation.idReservation}',
       reservation.toQueryParams(),
     );
     final response = await http.put(uri, headers: {
-      HttpHeaders.authorizationHeader: authenticationToken,
+      HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
     }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
@@ -288,11 +314,10 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<void> deleteReservation(
-      String authenticationToken, int idReservation) async {
+  Future<void> deleteReservation(String token, int idReservation) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/reservation/$idReservation');
     final response = await http.delete(uri, headers: {
-      HttpHeaders.authorizationHeader: authenticationToken,
+      HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
     }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {

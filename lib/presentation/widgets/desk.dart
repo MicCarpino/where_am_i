@@ -35,13 +35,14 @@ class _DeskState extends State<Desk> {
   bool isDeskOfLoggedUser;
   String resourceLabel;
   List<UserWithWorkstation> workstationsForDesk;
+  String newCodeWorkstation;
 
   @override
   void initState() {
     super.initState();
     _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
     loggedUser = sl<UserService>().getLoggedUser;
-    String newCodeWorkstation = WorkstationCodesConverter()
+    newCodeWorkstation = WorkstationCodesConverter()
         .convertNewToOldWorkstationCode(widget.workstationCode);
     workstationsForDesk = widget.allUsersWithWorkstation
         .where((element) =>
@@ -90,21 +91,15 @@ class _DeskState extends State<Desk> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (newContext) => BlocProvider.value( value: _workstationBloc,
+          builder: (newContext) => BlocProvider.value(
+            value: _workstationBloc,
             child: AssignableUsersPage(
-              usersAssignedToWorkstation: workstationsForDesk,
-              assignableUsers: widget.allUsersWithWorkstation
-                  .where((element) => element.workstation.codeWorkstation == null)
-                  .toList(),
-              selectedWorkstationCode: widget.workstationCode.toString(),
+              selectedWorkstationCode: newCodeWorkstation,
             ),
           ),
         ),
       ).then((selectedWorkstation) {
-        if (selectedWorkstation != null) {
-          _workstationBloc
-              .add(OnWorkstationUpdate(workstation: selectedWorkstation));
-        }
+          _workstationBloc.add(GetLastWorkstationsList());
       });
     } else if (widget.allUsersWithWorkstation.length > 1) {
       showDialog(

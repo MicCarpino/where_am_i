@@ -22,9 +22,9 @@ class Workstation extends Equatable {
     @required this.codeWorkstation,
     @required this.startTime,
     @required this.endTime,
-    this.status,
+    @required this.status,
     this.hasMoreForCurrentMoth,
-  });
+  }) : assert(idResource != null || freeName != null);
 
   @override
   List<Object> get props => [
@@ -50,4 +50,16 @@ class Workstation extends Equatable {
         status: status,
         hasMoreForCurrentMoth: hasMoreForCurrentMoth,
       );
+
+  Workstation assignWorkstationCode(String workstationCode) {
+    return Workstation(
+        idWorkstation: this.idWorkstation,
+        idResource: this.idResource,
+        workstationDate: this.workstationDate,
+        freeName: this.freeName,
+        codeWorkstation: workstationCode,
+        startTime: this.startTime,
+        endTime: this.endTime,
+        status: this.status);
+  }
 }

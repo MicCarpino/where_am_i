@@ -20,12 +20,6 @@ class Room26B extends StatelessWidget {
         mainAxisSpacing: 0,
         crossAxisSpacing: 15,
         children: List.generate(18, (index) {
-          String newCodeWorkstation = WorkstationCodesConverter()
-              .convertNewToOldWorkstationCode( index);
-         /* var workstationsForDesk = workstations
-              .where((element) =>
-                  element.workstation.codeWorkstation == newCodeWorkstation)
-              .toList();*/
           return Desk(
             allUsersWithWorkstation: workstations,
             workstationCode: index,

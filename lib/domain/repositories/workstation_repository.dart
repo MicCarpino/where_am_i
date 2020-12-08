@@ -22,6 +22,9 @@ abstract class WorkstationRepository {
   Future<Either<Failure, Workstation>> updateWorkstation(
       Workstation updatedWorkstation);
 
+  Future<Either<Failure, List<Workstation>>> updateAllWorkstations(
+      List<Workstation> updatedWorkstations);
+
   Future<Either<Failure, int>> deleteWorkstation(int idWorkstation);
 
   Future<Either<Failure, Workstation>> updateWorkstationStatus(

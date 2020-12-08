@@ -17,8 +17,18 @@ class OnWorkstationUpdate extends WorkstationEvent {
   });
 }
 
+class OnMultipleWorkstationsUpdate  extends WorkstationEvent {
+  final List<Workstation> updatedWorkstations;
+
+  OnMultipleWorkstationsUpdate({
+    @required this.updatedWorkstations,
+  });
+}
+
 class OnWorkstationLongClick extends WorkstationEvent {
   final int idWorkstation;
 
   OnWorkstationLongClick({this.idWorkstation});
 }
+
+class GetLastWorkstationsList extends WorkstationEvent {}

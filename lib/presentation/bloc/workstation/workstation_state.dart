@@ -15,3 +15,13 @@ class WorkstationsFetchCompletedState extends WorkstationState {
 
 class WorkstationsFetchErrorState extends WorkstationState {}
 
+class WorkstationUpdateStatusChanged extends WorkstationState {
+  final bool isLoading;
+  WorkstationUpdateStatusChanged({@required this.isLoading});
+}
+
+class WorkstationUpdateErrorState extends WorkstationState {
+  final String errorMessage;
+
+  WorkstationUpdateErrorState({@required this.errorMessage});
+}

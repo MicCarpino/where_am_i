@@ -104,7 +104,6 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
   void _changeState(bool isExpanded) {
     setState(() {
       _isExpanded = isExpanded;
-      widget.expansionCallback(_isExpanded);
       if (_isExpanded) {
         _controller.forward();
       } else {
@@ -120,6 +119,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
   }
 
   void _onExpansionIconClick() {
+    widget.expansionCallback(!_isExpanded);
     _changeState(!_isExpanded);
     widget.expandedItem.value = _isExpanded ? widget.key : null;
   }
@@ -142,7 +142,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
             iconColor: _iconColor.value,
             textColor: _headerColor.value,
             child: ListTile(
-              onTap:() => _isExpanded?null: widget.onHeaderClick(),
+              onTap:() => _isExpanded? null: widget.onHeaderClick(),
               leading: widget.leading,
               title:  widget.title,
               trailing: InkWell(
