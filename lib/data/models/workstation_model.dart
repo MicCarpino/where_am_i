@@ -15,7 +15,7 @@ class WorkstationModel extends Workstation {
     @required startTime,
     @required endTime,
     @required status,
-    @required hasMoreForCurrentMoth,
+    hasMoreForCurrentMoth,
   }) : super(
           idWorkstation: idWorkstation,
           idResource: idResource,
@@ -44,7 +44,7 @@ class WorkstationModel extends Workstation {
             ? TimeOfDay.fromDateTime(format.parse(json['endTime']))
             : TimeOfDay(hour: 18, minute: 0),
         status: json['status'] ?? 0,
-        hasMoreForCurrentMoth: json['hasMoreForCurrentMoth'] ?? null);
+        hasMoreForCurrentMoth: json['hasMoreForCurrentMoth'] ?? false);
   }
 
   Map<String, dynamic> toJson() => {

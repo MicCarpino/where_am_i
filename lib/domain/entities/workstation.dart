@@ -23,7 +23,7 @@ class Workstation extends Equatable {
     @required this.startTime,
     @required this.endTime,
     @required this.status,
-    this.hasMoreForCurrentMoth,
+    this.hasMoreForCurrentMoth = false,
   }) : assert(idResource != null || freeName != null);
 
   @override
@@ -48,7 +48,6 @@ class Workstation extends Equatable {
         startTime: startTime,
         endTime: endTime,
         status: status,
-        hasMoreForCurrentMoth: hasMoreForCurrentMoth,
       );
 
   Workstation assignWorkstationCode(String workstationCode) {

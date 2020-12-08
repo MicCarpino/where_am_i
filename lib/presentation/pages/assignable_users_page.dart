@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
@@ -52,23 +53,22 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
           cubit: _workstationBloc,
           builder: (context, state) {
             if (state is WorkstationsFetchCompletedState) {
-              List<UserWithWorkstation> list = state.usersWithWorkstations;
-              var occupants = list
+              var occupants = state.usersWithWorkstations
                   .where((element) =>
-              element.workstation.codeWorkstation ==
-                  widget.selectedWorkstationCode)
+                      element.workstation.codeWorkstation ==
+                      widget.selectedWorkstationCode)
                   .toList();
-              var assignables = list
-                  .where((element) =>
-              element.workstation.codeWorkstation == null &&
-                  element.workstation.status ==
-                      WORKSTATION_STATUS_CONFIRMED)
+              var unassignedResources = state.usersWithWorkstations
+                  .where(
+                      (element) => element.workstation.codeWorkstation == null)
                   .toList();
+              var assignableResources =
+                  _filterAssignableResources(occupants, unassignedResources);
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ..._buildOccupantsList(context, occupants),
-                    ..._buildAssignableResourcesList(assignables)
+                    ..._buildAssignableResourcesList(assignableResources)
                   ]);
             } else {
               return CircularLoading();
@@ -91,8 +91,8 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
         ));
   }
 
-  List<Widget> _buildOccupantsList(BuildContext context,
-      List<UserWithWorkstation> occupants) {
+  List<Widget> _buildOccupantsList(
+      BuildContext context, List<UserWithWorkstation> occupants) {
     List<Widget> list = [];
     if (occupants.isNotEmpty) {
       list.add(Padding(
@@ -107,21 +107,19 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
       var workstation = occupants[index].workstation;
       list.add(
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                '${workstation.startTime.format(context)} - ${workstation
-                    .endTime.format(context)} ${occupants[index]
-                    .getResourceLabel()}',
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-            IconButton(
-              icon: Icon(Icons.highlight_remove),
-              onPressed: () => print('bau'),
-              color: Colors.grey,
-            )
-          ]));
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            '${workstation.startTime.format(context)} - ${workstation.endTime.format(context)} ${occupants[index].getResourceLabel()}',
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.highlight_remove),
+          onPressed: () => _clearWorkstation(workstation),
+          color: Colors.grey,
+        )
+      ]));
       if (index + 1 != occupants.length) {
         list.add(Divider());
       }
@@ -146,7 +144,8 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
             itemCount: assignableUsers.length,
             itemBuilder: (BuildContext context, int index) {
               var item = assignableUsers[index];
-              if (item.workstation.hasMoreForCurrentMoth) {
+              if (item.workstation.hasMoreForCurrentMoth &&
+                  item.workstation.idResource != null) {
                 return _buildExpansionTile(item);
               } else {
                 return _buildSimpleTile(item);
@@ -204,31 +203,31 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                   ..._buildCheckBoxList(presencesToEndOfMonth),
                   isUpdating
                       ? CircularLoading(
-                    width: 50,
-                    height: 50,
-                  )
+                          width: 50,
+                          height: 50,
+                        )
                       : FlatButton(
-                    onPressed: () {
-                      List<Workstation> workstationsToAssign =
-                      _userPresencesChecked.entries.map((e) {
-                        if (e.value) {
-                          return e.key.assignWorkstationCode(
-                              widget.selectedWorkstationCode);
-                        }
-                      }).toList();
-                      workstationsToAssign
-                          .retainWhere((element) => element != null);
-                      _workstationBloc.add(OnMultipleWorkstationsUpdate(
-                          updatedWorkstations: workstationsToAssign));
-                    },
-                    child: Text(
-                      'CONFERMA',
-                      style: TextStyle(color: Colors.blue),
-                    ),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                        side: BorderSide(color: Colors.blue)),
-                  )
+                          onPressed: () {
+                            List<Workstation> workstationsToAssign =
+                                _userPresencesChecked.entries.map((e) {
+                              if (e.value) {
+                                return e.key.assignWorkstationCode(
+                                    widget.selectedWorkstationCode);
+                              }
+                            }).toList();
+                            workstationsToAssign
+                                .retainWhere((element) => element != null);
+                            _workstationBloc.add(OnMultipleWorkstationsUpdate(
+                                updatedWorkstations: workstationsToAssign));
+                          },
+                          child: Text(
+                            'CONFERMA',
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              side: BorderSide(color: Colors.blue)),
+                        )
                 ]);
               } else {}
               return CircularLoading();
@@ -240,11 +239,11 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
   List<Widget> _buildCheckBoxList(List<Workstation> presencesToEndOfMonth) {
     return List.generate(
       _userPresencesChecked.length,
-          (index) {
+      (index) {
         Workstation item = _userPresencesChecked.keys.elementAt(index);
         return CheckboxListTile(
             title:
-            Text(DateFormat.yMMMMd('en_US').format(item.workstationDate)),
+                Text(DateFormat.yMMMMd('en_US').format(item.workstationDate)),
             value: _userPresencesChecked.values.elementAt(index),
             onChanged: (newValue) {
               setState(() {
@@ -257,7 +256,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
 
   _fetchPresencesToEndOfMonth(UserWithWorkstation item) {
     String formattedDate =
-    DateFormat('yyyy-MM-dd').format(item.workstation.workstationDate);
+        DateFormat('yyyy-MM-dd').format(item.workstation.workstationDate);
     _workstationAssignmentBloc.add(
       OnUserPresencesToEndOfMonthRequest(
         presencesToEndOfMonthParameters: PresencesToEndOfMonthParameters(
@@ -271,10 +270,33 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
   }
 
   _performSingleAssignment(Workstation workstation) {
-    Workstation updatedWorkstation = workstation.assignWorkstationCode(
-        widget.selectedWorkstationCode);
-    _workstationBloc.add(OnSingleWorkstationUpdate(
-        workstation: updatedWorkstation
-    ));
+    Workstation updatedWorkstation =
+        workstation.assignWorkstationCode(widget.selectedWorkstationCode);
+    _workstationBloc
+        .add(OnSingleWorkstationUpdate(workstation: updatedWorkstation));
+  }
+
+  _clearWorkstation(Workstation workstation) {
+    Workstation updatedWorkstation = workstation.assignWorkstationCode(null);
+    _workstationBloc
+        .add(OnSingleWorkstationUpdate(workstation: updatedWorkstation));
+  }
+
+  List<UserWithWorkstation> _filterAssignableResources(
+      List<UserWithWorkstation> occupants,
+      List<UserWithWorkstation> allWorkstations) {
+    if (occupants.isNotEmpty) {
+      allWorkstations.removeWhere((element) => occupants.any((occupant) =>
+          element.workstation.startTime == occupant.workstation.startTime ||
+          element.workstation.endTime == occupant.workstation.endTime));
+    }
+    var freeNames = allWorkstations
+        .where((element) => element.workstation.freeName != null)
+        .toList();
+    var resources =
+        allWorkstations.where((element) => element.user != null).toList();
+    freeNames.sortByFreeName();
+    resources.sortBySurnameAndName();
+    return List()..addAll(freeNames)..addAll(resources);
   }
 }

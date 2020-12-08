@@ -58,7 +58,7 @@ extension DateTimeToZero on DateTime {
 extension UserWithWorkstationListSorter on List<UserWithWorkstation> {
   List<UserWithWorkstation> sortBySurnameAndName() {
     this.sort((a, b) {
-      int surnameResult = a.user.surname.compareTo(b.user.surname);
+      int surnameResult = a.user?.surname?.compareTo(b.user?.surname);
       return surnameResult != 0
           ? surnameResult
           : a.user.name.compareTo(b.user.name);
@@ -68,7 +68,7 @@ extension UserWithWorkstationListSorter on List<UserWithWorkstation> {
 
   List<UserWithWorkstation> sortByFreeName() {
     this.sort(
-            (a, b) => a.workstation.freeName.compareTo(b.workstation.freeName));
+            (a, b) => a.workstation?.freeName?.compareTo(b.workstation?.freeName));
     return this;
   }
 }
