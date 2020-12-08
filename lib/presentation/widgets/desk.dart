@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/workstations_code_converter.dart';
 import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
-import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/pages/assignable_users_page.dart';
 import 'package:where_am_i/presentation/widgets/workstation_marker.dart';
@@ -99,9 +99,15 @@ class _DeskState extends State<Desk> {
           ),
         ),
       ).then((selectedWorkstation) {
-          _workstationBloc.add(GetLastWorkstationsList());
+        _workstationBloc.add(GetLastWorkstationsList());
       });
-    } else if (widget.allUsersWithWorkstation.length > 1) {
+    }
+    var occupants = widget.allUsersWithWorkstation
+        .where((element) =>
+    element.workstation.codeWorkstation ==
+        widget.workstationCode.toString())
+        .toList();
+    if (occupants.length > 1 ) {
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -111,7 +117,7 @@ class _DeskState extends State<Desk> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
-                  children: _generateOccupantsList(),
+                  children: _generateOccupantsList(occupants),
                 ),
               ),
             );
@@ -120,36 +126,30 @@ class _DeskState extends State<Desk> {
       return null;
     }
   }
-
-  List<Widget> _generateOccupantsList() {
+//beltramo 14-18
+  List<Widget> _generateOccupantsList(List<UserWithWorkstation> occupants) {
     List<Widget> list = [];
-    for (var index = 0;
-        index < widget.allUsersWithWorkstation.length;
-        index++) {
-      var w = widget.allUsersWithWorkstation[index].workstation;
-      var user = widget.allUsersWithWorkstation[index].user;
-      String name =
-          user != null ? '${user.surname} ${user.name}' : w.freeName ?? '';
-      list.add(Text(
-          '${w.startTime.format(context)} - ${w.endTime.format(context)} $name'));
-      if (index + 1 != widget.allUsersWithWorkstation.length) {
+    occupants.sort((a, b) {
+      var aStartTime = a.workstation.startTime.toDouble();
+      var bStartTime = b.workstation.startTime.toDouble();
+      var aEndTime = a.workstation.startTime.toDouble();
+      var bEndTime = b.workstation.startTime.toDouble();
+      var abc =  aStartTime.compareTo(bStartTime);
+     return abc != 0 ? abc : aEndTime.compareTo(bEndTime);
+    });
+    for (var index = 0; index < occupants.length; index++) {
+      var w = occupants[index].workstation;
+      String name = occupants[index].getResourceLabel();
+      list.add(Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4.0,vertical: 8.0),
+        child: Text(
+            '${w.startTime.format(context)} - ${w.endTime.format(context)} $name',style: TextStyle(fontSize: 16),),
+      ));
+      if (index + 1 <occupants.length) {
         list.add(Divider());
       }
     }
     return list;
-  }
-
-  _onWorkstationLongClick(Workstation selectedWorkstation) {
-    if (loggedUser.idRole >= ROLE_STAFF &&
-        selectedWorkstation != null &&
-        widget.allowChangesForCurrentDate) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) =>
-              _buildRemoveConfirmationDialog(selectedWorkstation));
-    } else {
-      return null;
-    }
   }
 
   String _getResourceLabel() {
@@ -186,32 +186,5 @@ class _DeskState extends State<Desk> {
       });
       return label;
     }
-  }
-
-  AlertDialog _buildRemoveConfirmationDialog(Workstation workstation) {
-    return AlertDialog(
-      title: Text("Attenzione"),
-      content: Text(
-          "Continuando la risorsa verrà rimossa dalla postazione assegnatale"),
-      actions: [
-        FlatButton(
-            child: Text("Annulla"), onPressed: () => Navigator.pop(context)),
-        FlatButton(
-            child: Text("OK"),
-            onPressed: () {
-              //Clone of selected workstation with codeWorkstation set to null
-              var clearedWorkstation = Workstation(
-                idWorkstation: workstation.idWorkstation,
-                idResource: workstation.idResource,
-                codeWorkstation: null,
-                workstationDate: workstation.workstationDate,
-                freeName: workstation.freeName,
-              );
-              _workstationBloc
-                  .add(OnSingleWorkstationUpdate(workstation: clearedWorkstation));
-              Navigator.pop(context);
-            })
-      ],
-    );
   }
 }

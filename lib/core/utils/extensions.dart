@@ -35,6 +35,8 @@ extension TimeOfDayExtension on TimeOfDay {
     }
   }
 
+  double toDouble() => this.hour + this.minute/60.0;
+
   String toJson() {
     final now = new DateTime.now();
     final dt = DateTime(now.year, now.month, now.day, this.hour, this.minute);
