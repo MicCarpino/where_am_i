@@ -9,10 +9,10 @@ class FetchWorkstationsLists extends WorkstationEvent {
   FetchWorkstationsLists({@required this.dateToFetch});
 }
 
-class OnWorkstationUpdate extends WorkstationEvent {
+class OnSingleWorkstationUpdate extends WorkstationEvent {
   final Workstation workstation;
 
-  OnWorkstationUpdate({
+  OnSingleWorkstationUpdate({
     @required this.workstation,
   });
 }

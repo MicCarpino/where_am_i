@@ -43,7 +43,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   Stream<WorkstationState> mapEventToState(WorkstationEvent event) async* {
     if (event is FetchWorkstationsLists) {
       yield* _fetchWorkstationsList(event.dateToFetch);
-    } else if (event is OnWorkstationUpdate) {
+    } else if (event is OnSingleWorkstationUpdate) {
       yield* _performWorkstationUpdate(event.workstation);
     } else if (event is GetLastWorkstationsList) {
       yield WorkstationsFetchCompletedState(currentWorkstationList);
@@ -87,10 +87,51 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
   Stream<WorkstationState> _performWorkstationUpdate(
       Workstation updatedWorkstation) async* {
     final updateWorkstationResult = await _updateWorkstation(updatedWorkstation);
-    yield updateWorkstationResult.fold(
-        (failure) => WorkstationsFetchCompletedState(currentWorkstationList),
-        (result) {
-      //check if someone was already assigned to the workstation
+    if(updateWorkstationResult.isRight()){
+      var updatedWorkstation =  updateWorkstationResult.foldRight(null, (workstation, previous) => workstation);
+      int indexToUpdate = currentWorkstationList.indexWhere((element) =>
+      element.workstation.idWorkstation ==
+          updatedWorkstation.idWorkstation);
+      if(indexToUpdate != -1){
+        currentWorkstationList[indexToUpdate] = UserWithWorkstation(
+            user: currentWorkstationList[indexToUpdate].user, workstation: updatedWorkstation);
+      }
+      yield WorkstationsFetchCompletedState(currentWorkstationList);
+    } else {
+      Failure failure = updateWorkstationResult.foldLeft(null, (failure, r) => failure);
+      yield WorkstationUpdateErrorState(errorMessage: failure.toString());
+      yield WorkstationsFetchCompletedState(currentWorkstationList);
+    }
+  }
+
+  Stream<WorkstationState> _performMultipleWorkstationsUpdate(
+      List<Workstation> updatedWorkstations) async* {
+    yield WorkstationUpdateStatusChanged(isLoading: true);
+    yield WorkstationsFetchCompletedState(currentWorkstationList);
+    final updateMultipleWorkstationsResult = await _updateAllWorkstations(updatedWorkstations);
+    if(updateMultipleWorkstationsResult.isRight()){
+     List<Workstation> updatedWorkstations =  updateMultipleWorkstationsResult.foldRight(null, (workstations, previous) => workstations);
+     var workstationForCurrentDateUpdated = updatedWorkstations.singleWhere((a) => currentWorkstationList.any((b) => a.idWorkstation == b.workstation.idWorkstation));
+     //searching updated workstation for visualized date
+     var indexToUpdate = currentWorkstationList.indexWhere((element) => element.workstation.idWorkstation == workstationForCurrentDateUpdated.idWorkstation);
+     //updating local list if an occurrence is found
+     if(indexToUpdate != -1){
+       currentWorkstationList[indexToUpdate] = UserWithWorkstation(user:currentWorkstationList[indexToUpdate].user,workstation: workstationForCurrentDateUpdated );
+     }
+     yield WorkstationUpdateStatusChanged(isLoading: false);
+     yield WorkstationsFetchCompletedState(currentWorkstationList);
+    } else {
+      Failure failure = updateMultipleWorkstationsResult.foldLeft(null, (failure, r) => failure);
+      yield WorkstationUpdateErrorState(errorMessage: failure.toString());
+      yield WorkstationsFetchCompletedState(currentWorkstationList);
+    }
+  }
+}
+
+
+/*
+     //this snippet could be used to perform workstation assignment/replacement
+     //check if someone was already assigned to the workstation
       int indexOfCurrentUserAssigned = currentWorkstationList.indexWhere(
           (element) =>
               element.workstation.codeWorkstation ==
@@ -104,36 +145,5 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
             UserWithWorkstation(
                 user: currentUser.user,
                 workstation: currentUser.workstation.assignWorkstationCode(null));
-      }
-      //updating new user assigned to workstation
-      int newUser = currentWorkstationList.indexWhere((element) =>
-          element.workstation.idWorkstation ==
-          updatedWorkstation.idWorkstation);
-      currentWorkstationList[newUser] = UserWithWorkstation(
-          user: currentWorkstationList[newUser].user, workstation: result);
-      return WorkstationsFetchCompletedState(currentWorkstationList);
-    });
-  }
-  Stream<WorkstationState> _performMultipleWorkstationsUpdate(
-      List<Workstation> updatedWorkstations) async* {
-    yield WorkstationUpdateStatusChanged(isLoading: true);
-    yield WorkstationsFetchCompletedState(currentWorkstationList);
-    final updateMultipleWorkstationsResult = await _updateAllWorkstations(updatedWorkstations);
-    if(updateMultipleWorkstationsResult.isRight()){
-     List<Workstation> updatedWorkstations =  updateMultipleWorkstationsResult.foldRight(null, (workstations, previous) => workstations);
-     var workstationForCurrentDateUpdated = updatedWorkstations.singleWhere((a) => currentWorkstationList.any((b) => a.idWorkstation == b.workstation.idWorkstation));
-     //searching updated workstation for visualized date
-     var indexToUpdate = currentWorkstationList.indexWhere((element) => element.workstation.idWorkstation == workstationForCurrentDateUpdated.idWorkstation);
-     //updateing local list if an occurence is found
-     if(indexToUpdate != -1){
-       currentWorkstationList[indexToUpdate] = UserWithWorkstation(user:currentWorkstationList[indexToUpdate].user,workstation: workstationForCurrentDateUpdated );
-     }
-     yield WorkstationUpdateStatusChanged(isLoading: false);
-     yield WorkstationsFetchCompletedState(currentWorkstationList);
-    } else {
-      Failure failure = updateMultipleWorkstationsResult.foldLeft(null, (failure, r) => failure);
-      yield WorkstationUpdateErrorState(errorMessage: failure.toString());
-      yield WorkstationsFetchCompletedState(currentWorkstationList);
-    }
-  }
-}
+      }*/
+//updating new user assigned to workstation

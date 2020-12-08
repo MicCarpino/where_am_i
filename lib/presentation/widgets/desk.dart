@@ -208,7 +208,7 @@ class _DeskState extends State<Desk> {
                 freeName: workstation.freeName,
               );
               _workstationBloc
-                  .add(OnWorkstationUpdate(workstation: clearedWorkstation));
+                  .add(OnSingleWorkstationUpdate(workstation: clearedWorkstation));
               Navigator.pop(context);
             })
       ],
