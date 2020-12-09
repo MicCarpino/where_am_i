@@ -1,41 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:tuple/tuple.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 
 enum TimeSlot { morning, evening, fullDay }
 
-class TimeSlotDialog extends StatelessWidget {
+//https://pub.dev/packages/dropdown_date_picker
+//Intl.defaultLocale = 'it_IT';
+
+class TimeSlotDialog extends StatefulWidget {
   final Workstation workstation;
+  final DateTime startingDate = DateTime.now();
 
   TimeSlotDialog(this.workstation);
+
+  @override
+  _TimeSlotDialogState createState() => _TimeSlotDialogState();
+}
+
+class _TimeSlotDialogState extends State<TimeSlotDialog> {
+  bool _rememberMe = false;
+  String _selectedDate;
+  final formatter = DateFormat('EEEE d');
+  List<String> dates;
+
+  @override
+  void initState() {
+    dates = [
+      formatter.format(widget.startingDate),
+      formatter.format(DateTime(2020, 11, 10)),
+      formatter.format(DateTime(2020, 11, 11)),
+      formatter.format(DateTime(2020, 11, 12)),
+      formatter.format(DateTime(2020, 11, 13))
+    ];
+    _selectedDate = dates.first;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       elevation: 0,
-      backgroundColor: Colors.transparent,
       child: Padding(
         padding: const EdgeInsets.all(32.0),
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: _drawButtons(context)),
+            children: [..._buildDateSection(), ..._buildButtons(context)]),
       ),
     );
   }
 
-  List<Widget> _drawButtons(BuildContext context) {
+  List<Widget> _buildButtons(BuildContext context) {
     //there's already a presence
-    if (workstation != null) {
+    if (widget.workstation != null) {
       //current slot = morning slot, showing evening/full day options
-      if (workstation.startTime == TIME_SLOT_NINE &&
-          workstation.endTime == TIME_SLOT_THIRTEEN) {
+      if (widget.workstation.startTime == TIME_SLOT_NINE &&
+          widget.workstation.endTime == TIME_SLOT_THIRTEEN) {
         return [
           _buildTimeSlotButton(context, TimeSlot.fullDay),
           _buildTimeSlotButton(context, TimeSlot.evening)
         ];
-      } else if (workstation.startTime == TIME_SLOT_FOURTEEN &&
-          workstation.endTime == TIME_SLOT_EIGHTEEN) {
+      } else if (widget.workstation.startTime == TIME_SLOT_FOURTEEN &&
+          widget.workstation.endTime == TIME_SLOT_EIGHTEEN) {
         //current slot = evening, showing morning/full day options
         return [
           _buildTimeSlotButton(context, TimeSlot.fullDay),
@@ -80,5 +106,47 @@ class TimeSlotDialog extends StatelessWidget {
         color: dncBlue,
       ),
     );
+  }
+
+  Widget _buildDropDownMenu() {
+    var lastDateOfMonth =
+        new DateTime(widget.startingDate.year, widget.startingDate.month, 0);
+    return DropdownButton<String>(
+      value: _selectedDate,
+      items: _rememberMe
+          ? dates.map((String value) {
+              return new DropdownMenuItem<String>(
+                value: value,
+                child: new Text(value),
+              );
+            }).toList()
+          : null,
+      disabledHint: Text('giorno x '),
+      onChanged: (value) {
+        setState(() {
+          _selectedDate = value;
+        });
+        print(value);
+      },
+    );
+  }
+
+  List<Widget> _buildDateSection() {
+    if (widget.workstation == null) {
+      return [
+        CheckboxListTile(
+            contentPadding: const EdgeInsets.all(0),
+            title: Text('Presente fino a:'),
+            controlAffinity: ListTileControlAffinity.leading,
+            value: _rememberMe,
+            onChanged: (newValue) {
+              setState(() {
+                _rememberMe = newValue;
+              });
+            }),
+        _buildDropDownMenu()
+      ];
+    }
+    return List<Widget>();
   }
 }

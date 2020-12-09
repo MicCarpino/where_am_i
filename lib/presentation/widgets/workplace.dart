@@ -10,6 +10,7 @@ import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/pages/reservation_form_page.dart';
 import 'package:where_am_i/presentation/pages/workplaces_page.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
+import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 import 'package:where_am_i/presentation/widgets/reservations_calendar.dart';
 import 'package:where_am_i/presentation/widgets/room_24.dart';
 import 'package:where_am_i/presentation/widgets/room_26A_F1.dart';
@@ -41,9 +42,16 @@ class WorkplaceBuilder extends StatelessWidget {
                 } else if (state is WorkstationsFetchCompletedState) {
                   return _buildWorkstations(
                       state.usersWithWorkstations, allowChangesForCurrentDate);
+                } else if (state is WorkstationsFetchErrorState) {
+                  return RetryWidget(
+                      onTryAgainPressed: () =>
+                          BlocProvider.of<WorkstationBloc>(context).add(
+                              FetchWorkstationsLists(
+                                  dateToFetch: visualizedDate)));
+                } else {
+                  //show empty workstations
+                  return _buildWorkstations(List(), false);
                 }
-                //show empty workstations
-                return _buildWorkstations(List(), false);
               }),
           SizedBox(height: 10),
           ..._buildReservationsSection(context, allowChangesForCurrentDate)

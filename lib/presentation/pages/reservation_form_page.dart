@@ -129,8 +129,8 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Text(
           widget.reservation != null
-              ? '${DateFormat('EEEE, MMM d, ' 'yy').format(widget.reservation.reservationDate)}'
-              : '${DateFormat('EEEE, MMM d, ' 'yy').format(widget.reservationDate)}',
+              ? '${DateFormat('EEEE d MMMM ' 'yyyy').format(widget.reservation.reservationDate)}'
+              : '${DateFormat('EEEE d MMMM ' 'yyyy').format(widget.reservationDate)}',
           style: TextStyle(fontSize: 16),
         ),
       )
