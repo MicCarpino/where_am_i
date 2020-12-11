@@ -31,7 +31,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   bool _isRangeSelectionActive = false;
 
   //dropdown selected item
-  DateTime _selectedDate;
+  DateTime _dropDownSelectedDate;
   List<DateTime> _availableDates = List<DateTime>();
 
   @override
@@ -56,7 +56,6 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     return Dialog(
       elevation: 0,
       insetPadding: EdgeInsets.symmetric(horizontal: 48),
-      backgroundColor: Colors.green,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -81,49 +80,57 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   Widget _buildMultiplePresencesSection() {
     if (startingDateIsBeforeLastDay && widget.workstation == null) {
       return Container(
-          color: Colors.red,
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(
-              children: [
-                Checkbox(
-                    value: _isRangeSelectionActive,
-                    onChanged: (newValue) => setState(() {
-                          _isRangeSelectionActive = newValue;
-                        })),
-                Text('Presente fino a:', style: TextStyle(fontSize: 16))
-              ],
-            ),
-            _isRangeSelectionActive ? _buildDropDownMenu() : Container()
-          ]));
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Checkbox(
+                  value: _isRangeSelectionActive,
+                  onChanged: (newValue) => setState(() {
+                        _isRangeSelectionActive = newValue;
+                        _dropDownSelectedDate = null;
+                      })),
+              Text('Presente per più giornate', style: TextStyle(fontSize: 16))
+            ],
+          ),
+          _isRangeSelectionActive
+              ? Column(crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text("Presente fino a :", style: TextStyle(fontSize: 16)),
+                    _buildDropDown()
+                  ],
+                )
+              : Container()
+        ],
+      ));
     } else {
       return Container();
     }
   }
 
-  Widget _buildDropDownMenu() {
-    return DropdownButton<DateTime>(
-      value: _selectedDate,
-      hint: Text('Ultimo giorno di presenza'),
-      items: _availableDates
-          .map((date) => new DropdownMenuItem<DateTime>(
-                value: date,
-                child: new Text(formatter.format(date)),
-              ))
-          .toList(),
-      onChanged: (value) {
-        setState(() {
-          _selectedDate = value;
-        });
-        print(value);
-      },
+  Widget _buildDropDown() {
+    return  DropdownButton<DateTime>(
+          value: _dropDownSelectedDate,
+          hint: Text('Ultimo giorno di presenza'),
+          items: _availableDates
+              .map((date) => new DropdownMenuItem<DateTime>(
+                    value: date,
+                    child: new Text(formatter.format(date)),
+                  ))
+              .toList(),
+          onChanged: (value) {
+            setState(() {
+              _dropDownSelectedDate = value;
+            });
+            print(value);
+          },
     );
   }
 
   Widget _buildButtonsSection() {
     return Container(
       height: 400,
-      color: Colors.blue,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: _buildButtons(),
