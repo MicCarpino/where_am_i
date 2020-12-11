@@ -155,7 +155,7 @@ class _MyPresencesPageState extends State<MyPresencesPage>
       return showDialog(
           context: context,
           builder: (BuildContext context) {
-            return TimeSlotDialog(workstation);
+            return TimeSlotDialog(workstation, day);
           }).then(
         (value) {
           //checking if callback result contains a value

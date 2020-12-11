@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tuple/tuple.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 
 enum TimeSlot { morning, evening, fullDay }
@@ -11,79 +13,147 @@ enum TimeSlot { morning, evening, fullDay }
 
 class TimeSlotDialog extends StatefulWidget {
   final Workstation workstation;
-  final DateTime startingDate = DateTime.now();
+  final DateTime selectedDate;
 
-  TimeSlotDialog(this.workstation);
+  TimeSlotDialog(this.workstation, this.selectedDate);
 
   @override
   _TimeSlotDialogState createState() => _TimeSlotDialogState();
 }
 
 class _TimeSlotDialogState extends State<TimeSlotDialog> {
-  bool _rememberMe = false;
-  String _selectedDate;
   final formatter = DateFormat('EEEE d');
-  List<String> dates;
+  DateTime startingDate;
+  DateTime lastDateOfMonth;
+  bool startingDateIsBeforeLastDay;
+
+  //checkbox value
+  bool _isRangeSelectionActive = false;
+
+  //dropdown selected item
+  DateTime _selectedDate;
+  List<DateTime> _availableDates = List<DateTime>();
 
   @override
   void initState() {
-    dates = [
-      formatter.format(widget.startingDate),
-      formatter.format(DateTime(2020, 11, 10)),
-      formatter.format(DateTime(2020, 11, 11)),
-      formatter.format(DateTime(2020, 11, 12)),
-      formatter.format(DateTime(2020, 11, 13))
-    ];
-    _selectedDate = dates.first;
     super.initState();
+    startingDate = widget.selectedDate.zeroed();
+    // DateTime month starts from 0, so month+1 is to compensate date "taken" from another Datetime
+    // while setting 0 as day automatically turn it in the last day for the month
+    lastDateOfMonth =
+        new DateTime(startingDate.year, startingDate.month + 1, 0);
+    //startingDate cannot be a value after the last day of the month, so it's
+    //only necessary to check if is not equal to the last day
+    startingDateIsBeforeLastDay =
+        !startingDate.isAtSameMomentAs(lastDateOfMonth);
+    if (startingDateIsBeforeLastDay) {
+      initDropdownValues();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       elevation: 0,
+      insetPadding: EdgeInsets.symmetric(horizontal: 48),
+      backgroundColor: Colors.green,
       child: Padding(
-        padding: const EdgeInsets.all(32.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-            children: [..._buildDateSection(), ..._buildButtons(context)]),
+          mainAxisSize: MainAxisSize.min,
+          children: [_buildMultiplePresencesSection(), _buildButtonsSection()],
+        ),
       ),
     );
   }
 
-  List<Widget> _buildButtons(BuildContext context) {
-    //there's already a presence
-    if (widget.workstation != null) {
-      //current slot = morning slot, showing evening/full day options
-      if (widget.workstation.startTime == TIME_SLOT_NINE &&
-          widget.workstation.endTime == TIME_SLOT_THIRTEEN) {
-        return [
-          _buildTimeSlotButton(context, TimeSlot.fullDay),
-          _buildTimeSlotButton(context, TimeSlot.evening)
-        ];
-      } else if (widget.workstation.startTime == TIME_SLOT_FOURTEEN &&
-          widget.workstation.endTime == TIME_SLOT_EIGHTEEN) {
-        //current slot = evening, showing morning/full day options
-        return [
-          _buildTimeSlotButton(context, TimeSlot.fullDay),
-          _buildTimeSlotButton(context, TimeSlot.morning)
-        ];
-      } else {
-        // current slot = fullDay, showing morning/evening options
-        return [
-          _buildTimeSlotButton(context, TimeSlot.morning),
-          _buildTimeSlotButton(context, TimeSlot.evening)
-        ];
+  void initDropdownValues() {
+    DateTime date = startingDate.add(Duration(days: 1));
+    while (!date.isAfter(lastDateOfMonth)) {
+      if (date.weekday != DateTime.saturday ||
+          date.weekday != DateTime.sunday) {
+        _availableDates.add(date);
       }
-    } else {
-      //not presences yet, so showing morning/evening option
-      return [
-        _buildTimeSlotButton(context, TimeSlot.morning),
-        _buildTimeSlotButton(context, TimeSlot.evening)
-      ];
+      date = date.add(Duration(days: 1));
     }
   }
 
-  _buildTimeSlotButton(BuildContext context, TimeSlot timeSlot) {
+  Widget _buildMultiplePresencesSection() {
+    if (startingDateIsBeforeLastDay && widget.workstation == null) {
+      return Container(
+          color: Colors.red,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(
+              children: [
+                Checkbox(
+                    value: _isRangeSelectionActive,
+                    onChanged: (newValue) => setState(() {
+                          _isRangeSelectionActive = newValue;
+                        })),
+                Text('Presente fino a:', style: TextStyle(fontSize: 16))
+              ],
+            ),
+            _isRangeSelectionActive ? _buildDropDownMenu() : Container()
+          ]));
+    } else {
+      return Container();
+    }
+  }
+
+  Widget _buildDropDownMenu() {
+    return DropdownButton<DateTime>(
+      value: _selectedDate,
+      hint: Text('Ultimo giorno di presenza'),
+      items: _availableDates
+          .map((date) => new DropdownMenuItem<DateTime>(
+                value: date,
+                child: new Text(formatter.format(date)),
+              ))
+          .toList(),
+      onChanged: (value) {
+        setState(() {
+          _selectedDate = value;
+        });
+        print(value);
+      },
+    );
+  }
+
+  Widget _buildButtonsSection() {
+    return Container(
+      height: 400,
+      color: Colors.blue,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: _buildButtons(),
+      ),
+    );
+  }
+
+  List<Widget> _buildButtons() {
+    if (widget.workstation != null) {
+      var workstationTimeSlot = getWorkstationTimeSlot(widget.workstation);
+      return TimeSlot.values.map((e) {
+        if (e != workstationTimeSlot) {
+          return _buildTimeSlotButton(context, e);
+        }
+      }).toList();
+    } else {
+      return TimeSlot.values
+          .where((element) {
+            //skipping fulld day button if checkbox is not checked
+            if (element == TimeSlot.fullDay && !_isRangeSelectionActive) {
+              return false;
+            }
+            return true;
+          })
+          .map((e) => _buildTimeSlotButton(context, e))
+          .toList();
+    }
+  }
+
+  ButtonTheme _buildTimeSlotButton(BuildContext context, TimeSlot timeSlot) {
     String label = "TUTTO IL GIORNO";
     TimeOfDay startTime = TIME_SLOT_NINE;
     TimeOfDay endTime = TIME_SLOT_EIGHTEEN;
@@ -93,6 +163,8 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     } else if (timeSlot == TimeSlot.evening) {
       label = "POMERIGGIO";
       startTime = TIME_SLOT_FOURTEEN;
+    } else if (timeSlot == TimeSlot.fullDay) {
+      label = "TUTTO IL GIORNO";
     }
     return ButtonTheme(
       minWidth: double.infinity,
@@ -108,45 +180,15 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     );
   }
 
-  Widget _buildDropDownMenu() {
-    var lastDateOfMonth =
-        new DateTime(widget.startingDate.year, widget.startingDate.month, 0);
-    return DropdownButton<String>(
-      value: _selectedDate,
-      items: _rememberMe
-          ? dates.map((String value) {
-              return new DropdownMenuItem<String>(
-                value: value,
-                child: new Text(value),
-              );
-            }).toList()
-          : null,
-      disabledHint: Text('giorno x '),
-      onChanged: (value) {
-        setState(() {
-          _selectedDate = value;
-        });
-        print(value);
-      },
-    );
-  }
-
-  List<Widget> _buildDateSection() {
-    if (widget.workstation == null) {
-      return [
-        CheckboxListTile(
-            contentPadding: const EdgeInsets.all(0),
-            title: Text('Presente fino a:'),
-            controlAffinity: ListTileControlAffinity.leading,
-            value: _rememberMe,
-            onChanged: (newValue) {
-              setState(() {
-                _rememberMe = newValue;
-              });
-            }),
-        _buildDropDownMenu()
-      ];
+  TimeSlot getWorkstationTimeSlot(Workstation workstation) {
+    if (workstation.startTime == TIME_SLOT_NINE &&
+        workstation.endTime == TIME_SLOT_THIRTEEN) {
+      return TimeSlot.morning;
+    } else if (workstation.startTime == TIME_SLOT_FOURTEEN &&
+        workstation.endTime == TIME_SLOT_EIGHTEEN) {
+      return TimeSlot.evening;
+    } else {
+      return TimeSlot.fullDay;
     }
-    return List<Widget>();
   }
 }
