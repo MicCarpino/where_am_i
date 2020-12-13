@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 import 'injection_container.dart' as di;
 
 import 'package:where_am_i/core/utils/constants.dart';
@@ -9,6 +10,7 @@ import 'package:where_am_i/presentation/screen/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Intl.defaultLocale = 'it_IT';
   await di.init();
   runApp(MyApp());
 }
