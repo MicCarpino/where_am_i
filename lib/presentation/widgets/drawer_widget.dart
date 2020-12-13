@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/user.dart';
-import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
+import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
+import 'package:where_am_i/presentation/bloc/authentication/authentication_event.dart';
+import 'package:where_am_i/presentation/bloc/authentication/authentication_state.dart';
 import 'package:where_am_i/presentation/screen/login_screen.dart';
 
 enum Pages {
@@ -27,6 +30,13 @@ class DrawerWidget extends StatefulWidget {
 
 class _DrawerWidgetState extends State<DrawerWidget> {
   User loggedUser = sl<UserService>().getLoggedUser;
+  AuthenticationBloc loginBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    loginBloc = BlocProvider.of<AuthenticationBloc>(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,15 +82,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             leading:
                                 Icon(Icons.exit_to_app, color: Colors.black87),
                             title: Text('Logout'),
-                            onTap: () async {
-                              sl<HomeBloc>().add(OnLogoutButtonClick());
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => LoginScreen()),
-                                (Route<dynamic> route) => false,
-                              );
-                            })
+                            onTap: () => loginBloc.add(OnLogoutEvent()))
                       ],
                     )))
           ],

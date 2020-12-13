@@ -5,10 +5,9 @@ import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/core/utils/size_config.dart';
-import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
-import 'package:where_am_i/presentation/bloc/login/login_state.dart';
-import 'package:where_am_i/presentation/bloc/login/login_event.dart';
-import 'package:where_am_i/presentation/screen/home_screen.dart';
+import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
+import 'package:where_am_i/presentation/bloc/authentication/authentication_event.dart';
+import 'package:where_am_i/presentation/bloc/authentication/authentication_state.dart';
 import 'package:where_am_i/presentation/widgets/login_button.dart';
 
 final sl = GetIt.instance;
@@ -28,7 +27,14 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _rememberMe = false;
   bool _obscureText = false;
   bool _isLoading = false;
-  LoginBloc loginBloc = sl<LoginBloc>();
+
+  AuthenticationBloc loginBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    loginBloc = BlocProvider.of<AuthenticationBloc>(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,30 +43,22 @@ class _LoginScreenState extends State<LoginScreen> {
       resizeToAvoidBottomInset: true,
       extendBodyBehindAppBar: false,
       backgroundColor: Colors.white,
-      body: BlocConsumer<LoginBloc, LoginState>(
+      body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
         cubit: loginBloc,
         builder: (context, state) {
           return GestureDetector(
-              onTap: () {
-                //Dismiss soft keyboard if user taps somewhere on the screen
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
+              //Dismiss soft keyboard if user taps somewhere on the screen
+              onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
               child: phoneLayout(context));
         },
         listener: (context, state) {
-          if (state is LoadingState) {
+          if (state is LoginLoadingState) {
             _isLoading = true;
-          }else if (state is FailureState) {
+          } else if (state is LoginFailureState) {
             _isLoading = false;
             Scaffold.of(context).showSnackBar(SnackBar(
                 content: new Text('Si è verificato un errore: ${state.error}'),
                 duration: new Duration(seconds: 3)));
-          }else if (state is LoggedInState) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
-                  (Route<dynamic> route) => false,
-            );
           }
         },
       ),
@@ -120,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
           content: new Text('Username and password fields must not be empty'),
           duration: new Duration(seconds: 5)));
     } else {
-      loginBloc.add(LoginButtonPressed(username: email, password: password));
+      loginBloc.add(OnLoginButtonPressed(username: email, password: password));
     }
   }
 

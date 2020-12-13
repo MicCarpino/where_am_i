@@ -32,8 +32,8 @@ import 'package:where_am_i/domain/usecases/workstations/remove_workstation.dart'
 import 'package:where_am_i/domain/usecases/workstations/update_all_workstations.dart';
 import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/update_workstation_status.dart';
-import 'package:where_am_i/presentation/bloc/home/home_bloc.dart';
-import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
+import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
+import 'package:where_am_i/presentation/bloc/authentication/authentication_event.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/my_presences/my_presences_bloc.dart';
@@ -46,8 +46,7 @@ final sl = GetIt.instance;
 Future<void> init() async {
   sl.registerLazySingleton(() => UserService());
   // Bloc
-  sl.registerFactory(() => LoginBloc(performLogIn: sl()));
-  sl.registerFactory(() => HomeBloc(performLogOut: sl()));
+  sl.registerFactory(() => AuthenticationBloc(performLogIn: sl(), performLogOut: sl(),getLoggedUser: sl()));
   sl.registerFactory(() => WorkstationBloc(
         getWorkstationsByDate: sl(),
         updateWorkstation: sl(),
@@ -128,7 +127,8 @@ Future<void> init() async {
   sl.registerLazySingleton<LocalDataSource>(
       () => LocalDataSourceImpl(sharedPreferences: sl()));
 
-  sl.registerLazySingleton<RemoteDataSource>(() => RemoteDataSourceImpl());
+  sl.registerLazySingleton<RemoteDataSource>(() => RemoteDataSourceImpl(
+      onRevoke: () => sl<AuthenticationBloc>().add(OnLogoutEvent())));
   // Core
 /*  sl.registerLazySingleton(() => InputConverter());
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));*/

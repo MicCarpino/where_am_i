@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:where_am_i/presentation/pages/workplaces_page.dart';
 import 'package:where_am_i/presentation/pages/my_presences_page.dart';
 import 'package:where_am_i/presentation/pages/presences_management_page.dart';
@@ -21,15 +23,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Pages _bodyContent;
   String _title;
   User loggedUser;
+  AuthenticationBloc loginBloc;
 
   @override
   void initState() {
+    super.initState();
+    loginBloc = BlocProvider.of<AuthenticationBloc>(context);
     //default view
     _bodyContent = Pages.workplaces_page;
     setState(() {
       _title = widget.title;
     });
-    super.initState();
   }
 
   @override
@@ -40,7 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: dncBlue,
           iconTheme: IconThemeData(color: Colors.white),
         ),
-        drawer: DrawerWidget(_updateTitleAndBodyContent,_bodyContent),
+        drawer: BlocProvider<AuthenticationBloc>.value(
+            value: loginBloc,
+            child: DrawerWidget(_updateTitleAndBodyContent, _bodyContent)),
         body: _getBodyContent());
   }
 

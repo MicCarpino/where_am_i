@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:intl/intl.dart';
+import 'package:meta/meta.dart';
 import 'package:http/http.dart' as http;
 import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
@@ -58,12 +59,16 @@ abstract class RemoteDataSource {
 }
 
 class RemoteDataSourceImpl implements RemoteDataSource {
+  Function onRevoke;
+
+  RemoteDataSourceImpl({@required this.onRevoke});
+
   String formatDateToString(DateTime date) =>
       DateFormat('yyyy-MM-dd').format(date);
 
   Exception failureResult(http.Response response) {
     if (response.statusCode == 401) {
-      return UnauthorizedException();
+      onRevoke.call();
     } else {
       throw ServerException(response.body);
     }
