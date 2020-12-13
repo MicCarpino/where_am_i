@@ -30,32 +30,38 @@ class WorkplaceBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     bool allowChangesForCurrentDate =
         visualizedDate.isAtSameMomentOrAfter(DateTime.now().zeroed());
+
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,
         padding: EdgeInsets.all(16),
         child: Column(children: [
-          BlocBuilder<WorkstationBloc, WorkstationState>(
-              cubit: BlocProvider.of<WorkstationBloc>(context),
-              builder: (context, state) {
-                if (state is WorkstationsFetchLoadingState) {
-                  return CircularLoading();
-                } else if (state is WorkstationsFetchCompletedState) {
-                  return _buildWorkstations(
-                      state.usersWithWorkstations, allowChangesForCurrentDate);
-                } else if (state is WorkstationsFetchErrorState) {
-                  return RetryWidget(
-                      onTryAgainPressed: () =>
-                          BlocProvider.of<WorkstationBloc>(context).add(
-                              FetchWorkstationsLists(
-                                  dateToFetch: visualizedDate)));
-                } else {
-                  //show empty workstations
-                  return _buildWorkstations(List(), false);
-                }
-              }),
+          _buildWorkplaceSection(context, allowChangesForCurrentDate),
           SizedBox(height: 10),
           ..._buildReservationsSection(context, allowChangesForCurrentDate)
         ]));
+  }
+
+  BlocBuilder<WorkstationBloc, WorkstationState> _buildWorkplaceSection(
+      BuildContext context, bool allowChangesForCurrentDate) {
+    return BlocBuilder<WorkstationBloc, WorkstationState>(
+        buildWhen: (previous, current) =>
+            current is WorkstationsFetchLoadingState ||
+            current is WorkstationsFetchCompletedState ||
+            current is WorkstationsFetchErrorState,
+        cubit: BlocProvider.of<WorkstationBloc>(context),
+        builder: (context, state) {
+          if (state is WorkstationsFetchLoadingState) {
+            return CircularLoading();
+          } else if (state is WorkstationsFetchCompletedState) {
+            return _buildWorkstations(
+                state.usersWithWorkstations, allowChangesForCurrentDate);
+          } else {
+            return RetryWidget(
+                onTryAgainPressed: () =>
+                    BlocProvider.of<WorkstationBloc>(context).add(
+                        FetchWorkstationsLists(dateToFetch: visualizedDate)));
+          }
+        });
   }
 
   _buildWorkstations(List<UserWithWorkstation> usersWithWorkstations,
@@ -137,8 +143,13 @@ class WorkplaceBuilder extends StatelessWidget {
                       .toList(),
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );
+              } else  {
+                return Center(
+                    child: RetryWidget(
+                  onTryAgainPressed: () => reservationsBloc
+                      .add(FetchReservationsList(dateToFetch: visualizedDate)),
+                ));
               }
-              return ReservationsCalendar();
             })
       ];
     } else {

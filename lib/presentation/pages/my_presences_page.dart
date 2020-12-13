@@ -10,6 +10,7 @@ import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/my_presences/my_presences_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/presences_marker.dart';
+import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
 
 final serviceLocator = GetIt.instance;
@@ -32,9 +33,7 @@ class _MyPresencesPageState extends State<MyPresencesPage>
     super.initState();
     _calendarController = CalendarController();
     _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
+        vsync: this, duration: const Duration(milliseconds: 400));
     _animationController.forward();
   }
 
@@ -42,6 +41,10 @@ class _MyPresencesPageState extends State<MyPresencesPage>
   Widget build(BuildContext context) {
     return BlocConsumer<MyPresencesBloc, MyPresencesState>(
       cubit: _myPresencesBloc,
+      buildWhen: (previous, current) =>
+          current is PresencesFetchLoadingState ||
+          current is PresencesFetchErrorState ||
+          current is PresencesFetchCompletedState,
       builder: (context, state) {
         if (state is PresencesFetchLoadingState) {
           return Center(child: CircularLoading());
@@ -53,16 +56,15 @@ class _MyPresencesPageState extends State<MyPresencesPage>
               v.workstationDate: [v]
           };
           return _buildCalendar();
-        } else if (state is PresencesFetchErrorState) {
-          return Center(
-            child: MaterialButton(
-                child: Text('riprova'),
-                onPressed: () {
-                  _myPresencesBloc.add(FetchCurrentUserPresences());
-                }),
-          );
         } else {
-          return _buildCalendar();
+          return Container(
+              width: double.infinity,
+              height: double.infinity,
+              child: Center(
+                child: RetryWidget(
+                    onTryAgainPressed: () =>
+                        _myPresencesBloc.add(FetchCurrentUserPresences())),
+              ));
         }
       },
       listener: (context, state) {

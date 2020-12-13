@@ -39,24 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: Colors.white,
       body: BlocConsumer<LoginBloc, LoginState>(
         cubit: loginBloc,
-        listener: (context, state) {
-          if (state is LoadingState) {
-            _isLoading = true;
-          }
-          if (state is FailureState) {
-            _isLoading = false;
-            Scaffold.of(context).showSnackBar(SnackBar(
-                content: new Text('Si è verificato un errore: ${state.error}'),
-                duration: new Duration(seconds: 5)));
-          }
-          if (state is LoggedInState) {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
-              (Route<dynamic> route) => false,
-            );
-          }
-        },
         builder: (context, state) {
           return GestureDetector(
               onTap: () {
@@ -64,6 +46,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 FocusScope.of(context).requestFocus(new FocusNode());
               },
               child: phoneLayout(context));
+        },
+        listener: (context, state) {
+          if (state is LoadingState) {
+            _isLoading = true;
+          }else if (state is FailureState) {
+            _isLoading = false;
+            Scaffold.of(context).showSnackBar(SnackBar(
+                content: new Text('Si è verificato un errore: ${state.error}'),
+                duration: new Duration(seconds: 3)));
+          }else if (state is LoggedInState) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+                  (Route<dynamic> route) => false,
+            );
+          }
         },
       ),
     );
@@ -86,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.only(top: 100.0),
                   child: Image(image: AssetImage('assets/dnc_def_logo.png')),
                 ),
-                Form(key: _formKey, child: _formFields()),
+                Form(key: _formKey, child: _buildFormFields()),
                 LoginButton(
                   'Log In',
                   isLoading: _isLoading,
@@ -100,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _formFields() {
+  Widget _buildFormFields() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[

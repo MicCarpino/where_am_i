@@ -11,6 +11,7 @@ import 'package:where_am_i/presentation/bloc/presences_management/presences_mana
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
 import 'package:where_am_i/presentation/widgets/presences_management_tile.dart';
+import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 import 'package:where_am_i/presentation/widgets/text_input_dialog.dart';
 import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
 
@@ -57,20 +58,25 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
           child:
               BlocConsumer<PresencesManagementBloc, PresencesManagementState>(
             cubit: _presencesManagementBloc,
+            buildWhen: (previous, current) =>
+                current is PresencesManagementFetchCompletedState ||
+                current is PresencesManagementFetchErrorState ||
+                current is PresencesManagementFetchLoadingState,
             builder: (context, state) {
               if (state is PresencesManagementFetchCompletedState) {
                 return _buildPageBody(state.allUsersPresences);
-              } else if (state is PresencesManagementFetchErrorState) {
-                return Center(
-                  child: MaterialButton(
-                      child: Text('riprova'),
-                      onPressed: () => OnUsersPresencesFetchRequested(
-                          dateToFetch: this.visualizedDate)),
-                );
               } else if (state is PresencesManagementFetchLoadingState) {
                 return Center(child: CircularLoading());
               } else {
-                return Center(child: CircularLoading());
+                return Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    child: Center(
+                        child: RetryWidget(
+                      onTryAgainPressed: () => _presencesManagementBloc.add(
+                          OnUsersPresencesFetchRequested(
+                              dateToFetch: DateTime.now())),
+                    )));
               }
             },
             listener: (context, state) {

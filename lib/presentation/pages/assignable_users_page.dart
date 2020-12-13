@@ -11,6 +11,7 @@ import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation_assignment/workstation_assignement_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/custom_expansion_tile.dart';
+import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 
 final sl = GetIt.instance;
 
@@ -51,6 +52,10 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
         ),
         body: BlocConsumer(
           cubit: _workstationBloc,
+          buildWhen: (previous, current) =>
+              current is WorkstationsFetchCompletedState ||
+              current is WorkstationsFetchLoadingState ||
+              current is WorkstationsFetchErrorState,
           builder: (context, state) {
             if (state is WorkstationsFetchCompletedState) {
               var occupants = state.usersWithWorkstations
@@ -70,8 +75,14 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                     ..._buildOccupantsList(context, occupants),
                     ..._buildAssignableResourcesList(assignableResources)
                   ]);
-            } else {
+            } else if (state is WorkstationsFetchLoadingState) {
               return CircularLoading();
+            } else {
+              return Center(
+                  child: RetryWidget(
+                onTryAgainPressed: () =>
+                    _workstationBloc.add(GetLastWorkstationsList()),
+              ));
             }
           },
           listener: (context, state) {
@@ -231,8 +242,9 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                               side: BorderSide(color: Colors.blue)),
                         )
                 ]);
-              } else {}
-              return CircularLoading();
+              } else {
+                return CircularLoading();
+              }
             })
       ],
     );

@@ -35,9 +35,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
         _userService = userService,
         super(WorkstationInitial());
 
-  List<UserWithWorkstation> currentWorkstationList =
-      List<UserWithWorkstation>();
-
+  List<UserWithWorkstation> currentWorkstationList = List<UserWithWorkstation>();
 
   @override
   Stream<WorkstationState> mapEventToState(WorkstationEvent event) async* {
@@ -100,14 +98,14 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
     } else {
       Failure failure = updateWorkstationResult.foldLeft(null, (failure, r) => failure);
       yield WorkstationUpdateErrorState(errorMessage: failure.toString());
-      yield WorkstationsFetchCompletedState(currentWorkstationList);
+      //yield WorkstationsFetchCompletedState(currentWorkstationList);
     }
   }
 
   Stream<WorkstationState> _performMultipleWorkstationsUpdate(
       List<Workstation> updatedWorkstations) async* {
     yield WorkstationUpdateStatusChanged(isLoading: true);
-    yield WorkstationsFetchCompletedState(currentWorkstationList);
+    //yield WorkstationsFetchCompletedState(currentWorkstationList);
     final updateMultipleWorkstationsResult = await _updateAllWorkstations(updatedWorkstations);
     if(updateMultipleWorkstationsResult.isRight()){
      List<Workstation> updatedWorkstations =  updateMultipleWorkstationsResult.foldRight(null, (workstations, previous) => workstations);
@@ -119,11 +117,11 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
        currentWorkstationList[indexToUpdate] = UserWithWorkstation(user:currentWorkstationList[indexToUpdate].user,workstation: workstationForCurrentDateUpdated );
      }
      yield WorkstationUpdateStatusChanged(isLoading: false);
-     yield WorkstationsFetchCompletedState(currentWorkstationList);
+    // yield WorkstationsFetchCompletedState(currentWorkstationList);
     } else {
       Failure failure = updateMultipleWorkstationsResult.foldLeft(null, (failure, r) => failure);
       yield WorkstationUpdateErrorState(errorMessage: failure.toString());
-      yield WorkstationsFetchCompletedState(currentWorkstationList);
+     // yield WorkstationsFetchCompletedState(currentWorkstationList);
     }
   }
 }
@@ -131,6 +129,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
 
 /*
      //this snippet could be used to perform workstation assignment/replacement
+     //
      //check if someone was already assigned to the workstation
       int indexOfCurrentUserAssigned = currentWorkstationList.indexWhere(
           (element) =>
