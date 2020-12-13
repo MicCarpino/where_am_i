@@ -220,7 +220,11 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
         ? showDialog(
             context: context,
             builder: (BuildContext context) {
-              return TimeSlotDialog(userWithWorkstation.workstation,this.visualizedDate);
+              return TimeSlotDialog(
+                userWithWorkstation.workstation,
+                this.visualizedDate,
+                userWithWorkstation.user,
+              );
             }).then((value) {
             //checking if callback result contains a value
             if (value is Tuple2<TimeOfDay, TimeOfDay>) {

@@ -4,18 +4,18 @@ import 'package:intl/intl.dart';
 import 'package:tuple/tuple.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
+import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 
-enum TimeSlot { morning, evening, fullDay }
+enum TimeSlot { fullDay, morning, evening }
 
 //https://pub.dev/packages/dropdown_date_picker
-//Intl.defaultLocale = 'it_IT';
-
 class TimeSlotDialog extends StatefulWidget {
   final Workstation workstation;
   final DateTime selectedDate;
+  final User user;
 
-  TimeSlotDialog(this.workstation, this.selectedDate);
+  TimeSlotDialog(this.workstation, this.selectedDate, [this.user]);
 
   @override
   _TimeSlotDialogState createState() => _TimeSlotDialogState();
@@ -39,7 +39,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     super.initState();
     startingDate = widget.selectedDate.zeroed();
     // DateTime month starts from 0, so month+1 is to compensate date "taken" from another Datetime
-    // while setting 0 as day automatically turn it in the last day for the month
+    // while setting 0 as day automatically turn it in the last day of the month
     lastDateOfMonth =
         new DateTime(startingDate.year, startingDate.month + 1, 0);
     //startingDate cannot be a value after the last day of the month, so it's
@@ -60,7 +60,12 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [_buildMultiplePresencesSection(), _buildButtonsSection()],
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _buildTitleSection(),
+            _buildMultiplePresencesSection(),
+            _buildButtonsSection(),
+          ],
         ),
       ),
     );
@@ -95,7 +100,8 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
             ],
           ),
           _isRangeSelectionActive
-              ? Column(crossAxisAlignment: CrossAxisAlignment.stretch,
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text("Presente fino a :", style: TextStyle(fontSize: 16)),
                     _buildDropDown()
@@ -110,21 +116,21 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   }
 
   Widget _buildDropDown() {
-    return  DropdownButton<DateTime>(
-          value: _dropDownSelectedDate,
-          hint: Text('Ultimo giorno di presenza'),
-          items: _availableDates
-              .map((date) => new DropdownMenuItem<DateTime>(
-                    value: date,
-                    child: new Text(formatter.format(date)),
-                  ))
-              .toList(),
-          onChanged: (value) {
-            setState(() {
-              _dropDownSelectedDate = value;
-            });
-            print(value);
-          },
+    return DropdownButton<DateTime>(
+      value: _dropDownSelectedDate,
+      hint: Text('Ultimo giorno di presenza'),
+      items: _availableDates
+          .map((date) => new DropdownMenuItem<DateTime>(
+                value: date,
+                child: new Text(formatter.format(date)),
+              ))
+          .toList(),
+      onChanged: (value) {
+        setState(() {
+          _dropDownSelectedDate = value;
+        });
+        print(value);
+      },
     );
   }
 
@@ -132,6 +138,8 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     return Container(
       height: 400,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: _buildButtons(),
       ),
@@ -139,25 +147,19 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   }
 
   List<Widget> _buildButtons() {
-    if (widget.workstation != null) {
-      var workstationTimeSlot = getWorkstationTimeSlot(widget.workstation);
-      return TimeSlot.values.map((e) {
-        if (e != workstationTimeSlot) {
-          return _buildTimeSlotButton(context, e);
+    var buttonsToBuild = TimeSlot.values.where((element) {
+      if (widget.workstation != null) {
+        var workstationTimeSlot = getWorkstationTimeSlot(widget.workstation);
+        //skipping full day
+        if (element == workstationTimeSlot) {
+          return false;
         }
-      }).toList();
-    } else {
-      return TimeSlot.values
-          .where((element) {
-            //skipping fulld day button if checkbox is not checked
-            if (element == TimeSlot.fullDay && !_isRangeSelectionActive) {
-              return false;
-            }
-            return true;
-          })
-          .map((e) => _buildTimeSlotButton(context, e))
-          .toList();
-    }
+      } else if (element == TimeSlot.fullDay && !_isRangeSelectionActive) {
+        return false;
+      }
+      return true;
+    });
+    return buttonsToBuild.map((e) => _buildTimeSlotButton(context, e)).toList();
   }
 
   ButtonTheme _buildTimeSlotButton(BuildContext context, TimeSlot timeSlot) {
@@ -174,15 +176,16 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
       label = "TUTTO IL GIORNO";
     }
     return ButtonTheme(
-      minWidth: double.infinity,
       height: 100.0,
       child: RaisedButton(
-        elevation: 20,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-        child: Text(label, style: TextStyle(fontSize: 20, color: Colors.white)),
+        elevation: 5,
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(40),
+            side: BorderSide(color: Colors.blue)),
+        child: Text(label, style: TextStyle(fontSize: 20, color: Colors.blue)),
         onPressed: () => Navigator.pop(
             context, Tuple2<TimeOfDay, TimeOfDay>(startTime, endTime)),
-        color: dncBlue,
       ),
     );
   }
@@ -197,5 +200,21 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     } else {
       return TimeSlot.fullDay;
     }
+  }
+
+  Widget _buildTitleSection() {
+    String text;
+    if (widget.workstation != null) {
+      text = "Modifica presenza di ";
+      text += widget.user == null
+          ? formatter.format(widget.selectedDate)
+          : "${widget.user.surname} ${widget.user.name} per ${formatter.format(widget.selectedDate)}";
+    } else {
+      text = "Inserisci presenza per ";
+      text += widget.user == null
+          ? "${formatter.format(widget.selectedDate)}"
+          : "${widget.user.surname} ${widget.user.name} per ${formatter.format(widget.selectedDate)}";
+    }
+    return Text(text,style: TextStyle(fontSize: 16),);
   }
 }
