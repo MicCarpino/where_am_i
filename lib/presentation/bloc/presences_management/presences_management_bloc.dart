@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
@@ -106,7 +105,7 @@ class PresencesManagementBloc
     yield insertResult.fold((failure) {
       print('insert presence failure');
       return PresencesManagementErrorMessageState(
-          _getErrorMessageFromFailure(failure));
+          failure.getErrorMessageFromFailure());
     }, (insertedPresence) {
       print('insert presence success');
       if (originalUsersPresencesList != null) {
@@ -157,7 +156,7 @@ class PresencesManagementBloc
     yield insertResult.fold((failure) {
       print('insert presence failure');
       return PresencesManagementErrorMessageState(
-          _getErrorMessageFromFailure(failure));
+          failure.getErrorMessageFromFailure());
     }, (insertedPresences) {
       print('insert presence success');
       if (originalUsersPresencesList != null) {
@@ -206,7 +205,7 @@ class PresencesManagementBloc
     yield updateResult.fold((failure) {
       print('remove presence failure');
       return PresencesManagementErrorMessageState(
-          _getErrorMessageFromFailure(failure));
+          failure.getErrorMessageFromFailure());
     }, (updatedPresence) {
       print('update presence success');
       if (originalUsersPresencesList != null) {
@@ -235,7 +234,7 @@ class PresencesManagementBloc
         await _updateUserPresenceStatus(workstationStatusParameters);
     yield statusUpdateResult.fold(
         (failure) => PresencesManagementErrorMessageState(
-            _getErrorMessageFromFailure(failure)), (updatedPresence) {
+            failure.getErrorMessageFromFailure()), (updatedPresence) {
       print('update presence success');
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
@@ -264,7 +263,7 @@ class PresencesManagementBloc
     yield removeResult.fold((failure) {
       print('remove presence failure');
       return PresencesManagementErrorMessageState(
-          _getErrorMessageFromFailure(failure));
+          failure.getErrorMessageFromFailure());
     }, (deletedPresenceId) {
       print('delete presence success');
       if (originalUsersPresencesList != null) {
@@ -359,18 +358,5 @@ class PresencesManagementBloc
     resourcesNotManaged = resourcesNotManaged.sortBySurnameAndName();
     sortedList.addAll(resourcesNotManaged);
     return sortedList;
-  }
-
-  String _getErrorMessageFromFailure(Failure failure) {
-    String message = "Si è verificato un errore";
-    if (failure is ServerFailure) {
-      message = failure.errorMessage;
-    } else if (failure is UnexpectedFailure) {
-      message = failure.errorMessage;
-    } else if (failure is CacheFailure) {
-      message = "Errore cache";
-    }
-    print('FAILURE: $message');
-    return message;
   }
 }

@@ -62,8 +62,7 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
       listener: (context, state) {
         if (state is UserUpdateErrorState) {
           Scaffold.of(context).showSnackBar(SnackBar(
-              content: new Text(
-                  'Si è verificato un errore. Il ruolo non è stato aggiornato'),
+              content: new Text(state.errorMessage),
               duration: new Duration(seconds: 3)));
         }
       },

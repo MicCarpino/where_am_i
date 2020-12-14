@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/usecases/users/get_logged_user.dart';
 import 'package:where_am_i/domain/usecases/workstations/get_user_presences.dart';
@@ -33,7 +33,8 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     @required RemoveWorkstation removeUserPresence,
     @required UpdateWorkstation updateUserPresence,
     @required GetLoggedUser getLoggedUser,
-  })  : assert(getUserPresences != null),
+  })
+      : assert(getUserPresences != null),
         assert(insertUserPresence != null),
         assert(insertAllUserPresences != null),
         assert(removeUserPresence != null),
@@ -83,14 +84,11 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
       PresenceNewParameters newPresenceParams) async* {
     print('inserting user presence');
     var loggedUser = await _getLoggedUser(NoParams());
-    var idResourceOrFailure = loggedUser.fold(
-      (failure) => failure,
-      (authenticatedUser) => authenticatedUser.user.idResource,
-    );
-    if (idResourceOrFailure is String) {
+    if (loggedUser.isRight()) {
       Workstation newWorkstation = Workstation(
         idWorkstation: null,
-        idResource: idResourceOrFailure,
+        idResource: loggedUser.foldRight(
+            null, (authUser, previous) => authUser.user.idResource),
         freeName: newPresenceParams.freeName,
         workstationDate: newPresenceParams.date,
         codeWorkstation: null,
@@ -101,7 +99,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
       final insertResult = await _insertUserPresence(newWorkstation);
       yield insertResult.fold((failure) {
         print('insert presence failure');
-        return PresencesErrorMessageState(_getErrorMessageFromFailure(failure));
+        return PresencesErrorMessageState(failure.getErrorMessageFromFailure());
       }, (insertedPresence) {
         print('insert presence success');
         if (cachedPresences != null) {
@@ -115,22 +113,20 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
         }
       });
     } else {
-      yield PresencesErrorMessageState(
-          _getErrorMessageFromFailure(idResourceOrFailure));
-    }
+      var failure = loggedUser.foldLeft(null, (previous, r) => previous.get);
+      yield PresencesErrorMessageState(failure.getErrorMessageFromFailure());
+  }
   }
 
   Stream<MyPresencesState> _insertMultipleLoggedUserPresences(
       List<PresenceNewParameters> newPresencesParams) async* {
     var loggedUser = await _getLoggedUser(NoParams());
-    var idResourceOrFailure = loggedUser.fold(
-      (failure) => failure,
-      (authenticatedUser) => authenticatedUser.user.idResource,
-    );
-    if (idResourceOrFailure is String) {
-      var workstations = newPresencesParams.map((e) => Workstation(
+    if (loggedUser.isRight()) {
+      var workstations = newPresencesParams.map((e) =>
+          Workstation(
             idWorkstation: null,
-            idResource: idResourceOrFailure,
+            idResource:  loggedUser.foldRight(
+                null, (authUser, previous) => authUser.user.idResource),
             freeName: e.freeName,
             workstationDate: e.date,
             codeWorkstation: null,
@@ -141,7 +137,7 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
       final insertResult = await _insertAllUserPresences(workstations);
       yield insertResult.fold((failure) {
         print('insert presence failure');
-        return PresencesErrorMessageState(_getErrorMessageFromFailure(failure));
+        return PresencesErrorMessageState(failure.getErrorMessageFromFailure());
       }, (insertedPresences) {
         print('insert presence success');
         if (cachedPresences != null) {
@@ -155,8 +151,8 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
         }
       });
     } else {
-      yield PresencesErrorMessageState(
-          _getErrorMessageFromFailure(idResourceOrFailure));
+      var failure = loggedUser.foldLeft(null, (previous, r) => previous.get);
+      yield PresencesErrorMessageState(failure.getErrorMessageFromFailure());
     }
   }
 
@@ -174,13 +170,13 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     final updateResult = await _updateUserPresence(updatedWorkstation);
     yield updateResult.fold((failure) {
       print('remove presence failure');
-      return PresencesErrorMessageState(_getErrorMessageFromFailure(failure));
+      return PresencesErrorMessageState(failure.getErrorMessageFromFailure());
     }, (updatedPresence) {
       print('update presence success');
       if (cachedPresences != null) {
         print('valid  presences cache');
         cachedPresences[cachedPresences.indexWhere((element) =>
-                element.idWorkstation == updatedPresence.idWorkstation)] =
+        element.idWorkstation == updatedPresence.idWorkstation)] =
             updatedPresence;
         return PresencesFetchCompletedState(cachedPresences);
       } else {
@@ -196,13 +192,13 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     final removeResult = await _removeUserPresence(idWorkstation);
     yield removeResult.fold((failure) {
       print('remove presence failure');
-      return PresencesErrorMessageState(_getErrorMessageFromFailure(failure));
+      return PresencesErrorMessageState(failure.getErrorMessageFromFailure());
     }, (deletedPresenceId) {
       print('delete presence success');
       if (cachedPresences != null) {
         print('valid  presences cache');
         cachedPresences.removeWhere(
-            (element) => element.idWorkstation == deletedPresenceId);
+                (element) => element.idWorkstation == deletedPresenceId);
         return PresencesFetchCompletedState(cachedPresences);
       } else {
         print('invalid  presences cache');
@@ -212,15 +208,4 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     });
   }
 
-  String _getErrorMessageFromFailure(Failure failure) {
-    String message = "Si è verificato un errore";
-    if (failure is ServerFailure) {
-      message = failure.errorMessage;
-    } else if (failure is UnexpectedFailure) {
-      message = failure.errorMessage;
-    } else if (failure is CacheFailure) {
-      message = "Errore cache";
-    }
-    return message;
-  }
 }

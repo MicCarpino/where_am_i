@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 
 extension StringExtension on String {
@@ -74,3 +75,19 @@ extension UserWithWorkstationListSorter on List<UserWithWorkstation> {
     return this;
   }
 }
+
+/*extension FailureErrorMessage on Failure {
+  String getErrorMessageFromFailure() {
+    String message = "Si è verificato un errore";
+    if (this is ServerFailure) {
+      message = (this as ServerFailure).errorMessage;
+    } else if (this is UnexpectedFailure) {
+      message = (this as UnexpectedFailure).errorMessage;
+    } else if (this is CacheFailure) {
+      message = "Errore cache";
+    }
+    print('FAILURE TYPE ${this.toString()}');
+    print('FAILURE MSG: $message');
+    return message;
+  }
+}*/

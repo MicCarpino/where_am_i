@@ -51,6 +51,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
         }
       }, (loggedUser) => LoggedInState());
     } else if (event is OnLogoutEvent) {
+      print('PERFORMING LOGOUT');
       final logoutResult = await performLogOut(NoParams());
       yield LoggedOutState();
       yield logoutResult.fold((failure) {

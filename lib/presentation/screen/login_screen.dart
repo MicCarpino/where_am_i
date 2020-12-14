@@ -57,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
           } else if (state is LoginFailureState) {
             _isLoading = false;
             Scaffold.of(context).showSnackBar(SnackBar(
-                content: new Text('Si è verificato un errore: ${state.error}'),
+                content: new Text(state.error),
                 duration: new Duration(seconds: 3)));
           }
         },

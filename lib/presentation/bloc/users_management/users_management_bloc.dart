@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/core/error/failure.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/usecases/users/get_all_users.dart';
@@ -45,11 +46,8 @@ class UsersManagementBloc
     yield UsersListLoadingState();
     final usersList = await _getUsers(NoParams());
     yield usersList.fold((failure) {
-      print(
-          'user list fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
       return UsersListErrorState();
     }, (users) {
-      print('users : ${users.toList()}');
       originalUsersList = users;
       return UsersListReadyState(users);
     });
@@ -72,7 +70,7 @@ class UsersManagementBloc
     var updatedUsersList = await _updateUser(updatedUser);
     yield updatedUsersList.fold((failure) {
       print(          'update user fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
-       return UserUpdateErrorState();
+       return UserUpdateErrorState(errorMessage:failure.getErrorMessageFromFailure());
     }, (users) {
       originalUsersList = users;
       return UsersListReadyState(users);

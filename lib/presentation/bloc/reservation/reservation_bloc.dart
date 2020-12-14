@@ -3,7 +3,6 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
-import 'package:where_am_i/core/error/failure.dart';
 
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/domain/usecases/reservations/delete_reservation.dart';
@@ -44,26 +43,20 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
       yield* _fetchReservationsList(event.dateToFetch);
     } else if (event is InsertReservationEvent) {
       yield* _validateAndInsertReservation(event.reservation);
-    } else if (event is UpdateReservationEvent){
+    } else if (event is UpdateReservationEvent) {
       yield* _performReservationUpdate(event.updatedReservation);
-    } else if (event is DeleteReservationEvent){
+    } else if (event is DeleteReservationEvent) {
       yield* _performDeleteReservation(event.idReservation);
     }
   }
 
   Stream<ReservationState> _fetchReservationsList(DateTime dateToFetch) async* {
     yield ReservationsFetchLoadingState();
-
     print('fetching reservations for $dateToFetch');
-
     final reservationsList = await _getReservations(dateToFetch);
-
     yield reservationsList.fold((failure) {
-      print(
-          'reservations fail : ${failure is ServerFailure ? failure.errorMessage : failure.toString()}');
       return ReservationsFetchErrorState();
     }, (reservations) {
-      print('reservations : ${reservations.toList()}');
       return ReservationsFetchCompletedState(reservations);
     });
   }
@@ -78,7 +71,8 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
       yield ReservationUpdateErrorState(
           errorMessage:
               'Non è possibile inserire una prenotazione che inizia prima delle ore 9');
-    } else if (reservation.endHour > 18 || reservation.endHour == 18 && reservation.endMinutes > 0) {
+    } else if (reservation.endHour > 18 ||
+        reservation.endHour == 18 && reservation.endMinutes > 0) {
       yield ReservationUpdateErrorState(
           errorMessage:
               'Non è possibile inserire una prenotazione che finisce dopo le ore 18.00');
@@ -94,22 +88,19 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
       final updateReservationResult = await _insertReservation(reservation);
       yield updateReservationResult.fold((failure) {
         return ReservationUpdateErrorState(
-            errorMessage: (failure is ServerFailure)
-                ? failure.errorMessage
-                : "Boh, no so");
-      }, (reservationsList)  {
+            errorMessage: failure.getErrorMessageFromFailure());
+      }, (reservationsList) {
         return ReservationsFetchCompletedState(reservationsList);
       });
     }
   }
 
-  Stream<ReservationState> _performReservationUpdate(Reservation updatedReservation) async* {
+  Stream<ReservationState> _performReservationUpdate(
+      Reservation updatedReservation) async* {
     final updatedList = await _updateReservation(updatedReservation);
     yield updatedList.fold((failure) {
       return ReservationUpdateErrorState(
-          errorMessage: (failure is ServerFailure)
-              ? failure.errorMessage
-              : "Boh, no so");
+          errorMessage: failure.getErrorMessageFromFailure());
     }, (reservations) {
       print('reservations : ${reservations.toList()}');
       return ReservationsFetchCompletedState(reservations);
@@ -117,16 +108,13 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
   }
 
   Stream<ReservationState> _performDeleteReservation(int idReservation) async* {
-    final updatedList  = await _deleteReservation(idReservation);
+    final updatedList = await _deleteReservation(idReservation);
     yield updatedList.fold((failure) {
       return ReservationUpdateErrorState(
-          errorMessage: (failure is ServerFailure)
-              ? failure.errorMessage
-              : "Boh, no so");
+          errorMessage: failure.getErrorMessageFromFailure());
     }, (reservations) {
       print('reservations : ${reservations.toList()}');
       return ReservationsFetchCompletedState(reservations);
     });
   }
 }
-

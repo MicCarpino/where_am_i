@@ -71,6 +71,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   Exception failureResult(http.Response response) {
     if (response.statusCode == 401) {
+      print('CALLING LOGOUT ON 401');
       onRevoke.call();
     } else {
       throw ServerException(response.body);
