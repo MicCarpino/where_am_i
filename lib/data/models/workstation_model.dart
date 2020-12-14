@@ -15,7 +15,7 @@ class WorkstationModel extends Workstation {
     @required startTime,
     @required endTime,
     @required status,
-    hasMoreForCurrentMoth,
+    hasMoreForCurrentMonth,
   }) : super(
           idWorkstation: idWorkstation,
           idResource: idResource,
@@ -25,7 +25,7 @@ class WorkstationModel extends Workstation {
           startTime: startTime,
           endTime: endTime,
           status: status,
-          hasMoreForCurrentMoth: hasMoreForCurrentMoth,
+          hasMoreForCurrentMonth: hasMoreForCurrentMonth,
         );
 
   factory WorkstationModel.fromJson(Map<String, dynamic> json) {
@@ -44,7 +44,7 @@ class WorkstationModel extends Workstation {
             ? TimeOfDay.fromDateTime(format.parse(json['endTime']))
             : TimeOfDay(hour: 18, minute: 0),
         status: json['status'] ?? 0,
-        hasMoreForCurrentMoth: json['hasMoreForCurrentMoth'] ?? false);
+        hasMoreForCurrentMonth: json['hasMoreForCurrentMoth'] ?? false);
   }
 
   Map<String, dynamic> toJson() => {
@@ -56,6 +56,6 @@ class WorkstationModel extends Workstation {
         'startTime': startTime.toJson(),
         'endTime': endTime.toJson(),
         'status': status,
-        'hasMoreForCurrentMoth': hasMoreForCurrentMoth
+        'hasMoreForCurrentMoth': hasMoreForCurrentMonth
       };
 }

@@ -197,7 +197,11 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
                 context,
                 datesList
                     .map((date) => PresenceNewParameters(
-                        date: date, startTime: startTime, endTime: endTime))
+                        date: date,
+                        startTime: startTime,
+                        endTime: endTime,
+                        idResource: widget.user?.idResource ??
+                            widget.workstation?.idResource))
                     .toList());
           }),
     );
@@ -219,9 +223,11 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     String text;
     if (widget.workstation != null) {
       text = "Modifica presenza di ";
-      text += widget.user == null
-          ? formatter.format(widget.selectedDate)
-          : "${widget.user.surname} ${widget.user.name} per ${formatter.format(widget.selectedDate)}";
+      text += widget.user != null
+          ? "${widget.user.name} ${widget.user.surname} per ${formatter.format(widget.selectedDate)}"
+          : widget.workstation.freeName != null
+              ? "${widget.workstation.freeName} per ${formatter.format(widget.selectedDate)}"
+              : formatter.format(widget.selectedDate);
     } else {
       text = "Inserisci presenza per ";
       text += widget.user == null

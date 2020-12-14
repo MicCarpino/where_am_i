@@ -20,6 +20,11 @@ class OnPresenceAddedByManagement extends PresencesManagementEvent {
 
   OnPresenceAddedByManagement(this.newPresenceParams);
 }
+class OnMultiplePresencesAddedByManagement extends PresencesManagementEvent {
+  final List<PresenceNewParameters> newPresenceParams;
+
+  OnMultiplePresencesAddedByManagement(this.newPresenceParams);
+}
 
 class OnPresenceRemovedByManagement extends PresencesManagementEvent {
   final int idWorkstation;

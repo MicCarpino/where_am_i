@@ -68,6 +68,7 @@ Future<void> init() async {
   sl.registerFactory(() => PresencesManagementBloc(
         getAllUserPresencesByDate: sl(),
         insertUserPresence: sl(),
+        insertAllUserPresences: sl(),
         updateUserPresence: sl(),
         removeUserPresence: sl(),
         updateUserPresenceStatus: sl(),

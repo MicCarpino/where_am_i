@@ -12,7 +12,7 @@ class Workstation extends Equatable {
   final TimeOfDay startTime;
   final TimeOfDay endTime;
   final int status;
-  final bool hasMoreForCurrentMoth;
+  final bool hasMoreForCurrentMonth;
 
   Workstation({
     @required this.idWorkstation,
@@ -23,7 +23,7 @@ class Workstation extends Equatable {
     @required this.startTime,
     @required this.endTime,
     @required this.status,
-    this.hasMoreForCurrentMoth = false,
+    this.hasMoreForCurrentMonth = false,
   }) : assert(idResource != null || freeName != null);
 
   @override
@@ -36,7 +36,7 @@ class Workstation extends Equatable {
         startTime,
         endTime,
         status,
-        hasMoreForCurrentMoth,
+        hasMoreForCurrentMonth,
       ];
 
   WorkstationModel toWorkstationModel() => WorkstationModel(

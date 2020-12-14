@@ -233,20 +233,17 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
               );
             }).then((value) {
             //checking if callback result contains a value
-            if (value is Tuple2<TimeOfDay, TimeOfDay>) {
-              PresenceNewParameters newParams = PresenceNewParameters(
-                date: this.visualizedDate,
-                idResource: userWithWorkstation.user?.idResource,
-                freeName: userWithWorkstation.workstation?.freeName,
-                startTime: value.item1,
-                endTime: value.item2,
-              );
-              //presence already inserted, performing update
-              _presencesManagementBloc.add(
-                  userWithWorkstation.workstation != null
-                      ? OnPresenceUpdatedByManagement(
-                          userWithWorkstation.workstation, newParams)
-                      : OnPresenceAddedByManagement(newParams));
+      if (value != null && value is List<PresenceNewParameters>) {
+        if (value.length == 1) {
+          //presence already inserted, performing update
+          _presencesManagementBloc.add(
+              userWithWorkstation.workstation != null
+                  ? OnPresenceUpdatedByManagement(
+                  userWithWorkstation.workstation, value.first)
+                  : OnPresenceAddedByManagement(value.first));
+        }else {
+          _presencesManagementBloc.add(OnMultiplePresencesAddedByManagement(value));
+        }
             }
           })
         : null;
@@ -270,4 +267,5 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     _presencesManagementBloc
         .add(OnUsersPresencesFilterUpdate(filterInput: input));
   }
+
 }

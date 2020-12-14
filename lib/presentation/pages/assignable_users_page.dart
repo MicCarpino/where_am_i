@@ -155,7 +155,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
             itemCount: assignableUsers.length,
             itemBuilder: (BuildContext context, int index) {
               var item = assignableUsers[index];
-              if (item.workstation.hasMoreForCurrentMoth &&
+              if (item.workstation.hasMoreForCurrentMonth &&
                   item.workstation.idResource != null) {
                 return _buildExpansionTile(item);
               } else {

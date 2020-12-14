@@ -9,10 +9,12 @@ import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/usecases/get_all_users_presences_by_date.dart';
+import 'package:where_am_i/domain/usecases/workstations/insert_all_workstations.dart';
 import 'package:where_am_i/domain/usecases/workstations/insert_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/remove_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/update_workstation_status.dart';
+
 part 'presences_management_event.dart';
 
 part 'presences_management_state.dart';
@@ -21,6 +23,7 @@ class PresencesManagementBloc
     extends Bloc<PresencesManagementEvent, PresencesManagementState> {
   final GetAllUserPresencesByDate getAllUserPresencesByDate;
   final InsertWorkstation _insertUserPresence;
+  final InsertAllWorkstations _insertAllUserPresences;
   final RemoveWorkstation _removeUserPresence;
   final UpdateWorkstation _updateUserPresence;
   final UpdateWorkstationStatus _updateUserPresenceStatus;
@@ -28,17 +31,19 @@ class PresencesManagementBloc
   PresencesManagementBloc({
     @required GetAllUserPresencesByDate getAllUserPresencesByDate,
     @required InsertWorkstation insertUserPresence,
+    @required InsertAllWorkstations insertAllUserPresences,
     @required RemoveWorkstation removeUserPresence,
     @required UpdateWorkstation updateUserPresence,
     @required UpdateWorkstationStatus updateUserPresenceStatus,
-  })
-      : assert(getAllUserPresencesByDate != null),
+  })  : assert(getAllUserPresencesByDate != null),
         assert(insertUserPresence != null),
+        assert(insertAllUserPresences != null),
         assert(removeUserPresence != null),
         assert(updateUserPresence != null),
         assert(updateUserPresenceStatus != null),
         getAllUserPresencesByDate = getAllUserPresencesByDate,
         _insertUserPresence = insertUserPresence,
+        _insertAllUserPresences = insertAllUserPresences,
         _removeUserPresence = removeUserPresence,
         _updateUserPresence = updateUserPresence,
         _updateUserPresenceStatus = updateUserPresenceStatus,
@@ -48,18 +53,22 @@ class PresencesManagementBloc
 
   @override
   Stream<PresencesManagementState> mapEventToState(
-      PresencesManagementEvent event,) async* {
+    PresencesManagementEvent event,
+  ) async* {
     if (event is OnUsersPresencesFetchRequested) {
       yield* _fetchAllUsersPresences(event.dateToFetch);
     } else if (event is OnPresenceAddedByManagement) {
       yield* _insertPresence(event.newPresenceParams);
+    } else if (event is OnMultiplePresencesAddedByManagement) {
+      yield* _insertMultiplePresences(event.newPresenceParams);
     } else if (event is OnPresenceRemovedByManagement) {
       yield* _removePresence(event.idWorkstation);
     } else if (event is OnPresenceUpdatedByManagement) {
-      yield* _updatePresence(event.workstationToUpdate, event.updatedPresenceParams);
-    }else if (event is OnUserPresenceStatusUpdate) {
+      yield* _updatePresence(
+          event.workstationToUpdate, event.updatedPresenceParams);
+    } else if (event is OnUserPresenceStatusUpdate) {
       yield* _updatePresenceStatus(event.workstationStatusParameters);
-    }else if (event is OnUsersPresencesFilterUpdate) {
+    } else if (event is OnUsersPresencesFilterUpdate) {
       yield* _applyFilterToList(event.filterInput);
     }
   }
@@ -103,9 +112,9 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-        insertedPresence.idResource != null
-            ? element.user?.idResource == insertedPresence.idResource
-            : element.workstation?.freeName == insertedPresence.freeName);
+            insertedPresence.idResource != null
+                ? element.user?.idResource == insertedPresence.idResource
+                : element.workstation?.freeName == insertedPresence.freeName);
         // no element found, inserting new object
         if (index == -1) {
           //TODO: replace insert method with add when implementing list sorting
@@ -122,6 +131,57 @@ class PresencesManagementBloc
       } else {
         print('invalid  presences cache');
         _fetchAllUsersPresences(newPresenceParams.date);
+        return null;
+      }
+    });
+  }
+
+  Stream<PresencesManagementState> _insertMultiplePresences(
+      List<PresenceNewParameters> newPresenceParams) async* {
+    print('inserting multiple user presence');
+    var newWorkstations = newPresenceParams
+        .map((e) => Workstation(
+              idWorkstation: null,
+              idResource: e.idResource,
+              freeName: e.freeName,
+              workstationDate: e.date,
+              codeWorkstation: null,
+              startTime: e.startTime,
+              endTime: e.endTime,
+              status: WORKSTATION_STATUS_CONFIRMED,
+            ))
+        .toList();
+
+    final insertResult = await _insertAllUserPresences(newWorkstations);
+    yield insertResult.fold((failure) {
+      print('insert presence failure');
+      return PresencesManagementErrorMessageState(
+          _getErrorMessageFromFailure(failure));
+    }, (insertedPresences) {
+      print('insert presence success');
+      if (originalUsersPresencesList != null) {
+        print('valid presences cache');
+        insertedPresences.forEach((presence) {
+          var index = originalUsersPresencesList.indexWhere((element) =>
+          presence.idResource != null
+              ? element.user?.idResource == presence.idResource
+              : element.workstation?.freeName == presence.freeName);
+          // no element found, inserting new object
+          if (index == -1) {
+            //TODO: replace insert method with add when implementing list sorting
+            originalUsersPresencesList.insert(0,
+                UserWithWorkstation(user: null, workstation: presence));
+          } else {
+            // element found, assigning workstation
+            originalUsersPresencesList[index] = UserWithWorkstation(
+                user: originalUsersPresencesList[index].user,
+                workstation: presence);
+          }
+        });
+        return PresencesManagementFetchCompletedState(originalUsersPresencesList);
+      } else {
+        print('invalid  presences cache');
+        _fetchAllUsersPresences(newPresenceParams.first.date);
         return null;
       }
     });
@@ -149,9 +209,9 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-        updatedPresence.idResource != null
-            ? element.user?.idResource == updatedPresence.idResource
-            : element.workstation?.freeName == updatedPresence.freeName);
+            updatedPresence.idResource != null
+                ? element.user?.idResource == updatedPresence.idResource
+                : element.workstation?.freeName == updatedPresence.freeName);
         originalUsersPresencesList[index] = UserWithWorkstation(
             user: originalUsersPresencesList[index]?.user,
             workstation: updatedPresence);
@@ -165,17 +225,20 @@ class PresencesManagementBloc
     });
   }
 
-  Stream<PresencesManagementState> _updatePresenceStatus(WorkstationStatusParameters workstationStatusParameters) async*{
-    final statusUpdateResult = await _updateUserPresenceStatus(workstationStatusParameters);
-    yield statusUpdateResult.fold((failure) => PresencesManagementErrorMessageState(
-        _getErrorMessageFromFailure(failure)),(updatedPresence) {
+  Stream<PresencesManagementState> _updatePresenceStatus(
+      WorkstationStatusParameters workstationStatusParameters) async* {
+    final statusUpdateResult =
+        await _updateUserPresenceStatus(workstationStatusParameters);
+    yield statusUpdateResult.fold(
+        (failure) => PresencesManagementErrorMessageState(
+            _getErrorMessageFromFailure(failure)), (updatedPresence) {
       print('update presence success');
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-        updatedPresence.idResource != null
-            ? element.user?.idResource == updatedPresence.idResource
-            : element.workstation?.freeName == updatedPresence.freeName);
+            updatedPresence.idResource != null
+                ? element.user?.idResource == updatedPresence.idResource
+                : element.workstation?.freeName == updatedPresence.freeName);
         originalUsersPresencesList[index] = UserWithWorkstation(
             user: originalUsersPresencesList[index]?.user,
             workstation: updatedPresence);
@@ -188,7 +251,6 @@ class PresencesManagementBloc
         return null;
       }
     });
-
   }
 
   Stream<PresencesManagementState> _removePresence(int idWorkstation) async* {
@@ -203,14 +265,15 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid  presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-        element.workstation?.idWorkstation == deletedPresenceId);
-        if(originalUsersPresencesList[index].user != null ){
+            element.workstation?.idWorkstation == deletedPresenceId);
+        if (originalUsersPresencesList[index].user != null) {
           originalUsersPresencesList[index] = UserWithWorkstation(
               user: originalUsersPresencesList[index].user, workstation: null);
         } else {
           originalUsersPresencesList.removeAt(index);
         }
-        return PresencesManagementFetchCompletedState(originalUsersPresencesList);
+        return PresencesManagementFetchCompletedState(
+            originalUsersPresencesList);
       } else {
         print('invalid  presences cache');
         //TODO: refetch
@@ -226,17 +289,16 @@ class PresencesManagementBloc
       yield PresencesManagementFetchCompletedState(originalUsersPresencesList);
     } else {
       var filteredList = originalUsersPresencesList
-          .where((user) =>
-      user.user != null
-          ? user.user.name
-          .toLowerCase()
-          .contains(filterInput.toLowerCase()) ||
-          user.user.surname
-              .toLowerCase()
-              .contains(filterInput.toLowerCase())
-          : user.workstation.freeName
-          .toLowerCase()
-          .contains(filterInput.toLowerCase()))
+          .where((user) => user.user != null
+              ? user.user.name
+                      .toLowerCase()
+                      .contains(filterInput.toLowerCase()) ||
+                  user.user.surname
+                      .toLowerCase()
+                      .contains(filterInput.toLowerCase())
+              : user.workstation.freeName
+                  .toLowerCase()
+                  .contains(filterInput.toLowerCase()))
           .toList();
       yield PresencesManagementFetchCompletedState(filteredList);
     }
@@ -263,16 +325,33 @@ class PresencesManagementBloc
     return List.of(freeNamesWorkstations..addAll(usersWithWorkstations));
   }*/
 
-  _sortAndPublish(List<UserWithWorkstation> list){
-    List<UserWithWorkstation> resourcesPending = list.where((element) => element.workstation?.status == WORKSTATION_STATUS_PENDING && element.user != null).toList();
+  _sortAndPublish(List<UserWithWorkstation> list) {
+    List<UserWithWorkstation> resourcesPending = list
+        .where((element) =>
+            element.workstation?.status == WORKSTATION_STATUS_PENDING &&
+            element.user != null)
+        .toList();
     resourcesPending.sortBySurnameAndName();
-    List<UserWithWorkstation> freeNamePending = list.where((element) => element.workstation?.status == WORKSTATION_STATUS_PENDING && element.workstation?.freeName != null).toList();
+    List<UserWithWorkstation> freeNamePending = list
+        .where((element) =>
+            element.workstation?.status == WORKSTATION_STATUS_PENDING &&
+            element.workstation?.freeName != null)
+        .toList();
     freeNamePending.sortByFreeName();
-    List<UserWithWorkstation> resourcesConfirmed = list.where((element) => element.workstation?.status == WORKSTATION_STATUS_CONFIRMED && element.user != null).toList();
+    List<UserWithWorkstation> resourcesConfirmed = list
+        .where((element) =>
+            element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
+            element.user != null)
+        .toList();
     resourcesConfirmed.sortBySurnameAndName();
-    List<UserWithWorkstation> freeNameConfirmed = list.where((element) => element.workstation?.status == WORKSTATION_STATUS_CONFIRMED  && element.workstation?.freeName != null).toList();
+    List<UserWithWorkstation> freeNameConfirmed = list
+        .where((element) =>
+            element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
+            element.workstation?.freeName != null)
+        .toList();
     freeNameConfirmed.sortByFreeName();
-    List<UserWithWorkstation> resources = list.where((element) => element.workstation == null).toList();
+    List<UserWithWorkstation> resources =
+        list.where((element) => element.workstation == null).toList();
     resources.sortBySurnameAndName();
     List<UserWithWorkstation> sortedList = List<UserWithWorkstation>();
     sortedList.addAll(freeNamePending);
@@ -295,6 +374,4 @@ class PresencesManagementBloc
     print('FAILURE: $message');
     return message;
   }
-
-
 }
