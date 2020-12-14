@@ -13,6 +13,9 @@ import 'package:where_am_i/presentation/widgets/login_button.dart';
 final sl = GetIt.instance;
 
 class LoginScreen extends StatefulWidget {
+  final bool hasTokenExpired;
+
+  const LoginScreen([this.hasTokenExpired = false]);
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -24,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode _usernameFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
   final ScrollController _scrollController = ScrollController();
+  final tokenExpiredMessageShown = false;
   bool _rememberMe = false;
   bool _obscureText = false;
   bool _isLoading = false;

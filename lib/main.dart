@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget {
             return BlocProvider<AuthenticationBloc>.value(
                 value: loginBloc, child: SplashScreen());
           },
+          listenWhen: (previous, current) => previous!=current,
           listener: (context, state) {
             if (state is LoggedInState) {
               Navigator.push(
@@ -61,12 +62,13 @@ class MyApp extends StatelessWidget {
                         value: loginBloc, child: HomeScreen())),
               );
             } else if (state is LoggedOutState) {
+              print('logged out state trigger on main file');
               Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (newContext) =>
                     BlocProvider<AuthenticationBloc>.value(
-                        value: loginBloc, child: LoginScreen())),
+                        value: loginBloc, child: LoginScreen(state.hasTokenExpired))),
               );
             }
           },

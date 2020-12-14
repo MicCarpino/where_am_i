@@ -69,10 +69,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   String formatDateToString(DateTime date) =>
       DateFormat('yyyy-MM-dd').format(date);
 
-  Exception failureResult(http.Response response) {
+   _handleFailureResult(http.Response response) {
     if (response.statusCode == 401) {
       print('CALLING LOGOUT ON 401');
       onRevoke.call();
+     throw UnauthorizedException();
     } else {
       throw ServerException(response.body);
     }
@@ -89,7 +90,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return AuthenticatedUserModel.fromJson(json.decode(response.body));
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -107,7 +108,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return List<WorkstationModel>.from(
           workstationsList.map((e) => WorkstationModel.fromJson(e)));
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -125,7 +126,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return List<WorkstationModel>.from(
           workstationsList.map((e) => WorkstationModel.fromJson(e)));
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -143,7 +144,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return List<WorkstationModel>.from(
           workstationsList.map((e) => WorkstationModel.fromJson(e)));
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -162,7 +163,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(json.decode(response.body));
     } else {
-      throw failureResult(response);
+      return  _handleFailureResult(response);
     }
   }
 
@@ -184,7 +185,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return List<WorkstationModel>.from(
           workstationsList.map((e) => WorkstationModel.fromJson(e)));
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -204,7 +205,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(jsonDecode(response.body));
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -227,7 +228,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return List<WorkstationModel>.from(
           workstationsList.map((e) => WorkstationModel.fromJson(e)));
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -243,7 +244,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(jsonDecode(response.body));
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -257,7 +258,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return;
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -275,7 +276,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return List<ReservationModel>.from(
           reservationsList.map((e) => ReservationModel.fromJson(e)));
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -290,7 +291,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       var usersList = json.decode(response.body);
       return List<UserModel>.from(usersList.map((e) => UserModel.fromJson(e)));
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -305,7 +306,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return UserModel.fromJson(json.decode(response.body));
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -321,7 +322,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return ReservationModel.fromJson(json.decode(response.body));
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -340,7 +341,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return ReservationModel.fromJson(json.decode(response.body));
     } else {
-      throw failureResult(response);
+      return  _handleFailureResult(response);
     }
   }
 
@@ -354,7 +355,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return;
     } else {
-      throw failureResult(response);
+      return _handleFailureResult(response);
     }
   }
 

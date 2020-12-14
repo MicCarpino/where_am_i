@@ -12,4 +12,7 @@ class OnLoginButtonPressed extends AuthenticationEvent {
   OnLoginButtonPressed({this.username, this.password});
 }
 
-class OnLogoutEvent extends AuthenticationEvent {}
+class OnLogoutEvent extends AuthenticationEvent {
+  final bool hasTokenExpired;
+  OnLogoutEvent({this.hasTokenExpired = false});
+}

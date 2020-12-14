@@ -7,7 +7,11 @@ class AuthenticationInitialState extends AuthenticationState {}
 
 class LoggedInState extends AuthenticationState {}
 
-class LoggedOutState extends AuthenticationState {}
+class LoggedOutState extends AuthenticationState {
+  final bool hasTokenExpired;
+
+  LoggedOutState({this.hasTokenExpired = false});
+}
 
 class LoginLoadingState extends AuthenticationState {}
 

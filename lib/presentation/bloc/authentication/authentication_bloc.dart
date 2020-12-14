@@ -53,7 +53,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     } else if (event is OnLogoutEvent) {
       print('PERFORMING LOGOUT');
       final logoutResult = await performLogOut(NoParams());
-      yield LoggedOutState();
+      yield LoggedOutState(hasTokenExpired: event.hasTokenExpired);
       yield logoutResult.fold((failure) {
         //TODO: shows error message returned from server
         /*if (failure is ServerFailure) {

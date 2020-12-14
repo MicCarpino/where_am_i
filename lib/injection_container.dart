@@ -47,25 +47,26 @@ final sl = GetIt.instance;
 Future<void> init() async {
   sl.registerLazySingleton(() => UserService());
   // Bloc
-  sl.registerFactory(() => AuthenticationBloc(performLogIn: sl(), performLogOut: sl(),getLoggedUser: sl()));
-  sl.registerFactory(() => WorkstationBloc(
+  sl.registerLazySingleton(() => AuthenticationBloc(
+      performLogIn: sl(), performLogOut: sl(), getLoggedUser: sl()));
+  sl.registerLazySingleton(() => WorkstationBloc(
         getWorkstationsByDate: sl(),
         updateWorkstation: sl(),
         updateAllWorkstations: sl(),
         userService: sl(),
       ));
-  sl.registerFactory(() => WorkstationAssignementBloc(
+  sl.registerLazySingleton(() => WorkstationAssignementBloc(
         getAllUserPresencesToEndOfMonth: sl(),
       ));
-  sl.registerFactory(() => ReservationsBloc(
+  sl.registerLazySingleton(() => ReservationsBloc(
         getReservations: sl(),
         insertReservation: sl(),
         updateReservationStatus: sl(),
         deleteReservation: sl(),
       ));
-  sl.registerFactory(
+  sl.registerLazySingleton(
       () => UsersManagementBloc(getUsers: sl(), updateUser: sl()));
-  sl.registerFactory(() => PresencesManagementBloc(
+  sl.registerLazySingleton(() => PresencesManagementBloc(
         getAllUserPresencesByDate: sl(),
         insertUserPresence: sl(),
         insertAllUserPresences: sl(),
@@ -73,7 +74,7 @@ Future<void> init() async {
         removeUserPresence: sl(),
         updateUserPresenceStatus: sl(),
       ));
-  sl.registerFactory(() => MyPresencesBloc(
+  sl.registerLazySingleton(() => MyPresencesBloc(
         getUserPresences: sl(),
         insertUserPresence: sl(),
         insertAllUserPresences: sl(),
@@ -132,7 +133,9 @@ Future<void> init() async {
       () => LocalDataSourceImpl(sharedPreferences: sl()));
 
   sl.registerLazySingleton<RemoteDataSource>(() => RemoteDataSourceImpl(
-      onRevoke: () => sl<AuthenticationBloc>().add(OnLogoutEvent())));
+      onRevoke: () => sl<AuthenticationBloc>().add(
+            OnLogoutEvent(hasTokenExpired: true),
+          )));
   // Core
 /*  sl.registerLazySingleton(() => InputConverter());
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));*/

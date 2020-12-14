@@ -58,14 +58,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 icon: Icons.event_available,
                 text: 'Le mie presenze',
               ),
-              loggedUser.idRole >= ROLE_STAFF
+              loggedUser != null && loggedUser.idRole >= ROLE_STAFF
                   ? _buildItem(
                       drawerItemRelatedPage: Pages.presences_management_page,
                       icon: Icons.supervisor_account,
                       text: 'Gestione presenze',
                     )
                   : Container(),
-              loggedUser.idRole == ROLE_ADMIN
+                  loggedUser != null && loggedUser.idRole == ROLE_ADMIN
                   ? _buildItem(
                       drawerItemRelatedPage: Pages.users_management_page,
                       icon: Icons.lock_open,
