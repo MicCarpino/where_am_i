@@ -161,15 +161,15 @@ class _MyPresencesPageState extends State<MyPresencesPage>
           }).then(
         (value) {
           //checking if callback result contains a value
-          if (value != null && value is Tuple2<TimeOfDay, TimeOfDay>) {
-            PresenceNewParameters newParams = PresenceNewParameters(
-              date: day,
-              startTime: value.item1,
-              endTime: value.item2,
-            );
-            _myPresencesBloc.add(workstation != null
-                ? OnPresenceUpdate(workstation, newParams)
-                : OnPresenceAdded(newParams));
+          if (value != null && value is List<PresenceNewParameters>) {
+            //single insert or update
+            if (value.length == 1) {
+              _myPresencesBloc.add(workstation != null
+                  ? OnPresenceUpdate(workstation, value.first)
+                  : OnPresenceAdded(value.first));
+            } else {
+              _myPresencesBloc.add(OnMultiplePresencesAdded(value));
+            }
           }
         },
       );

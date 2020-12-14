@@ -34,6 +34,9 @@ abstract class RemoteDataSource {
   Future<WorkstationModel> insertWorkstation(
       String token, WorkstationModel workstation);
 
+  Future<List<WorkstationModel>> insertAllWorkstations(
+      String authenticationToken, List<WorkstationModel> list);
+
   Future<WorkstationModel> updateWorkstation(
       String token, WorkstationModel updatedWorkstation);
 
@@ -157,6 +160,28 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(json.decode(response.body));
+    } else {
+      throw failureResult(response);
+    }
+  }
+
+  @override
+  Future<List<WorkstationModel>> insertAllWorkstations(String token, List<WorkstationModel> list) async {
+    var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/insertAll');
+    var body = json.encode(
+        list.map((workstationModel) => workstationModel.toJson()).toList());
+    final response = await http
+        .post(uri,
+        headers: {
+          HttpHeaders.authorizationHeader: token,
+          HttpHeaders.contentTypeHeader: 'application/json'
+        },
+        body: json.encode(body))
+        .timeout(HTTP_TIMEOUT);
+    if (response.statusCode == 200) {
+      List<dynamic> workstationsList = json.decode(response.body);
+      return List<WorkstationModel>.from(
+          workstationsList.map((e) => WorkstationModel.fromJson(e)));
     } else {
       throw failureResult(response);
     }
@@ -331,4 +356,5 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       throw failureResult(response);
     }
   }
+
 }

@@ -27,5 +27,11 @@ class OnPresenceUpdate extends MyPresencesEvent {
   final Workstation workstationToUpdate;
   final PresenceNewParameters newPresenceParams;
 
-  OnPresenceUpdate(this.workstationToUpdate,this.newPresenceParams);
+  OnPresenceUpdate(this.workstationToUpdate, this.newPresenceParams);
+}
+
+class OnMultiplePresencesAdded extends MyPresencesEvent {
+  final List<PresenceNewParameters> newPresencesParams;
+
+  OnMultiplePresencesAdded(this.newPresencesParams);
 }

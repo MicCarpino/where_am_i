@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:tuple/tuple.dart';
+import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user.dart';
@@ -54,7 +54,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      elevation: 0,
+      elevation: 10,
       insetPadding: EdgeInsets.symmetric(horizontal: 48),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -178,15 +178,28 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     return ButtonTheme(
       height: 100.0,
       child: RaisedButton(
-        elevation: 5,
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(40),
-            side: BorderSide(color: Colors.blue)),
-        child: Text(label, style: TextStyle(fontSize: 20, color: Colors.blue)),
-        onPressed: () => Navigator.pop(
-            context, Tuple2<TimeOfDay, TimeOfDay>(startTime, endTime)),
-      ),
+          elevation: 5,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(40),
+              side: BorderSide(color: Colors.blue)),
+          child:
+              Text(label, style: TextStyle(fontSize: 20, color: Colors.blue)),
+          onPressed: () {
+            List<DateTime> datesList = [startingDate];
+            if (_dropDownSelectedDate != null) {
+              int index = _availableDates.indexOf(_dropDownSelectedDate);
+              if (index != -1) {
+                datesList.addAll(_availableDates.sublist(0, index + 1));
+              }
+            }
+            Navigator.pop(
+                context,
+                datesList
+                    .map((date) => PresenceNewParameters(
+                        date: date, startTime: startTime, endTime: endTime))
+                    .toList());
+          }),
     );
   }
 
@@ -215,6 +228,9 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
           ? "${formatter.format(widget.selectedDate)}"
           : "${widget.user.surname} ${widget.user.name} per ${formatter.format(widget.selectedDate)}";
     }
-    return Text(text,style: TextStyle(fontSize: 16),);
+    return Text(
+      text,
+      style: TextStyle(fontSize: 16),
+    );
   }
 }

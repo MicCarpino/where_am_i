@@ -9,6 +9,7 @@ import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/usecases/users/get_logged_user.dart';
 import 'package:where_am_i/domain/usecases/workstations/get_user_presences.dart';
+import 'package:where_am_i/domain/usecases/workstations/insert_all_workstations.dart';
 import 'package:where_am_i/domain/usecases/workstations/insert_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/remove_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
@@ -20,6 +21,7 @@ part 'my_presences_state.dart';
 class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
   final GetUserPresences _getUserPresences;
   final InsertWorkstation _insertUserPresence;
+  final InsertAllWorkstations _insertAllUserPresences;
   final RemoveWorkstation _removeUserPresence;
   final UpdateWorkstation _updateUserPresence;
   final GetLoggedUser _getLoggedUser;
@@ -27,16 +29,19 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
   MyPresencesBloc({
     @required GetUserPresences getUserPresences,
     @required InsertWorkstation insertUserPresence,
+    @required InsertAllWorkstations insertAllUserPresences,
     @required RemoveWorkstation removeUserPresence,
     @required UpdateWorkstation updateUserPresence,
     @required GetLoggedUser getLoggedUser,
   })  : assert(getUserPresences != null),
         assert(insertUserPresence != null),
+        assert(insertAllUserPresences != null),
         assert(removeUserPresence != null),
         assert(updateUserPresence != null),
         assert(getLoggedUser != null),
         _getUserPresences = getUserPresences,
         _insertUserPresence = insertUserPresence,
+        _insertAllUserPresences = insertAllUserPresences,
         _removeUserPresence = removeUserPresence,
         _updateUserPresence = updateUserPresence,
         _getLoggedUser = getLoggedUser,
@@ -50,6 +55,8 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
       yield* _fetchCurrentUserPresences();
     } else if (event is OnPresenceAdded) {
       yield* _insertLoggedUserPresence(event.newPresenceParams);
+    } else if (event is OnMultiplePresencesAdded) {
+      yield* _insertMultipleLoggedUserPresences(event.newPresencesParams);
     } else if (event is OnPresenceRemoved) {
       yield* _removeLoggedUserPresence(event.idWorkstation);
     } else if (event is OnPresenceUpdate) {
@@ -100,6 +107,46 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
         if (cachedPresences != null) {
           print('valid presences cache');
           cachedPresences.add(insertedPresence);
+          return PresencesFetchCompletedState(cachedPresences);
+        } else {
+          print('invalid  presences cache');
+          _fetchCurrentUserPresences();
+          return null;
+        }
+      });
+    } else {
+      yield PresencesErrorMessageState(
+          _getErrorMessageFromFailure(idResourceOrFailure));
+    }
+  }
+
+  Stream<MyPresencesState> _insertMultipleLoggedUserPresences(
+      List<PresenceNewParameters> newPresencesParams) async* {
+    var loggedUser = await _getLoggedUser(NoParams());
+    var idResourceOrFailure = loggedUser.fold(
+      (failure) => failure,
+      (authenticatedUser) => authenticatedUser.user.idResource,
+    );
+    if (idResourceOrFailure is String) {
+      var workstations = newPresencesParams.map((e) => Workstation(
+            idWorkstation: null,
+            idResource: idResourceOrFailure,
+            freeName: e.freeName,
+            workstationDate: e.date,
+            codeWorkstation: null,
+            startTime: e.startTime,
+            endTime: e.endTime,
+            status: WORKSTATION_STATUS_PENDING,
+          )).toList();
+      final insertResult = await _insertAllUserPresences(workstations);
+      yield insertResult.fold((failure) {
+        print('insert presence failure');
+        return PresencesErrorMessageState(_getErrorMessageFromFailure(failure));
+      }, (insertedPresences) {
+        print('insert presence success');
+        if (cachedPresences != null) {
+          print('valid presences cache');
+          cachedPresences.addAll(insertedPresences);
           return PresencesFetchCompletedState(cachedPresences);
         } else {
           print('invalid  presences cache');
@@ -176,5 +223,4 @@ class MyPresencesBloc extends Bloc<MyPresencesEvent, MyPresencesState> {
     }
     return message;
   }
-
 }
