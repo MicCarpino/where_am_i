@@ -186,25 +186,54 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
           child:
               Text(label, style: TextStyle(fontSize: 20, color: Colors.blue)),
           onPressed: () {
-            List<DateTime> datesList = [startingDate];
-            if (_dropDownSelectedDate != null) {
-              int index = _availableDates.indexOf(_dropDownSelectedDate);
-              if (index != -1) {
-                datesList.addAll(_availableDates.sublist(0, index + 1));
-              }
+            if (widget.workstation?.status == WORKSTATION_STATUS_REFUSED) {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Attenzione"),
+                      content: Text(
+                          "La presenza per questa risorsa è stata rifiutata. Confermando verranno apportate le modifiche e lo stato della richiesta verrà automaticamente confermato."),
+                      actions: [
+                        FlatButton(
+                            child: Text("Annulla"),
+                            onPressed: () => Navigator.pop(context)),
+                        FlatButton(
+                            child: Text("OK"),
+                            onPressed: () {
+                              Navigator.pop(context);
+                              _closeDialogAndSubmit(
+                                  context, startTime, endTime);
+                            })
+                      ],
+                    );
+                  });
+            } else {
+              _closeDialogAndSubmit(context, startTime, endTime);
             }
-            Navigator.pop(
-                context,
-                datesList
-                    .map((date) => PresenceNewParameters(
-                        date: date,
-                        startTime: startTime,
-                        endTime: endTime,
-                        idResource: widget.user?.idResource ??
-                            widget.workstation?.idResource))
-                    .toList());
           }),
     );
+  }
+
+  void _closeDialogAndSubmit(
+      BuildContext context, TimeOfDay startTime, TimeOfDay endTime) {
+    List<DateTime> datesList = [startingDate];
+    if (_dropDownSelectedDate != null) {
+      int index = _availableDates.indexOf(_dropDownSelectedDate);
+      if (index != -1) {
+        datesList.addAll(_availableDates.sublist(0, index + 1));
+      }
+    }
+    Navigator.pop(
+        context,
+        datesList
+            .map((date) => PresenceNewParameters(
+                date: date,
+                startTime: startTime,
+                endTime: endTime,
+                idResource:
+                    widget.user?.idResource ?? widget.workstation?.idResource))
+            .toList());
   }
 
   TimeSlot getWorkstationTimeSlot(Workstation workstation) {

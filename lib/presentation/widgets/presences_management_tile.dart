@@ -27,7 +27,10 @@ class PresencesManagementTile extends StatelessWidget {
         _buildResourceSection(context),
         userWithWorkstation?.workstation?.status == WORKSTATION_STATUS_PENDING
             ? _buildButtons()
-            : Container()
+            : userWithWorkstation?.workstation?.status ==
+                    WORKSTATION_STATUS_REFUSED
+                ? _buildRefusedIcon()
+                : Container()
       ]),
     );
   }
@@ -45,7 +48,8 @@ class PresencesManagementTile extends StatelessWidget {
             children: [
               _buildNameSection(),
               SizedBox(height: 8),
-              userWithWorkstation.workstation != null ? _buildTimeSlotSection(context)
+              userWithWorkstation.workstation != null
+                  ? _buildTimeSlotSection(context)
                   : Container(),
             ],
           ),
@@ -115,6 +119,15 @@ class PresencesManagementTile extends StatelessWidget {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildRefusedIcon() {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Icon(Icons.block, color: Colors.red),
       ),
     );
   }

@@ -222,7 +222,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   }
 
   _onUserClick(UserWithWorkstation userWithWorkstation) {
-    return userWithWorkstation?.workstation?.status != 0
+    return userWithWorkstation?.workstation?.status != WORKSTATION_STATUS_PENDING
         ? showDialog(
             context: context,
             builder: (BuildContext context) {

@@ -128,8 +128,16 @@ class _MyPresencesPageState extends State<MyPresencesPage>
           date: date, startTime: TIME_SLOT_NINE, endTime: TIME_SLOT_EIGHTEEN)));
     } else if (events.isNotEmpty && events.first is Workstation) {
       WorkstationModel workstation = events.first;
-      //performing delete
-      _myPresencesBloc.add(OnPresenceRemoved(workstation.idWorkstation));
+      if (workstation.status == WORKSTATION_STATUS_REFUSED) {
+        Scaffold.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  "Non è possibile eliminare una richiesta rifiutata")),
+        );
+      } else {
+        //performing delete
+        _myPresencesBloc.add(OnPresenceRemoved(workstation.idWorkstation));
+      }
     }
   }
 
@@ -138,13 +146,13 @@ class _MyPresencesPageState extends State<MyPresencesPage>
     if (events.isNotEmpty) {
       workstation = events.first as Workstation;
     }
-    if (workstation.status == WORKSTATION_STATUS_CONFIRMED) {
+    if (workstation?.status == WORKSTATION_STATUS_CONFIRMED) {
       Scaffold.of(context).showSnackBar(
         SnackBar(
             content: Text(
                 'Per modificare richieste di presenza già confermate contattare l\'amministrazione')),
       );
-    } else if (workstation.status == WORKSTATION_STATUS_REFUSED) {
+    } else if (workstation?.status == WORKSTATION_STATUS_REFUSED) {
       Scaffold.of(context).showSnackBar(
         SnackBar(
             content: Text(

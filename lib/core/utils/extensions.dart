@@ -63,7 +63,7 @@ extension UserWithWorkstationListSorter on List<UserWithWorkstation> {
       int surnameResult = a.user?.surname?.compareTo(b.user?.surname);
       return surnameResult != 0
           ? surnameResult
-          : a.user.name.compareTo(b.user.name);
+          : a.user?.name?.compareTo(b.user?.name);
     });
     return this;
   }
