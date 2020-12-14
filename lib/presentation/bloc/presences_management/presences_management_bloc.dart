@@ -84,7 +84,7 @@ class PresencesManagementBloc
     }, (allUserPresences) {
       print('all users user presences');
       originalUsersPresencesList = allUserPresences;
-      var sortedList = _sortAndPublish(originalUsersPresencesList);
+      var sortedList = _sortPresencesManagementList(originalUsersPresencesList);
       return PresencesManagementFetchCompletedState(sortedList);
     });
   }
@@ -126,8 +126,8 @@ class PresencesManagementBloc
               user: originalUsersPresencesList[index].user,
               workstation: insertedPresence);
         }
-        return PresencesManagementFetchCompletedState(
-            originalUsersPresencesList);
+        var sortedList = _sortPresencesManagementList(originalUsersPresencesList);
+        return PresencesManagementFetchCompletedState(sortedList);
       } else {
         print('invalid  presences cache');
         _fetchAllUsersPresences(newPresenceParams.date);
@@ -178,7 +178,8 @@ class PresencesManagementBloc
                 workstation: presence);
           }
         });
-        return PresencesManagementFetchCompletedState(originalUsersPresencesList);
+        var sortedList = _sortPresencesManagementList(originalUsersPresencesList);
+        return PresencesManagementFetchCompletedState(sortedList);
       } else {
         print('invalid  presences cache');
         _fetchAllUsersPresences(newPresenceParams.first.date);
@@ -215,8 +216,8 @@ class PresencesManagementBloc
         originalUsersPresencesList[index] = UserWithWorkstation(
             user: originalUsersPresencesList[index]?.user,
             workstation: updatedPresence);
-        return PresencesManagementFetchCompletedState(
-            originalUsersPresencesList);
+        var sortedList = _sortPresencesManagementList(originalUsersPresencesList);
+        return PresencesManagementFetchCompletedState(sortedList);
       } else {
         print('invalid  presences cache');
         _fetchAllUsersPresences(newParams.date);
@@ -242,8 +243,8 @@ class PresencesManagementBloc
         originalUsersPresencesList[index] = UserWithWorkstation(
             user: originalUsersPresencesList[index]?.user,
             workstation: updatedPresence);
-        return PresencesManagementFetchCompletedState(
-            originalUsersPresencesList);
+        var sortedList = _sortPresencesManagementList(originalUsersPresencesList);
+        return PresencesManagementFetchCompletedState(sortedList);
       } else {
         print('invalid  presences cache');
         //TODO: refetch
@@ -272,8 +273,8 @@ class PresencesManagementBloc
         } else {
           originalUsersPresencesList.removeAt(index);
         }
-        return PresencesManagementFetchCompletedState(
-            originalUsersPresencesList);
+        var sortedList = _sortPresencesManagementList(originalUsersPresencesList);
+        return PresencesManagementFetchCompletedState(sortedList);
       } else {
         print('invalid  presences cache');
         //TODO: refetch
@@ -325,7 +326,7 @@ class PresencesManagementBloc
     return List.of(freeNamesWorkstations..addAll(usersWithWorkstations));
   }*/
 
-  _sortAndPublish(List<UserWithWorkstation> list) {
+  List<UserWithWorkstation> _sortPresencesManagementList(List<UserWithWorkstation> list) {
     List<UserWithWorkstation> resourcesPending = list
         .where((element) =>
             element.workstation?.status == WORKSTATION_STATUS_PENDING &&
