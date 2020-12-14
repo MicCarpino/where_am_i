@@ -176,7 +176,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
           HttpHeaders.authorizationHeader: token,
           HttpHeaders.contentTypeHeader: 'application/json'
         },
-        body: json.encode(body))
+        body: body)
         .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       List<dynamic> workstationsList = json.decode(response.body);

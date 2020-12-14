@@ -34,7 +34,13 @@ class MarkerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint();
-    paint.color = status == WORKSTATION_STATUS_PENDING ? dncBlue : dncOrange;
+    if (status == WORKSTATION_STATUS_PENDING) {
+      paint.color = dncBlue;
+    } else if (status == WORKSTATION_STATUS_CONFIRMED) {
+      paint.color = dncOrange;
+    } else {
+      paint.color = Colors.red[500];
+    }
     paint.style = PaintingStyle.fill;
     var path = Path();
     //full day, drawing full circle

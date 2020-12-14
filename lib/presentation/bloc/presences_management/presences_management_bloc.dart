@@ -35,7 +35,8 @@ class PresencesManagementBloc
     @required RemoveWorkstation removeUserPresence,
     @required UpdateWorkstation updateUserPresence,
     @required UpdateWorkstationStatus updateUserPresenceStatus,
-  })  : assert(getAllUserPresencesByDate != null),
+  })
+      : assert(getAllUserPresencesByDate != null),
         assert(insertUserPresence != null),
         assert(insertAllUserPresences != null),
         assert(removeUserPresence != null),
@@ -53,8 +54,7 @@ class PresencesManagementBloc
 
   @override
   Stream<PresencesManagementState> mapEventToState(
-    PresencesManagementEvent event,
-  ) async* {
+      PresencesManagementEvent event,) async* {
     if (event is OnUsersPresencesFetchRequested) {
       yield* _fetchAllUsersPresences(event.dateToFetch);
     } else if (event is OnPresenceAddedByManagement) {
@@ -112,9 +112,9 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-            insertedPresence.idResource != null
-                ? element.user?.idResource == insertedPresence.idResource
-                : element.workstation?.freeName == insertedPresence.freeName);
+        insertedPresence.idResource != null
+            ? element.user?.idResource == insertedPresence.idResource
+            : element.workstation?.freeName == insertedPresence.freeName);
         // no element found, inserting new object
         if (index == -1) {
           //TODO: replace insert method with add when implementing list sorting
@@ -126,7 +126,8 @@ class PresencesManagementBloc
               user: originalUsersPresencesList[index].user,
               workstation: insertedPresence);
         }
-        var sortedList = _sortPresencesManagementList(originalUsersPresencesList);
+        var sortedList = _sortPresencesManagementList(
+            originalUsersPresencesList);
         return PresencesManagementFetchCompletedState(sortedList);
       } else {
         print('invalid  presences cache');
@@ -140,16 +141,17 @@ class PresencesManagementBloc
       List<PresenceNewParameters> newPresenceParams) async* {
     print('inserting multiple user presence');
     var newWorkstations = newPresenceParams
-        .map((e) => Workstation(
-              idWorkstation: null,
-              idResource: e.idResource,
-              freeName: e.freeName,
-              workstationDate: e.date,
-              codeWorkstation: null,
-              startTime: e.startTime,
-              endTime: e.endTime,
-              status: WORKSTATION_STATUS_CONFIRMED,
-            ))
+        .map((e) =>
+        Workstation(
+          idWorkstation: null,
+          idResource: e.idResource,
+          freeName: e.freeName,
+          workstationDate: e.date,
+          codeWorkstation: null,
+          startTime: e.startTime,
+          endTime: e.endTime,
+          status: WORKSTATION_STATUS_CONFIRMED,
+        ))
         .toList();
 
     final insertResult = await _insertAllUserPresences(newWorkstations);
@@ -178,7 +180,8 @@ class PresencesManagementBloc
                 workstation: presence);
           }
         });
-        var sortedList = _sortPresencesManagementList(originalUsersPresencesList);
+        var sortedList = _sortPresencesManagementList(
+            originalUsersPresencesList);
         return PresencesManagementFetchCompletedState(sortedList);
       } else {
         print('invalid  presences cache');
@@ -210,13 +213,14 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-            updatedPresence.idResource != null
-                ? element.user?.idResource == updatedPresence.idResource
-                : element.workstation?.freeName == updatedPresence.freeName);
+        updatedPresence.idResource != null
+            ? element.user?.idResource == updatedPresence.idResource
+            : element.workstation?.freeName == updatedPresence.freeName);
         originalUsersPresencesList[index] = UserWithWorkstation(
             user: originalUsersPresencesList[index]?.user,
             workstation: updatedPresence);
-        var sortedList = _sortPresencesManagementList(originalUsersPresencesList);
+        var sortedList = _sortPresencesManagementList(
+            originalUsersPresencesList);
         return PresencesManagementFetchCompletedState(sortedList);
       } else {
         print('invalid  presences cache');
@@ -229,21 +233,23 @@ class PresencesManagementBloc
   Stream<PresencesManagementState> _updatePresenceStatus(
       WorkstationStatusParameters workstationStatusParameters) async* {
     final statusUpdateResult =
-        await _updateUserPresenceStatus(workstationStatusParameters);
+    await _updateUserPresenceStatus(workstationStatusParameters);
     yield statusUpdateResult.fold(
-        (failure) => PresencesManagementErrorMessageState(
-            _getErrorMessageFromFailure(failure)), (updatedPresence) {
+            (failure) =>
+            PresencesManagementErrorMessageState(
+                _getErrorMessageFromFailure(failure)), (updatedPresence) {
       print('update presence success');
       if (originalUsersPresencesList != null) {
         print('valid presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-            updatedPresence.idResource != null
-                ? element.user?.idResource == updatedPresence.idResource
-                : element.workstation?.freeName == updatedPresence.freeName);
+        updatedPresence.idResource != null
+            ? element.user?.idResource == updatedPresence.idResource
+            : element.workstation?.freeName == updatedPresence.freeName);
         originalUsersPresencesList[index] = UserWithWorkstation(
             user: originalUsersPresencesList[index]?.user,
             workstation: updatedPresence);
-        var sortedList = _sortPresencesManagementList(originalUsersPresencesList);
+        var sortedList = _sortPresencesManagementList(
+            originalUsersPresencesList);
         return PresencesManagementFetchCompletedState(sortedList);
       } else {
         print('invalid  presences cache');
@@ -266,14 +272,15 @@ class PresencesManagementBloc
       if (originalUsersPresencesList != null) {
         print('valid  presences cache');
         var index = originalUsersPresencesList.indexWhere((element) =>
-            element.workstation?.idWorkstation == deletedPresenceId);
+        element.workstation?.idWorkstation == deletedPresenceId);
         if (originalUsersPresencesList[index].user != null) {
           originalUsersPresencesList[index] = UserWithWorkstation(
               user: originalUsersPresencesList[index].user, workstation: null);
         } else {
           originalUsersPresencesList.removeAt(index);
         }
-        var sortedList = _sortPresencesManagementList(originalUsersPresencesList);
+        var sortedList = _sortPresencesManagementList(
+            originalUsersPresencesList);
         return PresencesManagementFetchCompletedState(sortedList);
       } else {
         print('invalid  presences cache');
@@ -284,22 +291,23 @@ class PresencesManagementBloc
     });
   }
 
-  Stream<PresencesManagementState> _applyFilterToList(
-      String filterInput) async* {
+  Stream<PresencesManagementState> _applyFilterToList(String filterInput) async* {
     if (filterInput.isEmpty) {
-      yield PresencesManagementFetchCompletedState(originalUsersPresencesList);
+      var sortedList = _sortPresencesManagementList(originalUsersPresencesList);
+      yield PresencesManagementFetchCompletedState(sortedList);
     } else {
       var filteredList = originalUsersPresencesList
-          .where((user) => user.user != null
-              ? user.user.name
-                      .toLowerCase()
-                      .contains(filterInput.toLowerCase()) ||
-                  user.user.surname
-                      .toLowerCase()
-                      .contains(filterInput.toLowerCase())
-              : user.workstation.freeName
-                  .toLowerCase()
-                  .contains(filterInput.toLowerCase()))
+          .where((user) =>
+      user.user != null
+          ? user.user.name
+          .toLowerCase()
+          .contains(filterInput.toLowerCase()) ||
+          user.user.surname
+              .toLowerCase()
+              .contains(filterInput.toLowerCase())
+          : user.workstation.freeName
+          .toLowerCase()
+          .contains(filterInput.toLowerCase()))
           .toList();
       yield PresencesManagementFetchCompletedState(filteredList);
     }
@@ -326,33 +334,41 @@ class PresencesManagementBloc
     return List.of(freeNamesWorkstations..addAll(usersWithWorkstations));
   }*/
 
-  List<UserWithWorkstation> _sortPresencesManagementList(List<UserWithWorkstation> list) {
+  List<UserWithWorkstation> _sortPresencesManagementList(
+      List<UserWithWorkstation> list) {
+    // resources waiting for confirmation
     List<UserWithWorkstation> resourcesPending = list
         .where((element) =>
-            element.workstation?.status == WORKSTATION_STATUS_PENDING &&
-            element.user != null)
+    element.workstation?.status == WORKSTATION_STATUS_PENDING &&
+        element.user != null)
         .toList();
     resourcesPending.sortBySurnameAndName();
+    // free names waiting for confirmation
     List<UserWithWorkstation> freeNamePending = list
         .where((element) =>
-            element.workstation?.status == WORKSTATION_STATUS_PENDING &&
-            element.workstation?.freeName != null)
+    element.workstation?.status == WORKSTATION_STATUS_PENDING &&
+        element.workstation?.freeName != null)
         .toList();
     freeNamePending.sortByFreeName();
+    // resources confirmed
     List<UserWithWorkstation> resourcesConfirmed = list
         .where((element) =>
-            element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
-            element.user != null)
+    element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
+        element.user != null)
         .toList();
     resourcesConfirmed.sortBySurnameAndName();
+    //free names confirmed
     List<UserWithWorkstation> freeNameConfirmed = list
         .where((element) =>
-            element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
-            element.workstation?.freeName != null)
+    element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
+        element.workstation?.freeName != null)
         .toList();
     freeNameConfirmed.sortByFreeName();
+    //all resources and free names remaining
     List<UserWithWorkstation> resources =
-        list.where((element) => element.workstation == null).toList();
+    list.where((element) =>
+    element.workstation == null ||
+        element.workstation?.status == WORKSTATION_STATUS_REFUSED).toList();
     resources.sortBySurnameAndName();
     List<UserWithWorkstation> sortedList = List<UserWithWorkstation>();
     sortedList.addAll(freeNamePending);

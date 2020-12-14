@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:tuple/tuple.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 
@@ -158,7 +157,8 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
           userWithWorkstation: presences[index],
           onSingleClick: () => _onUserClick(presences[index]),
           onLongClick: () => _onUserLongClick(presences[index]),
-          onStatusButtonClick: (value) => _onStatusChange(value),
+          onStatusButtonClick: (value) =>
+              _presencesManagementBloc.add(OnUserPresenceStatusUpdate(value)),
         ),
         itemCount: presences.length,
       ),
@@ -233,29 +233,21 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
               );
             }).then((value) {
             //checking if callback result contains a value
-      if (value != null && value is List<PresenceNewParameters>) {
-        if (value.length == 1) {
-          //presence already inserted, performing update
-          _presencesManagementBloc.add(
-              userWithWorkstation.workstation != null
-                  ? OnPresenceUpdatedByManagement(
-                  userWithWorkstation.workstation, value.first)
-                  : OnPresenceAddedByManagement(value.first));
-        }else {
-          _presencesManagementBloc.add(OnMultiplePresencesAddedByManagement(value));
-        }
+            if (value != null && value is List<PresenceNewParameters>) {
+              if (value.length == 1) {
+                //presence already inserted, performing update
+                _presencesManagementBloc.add(
+                    userWithWorkstation.workstation != null
+                        ? OnPresenceUpdatedByManagement(
+                            userWithWorkstation.workstation, value.first)
+                        : OnPresenceAddedByManagement(value.first));
+              } else {
+                _presencesManagementBloc
+                    .add(OnMultiplePresencesAddedByManagement(value));
+              }
             }
           })
         : null;
-  }
-
-  _onStatusChange(WorkstationStatusParameters newStatusParams) {
-    newStatusParams.status != null
-        ? _presencesManagementBloc
-            .add(OnUserPresenceStatusUpdate(newStatusParams))
-        : _presencesManagementBloc.add(
-            OnPresenceRemovedByManagement(newStatusParams.idWorkstation),
-          );
   }
 
   _showSnackbarWithMessage(String message) {
@@ -267,5 +259,4 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
     _presencesManagementBloc
         .add(OnUsersPresencesFilterUpdate(filterInput: input));
   }
-
 }

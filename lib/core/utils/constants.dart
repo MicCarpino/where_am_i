@@ -45,6 +45,7 @@ const ROLE_ADMIN = 3;
 // workstations constants
 const WORKSTATION_STATUS_PENDING = 0;
 const WORKSTATION_STATUS_CONFIRMED = 1;
+const WORKSTATION_STATUS_REFUSED = 2;
 const TIME_SLOT_NINE = TimeOfDay(hour: 9, minute: 0);
 const TIME_SLOT_THIRTEEN = TimeOfDay(hour: 13, minute: 0);
 const TIME_SLOT_FOURTEEN = TimeOfDay(hour: 14, minute: 0);

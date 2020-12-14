@@ -45,8 +45,7 @@ class PresencesManagementTile extends StatelessWidget {
             children: [
               _buildNameSection(),
               SizedBox(height: 8),
-              userWithWorkstation.workstation != null
-                  ? _buildTimeSlotSection(context)
+              userWithWorkstation.workstation != null ? _buildTimeSlotSection(context)
                   : Container(),
             ],
           ),
@@ -59,7 +58,9 @@ class PresencesManagementTile extends StatelessWidget {
     return Text(
       userWithWorkstation.getResourceLabel(),
       style: TextStyle(
-          color: userWithWorkstation.workstation != null
+          color: userWithWorkstation.workstation != null ||
+                  userWithWorkstation.workstation?.status ==
+                      WORKSTATION_STATUS_CONFIRMED
               ? Colors.black
               : Colors.black38,
           fontSize: 16),
@@ -108,7 +109,7 @@ class PresencesManagementTile extends StatelessWidget {
               onPressed: () => onStatusButtonClick(
                 WorkstationStatusParameters(
                   idWorkstation: userWithWorkstation.workstation.idWorkstation,
-                  status: null,
+                  status: WORKSTATION_STATUS_REFUSED,
                 ),
               ),
             )

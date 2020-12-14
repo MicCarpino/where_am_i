@@ -2,7 +2,6 @@ import 'package:get_it/get_it.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tuple/tuple.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
@@ -129,16 +128,8 @@ class _MyPresencesPageState extends State<MyPresencesPage>
           date: date, startTime: TIME_SLOT_NINE, endTime: TIME_SLOT_EIGHTEEN)));
     } else if (events.isNotEmpty && events.first is Workstation) {
       WorkstationModel workstation = events.first;
-      if (workstation.status == WORKSTATION_STATUS_CONFIRMED) {
-        Scaffold.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  "Non è possibile effettuare modifiche a presenze già confermate")),
-        );
-      } else {
-        //performing delete
-        _myPresencesBloc.add(OnPresenceRemoved(workstation.idWorkstation));
-      }
+      //performing delete
+      _myPresencesBloc.add(OnPresenceRemoved(workstation.idWorkstation));
     }
   }
 
@@ -147,11 +138,17 @@ class _MyPresencesPageState extends State<MyPresencesPage>
     if (events.isNotEmpty) {
       workstation = events.first as Workstation;
     }
-    if (workstation?.status == WORKSTATION_STATUS_CONFIRMED) {
+    if (workstation.status == WORKSTATION_STATUS_CONFIRMED) {
       Scaffold.of(context).showSnackBar(
         SnackBar(
             content: Text(
-                "Non è possibile effettuare modifiche a presenze già confermate")),
+                'Per modificare richieste di presenza già confermate contattare l\'amministrazione')),
+      );
+    } else if (workstation.status == WORKSTATION_STATUS_REFUSED) {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                "Per modificare richieste di presenza rifiutate contattare l\'amministrazione")),
       );
     } else {
       return showDialog(
