@@ -42,7 +42,8 @@ class _DeskState extends State<Desk> {
     loggedUser = sl<UserService>().getLoggedUser;
     workstationsForDesk = widget.allUsersWithWorkstation
         .where((element) =>
-            element.workstation?.codeWorkstation == widget.workstationCode.toString())
+            element.workstation?.codeWorkstation ==
+            widget.workstationCode.toString())
         .toList();
     isDeskOfLoggedUser = workstationsForDesk?.any(
         (element) => element.workstation.idResource == loggedUser.idResource);
@@ -97,31 +98,33 @@ class _DeskState extends State<Desk> {
       ).then((selectedWorkstation) {
         _workstationBloc.add(GetLastWorkstationsList());
       });
-    }
-    var occupants = widget.allUsersWithWorkstation
-        .where((element) =>
-    element.workstation.codeWorkstation ==
-        widget.workstationCode.toString())
-        .toList();
-    if (occupants.length > 1 ) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Dialog(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: _generateOccupantsList(occupants),
-                ),
-              ),
-            );
-          });
     } else {
-      return null;
+      var occupants = widget.allUsersWithWorkstation
+          .where((element) =>
+              element.workstation.codeWorkstation ==
+              widget.workstationCode.toString())
+          .toList();
+      if (occupants.length > 1) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return Dialog(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: _generateOccupantsList(occupants),
+                  ),
+                ),
+              );
+            });
+      } else {
+        return null;
+      }
     }
   }
+
 //beltramo 14-18
   List<Widget> _generateOccupantsList(List<UserWithWorkstation> occupants) {
     List<Widget> list = [];
@@ -130,18 +133,20 @@ class _DeskState extends State<Desk> {
       var bStartTime = b.workstation.startTime.toDouble();
       var aEndTime = a.workstation.startTime.toDouble();
       var bEndTime = b.workstation.startTime.toDouble();
-      var abc =  aStartTime.compareTo(bStartTime);
-     return abc != 0 ? abc : aEndTime.compareTo(bEndTime);
+      var abc = aStartTime.compareTo(bStartTime);
+      return abc != 0 ? abc : aEndTime.compareTo(bEndTime);
     });
     for (var index = 0; index < occupants.length; index++) {
       var w = occupants[index].workstation;
       String name = occupants[index].getResourceLabel();
       list.add(Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4.0,vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
         child: Text(
-            '${w.startTime.format(context)} - ${w.endTime.format(context)} $name',style: TextStyle(fontSize: 16),),
+          '${w.startTime.format(context)} - ${w.endTime.format(context)} $name',
+          style: TextStyle(fontSize: 16),
+        ),
       ));
-      if (index + 1 <occupants.length) {
+      if (index + 1 < occupants.length) {
         list.add(Divider());
       }
     }
