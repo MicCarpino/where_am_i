@@ -4,11 +4,17 @@ import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/widgets/room_label.dart';
 import 'package:where_am_i/presentation/widgets/desk.dart';
 
+const R26A_FLOOR1_ROOM1_1_INDEX = 76;
+const R26A_FLOOR1_ROOM1_2_INDEX = 82;
+const R26A_FLOOR1_ROOM2_INDEX = 88;
+
 class Room26AF1 extends StatelessWidget {
   final List<UserWithWorkstation> workstations;
   final bool allowChangesForCurrentDate;
 
   Room26AF1({this.workstations = const [], this.allowChangesForCurrentDate});
+
+  final codeConverter = WorkstationCodesConverter();
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +35,12 @@ class Room26AF1 extends StatelessWidget {
                     mainAxisSpacing: 0,
                     crossAxisSpacing: 0,
                     children: List.generate(6, (index) {
+                      int newWorkstationCode =
+                          codeConverter.convertNewToOldWorkstationCode(
+                              R26A_FLOOR1_ROOM1_1_INDEX + index);
                       return Desk(
                         allUsersWithWorkstation: workstations,
-                        workstationCode: 76 + index,
+                        workstationCode: newWorkstationCode,
                         allowChangesForCurrentDate: allowChangesForCurrentDate,
                       );
                     }))),
@@ -45,9 +54,12 @@ class Room26AF1 extends StatelessWidget {
                     mainAxisSpacing: 0,
                     crossAxisSpacing: 0,
                     children: List.generate(6, (index) {
+                      int newWorkstationCode =
+                          codeConverter.convertNewToOldWorkstationCode(
+                              R26A_FLOOR1_ROOM1_2_INDEX + index);
                       return Desk(
                         allUsersWithWorkstation: workstations,
-                        workstationCode: 82 + index,
+                        workstationCode: newWorkstationCode,
                         allowChangesForCurrentDate: allowChangesForCurrentDate,
                       );
                     })))
@@ -64,15 +76,17 @@ class Room26AF1 extends StatelessWidget {
               mainAxisSpacing: 0,
               crossAxisSpacing: 0,
               children: List.generate(4, (index) {
-                String newCodeWorkstation = WorkstationCodesConverter()
-                    .convertNewToOldWorkstationCode(ROOM_26AF1_STARTING_INDEX + index);
+                int newWorkstationCode =
+                    codeConverter.convertNewToOldWorkstationCode(
+                        R26A_FLOOR1_ROOM2_INDEX + index);
                 var workstationsForDesk = workstations
                     .where((element) =>
-                        element.workstation.codeWorkstation == newCodeWorkstation)
+                        element.workstation.codeWorkstation ==
+                        newWorkstationCode.toString())
                     .toList();
                 return Desk(
                   allUsersWithWorkstation: workstationsForDesk,
-                  workstationCode: ROOM_26AF1_STARTING_INDEX + index,
+                  workstationCode: newWorkstationCode,
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );
               })),

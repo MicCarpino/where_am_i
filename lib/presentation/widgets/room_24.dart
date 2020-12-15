@@ -3,11 +3,16 @@ import 'package:where_am_i/core/utils/workstations_code_converter.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/widgets/desk.dart';
 
+const R24_1_INDEX = 19;
+const R24_2_INDEX = 27;
+
 class Room24 extends StatelessWidget {
   final List<UserWithWorkstation> workstations;
   final bool allowChangesForCurrentDate;
 
   Room24({this.workstations = const [], this.allowChangesForCurrentDate});
+
+  final codeConvert = WorkstationCodesConverter();
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +29,12 @@ class Room24 extends StatelessWidget {
               mainAxisSpacing: 0,
               crossAxisSpacing: 0,
               children: List.generate(8, (index) {
+                int newCodeWorkstation =
+              codeConvert.convertNewToOldWorkstationCode(
+                  R24_1_INDEX + index);
                 return Desk(
                   allUsersWithWorkstation: workstations,
-                  workstationCode: 19 + index,
+                  workstationCode: newCodeWorkstation,
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );
               })),
@@ -41,16 +49,17 @@ class Room24 extends StatelessWidget {
               mainAxisSpacing: 0,
               crossAxisSpacing: 0,
               children: List.generate(8, (index) {
-                String newCodeWorkstation = WorkstationCodesConverter()
-                    .convertNewToOldWorkstationCode(
-                    ROOM_24_STARTING_INDEX + index);
+                int newCodeWorkstation =
+                    codeConvert.convertNewToOldWorkstationCode(
+                        R24_2_INDEX + index);
                 var workstationsForDesk = workstations
                     .where((element) =>
-                element.workstation.codeWorkstation == newCodeWorkstation)
+                        element.workstation.codeWorkstation ==
+                        newCodeWorkstation.toString())
                     .toList();
                 return Desk(
                   allUsersWithWorkstation: workstationsForDesk,
-                  workstationCode: 27 + index,
+                  workstationCode: newCodeWorkstation,
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );
               })),

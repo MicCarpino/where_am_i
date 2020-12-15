@@ -100,12 +100,12 @@ class WorkplaceBuilder extends StatelessWidget {
     // ignore: close_sinks
     var reservationsBloc = BlocProvider.of<ReservationsBloc>(context);
     if (room == Rooms.room_26B ||
-        room == Rooms.room_26A_Floor1 ||
+        room == Rooms.room_26A_Floor2 ||
         room == Rooms.room_24) {
       return [
         //Reservation section title
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text('Saletta riunioni', style: roomLabelStyle),
+          Text('Saletta riunioni ${room.reservationRoomSuffix}', style: roomLabelStyle),
           //show/hide "add reservation" button for past days
           Visibility(
             visible:

@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
-import 'package:where_am_i/core/utils/workstations_code_converter.dart';
 import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
@@ -35,18 +34,15 @@ class _DeskState extends State<Desk> {
   bool isDeskOfLoggedUser;
   String resourceLabel;
   List<UserWithWorkstation> workstationsForDesk;
-  String newCodeWorkstation;
 
   @override
   void initState() {
     super.initState();
     _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
     loggedUser = sl<UserService>().getLoggedUser;
-    newCodeWorkstation = WorkstationCodesConverter()
-        .convertNewToOldWorkstationCode(widget.workstationCode);
     workstationsForDesk = widget.allUsersWithWorkstation
         .where((element) =>
-            element.workstation?.codeWorkstation == newCodeWorkstation)
+            element.workstation?.codeWorkstation == widget.workstationCode.toString())
         .toList();
     isDeskOfLoggedUser = workstationsForDesk?.any(
         (element) => element.workstation.idResource == loggedUser.idResource);
@@ -94,7 +90,7 @@ class _DeskState extends State<Desk> {
           builder: (newContext) => BlocProvider.value(
             value: _workstationBloc,
             child: AssignableUsersPage(
-              selectedWorkstationCode: newCodeWorkstation,
+              selectedWorkstationCode: widget.workstationCode.toString(),
             ),
           ),
         ),
@@ -153,6 +149,7 @@ class _DeskState extends State<Desk> {
   }
 
   String _getResourceLabel() {
+    return widget.workstationCode.toString();
     if (workstationsForDesk == null || workstationsForDesk.isEmpty) {
       return null;
     } else if (workstationsForDesk.length == 1) {

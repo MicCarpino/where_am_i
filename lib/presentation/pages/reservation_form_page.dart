@@ -450,7 +450,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                       child: Text(Rooms.values
                           .singleWhere(
                               (element) => element.reservationRoomId == roomId)
-                          .reservationRoomTitle),
+                          .reservationRoomLabel),
                     ))
                 .toList(),
             onChanged: (selection) => setState(() {

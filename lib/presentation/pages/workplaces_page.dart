@@ -45,7 +45,7 @@ extension RoomsTitles on Rooms {
     switch (this) {
       case Rooms.room_26B:
         return 26;
-      case Rooms.room_26A_Floor1:
+      case Rooms.room_26A_Floor2:
         return 262;
       case Rooms.room_24:
         return 24;
@@ -54,11 +54,20 @@ extension RoomsTitles on Rooms {
     }
   }
 
-  String get reservationRoomTitle{
+  String get reservationRoomLabel{
     Map<int, String> reservationsRoomTitles = {
       26: "Civico 26/B",
       262: "Civico 26/A",
       24: "Civico 24",
+    };
+    return reservationsRoomTitles[this.reservationRoomId];
+  }
+
+  String get reservationRoomSuffix{
+    Map<int, String> reservationsRoomTitles = {
+      26: "26/B",
+      262: "26/A",
+      24: "24",
     };
     return reservationsRoomTitles[this.reservationRoomId];
   }
