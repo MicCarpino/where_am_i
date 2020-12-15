@@ -149,7 +149,6 @@ class _DeskState extends State<Desk> {
   }
 
   String _getResourceLabel() {
-    return widget.workstationCode.toString();
     if (workstationsForDesk == null || workstationsForDesk.isEmpty) {
       return null;
     } else if (workstationsForDesk.length == 1) {
