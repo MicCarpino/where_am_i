@@ -66,6 +66,7 @@ class ReservationModel extends Reservation {
 
   Map<String, String> toQueryParams() {
     var queryParams = Map<String, String>();
+    queryParams['idReservation'] = idReservation.toString();
     if (reservationDate != null) {
       queryParams['reservationDate'] = DateFormat('yyyy-MM-dd').format(reservationDate);
     }

@@ -105,7 +105,8 @@ class WorkplaceBuilder extends StatelessWidget {
       return [
         //Reservation section title
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text('Saletta riunioni ${room.reservationRoomSuffix}', style: roomLabelStyle),
+          Text('Saletta riunioni ${room.reservationRoomSuffix}',
+              style: roomLabelStyle),
           //show/hide "add reservation" button for past days
           Visibility(
             visible:
@@ -132,6 +133,10 @@ class WorkplaceBuilder extends StatelessWidget {
         //Calendar displaying reservations
         BlocBuilder<ReservationsBloc, ReservationState>(
             cubit: reservationsBloc,
+            buildWhen: (previous, current) =>
+                current is ReservationsFetchErrorState ||
+                current is ReservationsFetchLoadingState ||
+                current is ReservationsFetchCompletedState,
             builder: (context, state) {
               if (state is ReservationsFetchLoadingState) {
                 return CircularLoading();
@@ -143,7 +148,7 @@ class WorkplaceBuilder extends StatelessWidget {
                       .toList(),
                   allowChangesForCurrentDate: allowChangesForCurrentDate,
                 );
-              } else  {
+              } else {
                 return Center(
                     child: RetryWidget(
                   onTryAgainPressed: () => reservationsBloc

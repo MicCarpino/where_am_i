@@ -13,20 +13,31 @@ import 'package:where_am_i/presentation/widgets/reservations_details_dialog.dart
 
 //https://pub.dev/packages/flutter_week_view
 
-class ReservationsCalendar extends StatelessWidget {
+class ReservationsCalendar extends StatefulWidget {
   final List<Reservation> reservationsList;
   final bool allowChangesForCurrentDate;
-
-  final serviceLocator = GetIt.instance;
 
   ReservationsCalendar(
       {this.reservationsList = const [], this.allowChangesForCurrentDate});
 
   @override
+  _ReservationsCalendarState createState() => _ReservationsCalendarState();
+}
+
+class _ReservationsCalendarState extends State<ReservationsCalendar> {
+  final serviceLocator = GetIt.instance;
+  ReservationsBloc _reservationBloc;
+  User loggedUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _reservationBloc = BlocProvider.of<ReservationsBloc>(context);
+    loggedUser = serviceLocator<UserService>().getLoggedUser;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    ReservationsBloc _reservationBloc =
-        BlocProvider.of<ReservationsBloc>(context);
-    User loggedUser = serviceLocator<UserService>().getLoggedUser;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: DayView(
@@ -40,17 +51,15 @@ class ReservationsCalendar extends StatelessWidget {
         // +/- 10 minutes to prevent crop
         minimumTime: HourMinute(hour: 8, minute: 50),
         maximumTime: HourMinute(hour: 18, minute: 10),
-        events: reservationsList
-                ?.map((e) => _mapReservationToEvent(
-                    e, context, _reservationBloc, loggedUser))
+        events: widget.reservationsList
+                ?.map((e) => _mapReservationToEvent(e))
                 ?.toList() ??
             [],
       ),
     );
   }
 
-  FlutterWeekViewEvent _mapReservationToEvent(Reservation reservation,
-      BuildContext context, ReservationsBloc bloc, User loggedUser) {
+  FlutterWeekViewEvent _mapReservationToEvent(Reservation reservation) {
     var date = DateTime.now();
     return FlutterWeekViewEvent(
       decoration: BoxDecoration(
@@ -84,7 +93,7 @@ class ReservationsCalendar extends StatelessWidget {
         // - is not a reservation for past days
         // - logged user role is staff or admin
         // - the reservation is not confirmed and the user is the handler
-        if (allowChangesForCurrentDate &&
+        if (widget.allowChangesForCurrentDate &&
             (loggedUser.idRole >= ROLE_STAFF ||
                 (reservation.status == RESERVATION_PENDING &&
                     loggedUser.idResource ==
@@ -93,7 +102,7 @@ class ReservationsCalendar extends StatelessWidget {
               context: context,
               builder: (BuildContext context) {
                 return _showEditReservationOptions(
-                    reservation, context, bloc, loggedUser.idRole);
+                    reservation, context, loggedUser.idRole);
               });
         } else {
           return null;
@@ -118,8 +127,8 @@ class ReservationsCalendar extends StatelessWidget {
     );
   }
 
-  Dialog _showEditReservationOptions(Reservation reservation,
-      BuildContext context, ReservationsBloc bloc, int loggedUserRole) {
+  Dialog _showEditReservationOptions(
+      Reservation reservation, BuildContext context, int loggedUserRole) {
     return Dialog(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -140,7 +149,7 @@ class ReservationsCalendar extends StatelessWidget {
                       ),
                     ]),
                     onTap: () {
-                      bloc.add(UpdateReservationEvent(
+                      _reservationBloc.add(UpdateReservationEvent(
                           updatedReservation: Reservation(
                               idReservation: reservation.idReservation,
                               startHour: reservation.startHour,
@@ -172,7 +181,7 @@ class ReservationsCalendar extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => BlocProvider.value(
-                        value: bloc,
+                        value: _reservationBloc,
                         child: ReservationFormPage(reservation: reservation),
                       ),
                     ),
@@ -186,7 +195,7 @@ class ReservationsCalendar extends StatelessWidget {
                   ),
                 ]),
                 onTap: () {
-                  bloc.add(DeleteReservationEvent(
+                  _reservationBloc.add(DeleteReservationEvent(
                       idReservation: reservation.idReservation));
                   Navigator.of(context).pop();
                 }),
