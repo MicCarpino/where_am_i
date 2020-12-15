@@ -66,9 +66,12 @@ class ReservationModel extends Reservation {
 
   Map<String, String> toQueryParams() {
     var queryParams = Map<String, String>();
-    queryParams['idReservation'] = idReservation.toString();
+    if (idReservation != null) {
+      queryParams['idReservation'] = idReservation.toString();
+    }
     if (reservationDate != null) {
-      queryParams['reservationDate'] = DateFormat('yyyy-MM-dd').format(reservationDate);
+      queryParams['reservationDate'] =
+          DateFormat('yyyy-MM-dd').format(reservationDate);
     }
     if (idRoom != null) {
       queryParams['idRoom'] = idRoom.toString();
@@ -86,7 +89,7 @@ class ReservationModel extends Reservation {
       queryParams['endMinutes'] = endMinutes.toString();
     }
     if (startHour != null) {
-      queryParams['startHour'] =startHour.toString();
+      queryParams['startHour'] = startHour.toString();
     }
     if (endHour != null) {
       queryParams['endHour'] = endHour.toString();
