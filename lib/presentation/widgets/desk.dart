@@ -95,9 +95,7 @@ class _DeskState extends State<Desk> {
             ),
           ),
         ),
-      ).then((selectedWorkstation) {
-        _workstationBloc.add(GetLastWorkstationsList());
-      });
+      );
     } else {
       var occupants = widget.allUsersWithWorkstation
           .where((element) =>

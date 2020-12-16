@@ -86,7 +86,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
               ..._buildSubjectSection(),
               _buildTimePickersSection(),
               ..._buildParticipantsSection(),
-              BlocBuilder(
+              BlocConsumer(
                   cubit: _reservationBloc,
                   builder: (context, state) {
                     if (state is ReservationUpdatingState) {
@@ -94,10 +94,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                     } else {
                       return _buildButtonsSection();
                     }
-                  }),
-              BlocListener<ReservationsBloc, ReservationState>(
-                  child: Container(),
-                  cubit: _reservationBloc,
+                  },
                   listener: (context, state) {
                     if (state is ReservationUpdateErrorState) {
                       Scaffold.of(context).showSnackBar(
@@ -265,7 +262,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
       hideOnEmpty: true,
       autoFlipDirection: true,
       textFieldConfiguration: TextFieldConfiguration(
-        controller: _participantsTextController,
+          controller: _participantsTextController,
           autofocus: false,
           decoration: InputDecoration(
             //delete icon, clears textfield

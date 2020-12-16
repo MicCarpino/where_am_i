@@ -6,8 +6,6 @@ import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:where_am_i/presentation/bloc/authentication/authentication_event.dart';
-import 'package:where_am_i/presentation/bloc/authentication/authentication_state.dart';
-import 'package:where_am_i/presentation/screen/login_screen.dart';
 
 enum Pages {
   workplaces_page,
@@ -65,7 +63,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       text: 'Gestione presenze',
                     )
                   : Container(),
-                  loggedUser != null && loggedUser.idRole == ROLE_ADMIN
+              //loggedUser != null && loggedUser.idRole == ROLE_ADMIN
+              loggedUser != null && (loggedUser.idRole == ROLE_ADMIN || loggedUser.idResource == "177")
                   ? _buildItem(
                       drawerItemRelatedPage: Pages.users_management_page,
                       icon: Icons.lock_open,
@@ -148,9 +147,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Image(image: AssetImage('assets/dnc_def_logo.png'), width: 200),
-        Text('Ciao ${loggedUser?.name}',
-            style: TextStyle(
-                color: dncBlue, fontSize: 20, fontWeight: FontWeight.bold)),
+        loggedUser != null
+            ? Text('Ciao ${loggedUser?.name}',
+                style: TextStyle(
+                    color: dncBlue, fontSize: 20, fontWeight: FontWeight.bold))
+            : Container(),
         _buildAssignedWorkplaceSection()
       ],
     ));

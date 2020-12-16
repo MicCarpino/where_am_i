@@ -41,27 +41,32 @@ class WorkplaceBuilder extends StatelessWidget {
         ]));
   }
 
-  BlocBuilder<WorkstationBloc, WorkstationState> _buildWorkplaceSection(
+  BlocConsumer<WorkstationBloc, WorkstationState> _buildWorkplaceSection(
       BuildContext context, bool allowChangesForCurrentDate) {
-    return BlocBuilder<WorkstationBloc, WorkstationState>(
-        buildWhen: (previous, current) =>
-            current is WorkstationsFetchLoadingState ||
-            current is WorkstationsFetchCompletedState ||
-            current is WorkstationsFetchErrorState,
-        cubit: BlocProvider.of<WorkstationBloc>(context),
-        builder: (context, state) {
-          if (state is WorkstationsFetchLoadingState) {
-            return CircularLoading();
-          } else if (state is WorkstationsFetchCompletedState) {
-            return _buildWorkstations(
-                state.usersWithWorkstations, allowChangesForCurrentDate);
-          } else {
-            return RetryWidget(
-                onTryAgainPressed: () =>
-                    BlocProvider.of<WorkstationBloc>(context).add(
-                        FetchWorkstationsLists(dateToFetch: visualizedDate)));
-          }
-        });
+    return BlocConsumer<WorkstationBloc, WorkstationState>(
+      cubit: BlocProvider.of<WorkstationBloc>(context),
+      builder: (context, state) {
+        print('WORKSTATION STATE: ${state.toString()}');
+        if (state is WorkstationsFetchLoadingState) {
+          return CircularLoading();
+        } else if (state is WorkstationsFetchCompletedState) {
+          return _buildWorkstations(
+              state.usersWithWorkstations, allowChangesForCurrentDate);
+        } else {
+          return RetryWidget(
+            onTryAgainPressed: () => BlocProvider.of<WorkstationBloc>(context)
+                .add(FetchWorkstationsLists(dateToFetch: visualizedDate)),
+          );
+        }
+      },
+      listener: (context, state) {
+        if (state is ReservationUpdateErrorState) {
+          Scaffold.of(context).showSnackBar(
+            SnackBar(content: Text("wii")),
+          );
+        }
+      },
+    );
   }
 
   _buildWorkstations(List<UserWithWorkstation> usersWithWorkstations,
@@ -131,31 +136,41 @@ class WorkplaceBuilder extends StatelessWidget {
           ),
         ]),
         //Calendar displaying reservations
-        BlocBuilder<ReservationsBloc, ReservationState>(
-            cubit: reservationsBloc,
-            buildWhen: (previous, current) =>
-                current is ReservationsFetchErrorState ||
-                current is ReservationsFetchLoadingState ||
-                current is ReservationsFetchCompletedState,
-            builder: (context, state) {
-              if (state is ReservationsFetchLoadingState) {
-                return CircularLoading();
-              } else if (state is ReservationsFetchCompletedState) {
-                return ReservationsCalendar(
-                  reservationsList: state.reservationsList
-                      .where(
-                          (element) => element.idRoom == room.reservationRoomId)
-                      .toList(),
-                  allowChangesForCurrentDate: allowChangesForCurrentDate,
-                );
-              } else {
-                return Center(
-                    child: RetryWidget(
-                  onTryAgainPressed: () => reservationsBloc
-                      .add(FetchReservationsList(dateToFetch: visualizedDate)),
-                ));
-              }
-            })
+        BlocConsumer<ReservationsBloc, ReservationState>(
+          cubit: reservationsBloc,
+          buildWhen: (previous, current) =>
+              current is ReservationsFetchErrorState ||
+              current is ReservationsFetchLoadingState ||
+              current is WorkstationUpdatingState ||
+              current is ReservationsFetchCompletedState,
+          builder: (context, state) {
+            print('RESERVATION STATE: ${state.toString()}');
+            if (state is ReservationsFetchLoadingState) {
+              return CircularLoading();
+            } else if (state is ReservationsFetchCompletedState) {
+              return ReservationsCalendar(
+                reservationsList: state.reservationsList
+                    .where(
+                        (element) => element.idRoom == room.reservationRoomId)
+                    .toList(),
+                allowChangesForCurrentDate: allowChangesForCurrentDate,
+              );
+            } else {
+              return Center(
+                  child: RetryWidget(
+                onTryAgainPressed: () => reservationsBloc
+                    .add(FetchReservationsList(dateToFetch: visualizedDate)),
+              ));
+            }
+          },
+          listener: (context, state) {
+            if (state is ReservationUpdateErrorState) {
+              Scaffold.of(context).showSnackBar(
+                SnackBar(content: Text(state.errorMessage)),
+              );
+            }
+          },
+        )
       ];
     } else {
       return [SizedBox.shrink()];
