@@ -20,6 +20,8 @@ class WorkstationUpdateStatusChanged extends WorkstationState {
   WorkstationUpdateStatusChanged({@required this.isLoading});
 }
 
+class WorkstationUpdatingState extends WorkstationState{}
+
 class WorkstationUpdateErrorState extends WorkstationState {
   final String errorMessage;
 

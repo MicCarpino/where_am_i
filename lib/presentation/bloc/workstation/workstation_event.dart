@@ -24,11 +24,3 @@ class OnMultipleWorkstationsUpdate  extends WorkstationEvent {
     @required this.updatedWorkstations,
   });
 }
-
-class OnWorkstationLongClick extends WorkstationEvent {
-  final int idWorkstation;
-
-  OnWorkstationLongClick({this.idWorkstation});
-}
-
-class GetLastWorkstationsList extends WorkstationEvent {}

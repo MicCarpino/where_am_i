@@ -43,8 +43,6 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
       yield* _fetchWorkstationsList(event.dateToFetch);
     } else if (event is OnSingleWorkstationUpdate) {
       yield* _performWorkstationUpdate(event.workstation);
-    } else if (event is GetLastWorkstationsList) {
-      yield WorkstationsFetchCompletedState(currentWorkstationList);
     } else if (event is OnMultipleWorkstationsUpdate) {
       yield* _performMultipleWorkstationsUpdate(event.updatedWorkstations);
     }
@@ -84,6 +82,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
 
   Stream<WorkstationState> _performWorkstationUpdate(
       Workstation updatedWorkstation) async* {
+    yield WorkstationUpdatingState();
     final updateWorkstationResult =
         await _updateWorkstation(updatedWorkstation);
     yield updateWorkstationResult.fold(
@@ -102,6 +101,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
 
   Stream<WorkstationState> _performMultipleWorkstationsUpdate(
       List<Workstation> updatedWorkstations) async* {
+    yield WorkstationUpdatingState();
     yield WorkstationUpdateStatusChanged(isLoading: true);
     final updateMultipleWorkstationsResult =
         await _updateAllWorkstations(updatedWorkstations);

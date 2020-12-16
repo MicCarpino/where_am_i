@@ -39,8 +39,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
   void initState() {
     super.initState();
     _workstationAssignmentBloc = sl<WorkstationAssignementBloc>();
-    _workstationBloc = BlocProvider.of<WorkstationBloc>(context)
-      ..add(GetLastWorkstationsList());
+    _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
   }
 
   @override
@@ -75,14 +74,8 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                     ..._buildOccupantsList(context, occupants),
                     ..._buildAssignableResourcesList(assignableResources)
                   ]);
-            } else if (state is WorkstationsFetchLoadingState) {
-              return CircularLoading();
             } else {
-              return Center(
-                  child: RetryWidget(
-                onTryAgainPressed: () =>
-                    _workstationBloc.add(GetLastWorkstationsList()),
-              ));
+              return CircularLoading();
             }
           },
           listener: (context, state) {
@@ -103,7 +96,9 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
   }
 
   List<Widget> _buildOccupantsList(
-      BuildContext context, List<UserWithWorkstation> occupants) {
+    BuildContext context,
+    List<UserWithWorkstation> occupants,
+  ) {
     List<Widget> list = [];
     if (occupants.isNotEmpty) {
       list.add(Padding(
@@ -114,6 +109,14 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
         ),
       ));
     }
+    occupants.sort((a, b) {
+      var aStartTime = a.workstation.startTime.toDouble();
+      var bStartTime = b.workstation.startTime.toDouble();
+      var aEndTime = a.workstation.startTime.toDouble();
+      var bEndTime = b.workstation.startTime.toDouble();
+      var abc = aStartTime.compareTo(bStartTime);
+      return abc != 0 ? abc : aEndTime.compareTo(bEndTime);
+    });
     for (var index = 0; index < occupants.length; index++) {
       var workstation = occupants[index].workstation;
       list.add(
@@ -215,10 +218,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                 return Column(children: [
                   ..._buildCheckBoxList(presencesToEndOfMonth),
                   isUpdating
-                      ? CircularLoading(
-                          width: 50,
-                          height: 50,
-                        )
+                      ? CircularLoading(width: 50, height: 50)
                       : FlatButton(
                           onPressed: () {
                             List<Workstation> workstationsToAssign =
@@ -230,8 +230,10 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                             }).toList();
                             workstationsToAssign
                                 .retainWhere((element) => element != null);
-                            _workstationBloc.add(OnMultipleWorkstationsUpdate(
-                                updatedWorkstations: workstationsToAssign));
+                            _workstationBloc.add(
+                              OnMultipleWorkstationsUpdate(
+                                  updatedWorkstations: workstationsToAssign),
+                            );
                           },
                           child: Text(
                             'CONFERMA',
