@@ -66,18 +66,19 @@ class _DeskState extends State<Desk> {
               //allow edit if user's role is staff or higher
               onPressed: () => _onWorkstationClick(),
               child: resourceLabel != null
-                  ? FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: AutoSizeText(
-                        resourceLabel?.replaceAll(" ", "\n"),
-                        maxLines: resourceLabel?.split(" ")?.length,
-                        textAlign: TextAlign.center,minFontSize: 18,
-                        wrapWords: true,
-                        overflow: TextOverflow.clip,style: TextStyle(
+                  ? AutoSizeText(
+                      resourceLabel?.replaceAll(" ", "\n"),
+                      maxLines: resourceLabel?.split(" ")?.length,
+                      minFontSize: 10,
+                      maxFontSize: 14,
+                      softWrap: false,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.visible,
+                      style: TextStyle(
                           color: widget.allowChangesForCurrentDate
                               ? Colors.black
                               : Colors.black45),
-                      ))
+                    )
                   : Container())),
     );
   }

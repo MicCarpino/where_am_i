@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -119,21 +120,28 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
     });
     for (var index = 0; index < occupants.length; index++) {
       var workstation = occupants[index].workstation;
-      list.add(
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            '${workstation.startTime.format(context)} - ${workstation.endTime.format(context)} ${occupants[index].getResourceLabel()}',
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-        IconButton(
-          icon: Icon(Icons.highlight_remove),
-          onPressed: () => _clearWorkstation(workstation),
-          color: Colors.grey,
-        )
-      ]));
+      list.add(Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: AutoSizeText(
+                  '${workstation.startTime.format(context)} - ${workstation.endTime.format(context)} ${occupants[index].getResourceLabel()}',
+                  maxLines: 1,
+                  minFontSize: 14,textAlign: TextAlign.start,
+                  overflow: TextOverflow.fade,softWrap: false,
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.highlight_remove),
+              onPressed: () => _clearWorkstation(workstation),
+              color: Colors.grey,
+            )
+          ]));
       if (index + 1 != occupants.length) {
         list.add(Divider());
       }
