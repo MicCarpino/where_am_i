@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -40,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(_title, style: TextStyle(color: Colors.white)),
+          title: AutoSizeText(_title,maxLines:1, style: TextStyle(color: Colors.white)),
           backgroundColor: dncBlue,
           iconTheme: IconThemeData(color: Colors.white),
         ),

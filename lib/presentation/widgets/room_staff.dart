@@ -14,146 +14,82 @@ class RoomStaff extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.max,
       children: [
         RoomLabel(labelText: 'Dirigenza'),
-        Container(
-          height: 200,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              //left side
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      height: 100,
-                      child: Desk(
-                        allUsersWithWorkstation: workstations
-                            .where((element) =>
-                                element.workstation.codeWorkstation == "48")
-                            .toList(),
-                        workstationCode: 48,
-                        allowChangesForCurrentDate: allowChangesForCurrentDate,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 100,
-                      height: 100,
-                      child: Desk(
-                        allUsersWithWorkstation: workstations
-                            .where((element) =>
-                                element.workstation.codeWorkstation == "49")
-                            .toList(),
-                        workstationCode: 49,
-                        allowChangesForCurrentDate: allowChangesForCurrentDate,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              //right side
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      height: 100,
-                      child: Desk(
-                        allUsersWithWorkstation: workstations
-                            .where((element) =>
-                                element.workstation.codeWorkstation == "47")
-                            .toList(),
-                        workstationCode: 47,
-                        allowChangesForCurrentDate: allowChangesForCurrentDate,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        _buildAdministrationRoom(),
         RoomLabel(labelText: 'Amministrazione'),
-        Container(
-          height: 350,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Desk(
-                      allUsersWithWorkstation: workstations
-                          .where((element) =>
-                              element.workstation.codeWorkstation == "43")
-                          .toList(),
-                      workstationCode: 43,
-                      allowChangesForCurrentDate: allowChangesForCurrentDate,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Desk(
-                      allUsersWithWorkstation: workstations
-                          .where((element) =>
-                              element.workstation.codeWorkstation == "44")
-                          .toList(),
-                      workstationCode: 44,
-                      allowChangesForCurrentDate: allowChangesForCurrentDate,
-                    ),
-                  ),
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Desk(
-                      allUsersWithWorkstation: workstations
-                          .where((element) =>
-                              element.workstation.codeWorkstation == "46")
-                          .toList(),
-                      workstationCode: 46,
-                      allowChangesForCurrentDate: allowChangesForCurrentDate,
-                    ),
-                  ),
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Desk(
-                      allUsersWithWorkstation: workstations
-                          .where((element) =>
-                              element.workstation.codeWorkstation == "45")
-                          .toList(),
-                      workstationCode: 45,
-                      allowChangesForCurrentDate: allowChangesForCurrentDate,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        )
+        _buildStaffRoom()
       ],
     );
+  }
+
+  Widget _buildAdministrationRoom() {
+    return Padding(
+      padding: const EdgeInsets.all(32.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+              flex: 1,
+              child: Column(children: [
+                _autoSizedWorkstation(48),
+                _autoSizedWorkstation(49)
+              ])),
+          Expanded(
+            flex: 1,
+            child: Column(children: [_autoSizedWorkstation(47)]),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStaffRoom() {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Expanded(
+            flex: 1,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [_autoSizedWorkstation(43), _autoSizedWorkstation(44)],
+            )),
+        _singleOffsetWorkstation(0.25),
+        _singleOffsetWorkstation(0.6),
+      ],
+    );
+  }
+
+  AspectRatio _autoSizedWorkstation(int code) {
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Desk(
+        allUsersWithWorkstation: workstations
+            .where((element) =>
+                element.workstation.codeWorkstation == code.toString())
+            .toList(),
+        workstationCode: code,
+        allowChangesForCurrentDate: allowChangesForCurrentDate,
+      ),
+    );
+  }
+
+  Expanded _singleOffsetWorkstation(double offset) {
+    return Expanded(
+        flex: 1,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            //just empty autosized container that push down the proper widget
+            Flexible(
+                flex: 1,
+                child: Row(children: [
+                  Flexible(
+                      child:
+                          AspectRatio(aspectRatio: offset, child: Container()))
+                ])),
+            Flexible(flex: 1, child: _autoSizedWorkstation(46)),
+          ],
+        ));
   }
 }

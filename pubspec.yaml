@@ -34,7 +34,7 @@ dependencies:
   # Remote API
   http: ^0.12.0+2
   # Local cache
-  shared_preferences: ^0.5.12+2
+  shared_preferences: ^0.5.12+4
   # Widget for daily calendar
   flutter_week_view: ^1.0.0+1
   # AutoSize text view
@@ -47,6 +47,8 @@ dependencies:
   flutter_typeahead: ^1.8.8
   # Criptography
   cryptography: ^1.4.1
+  # Plugin added just to fix a build error
+  flutter_keyboard_visibility: ^4.0.2
 
 dev_dependencies:
   flutter_test:

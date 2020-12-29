@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
           listenWhen: (previous, current) => previous!=current,
           listener: (context, state) {
             if (state is LoggedInState) {
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (newContext) =>
@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
               );
             } else if (state is LoggedOutState) {
               print('logged out state trigger on main file');
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (newContext) =>
