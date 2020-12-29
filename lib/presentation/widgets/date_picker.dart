@@ -44,7 +44,11 @@ class _DatePickerState extends State<DatePicker> {
                         Icon(Icons.keyboard_arrow_left, color: Colors.white)),
                 onTap: () {
                   setState(() {
-                    visualizedDate = visualizedDate.subtract(Duration(days: 1));
+                    visualizedDate = visualizedDate.subtract(
+                      Duration(
+                        days: visualizedDate.weekday == DateTime.monday ? 2 : 1,
+                      ),
+                    );
                     onDateChanged(visualizedDate);
                   });
                 },
@@ -52,11 +56,9 @@ class _DatePickerState extends State<DatePicker> {
             ),
           ),
           GestureDetector(
-              child: Text(DateFormat('EEE, MMM d').format(visualizedDate),
+              child: Text(DateFormat('EEEE d MMMM').format(visualizedDate),
                   style: TextStyle(color: Colors.white, fontSize: 16)),
-              onTap: () {
-                _showCalendar(context);
-              }),
+              onTap: () => _showCalendar(context)),
           ClipOval(
             child: Material(
               color: Colors.transparent, // button color
@@ -69,7 +71,12 @@ class _DatePickerState extends State<DatePicker> {
                         Icon(Icons.keyboard_arrow_right, color: Colors.white)),
                 onTap: () {
                   setState(() {
-                    visualizedDate = visualizedDate.add(Duration(days: 1));
+                    visualizedDate = visualizedDate.add(
+                      Duration(
+                        days:
+                            visualizedDate.weekday == DateTime.saturday ? 2 : 1,
+                      ),
+                    );
                     onDateChanged(visualizedDate);
                   });
                 },
@@ -85,6 +92,7 @@ class _DatePickerState extends State<DatePicker> {
     await showDatePicker(
         context: context,
         initialDate: visualizedDate,
+        selectableDayPredicate: (day) => day.weekday != DateTime.sunday,
         firstDate: DateTime.now().subtract(Duration(days: 365)),
         lastDate: DateTime.now().add(Duration(days: 365)),
         locale: const Locale("it", ""),
