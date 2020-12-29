@@ -80,7 +80,8 @@ class _MyPresencesPageState extends State<MyPresencesPage>
 
   Widget _buildCalendar() {
     return TableCalendar(
-        locale: 'en_US',
+        enabledDayPredicate: (day) => day.weekday != DateTime.sunday,
+        locale: 'it_IT',
         calendarController: _calendarController,
         //holidays: _holidays,
         initialCalendarFormat: CalendarFormat.month,
@@ -131,8 +132,8 @@ class _MyPresencesPageState extends State<MyPresencesPage>
       if (workstation.status == WORKSTATION_STATUS_REFUSED) {
         Scaffold.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  "Non è possibile eliminare una richiesta rifiutata")),
+              content:
+                  Text("Non è possibile eliminare una richiesta rifiutata")),
         );
       } else {
         //performing delete

@@ -74,7 +74,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   void initDropdownValues() {
     DateTime date = startingDate.add(Duration(days: 1));
     while (!date.isAfter(lastDateOfMonth)) {
-      if (date.weekday != DateTime.saturday ||
+      if (date.weekday != DateTime.saturday &&
           date.weekday != DateTime.sunday) {
         _availableDates.add(date);
       }
@@ -263,9 +263,6 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
           ? "${formatter.format(widget.selectedDate)}"
           : "${widget.user.surname} ${widget.user.name} per ${formatter.format(widget.selectedDate)}";
     }
-    return Text(
-      text,
-      style: TextStyle(fontSize: 16),
-    );
+    return Text(text, style: TextStyle(fontSize: 16));
   }
 }
