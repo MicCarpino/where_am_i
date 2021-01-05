@@ -267,7 +267,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
         Workstation item = _userPresencesChecked.keys.elementAt(index);
         return CheckboxListTile(
             title:
-                Text(DateFormat.yMMMMd('en_US').format(item.workstationDate)),
+                Text(DateFormat.yMMMMd('it_IT').format(item.workstationDate)),
             subtitle: _buildTimeSlotLabel(item),
             value: _userPresencesChecked.values.elementAt(index),
             onChanged: (newValue) {
