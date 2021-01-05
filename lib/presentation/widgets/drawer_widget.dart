@@ -127,7 +127,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     'Gestione utenze', drawerItemRelatedPage);
                 break;
               case Pages.workplaces_page:
-                widget.setTitleAndPage('Civico 26B', drawerItemRelatedPage);
+                widget.setTitleAndPage('Civico 26/B', drawerItemRelatedPage);
                 break;
             }
           });
