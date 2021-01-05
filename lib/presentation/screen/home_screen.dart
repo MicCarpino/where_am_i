@@ -14,7 +14,7 @@ import 'package:where_am_i/presentation/widgets/drawer_widget.dart';
 final sl = GetIt.instance;
 
 class HomeScreen extends StatefulWidget {
-  final String title = "Civico 26B";
+  final String title = "Civico 26/B";
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
