@@ -12,20 +12,21 @@ class RoomStaff extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RoomLabel(labelText: 'Dirigenza'),
-        _buildAdministrationRoom(),
+        _buildManagementRoom(),
         RoomLabel(labelText: 'Amministrazione'),
-        _buildStaffRoom()
+    _buildAdministrationRoom(screenWidth)
       ],
     );
   }
 
-  Widget _buildAdministrationRoom() {
+  Widget _buildManagementRoom() {
     return Padding(
-      padding: const EdgeInsets.all(32.0),
+      padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -44,19 +45,39 @@ class RoomStaff extends StatelessWidget {
     );
   }
 
-  Widget _buildStaffRoom() {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Expanded(
-            flex: 1,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [_autoSizedWorkstation(43), _autoSizedWorkstation(44)],
-            )),
-        _singleOffsetWorkstation(0.25),
-        _singleOffsetWorkstation(0.6),
-      ],
+  Widget _buildAdministrationRoom(double screenWidth) {
+    var workstationSize = (screenWidth - 64) / 3;
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Column(children: [
+            Container(
+              width: workstationSize,
+              child: _autoSizedWorkstation(43),
+            ),
+            Container(
+              width: workstationSize,
+              child: _autoSizedWorkstation(43),
+            ),
+          ]),
+          Column(children: [
+            SizedBox(height: workstationSize*2.5),
+            Container(
+              width: workstationSize,
+              child: _autoSizedWorkstation(43),
+            )
+          ]),Column(children: [
+            SizedBox(height: workstationSize*1.25),
+            Container(
+              width: workstationSize,
+              child: _autoSizedWorkstation(43),
+            )
+          ]),
+        ],
+      ),
     );
   }
 
