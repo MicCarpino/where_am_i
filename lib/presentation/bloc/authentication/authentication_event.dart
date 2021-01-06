@@ -1,18 +1,21 @@
-import 'package:meta/meta.dart';
+part of 'authentication_bloc.dart';
 
-@immutable
-abstract class AuthenticationEvent {}
+abstract class AuthenticationEvent extends Equatable {
+  const AuthenticationEvent();
 
-class OnSplashScreenShowing extends AuthenticationEvent{}
-
-class OnLoginButtonPressed extends AuthenticationEvent {
-  final String username;
-  final String password;
-
-  OnLoginButtonPressed({this.username, this.password});
+  @override
+  List<Object> get props => [];
 }
 
-class OnLogoutEvent extends AuthenticationEvent {
-  final bool hasTokenExpired;
-  OnLogoutEvent({this.hasTokenExpired = false});
+class AuthenticationStatusChanged extends AuthenticationEvent {
+  const AuthenticationStatusChanged(this.status);
+
+  final AuthenticationStatus status;
+
+  @override
+  List<Object> get props => [status];
 }
+
+class AuthenticationLogoutRequested extends AuthenticationEvent {}
+
+class AuthenticationTokenExpired extends AuthenticationEvent {}

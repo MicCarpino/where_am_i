@@ -1,22 +1,26 @@
-import 'package:meta/meta.dart';
+part of 'authentication_bloc.dart';
 
 @immutable
-abstract class AuthenticationState {}
+class AuthenticationState extends Equatable {
+  const AuthenticationState._({
+    this.authenticationStatus = AuthenticationStatus.unknown,
+    this.authenticatedUser,
+  });
 
-class AuthenticationInitialState extends AuthenticationState {}
+  const AuthenticationState.unknown() : this._();
 
-class LoggedInState extends AuthenticationState {}
+  const AuthenticationState.authenticated(AuthenticatedUser user)
+      : this._(
+          authenticationStatus: AuthenticationStatus.authenticated,
+          authenticatedUser: user,
+        );
 
-class LoggedOutState extends AuthenticationState {
-  final bool hasTokenExpired;
+  const AuthenticationState.unauthenticated()
+      : this._(authenticationStatus: AuthenticationStatus.unauthenticated);
 
-  LoggedOutState({this.hasTokenExpired = false});
-}
+  final AuthenticationStatus authenticationStatus;
+  final AuthenticatedUser authenticatedUser;
 
-class LoginLoadingState extends AuthenticationState {}
-
-class LoginFailureState extends AuthenticationState {
-  final String error;
-
-  LoginFailureState({this.error});
+  @override
+  List<Object> get props => [authenticationStatus, authenticatedUser];
 }
