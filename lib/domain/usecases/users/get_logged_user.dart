@@ -2,11 +2,11 @@ import 'package:dartz/dartz.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/domain/entities/authenticated_user.dart';
-import 'package:where_am_i/domain/repositories/auth_repository.dart';
+import 'package:where_am_i/domain/repositories/authentication_repository.dart';
 
 
 class GetLoggedUser implements UseCase<AuthenticatedUser, NoParams> {
-  final AuthRepository _loginRepository;
+  final AuthenticationRepository _loginRepository;
   GetLoggedUser(this._loginRepository);
 
   @override

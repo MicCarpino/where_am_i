@@ -15,4 +15,5 @@ class AuthenticatedUser extends Equatable {
 
   @override
   List<Object> get props => [user, authenticationToken, expiration];
+
 }

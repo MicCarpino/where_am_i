@@ -1,10 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/user.dart';
-import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:where_am_i/presentation/pages/workplaces_page.dart';
 import 'package:where_am_i/presentation/pages/my_presences_page.dart';
 import 'package:where_am_i/presentation/pages/presences_management_page.dart';
@@ -14,6 +12,9 @@ import 'package:where_am_i/presentation/widgets/drawer_widget.dart';
 final sl = GetIt.instance;
 
 class HomeScreen extends StatefulWidget {
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => HomeScreen());
+  }
   final String title = "Civico 26/B";
 
   @override
@@ -24,12 +25,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Pages _bodyContent;
   String _title;
   User loggedUser;
-  AuthenticationBloc loginBloc;
 
   @override
   void initState() {
     super.initState();
-    loginBloc = BlocProvider.of<AuthenticationBloc>(context);
     //default view
     _bodyContent = Pages.workplaces_page;
     setState(() {
@@ -45,9 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: dncBlue,
           iconTheme: IconThemeData(color: Colors.white),
         ),
-        drawer: BlocProvider<AuthenticationBloc>.value(
-            value: loginBloc,
-            child: DrawerWidget(_updateTitleAndBodyContent, _bodyContent)),
+        drawer:  DrawerWidget(_updateTitleAndBodyContent, _bodyContent),
         body: _getBodyContent());
   }
 

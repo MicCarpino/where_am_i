@@ -1,24 +1,37 @@
+import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
-
 import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/authenticated_user.dart';
-import 'package:where_am_i/domain/repositories/auth_repository.dart';
+import 'package:where_am_i/domain/repositories/authentication_repository.dart';
 
-class AuthRepositoryImpl implements AuthRepository {
+enum AuthenticationStatus { unknown, authenticated, unauthenticated }
+
+class AuthRepositoryImpl implements AuthenticationRepository {
   final RemoteDataSource remoteDataSource;
   final LocalDataSource localDataSource;
   final serviceLocator = GetIt.instance;
+
+  final _controller = StreamController<AuthenticationStatus>();
 
   AuthRepositoryImpl({
     @required this.remoteDataSource,
     @required this.localDataSource,
   });
+
+  Stream<AuthenticationStatus> get status async* {
+    await Future<void>.delayed(const Duration(seconds: 1));
+    final cachedUser = await localDataSource.getCachedUser();
+    yield cachedUser != null
+        ? AuthenticationStatus.authenticated
+        : AuthenticationStatus.unauthenticated;
+    yield* _controller.stream;
+  }
 
   @override
   Future<Either<Failure, AuthenticatedUser>> performUserAuthentication(
@@ -27,8 +40,8 @@ class AuthRepositoryImpl implements AuthRepository {
       final loggedUser =
           await remoteDataSource.performUserAuthentication(username, password);
       localDataSource.cacheLoggedUser(loggedUser);
-     // serviceLocator.registerSingleton(UserService());
       serviceLocator<UserService>().setLoggedUser(loggedUser.user);
+      _controller.add(AuthenticationStatus.authenticated);
       return Right(loggedUser);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.errorMessage));
@@ -41,7 +54,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, AuthenticatedUser>> getLoggedUser() async {
     try {
       final cachedUser = await localDataSource.getCachedUser();
-     // serviceLocator.registerSingleton(UserService());
+      // serviceLocator.registerSingleton(UserService());
       serviceLocator<UserService>().setLoggedUser(cachedUser.user);
       return Right(cachedUser);
     } on CacheException {
@@ -56,6 +69,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final result = await localDataSource.deleteLoggedUser();
       serviceLocator<UserService>().removeLoggedUser();
+      _controller.add(AuthenticationStatus.unauthenticated);
       return Right(result);
     } on CacheException {
       return Left(CacheFailure());
@@ -63,4 +77,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(UnexpectedFailure(e.toString()));
     }
   }
+
+  void dispose() => _controller.close();
 }

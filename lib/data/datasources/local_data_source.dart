@@ -22,11 +22,9 @@ class LocalDataSourceImpl implements LocalDataSource {
   @override
   Future<AuthenticatedUserModel> getCachedUser() {
     final jsonString = sharedPreferences.getString(CACHED_LOGGED_USER);
-    if (jsonString != null) {
-      return Future.value(AuthenticatedUserModel.fromJson(json.decode(jsonString)));
-    } else {
-      throw CacheException();
-    }
+    return jsonString != null
+        ? Future.value(AuthenticatedUserModel.fromJson(json.decode(jsonString)))
+        : null;
   }
 
   @override

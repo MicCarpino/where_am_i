@@ -5,7 +5,6 @@ import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
-import 'package:where_am_i/presentation/bloc/authentication/authentication_event.dart';
 
 enum Pages {
   workplaces_page,
@@ -27,13 +26,15 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  User loggedUser = sl<UserService>().getLoggedUser;
-  AuthenticationBloc loginBloc;
+  //User loggedUser = sl<UserService>().getLoggedUser;
+  User loggedUser;
+  AuthenticationBloc _authenticationBloc;
 
   @override
   void initState() {
     super.initState();
-    loginBloc = BlocProvider.of<AuthenticationBloc>(context);
+    _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+    loggedUser = _authenticationBloc.state.authenticatedUser.user;
   }
 
   @override
@@ -64,7 +65,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     )
                   : Container(),
               //loggedUser != null && loggedUser.idRole == ROLE_ADMIN
-              loggedUser != null && (loggedUser.idRole == ROLE_ADMIN || loggedUser.idResource == "177")
+              loggedUser != null &&
+                      (loggedUser.idRole == ROLE_ADMIN ||
+                          loggedUser.idResource == "177")
                   ? _buildItem(
                       drawerItemRelatedPage: Pages.users_management_page,
                       icon: Icons.lock_open,
@@ -81,7 +84,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             leading:
                                 Icon(Icons.exit_to_app, color: Colors.black87),
                             title: Text('Logout'),
-                            onTap: () => loginBloc.add(OnLogoutEvent()))
+                            onTap: () => _authenticationBloc
+                                .add(AuthenticationLogoutRequested()))
                       ],
                     )))
           ],

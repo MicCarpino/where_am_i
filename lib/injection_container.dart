@@ -9,7 +9,7 @@ import 'package:where_am_i/data/repositories/auth_repository_impl.dart';
 import 'package:where_am_i/data/repositories/reservation_repository_impl.dart';
 import 'package:where_am_i/data/repositories/user_repository_impl.dart';
 import 'package:where_am_i/domain/repositories/reservation_repository.dart';
-import 'package:where_am_i/domain/repositories/auth_repository.dart';
+import 'package:where_am_i/domain/repositories/authentication_repository.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import 'package:where_am_i/domain/usecases/get_all_user_presences_to_end_of_month.dart';
@@ -34,7 +34,8 @@ import 'package:where_am_i/domain/usecases/workstations/update_all_workstations.
 import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/update_workstation_status.dart';
 import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
-import 'package:where_am_i/presentation/bloc/authentication/authentication_event.dart';
+import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
+import 'package:where_am_i/presentation/bloc/login/login_event.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/my_presences/my_presences_bloc.dart';
@@ -48,7 +49,14 @@ Future<void> init() async {
   sl.registerLazySingleton(() => UserService());
   // Bloc
   sl.registerLazySingleton(() => AuthenticationBloc(
-      performLogIn: sl(), performLogOut: sl(), getLoggedUser: sl()));
+        authenticationRepository: sl(),
+        performLogOut: sl(),
+      ));
+  sl.registerLazySingleton(() => LoginBloc(
+        performLogIn: sl(),
+        performLogOut: sl(),
+        getLoggedUser: sl(),
+      ));
   sl.registerFactory(() => WorkstationBloc(
         getWorkstationsByDate: sl(),
         updateWorkstation: sl(),
@@ -110,7 +118,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => DeleteReservation(sl()));
 
   // Repository
-  sl.registerLazySingleton<AuthRepository>(() => (AuthRepositoryImpl(
+  sl.registerLazySingleton<AuthenticationRepository>(() => (AuthRepositoryImpl(
         localDataSource: sl(),
         remoteDataSource: sl(),
       )));
@@ -134,7 +142,7 @@ Future<void> init() async {
 
   sl.registerLazySingleton<RemoteDataSource>(() => RemoteDataSourceImpl(
       onRevoke: () => sl<AuthenticationBloc>().add(
-            OnLogoutEvent(hasTokenExpired: true),
+            AuthenticationTokenExpired(),
           )));
   // Core
 /*  sl.registerLazySingleton(() => InputConverter());

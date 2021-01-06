@@ -5,14 +5,19 @@ import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/core/utils/size_config.dart';
-import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
-import 'package:where_am_i/presentation/bloc/authentication/authentication_event.dart';
-import 'package:where_am_i/presentation/bloc/authentication/authentication_state.dart';
+import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
+import 'package:where_am_i/presentation/bloc/login/login_state.dart';
+import 'package:where_am_i/presentation/bloc/login/login_event.dart';
 import 'package:where_am_i/presentation/widgets/login_button.dart';
 
 final sl = GetIt.instance;
 
 class LoginScreen extends StatefulWidget {
+
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => LoginScreen());
+  }
+
   final bool hasTokenExpired;
 
   const LoginScreen([this.hasTokenExpired = false]);
@@ -32,13 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscureText = false;
   bool _isLoading = false;
 
-  AuthenticationBloc loginBloc;
-
-  @override
-  void initState() {
-    super.initState();
-    loginBloc = BlocProvider.of<AuthenticationBloc>(context);
-  }
+  LoginBloc loginBloc = sl<LoginBloc>();
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
       resizeToAvoidBottomInset: true,
       extendBodyBehindAppBar: false,
       backgroundColor: Colors.white,
-      body: BlocConsumer<AuthenticationBloc, AuthenticationState>(
+      body: BlocConsumer<LoginBloc, LoginState>(
         cubit: loginBloc,
         builder: (context, state) {
           return GestureDetector(

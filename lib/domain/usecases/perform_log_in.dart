@@ -8,10 +8,10 @@ import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/aes_utils.dart';
 import 'package:where_am_i/domain/entities/authenticated_user.dart';
 
-import '../repositories/auth_repository.dart';
+import '../repositories/authentication_repository.dart';
 
 class PerformLogIn extends UseCase<AuthenticatedUser, LoginParams> {
-  final AuthRepository _loginRepository;
+  final AuthenticationRepository _loginRepository;
 
   PerformLogIn(this._loginRepository);
 
