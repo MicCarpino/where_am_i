@@ -49,6 +49,13 @@ dependencies:
   cryptography: ^1.4.1
   # Plugin added just to fix a build error
   flutter_keyboard_visibility: ^4.0.2
+  #icon
+  flutter_launcher_icons: ^0.8.1
+
+flutter_icons:
+  image_path: "assets/app_icon.png"
+  android: true
+  ios: true
 
 dev_dependencies:
   flutter_test:
