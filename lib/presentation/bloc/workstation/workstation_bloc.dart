@@ -125,6 +125,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
       }
       return WorkstationUpdateStatusChanged(isLoading: false);
     });
+    yield WorkstationsFetchCompletedState(currentWorkstationList);
   }
 }
 

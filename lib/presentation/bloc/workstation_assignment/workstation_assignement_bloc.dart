@@ -15,10 +15,9 @@ class WorkstationAssignementBloc
     extends Bloc<WorkstationAssignmentEvent, WorkstationAssignementState> {
   final GetAllUserPresencesToEndOfMonth _getAllUserPresencesToEndOfMonth;
 
-  WorkstationAssignementBloc(
-      {@required
-          GetAllUserPresencesToEndOfMonth getAllUserPresencesToEndOfMonth})
-      : _getAllUserPresencesToEndOfMonth = getAllUserPresencesToEndOfMonth,
+  WorkstationAssignementBloc({
+    @required GetAllUserPresencesToEndOfMonth getAllUserPresencesToEndOfMonth,
+  })  : _getAllUserPresencesToEndOfMonth = getAllUserPresencesToEndOfMonth,
         assert(getAllUserPresencesToEndOfMonth != null),
         super(WorkstationAssignementInitial());
 
