@@ -83,19 +83,25 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
 
   Widget _buildMultiplePresencesSection() {
     if (startingDateIsBeforeLastDay && widget.workstation == null) {
-      return Container(
-          child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      return Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
-              Checkbox(
-                  value: _isRangeSelectionActive,
-                  onChanged: (newValue) => setState(() {
-                        _isRangeSelectionActive = newValue;
-                        _dropDownSelectedDate = null;
-                      })),
-              Text('Presente per più giornate', style: TextStyle(fontSize: 16))
+              SizedBox(
+                height: 48.0,
+                width: 24.0,
+                child: Checkbox(
+                    value: _isRangeSelectionActive,
+                    onChanged: (newValue) => setState(() {
+                          _isRangeSelectionActive = newValue;
+                          _dropDownSelectedDate = null;
+                        })),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Presente per più giornate'),
+              ),
             ],
           ),
           _isRangeSelectionActive
@@ -108,7 +114,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
                 )
               : Container()
         ],
-      ));
+      );
     } else {
       return Container();
     }
@@ -134,11 +140,14 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   }
 
   Widget _buildButtonsSection() {
-    return  Column(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: _buildButtons(),
+      ),
     );
   }
 
@@ -171,48 +180,49 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     } else if (timeSlot == TimeSlot.fullDay) {
       label = "TUTTO IL GIORNO";
     }
-    return AspectRatio(aspectRatio: 2.5,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: RaisedButton(
-              elevation: 5,
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40),
-                  side: BorderSide(color: Colors.blue)),
-              child: Text(
-                label,
-                style: TextStyle(fontSize: 20, color: Colors.blue),
-                textAlign: TextAlign.center,
-              ),
-              onPressed: () {
-                if (widget.workstation?.status == WORKSTATION_STATUS_REFUSED) {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("Attenzione"),
-                          content: Text(
-                              "La presenza per questa risorsa è stata rifiutata. Confermando verranno apportate le modifiche e lo stato della richiesta verrà automaticamente confermato."),
-                          actions: [
-                            FlatButton(
-                                child: Text("Annulla"),
-                                onPressed: () => Navigator.pop(context)),
-                            FlatButton(
-                                child: Text("OK"),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  _closeDialogAndSubmit(
-                                      context, startTime, endTime);
-                                })
-                          ],
-                        );
-                      });
-                } else {
-                  _closeDialogAndSubmit(context, startTime, endTime);
-                }
-              }),
-        ),
+    return AspectRatio(
+      aspectRatio: 2.5,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: RaisedButton(
+            elevation: 5,
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(40),
+                side: BorderSide(color: Colors.blue)),
+            child: Text(
+              label,
+              style: TextStyle(fontSize: 20, color: Colors.blue),
+              textAlign: TextAlign.center,
+            ),
+            onPressed: () {
+              if (widget.workstation?.status == WORKSTATION_STATUS_REFUSED) {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Attenzione"),
+                        content: Text(
+                            "La presenza per questa risorsa è stata rifiutata. Confermando verranno apportate le modifiche e lo stato della richiesta verrà automaticamente confermato."),
+                        actions: [
+                          FlatButton(
+                              child: Text("Annulla"),
+                              onPressed: () => Navigator.pop(context)),
+                          FlatButton(
+                              child: Text("OK"),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                _closeDialogAndSubmit(
+                                    context, startTime, endTime);
+                              })
+                        ],
+                      );
+                    });
+              } else {
+                _closeDialogAndSubmit(context, startTime, endTime);
+              }
+            }),
+      ),
     );
   }
 
