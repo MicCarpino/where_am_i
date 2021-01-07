@@ -112,11 +112,12 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
           .foldRight(null, (workstations, previous) => workstations);
       var workstationForCurrentDateUpdated = updatedWorkstations.singleWhere(
           (a) => currentWorkstationList
-              .any((b) => a.idWorkstation == b.workstation.idWorkstation));
+              .any((b) => a.idWorkstation == b.workstation.idWorkstation),
+          orElse: () => null);
       //searching updated workstation for visualized date
       var indexToUpdate = currentWorkstationList.indexWhere((element) =>
           element.workstation.idWorkstation ==
-          workstationForCurrentDateUpdated.idWorkstation);
+          workstationForCurrentDateUpdated?.idWorkstation);
       //updating local list if an occurrence is found
       if (indexToUpdate != -1) {
         currentWorkstationList[indexToUpdate] = UserWithWorkstation(

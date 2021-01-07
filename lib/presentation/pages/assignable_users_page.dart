@@ -12,7 +12,6 @@ import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation_assignment/workstation_assignement_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/custom_expansion_tile.dart';
-import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 
 final sl = GetIt.instance;
 
@@ -64,8 +63,10 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                       widget.selectedWorkstationCode)
                   .toList();
               var unassignedResources = state.usersWithWorkstations
-                  .where(
-                      (element) => element.workstation.codeWorkstation == null)
+                  .where((element) =>
+                      element.workstation.codeWorkstation == null &&
+                      element.workstation.status ==
+                          WORKSTATION_STATUS_CONFIRMED)
                   .toList();
               var assignableResources =
                   _filterAssignableResources(occupants, unassignedResources);
@@ -130,8 +131,10 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                 child: AutoSizeText(
                   '${workstation.startTime.format(context)} - ${workstation.endTime.format(context)} ${occupants[index].getResourceLabel()}',
                   maxLines: 1,
-                  minFontSize: 14,textAlign: TextAlign.start,
-                  overflow: TextOverflow.fade,softWrap: false,
+                  minFontSize: 14,
+                  textAlign: TextAlign.start,
+                  overflow: TextOverflow.fade,
+                  softWrap: false,
                   style: TextStyle(fontSize: 16),
                 ),
               ),
@@ -269,12 +272,16 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
             title:
                 Text(DateFormat.yMMMMd('it_IT').format(item.workstationDate)),
             subtitle: _buildTimeSlotLabel(item),
-            value: _userPresencesChecked.values.elementAt(index),
-            onChanged: (newValue) {
-              setState(() {
-                _userPresencesChecked[item] = newValue;
-              });
-            });
+            value: index == 0
+                ? true
+                : _userPresencesChecked.values.elementAt(index),
+            onChanged: index == 0
+                ? null
+                : (newValue) {
+                    setState(() {
+                      _userPresencesChecked[item] = newValue;
+                    });
+                  });
       },
     );
   }
