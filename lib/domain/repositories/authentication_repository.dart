@@ -14,4 +14,8 @@ abstract class AuthenticationRepository {
   Stream<AuthenticationStatus> get status;
 
   void dispose();
+
+  void storeCredentials(String username, String password);
+
+  void removeStoredCredentials();
 }

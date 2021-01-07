@@ -79,4 +79,29 @@ class AuthRepositoryImpl implements AuthenticationRepository {
   }
 
   void dispose() => _controller.close();
+
+  @override
+  Future<Either<Failure, void>> storeCredentials(
+      String username, String password) async {
+    try {
+      final result = await localDataSource.storeCredentials(username, password);
+      return Right(result);
+    } on CacheException {
+      return Left(CacheFailure());
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> removeStoredCredentials() async {
+    try {
+      final result = await localDataSource.removeStoredCredentials();
+      return Right(result);
+    } on CacheException {
+      return Left(CacheFailure());
+    } on Exception catch (e) {
+      return Left(UnexpectedFailure(e.toString()));
+    }
+  }
 }

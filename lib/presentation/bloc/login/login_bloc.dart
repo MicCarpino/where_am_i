@@ -40,6 +40,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     var loginParameters = LoginParams(
       username: event.username,
       password: event.password,
+      isRememberChecked: event.isRememberMeChecked,
     );
     final result = await performLogIn(loginParameters);
     yield result.fold((failure) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/core/utils/size_config.dart';
@@ -13,16 +14,16 @@ import 'package:where_am_i/presentation/widgets/login_button.dart';
 final sl = GetIt.instance;
 
 class LoginScreen extends StatefulWidget {
-
   static Route route() {
     return MaterialPageRoute<void>(builder: (_) => LoginScreen());
   }
 
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+
   final bool hasTokenExpired;
 
   const LoginScreen([this.hasTokenExpired = false]);
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -32,12 +33,27 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode _usernameFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
   final ScrollController _scrollController = ScrollController();
-  final tokenExpiredMessageShown = false;
-  bool _rememberMe = false;
-  bool _obscureText = false;
-  bool _isLoading = false;
 
   LoginBloc loginBloc = sl<LoginBloc>();
+
+  bool _rememberMe = false;
+  bool _obscureText = true;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences sharedPreferences = sl<SharedPreferences>();
+    if (sharedPreferences.getBool(IS_REMEMBER_ME_CHECKED) ?? false) {
+      var sharedPrefsUsername = sharedPreferences.getString(STORED_USERNAME);
+      var sharedPrefsPassword = sharedPreferences.getString(STORED_PASSWORD);
+      setState(() {
+        _rememberMe = true;
+        _usernameController.text = sharedPrefsUsername;
+        _passwordController.text = sharedPrefsPassword;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
         SizedBox(height: SizeConfig.safeBlockVertical * 3),
         _buildPasswordTF(),
         SizedBox(height: SizeConfig.safeBlockVertical * 3),
-        //_buildRememberMeCheckbox()
+        _buildRememberMeCheckbox()
       ],
     );
   }
@@ -121,7 +137,11 @@ class _LoginScreenState extends State<LoginScreen> {
           content: new Text('Username and password fields must not be empty'),
           duration: new Duration(seconds: 5)));
     } else {
-      loginBloc.add(OnLoginButtonPressed(username: email, password: password));
+      loginBloc.add(OnLoginButtonPressed(
+        username: email,
+        password: password,
+        isRememberMeChecked: _rememberMe,
+      ));
     }
   }
 
@@ -216,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
               },
             ),
           ),
-          Text('Remember me', style: loginLabelStyle),
+          Text('Memorizza credenziali', style: loginLabelStyle),
         ],
       ),
     );

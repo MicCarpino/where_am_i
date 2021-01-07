@@ -20,10 +20,10 @@ const Color divider_color = Color(0xffaaaaaa);
 const Color transparent_70 = Color(0xffB3414141);
 
 //keys
-const String SPLASH_SCREEN_KEY = 'SPLASH_SCREEN';
-const String LOGIN_SCREEN_KEY = 'LOGIN_SCREEN';
-const String HOME_SCREEN_KEY = 'HOME_SCREEN';
-const String JWT_TOKEN_KEY = 'JWT_TOKEN';
+const CACHED_LOGGED_USER = 'CACHED_LOGGED_USER';
+const IS_REMEMBER_ME_CHECKED = 'REMEMBER_CREDENTIALS_CHECKED';
+const STORED_USERNAME = 'STORED_USERNAME';
+const STORED_PASSWORD = 'STORED_PASSWORD';
 
 //LocalHost
 //const BASE_URL = "10.0.2.2:8080";
@@ -32,16 +32,19 @@ const BASE_URL = "test.dncsrl.com";
 //Prod
 //const BASE_URL = "wai.dncsrl.com";
 const HTTP_TIMEOUT = Duration(seconds: 20);
-//reservations constamts
+
+//reservations constants
 const ROOM_24_CODE = 24;
 const ROOM_26B_CODE = 26;
 const ROOM_26A_CODE = 262;
 const RESERVATION_PENDING = 0;
 const RESERVATION_CONFIRMED = 1;
+
 //roles constants
 const ROLE_USER = 1;
 const ROLE_STAFF = 2;
 const ROLE_ADMIN = 3;
+
 // workstations constants
 const WORKSTATION_STATUS_PENDING = 0;
 const WORKSTATION_STATUS_CONFIRMED = 1;

@@ -19,23 +19,34 @@ class PerformLogIn extends UseCase<AuthenticatedUser, LoginParams> {
     var iv = "bd6c7e4747a2962e38cfdcdf586cd7b9";
     var salt = "967c96f344f88e3ccaa512b6ae4d4247";
     var passPhrase = "7061737323313233";
-    var aesUtils =  AesUtils(128,1000);
+    var aesUtils = AesUtils(128, 1000);
     var cipherText = aesUtils.encrypt(salt, iv, passPhrase, params.password);
-    String aesPassword = (iv +"::"+salt+"::"+base64Encode(cipherText));
+    String aesPassword = (iv + "::" + salt + "::" + base64Encode(cipherText));
     var bytes = utf8.encode(aesPassword);
     String encryptedPassword = base64.encode(bytes);
-    return _loginRepository.performUserAuthentication(
+    var result = await _loginRepository.performUserAuthentication(
       params.username,
-     encryptedPassword,
+      encryptedPassword,
     );
+    if (result.isRight()) {
+      params.isRememberChecked
+          ? _loginRepository.storeCredentials(params.username, params.password)
+          : _loginRepository.removeStoredCredentials();
+    }
+    return result;
   }
 }
 
 class LoginParams extends Equatable {
   final String username;
   final String password;
+  final bool isRememberChecked;
 
-  LoginParams({@required this.username, @required this.password});
+  LoginParams({
+    @required this.username,
+    @required this.password,
+    @required this.isRememberChecked,
+  });
 
   @override
   List<Object> get props => [username, password];

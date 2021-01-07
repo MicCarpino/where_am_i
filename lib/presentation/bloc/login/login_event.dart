@@ -6,8 +6,9 @@ abstract class LoginEvent {}
 class OnLoginButtonPressed extends LoginEvent {
   final String username;
   final String password;
+  final bool isRememberMeChecked;
 
-  OnLoginButtonPressed({this.username, this.password});
+  OnLoginButtonPressed({this.username, this.password,this.isRememberMeChecked});
 }
 
 class OnLogoutEvent extends LoginEvent {
