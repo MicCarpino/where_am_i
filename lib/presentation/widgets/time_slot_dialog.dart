@@ -55,9 +55,8 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       elevation: 10,
-      insetPadding: EdgeInsets.symmetric(horizontal: 48),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -135,14 +134,11 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   }
 
   Widget _buildButtonsSection() {
-    return Container(
-      height: 400,
-      child: Column(
+    return  Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: _buildButtons(),
-      ),
     );
   }
 
@@ -162,7 +158,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     return buttonsToBuild.map((e) => _buildTimeSlotButton(context, e)).toList();
   }
 
-  ButtonTheme _buildTimeSlotButton(BuildContext context, TimeSlot timeSlot) {
+  Widget _buildTimeSlotButton(BuildContext context, TimeSlot timeSlot) {
     String label = "TUTTO IL GIORNO";
     TimeOfDay startTime = TIME_SLOT_NINE;
     TimeOfDay endTime = TIME_SLOT_EIGHTEEN;
@@ -175,43 +171,48 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     } else if (timeSlot == TimeSlot.fullDay) {
       label = "TUTTO IL GIORNO";
     }
-    return ButtonTheme(
-      height: 100.0,
-      child: RaisedButton(
-          elevation: 5,
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(40),
-              side: BorderSide(color: Colors.blue)),
-          child:
-              Text(label, style: TextStyle(fontSize: 20, color: Colors.blue)),
-          onPressed: () {
-            if (widget.workstation?.status == WORKSTATION_STATUS_REFUSED) {
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text("Attenzione"),
-                      content: Text(
-                          "La presenza per questa risorsa è stata rifiutata. Confermando verranno apportate le modifiche e lo stato della richiesta verrà automaticamente confermato."),
-                      actions: [
-                        FlatButton(
-                            child: Text("Annulla"),
-                            onPressed: () => Navigator.pop(context)),
-                        FlatButton(
-                            child: Text("OK"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              _closeDialogAndSubmit(
-                                  context, startTime, endTime);
-                            })
-                      ],
-                    );
-                  });
-            } else {
-              _closeDialogAndSubmit(context, startTime, endTime);
-            }
-          }),
+    return AspectRatio(aspectRatio: 2.5,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: RaisedButton(
+              elevation: 5,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40),
+                  side: BorderSide(color: Colors.blue)),
+              child: Text(
+                label,
+                style: TextStyle(fontSize: 20, color: Colors.blue),
+                textAlign: TextAlign.center,
+              ),
+              onPressed: () {
+                if (widget.workstation?.status == WORKSTATION_STATUS_REFUSED) {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Attenzione"),
+                          content: Text(
+                              "La presenza per questa risorsa è stata rifiutata. Confermando verranno apportate le modifiche e lo stato della richiesta verrà automaticamente confermato."),
+                          actions: [
+                            FlatButton(
+                                child: Text("Annulla"),
+                                onPressed: () => Navigator.pop(context)),
+                            FlatButton(
+                                child: Text("OK"),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  _closeDialogAndSubmit(
+                                      context, startTime, endTime);
+                                })
+                          ],
+                        );
+                      });
+                } else {
+                  _closeDialogAndSubmit(context, startTime, endTime);
+                }
+              }),
+        ),
     );
   }
 
