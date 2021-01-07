@@ -45,6 +45,8 @@ class AuthRepositoryImpl implements AuthenticationRepository {
       return Right(loggedUser);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.errorMessage));
+    } on UnauthorizedException catch (e) {
+      return Left(UnexpectedFailure("Credenziali errate"));
     } on Exception catch (e) {
       return Left(UnexpectedFailure(e.toString()));
     }

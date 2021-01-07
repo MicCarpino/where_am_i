@@ -102,10 +102,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Image(image: AssetImage('assets/dnc_def_logo.png')),
                 ),
                 Form(key: _formKey, child: _buildFormFields()),
-                LoginButton(
-                  'Log In',
-                  isLoading: _isLoading,
-                  onTap: () => _login(context),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: LoginButton(
+                    'Log In',
+                    isLoading: _isLoading,
+                    onTap: () => _login(context),
+                  ),
                 ),
               ],
             ),
@@ -247,4 +250,7 @@ class _LoginScreenState extends State<LoginScreen> {
     currentFocus.unfocus();
     FocusScope.of(context).requestFocus(nextFocus);
   }
+}
+class MyType<E> {
+  bool check(instance) => instance is E;
 }
