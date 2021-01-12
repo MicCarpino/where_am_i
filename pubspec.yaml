@@ -40,7 +40,7 @@ dependencies:
   # AutoSize text view
   auto_size_text: ^2.1.0
   # Date format
-  intl: ^0.16.1
+  intl: ^0.17.0-nullsafety.2
   # Customizable calendar
   table_calendar: ^2.3.0
   # AutoCompleteTestView
