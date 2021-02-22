@@ -676,6 +676,15 @@ class _$MyPresencesActorStateTearOff {
       failure,
     );
   }
+
+// ignore: unused_element
+  _ShowTimeSlotDialog showTimeSlotDialog(DateTime date,
+      [Workstation workstation]) {
+    return _ShowTimeSlotDialog(
+      date,
+      workstation,
+    );
+  }
 }
 
 /// @nodoc
@@ -694,6 +703,8 @@ mixin _$MyPresencesActorState {
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
     @required TResult updateFailure(Failure failure),
+    @required
+        TResult showTimeSlotDialog(DateTime date, Workstation workstation),
   });
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
@@ -705,6 +716,7 @@ mixin _$MyPresencesActorState {
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
     TResult updateFailure(Failure failure),
+    TResult showTimeSlotDialog(DateTime date, Workstation workstation),
     @required TResult orElse(),
   });
   @optionalTypeArgs
@@ -717,6 +729,7 @@ mixin _$MyPresencesActorState {
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
     @required TResult updateFailure(_UpdateFailure value),
+    @required TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
   });
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
@@ -728,6 +741,7 @@ mixin _$MyPresencesActorState {
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
     TResult updateFailure(_UpdateFailure value),
+    TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
     @required TResult orElse(),
   });
 }
@@ -794,6 +808,8 @@ class _$_Initial implements _Initial {
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
     @required TResult updateFailure(Failure failure),
+    @required
+        TResult showTimeSlotDialog(DateTime date, Workstation workstation),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -803,6 +819,7 @@ class _$_Initial implements _Initial {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return initial();
   }
 
@@ -817,6 +834,7 @@ class _$_Initial implements _Initial {
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
     TResult updateFailure(Failure failure),
+    TResult showTimeSlotDialog(DateTime date, Workstation workstation),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -837,6 +855,7 @@ class _$_Initial implements _Initial {
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
     @required TResult updateFailure(_UpdateFailure value),
+    @required TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -846,6 +865,7 @@ class _$_Initial implements _Initial {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return initial(this);
   }
 
@@ -860,6 +880,7 @@ class _$_Initial implements _Initial {
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
     TResult updateFailure(_UpdateFailure value),
+    TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -921,6 +942,8 @@ class _$_ActionInProgress implements _ActionInProgress {
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
     @required TResult updateFailure(Failure failure),
+    @required
+        TResult showTimeSlotDialog(DateTime date, Workstation workstation),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -930,6 +953,7 @@ class _$_ActionInProgress implements _ActionInProgress {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return actionInProgress();
   }
 
@@ -944,6 +968,7 @@ class _$_ActionInProgress implements _ActionInProgress {
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
     TResult updateFailure(Failure failure),
+    TResult showTimeSlotDialog(DateTime date, Workstation workstation),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -964,6 +989,7 @@ class _$_ActionInProgress implements _ActionInProgress {
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
     @required TResult updateFailure(_UpdateFailure value),
+    @required TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -973,6 +999,7 @@ class _$_ActionInProgress implements _ActionInProgress {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return actionInProgress(this);
   }
 
@@ -987,6 +1014,7 @@ class _$_ActionInProgress implements _ActionInProgress {
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
     TResult updateFailure(_UpdateFailure value),
+    TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1071,6 +1099,8 @@ class _$_InsertSuccess implements _InsertSuccess {
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
     @required TResult updateFailure(Failure failure),
+    @required
+        TResult showTimeSlotDialog(DateTime date, Workstation workstation),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -1080,6 +1110,7 @@ class _$_InsertSuccess implements _InsertSuccess {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return insertSuccess(workstation);
   }
 
@@ -1094,6 +1125,7 @@ class _$_InsertSuccess implements _InsertSuccess {
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
     TResult updateFailure(Failure failure),
+    TResult showTimeSlotDialog(DateTime date, Workstation workstation),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1114,6 +1146,7 @@ class _$_InsertSuccess implements _InsertSuccess {
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
     @required TResult updateFailure(_UpdateFailure value),
+    @required TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -1123,6 +1156,7 @@ class _$_InsertSuccess implements _InsertSuccess {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return insertSuccess(this);
   }
 
@@ -1137,6 +1171,7 @@ class _$_InsertSuccess implements _InsertSuccess {
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
     TResult updateFailure(_UpdateFailure value),
+    TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1224,6 +1259,8 @@ class _$_InsertFailure implements _InsertFailure {
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
     @required TResult updateFailure(Failure failure),
+    @required
+        TResult showTimeSlotDialog(DateTime date, Workstation workstation),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -1233,6 +1270,7 @@ class _$_InsertFailure implements _InsertFailure {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return insertFailure(failure);
   }
 
@@ -1247,6 +1285,7 @@ class _$_InsertFailure implements _InsertFailure {
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
     TResult updateFailure(Failure failure),
+    TResult showTimeSlotDialog(DateTime date, Workstation workstation),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1267,6 +1306,7 @@ class _$_InsertFailure implements _InsertFailure {
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
     @required TResult updateFailure(_UpdateFailure value),
+    @required TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -1276,6 +1316,7 @@ class _$_InsertFailure implements _InsertFailure {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return insertFailure(this);
   }
 
@@ -1290,6 +1331,7 @@ class _$_InsertFailure implements _InsertFailure {
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
     TResult updateFailure(_UpdateFailure value),
+    TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1378,6 +1420,8 @@ class _$_DeleteSuccess implements _DeleteSuccess {
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
     @required TResult updateFailure(Failure failure),
+    @required
+        TResult showTimeSlotDialog(DateTime date, Workstation workstation),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -1387,6 +1431,7 @@ class _$_DeleteSuccess implements _DeleteSuccess {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return deleteSuccess(idWorkstation);
   }
 
@@ -1401,6 +1446,7 @@ class _$_DeleteSuccess implements _DeleteSuccess {
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
     TResult updateFailure(Failure failure),
+    TResult showTimeSlotDialog(DateTime date, Workstation workstation),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1421,6 +1467,7 @@ class _$_DeleteSuccess implements _DeleteSuccess {
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
     @required TResult updateFailure(_UpdateFailure value),
+    @required TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -1430,6 +1477,7 @@ class _$_DeleteSuccess implements _DeleteSuccess {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return deleteSuccess(this);
   }
 
@@ -1444,6 +1492,7 @@ class _$_DeleteSuccess implements _DeleteSuccess {
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
     TResult updateFailure(_UpdateFailure value),
+    TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1531,6 +1580,8 @@ class _$_DeleteFailure implements _DeleteFailure {
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
     @required TResult updateFailure(Failure failure),
+    @required
+        TResult showTimeSlotDialog(DateTime date, Workstation workstation),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -1540,6 +1591,7 @@ class _$_DeleteFailure implements _DeleteFailure {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return deleteFailure(failure);
   }
 
@@ -1554,6 +1606,7 @@ class _$_DeleteFailure implements _DeleteFailure {
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
     TResult updateFailure(Failure failure),
+    TResult showTimeSlotDialog(DateTime date, Workstation workstation),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1574,6 +1627,7 @@ class _$_DeleteFailure implements _DeleteFailure {
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
     @required TResult updateFailure(_UpdateFailure value),
+    @required TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -1583,6 +1637,7 @@ class _$_DeleteFailure implements _DeleteFailure {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return deleteFailure(this);
   }
 
@@ -1597,6 +1652,7 @@ class _$_DeleteFailure implements _DeleteFailure {
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
     TResult updateFailure(_UpdateFailure value),
+    TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1685,6 +1741,8 @@ class _$_UpdateSuccess implements _UpdateSuccess {
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
     @required TResult updateFailure(Failure failure),
+    @required
+        TResult showTimeSlotDialog(DateTime date, Workstation workstation),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -1694,6 +1752,7 @@ class _$_UpdateSuccess implements _UpdateSuccess {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return updateSuccess(workstation);
   }
 
@@ -1708,6 +1767,7 @@ class _$_UpdateSuccess implements _UpdateSuccess {
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
     TResult updateFailure(Failure failure),
+    TResult showTimeSlotDialog(DateTime date, Workstation workstation),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1728,6 +1788,7 @@ class _$_UpdateSuccess implements _UpdateSuccess {
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
     @required TResult updateFailure(_UpdateFailure value),
+    @required TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -1737,6 +1798,7 @@ class _$_UpdateSuccess implements _UpdateSuccess {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return updateSuccess(this);
   }
 
@@ -1751,6 +1813,7 @@ class _$_UpdateSuccess implements _UpdateSuccess {
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
     TResult updateFailure(_UpdateFailure value),
+    TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1838,6 +1901,8 @@ class _$_UpdateFailure implements _UpdateFailure {
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
     @required TResult updateFailure(Failure failure),
+    @required
+        TResult showTimeSlotDialog(DateTime date, Workstation workstation),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -1847,6 +1912,7 @@ class _$_UpdateFailure implements _UpdateFailure {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return updateFailure(failure);
   }
 
@@ -1861,6 +1927,7 @@ class _$_UpdateFailure implements _UpdateFailure {
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
     TResult updateFailure(Failure failure),
+    TResult showTimeSlotDialog(DateTime date, Workstation workstation),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1881,6 +1948,7 @@ class _$_UpdateFailure implements _UpdateFailure {
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
     @required TResult updateFailure(_UpdateFailure value),
+    @required TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
   }) {
     assert(initial != null);
     assert(actionInProgress != null);
@@ -1890,6 +1958,7 @@ class _$_UpdateFailure implements _UpdateFailure {
     assert(deleteFailure != null);
     assert(updateSuccess != null);
     assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
     return updateFailure(this);
   }
 
@@ -1904,6 +1973,7 @@ class _$_UpdateFailure implements _UpdateFailure {
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
     TResult updateFailure(_UpdateFailure value),
+    TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1920,4 +1990,176 @@ abstract class _UpdateFailure implements MyPresencesActorState {
   Failure get failure;
   @JsonKey(ignore: true)
   _$UpdateFailureCopyWith<_UpdateFailure> get copyWith;
+}
+
+/// @nodoc
+abstract class _$ShowTimeSlotDialogCopyWith<$Res> {
+  factory _$ShowTimeSlotDialogCopyWith(
+          _ShowTimeSlotDialog value, $Res Function(_ShowTimeSlotDialog) then) =
+      __$ShowTimeSlotDialogCopyWithImpl<$Res>;
+  $Res call({DateTime date, Workstation workstation});
+}
+
+/// @nodoc
+class __$ShowTimeSlotDialogCopyWithImpl<$Res>
+    extends _$MyPresencesActorStateCopyWithImpl<$Res>
+    implements _$ShowTimeSlotDialogCopyWith<$Res> {
+  __$ShowTimeSlotDialogCopyWithImpl(
+      _ShowTimeSlotDialog _value, $Res Function(_ShowTimeSlotDialog) _then)
+      : super(_value, (v) => _then(v as _ShowTimeSlotDialog));
+
+  @override
+  _ShowTimeSlotDialog get _value => super._value as _ShowTimeSlotDialog;
+
+  @override
+  $Res call({
+    Object date = freezed,
+    Object workstation = freezed,
+  }) {
+    return _then(_ShowTimeSlotDialog(
+      date == freezed ? _value.date : date as DateTime,
+      workstation == freezed ? _value.workstation : workstation as Workstation,
+    ));
+  }
+}
+
+/// @nodoc
+class _$_ShowTimeSlotDialog implements _ShowTimeSlotDialog {
+  const _$_ShowTimeSlotDialog(this.date, [this.workstation])
+      : assert(date != null);
+
+  @override
+  final DateTime date;
+  @override
+  final Workstation workstation;
+
+  @override
+  String toString() {
+    return 'MyPresencesActorState.showTimeSlotDialog(date: $date, workstation: $workstation)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is _ShowTimeSlotDialog &&
+            (identical(other.date, date) ||
+                const DeepCollectionEquality().equals(other.date, date)) &&
+            (identical(other.workstation, workstation) ||
+                const DeepCollectionEquality()
+                    .equals(other.workstation, workstation)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(date) ^
+      const DeepCollectionEquality().hash(workstation);
+
+  @JsonKey(ignore: true)
+  @override
+  _$ShowTimeSlotDialogCopyWith<_ShowTimeSlotDialog> get copyWith =>
+      __$ShowTimeSlotDialogCopyWithImpl<_ShowTimeSlotDialog>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object>({
+    @required TResult initial(),
+    @required TResult actionInProgress(),
+    @required TResult insertSuccess(Workstation workstation),
+    @required TResult insertFailure(Failure failure),
+    @required TResult deleteSuccess(int idWorkstation),
+    @required TResult deleteFailure(Failure failure),
+    @required TResult updateSuccess(Workstation workstation),
+    @required TResult updateFailure(Failure failure),
+    @required
+        TResult showTimeSlotDialog(DateTime date, Workstation workstation),
+  }) {
+    assert(initial != null);
+    assert(actionInProgress != null);
+    assert(insertSuccess != null);
+    assert(insertFailure != null);
+    assert(deleteSuccess != null);
+    assert(deleteFailure != null);
+    assert(updateSuccess != null);
+    assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
+    return showTimeSlotDialog(date, workstation);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object>({
+    TResult initial(),
+    TResult actionInProgress(),
+    TResult insertSuccess(Workstation workstation),
+    TResult insertFailure(Failure failure),
+    TResult deleteSuccess(int idWorkstation),
+    TResult deleteFailure(Failure failure),
+    TResult updateSuccess(Workstation workstation),
+    TResult updateFailure(Failure failure),
+    TResult showTimeSlotDialog(DateTime date, Workstation workstation),
+    @required TResult orElse(),
+  }) {
+    assert(orElse != null);
+    if (showTimeSlotDialog != null) {
+      return showTimeSlotDialog(date, workstation);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object>({
+    @required TResult initial(_Initial value),
+    @required TResult actionInProgress(_ActionInProgress value),
+    @required TResult insertSuccess(_InsertSuccess value),
+    @required TResult insertFailure(_InsertFailure value),
+    @required TResult deleteSuccess(_DeleteSuccess value),
+    @required TResult deleteFailure(_DeleteFailure value),
+    @required TResult updateSuccess(_UpdateSuccess value),
+    @required TResult updateFailure(_UpdateFailure value),
+    @required TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
+  }) {
+    assert(initial != null);
+    assert(actionInProgress != null);
+    assert(insertSuccess != null);
+    assert(insertFailure != null);
+    assert(deleteSuccess != null);
+    assert(deleteFailure != null);
+    assert(updateSuccess != null);
+    assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
+    return showTimeSlotDialog(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object>({
+    TResult initial(_Initial value),
+    TResult actionInProgress(_ActionInProgress value),
+    TResult insertSuccess(_InsertSuccess value),
+    TResult insertFailure(_InsertFailure value),
+    TResult deleteSuccess(_DeleteSuccess value),
+    TResult deleteFailure(_DeleteFailure value),
+    TResult updateSuccess(_UpdateSuccess value),
+    TResult updateFailure(_UpdateFailure value),
+    TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
+    @required TResult orElse(),
+  }) {
+    assert(orElse != null);
+    if (showTimeSlotDialog != null) {
+      return showTimeSlotDialog(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _ShowTimeSlotDialog implements MyPresencesActorState {
+  const factory _ShowTimeSlotDialog(DateTime date, [Workstation workstation]) =
+      _$_ShowTimeSlotDialog;
+
+  DateTime get date;
+  Workstation get workstation;
+  @JsonKey(ignore: true)
+  _$ShowTimeSlotDialogCopyWith<_ShowTimeSlotDialog> get copyWith;
 }

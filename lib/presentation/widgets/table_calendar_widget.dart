@@ -11,8 +11,10 @@ class TableCalendarWidget extends StatefulWidget {
   @override
   _TableCalendarWidgetState createState() => _TableCalendarWidgetState();
 
-  const TableCalendarWidget({Key key, @required this.userPresences})
-      : super(key: key);
+  const TableCalendarWidget({
+    Key key,
+    @required this.userPresences,
+  }) : super(key: key);
 
   final List<Workstation> userPresences;
 }
@@ -36,6 +38,7 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget>
   Widget build(BuildContext context) {
     return TableCalendar(
       enabledDayPredicate: (day) => day.weekday != DateTime.sunday,
+      initialSelectedDay: DateTime.now(),
       locale: 'it_IT',
       calendarController: _calendarController,
       //holidays: _holidays,
@@ -67,20 +70,17 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget>
         markersBuilder: (_, date, events, __) => events.isNotEmpty
             ? [PresencesMarker(workstation: events.first)]
             : List.empty(),
-        todayDayBuilder: (context, date, _) => Container(
+        /*todayDayBuilder: (_, date, __) => Container(
           alignment: Alignment.center,
           child: Text(
             '${date.day}',
-            style: TextStyle(
-              fontSize: 16.0,
-              color: dncBlue,
-            ),
+            style: TextStyle(fontSize: 16.0, color: dncBlue),
           ),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: dncBlue),
           ),
-        ),
+        ),*/
       ),
       onDaySelected: (date, events, _) => events.isEmpty
           ? context
@@ -89,16 +89,19 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget>
           : context
               .read<MyPresencesActorBloc>()
               .add(MyPresencesActorEvent.removed(events.first as Workstation)),
-      onDayLongPressed: (day, events, _) => events.isEmpty
-          ? context
-              .read<MyPresencesActorBloc>()
-              .add(MyPresencesActorEvent.editRequested(day))
-          : context.read<MyPresencesActorBloc>().add(
+      onDayLongPressed: (day, events, _) =>
+          context.read<MyPresencesActorBloc>().add(
                 MyPresencesActorEvent.editRequested(
-                    day, events.first as Workstation),
+                    day, events.isEmpty ? null : events.first),
               ),
+      /* : context.read<MyPresencesActorBloc>().add(
+                MyPresencesActorEvent.editRequested(
+                    day, events.first as Workstation)
+              ),*/
       onVisibleDaysChanged: null,
-      events: getEvents(),
+      events: {
+        for (Workstation v in widget.userPresences) v.workstationDate: [v]
+      },
     );
   }
 
@@ -109,9 +112,4 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget>
     super.dispose();
   }
 
-  Map<DateTime, List> getEvents() {
-    return {
-      for (Workstation v in widget.userPresences) v.workstationDate: [v]
-    };
-  }
 }

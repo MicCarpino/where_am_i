@@ -23,4 +23,7 @@ abstract class MyPresencesActorState with _$MyPresencesActorState {
 
   const factory MyPresencesActorState.updateFailure(Failure failure) =
       _UpdateFailure;
+
+  const factory MyPresencesActorState.showTimeSlotDialog(
+      DateTime date, [Workstation workstation]) = _ShowTimeSlotDialog;
 }

@@ -6,6 +6,7 @@ import 'package:where_am_i/presentation/bloc/my_presences/actor/my_presences_act
 import 'package:where_am_i/presentation/bloc/my_presences/watcher/my_presences_watcher_bloc.dart';
 import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 import 'package:where_am_i/presentation/widgets/table_calendar_widget.dart';
+import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
 
 import '../../injection_container.dart';
 
@@ -35,6 +36,11 @@ class MyPresencesPage extends StatelessWidget {
                     context, f.failure.getErrorMessageFromFailure()),
                 updateFailure: (f) => showSnackbar(
                     context, f.failure.getErrorMessageFromFailure()),
+                showTimeSlotDialog: (value) => showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return TimeSlotDialog(value.workstation, value.date);
+                    }),
                 orElse: () {});
           },
           child: BlocBuilder<MyPresencesWatcherBloc, MyPresencesWatcherState>(
@@ -43,9 +49,8 @@ class MyPresencesPage extends StatelessWidget {
                 initial: (_) => Container(),
                 loadInProgress: (_) =>
                     const Center(child: CircularProgressIndicator()),
-                loadSuccess: (state) {
-                  return TableCalendarWidget(userPresences: state.presences);
-                },
+                loadSuccess: (state) =>
+                    TableCalendarWidget(userPresences: state.presences),
                 loadFailure: (_) => Container(
                     width: double.infinity,
                     height: double.infinity,

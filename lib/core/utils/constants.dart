@@ -55,7 +55,7 @@ const TIME_SLOT_FOURTEEN = TimeOfDay(hour: 14, minute: 0);
 const TIME_SLOT_EIGHTEEN = TimeOfDay(hour: 18, minute: 0);
 
 //error messages
-const WORKSTATION_EDIT_FORBIDDEN_ERROR = 'Non è possibile modificare richieste di presenza già gestite. Contattare l\'amministrazione ';
-
+const WORKSTATION_EDIT_STATUS_ERROR = 'Non è possibile modificare richieste di presenza già gestite. Contattare l\'amministrazione ';
+const WORKSTATION_EDIT_DATE_ERROR = 'Non è possibile eseguire modifiche su date passate';
 
 

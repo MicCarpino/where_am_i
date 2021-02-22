@@ -4,6 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
@@ -50,7 +51,7 @@ class MyPresencesActorBloc
       removed: (e) async* {
         if (e.workstation.status != WORKSTATION_STATUS_PENDING) {
           yield MyPresencesActorState.deleteFailure(
-            UnexpectedFailure(WORKSTATION_EDIT_FORBIDDEN_ERROR),
+            UnexpectedFailure(WORKSTATION_EDIT_STATUS_ERROR),
           );
         } else {
           yield const MyPresencesActorState.actionInProgress();
@@ -65,8 +66,8 @@ class MyPresencesActorBloc
       },
       updated: (e) async* {
         if (e.workstation.status != WORKSTATION_STATUS_PENDING) {
-          yield MyPresencesActorState.deleteFailure(
-            UnexpectedFailure(WORKSTATION_EDIT_FORBIDDEN_ERROR),
+          yield MyPresencesActorState.updateFailure(
+            UnexpectedFailure(WORKSTATION_EDIT_STATUS_ERROR),
           );
         } else {
           yield const MyPresencesActorState.actionInProgress();
@@ -79,8 +80,21 @@ class MyPresencesActorBloc
         }
       },
       editRequested: (e) async* {
-        //TODO: fix this
-        yield const MyPresencesActorState.actionInProgress();
+       if(e.day.zeroed().isAtSameMomentOrAfter(DateTime.now().zeroed())){
+         if(e.workstation != null && e.workstation?.status != WORKSTATION_STATUS_PENDING){
+           yield MyPresencesActorState.updateFailure(
+             UnexpectedFailure(WORKSTATION_EDIT_STATUS_ERROR),
+           );
+         } else {
+           yield MyPresencesActorState.showTimeSlotDialog(e.day,e.workstation);
+         }
+       } else {
+         yield const MyPresencesActorState.actionInProgress();
+         yield MyPresencesActorState.updateFailure(
+           UnexpectedFailure(WORKSTATION_EDIT_DATE_ERROR),
+         );
+
+       }
       },
     );
   }
