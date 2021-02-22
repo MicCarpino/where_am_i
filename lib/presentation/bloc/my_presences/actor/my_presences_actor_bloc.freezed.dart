@@ -21,9 +21,9 @@ class _$MyPresencesActorEventTearOff {
   }
 
 // ignore: unused_element
-  _Removed removed(int idWorkstation) {
+  _Removed removed(Workstation workstation) {
     return _Removed(
-      idWorkstation,
+      workstation,
     );
   }
 
@@ -52,14 +52,14 @@ mixin _$MyPresencesActorEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object>({
     @required TResult added(DateTime date),
-    @required TResult removed(int idWorkstation),
+    @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required TResult editRequested(DateTime day, Workstation workstation),
   });
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
     TResult added(DateTime date),
-    TResult removed(int idWorkstation),
+    TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation),
     @required TResult orElse(),
@@ -158,7 +158,7 @@ class _$_Added implements _Added {
   @optionalTypeArgs
   TResult when<TResult extends Object>({
     @required TResult added(DateTime date),
-    @required TResult removed(int idWorkstation),
+    @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required TResult editRequested(DateTime day, Workstation workstation),
   }) {
@@ -173,7 +173,7 @@ class _$_Added implements _Added {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
     TResult added(DateTime date),
-    TResult removed(int idWorkstation),
+    TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation),
     @required TResult orElse(),
@@ -229,7 +229,7 @@ abstract class _Added implements MyPresencesActorEvent {
 abstract class _$RemovedCopyWith<$Res> {
   factory _$RemovedCopyWith(_Removed value, $Res Function(_Removed) then) =
       __$RemovedCopyWithImpl<$Res>;
-  $Res call({int idWorkstation});
+  $Res call({Workstation workstation});
 }
 
 /// @nodoc
@@ -244,38 +244,38 @@ class __$RemovedCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object idWorkstation = freezed,
+    Object workstation = freezed,
   }) {
     return _then(_Removed(
-      idWorkstation == freezed ? _value.idWorkstation : idWorkstation as int,
+      workstation == freezed ? _value.workstation : workstation as Workstation,
     ));
   }
 }
 
 /// @nodoc
 class _$_Removed implements _Removed {
-  const _$_Removed(this.idWorkstation) : assert(idWorkstation != null);
+  const _$_Removed(this.workstation) : assert(workstation != null);
 
   @override
-  final int idWorkstation;
+  final Workstation workstation;
 
   @override
   String toString() {
-    return 'MyPresencesActorEvent.removed(idWorkstation: $idWorkstation)';
+    return 'MyPresencesActorEvent.removed(workstation: $workstation)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _Removed &&
-            (identical(other.idWorkstation, idWorkstation) ||
+            (identical(other.workstation, workstation) ||
                 const DeepCollectionEquality()
-                    .equals(other.idWorkstation, idWorkstation)));
+                    .equals(other.workstation, workstation)));
   }
 
   @override
   int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(idWorkstation);
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(workstation);
 
   @JsonKey(ignore: true)
   @override
@@ -286,7 +286,7 @@ class _$_Removed implements _Removed {
   @optionalTypeArgs
   TResult when<TResult extends Object>({
     @required TResult added(DateTime date),
-    @required TResult removed(int idWorkstation),
+    @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required TResult editRequested(DateTime day, Workstation workstation),
   }) {
@@ -294,21 +294,21 @@ class _$_Removed implements _Removed {
     assert(removed != null);
     assert(updated != null);
     assert(editRequested != null);
-    return removed(idWorkstation);
+    return removed(workstation);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
     TResult added(DateTime date),
-    TResult removed(int idWorkstation),
+    TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
     if (removed != null) {
-      return removed(idWorkstation);
+      return removed(workstation);
     }
     return orElse();
   }
@@ -346,9 +346,9 @@ class _$_Removed implements _Removed {
 }
 
 abstract class _Removed implements MyPresencesActorEvent {
-  const factory _Removed(int idWorkstation) = _$_Removed;
+  const factory _Removed(Workstation workstation) = _$_Removed;
 
-  int get idWorkstation;
+  Workstation get workstation;
   @JsonKey(ignore: true)
   _$RemovedCopyWith<_Removed> get copyWith;
 }
@@ -414,7 +414,7 @@ class _$_Updated implements _Updated {
   @optionalTypeArgs
   TResult when<TResult extends Object>({
     @required TResult added(DateTime date),
-    @required TResult removed(int idWorkstation),
+    @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required TResult editRequested(DateTime day, Workstation workstation),
   }) {
@@ -429,7 +429,7 @@ class _$_Updated implements _Updated {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
     TResult added(DateTime date),
-    TResult removed(int idWorkstation),
+    TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation),
     @required TResult orElse(),
@@ -552,7 +552,7 @@ class _$_EditRequested implements _EditRequested {
   @optionalTypeArgs
   TResult when<TResult extends Object>({
     @required TResult added(DateTime date),
-    @required TResult removed(int idWorkstation),
+    @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required TResult editRequested(DateTime day, Workstation workstation),
   }) {
@@ -567,7 +567,7 @@ class _$_EditRequested implements _EditRequested {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
     TResult added(DateTime date),
-    TResult removed(int idWorkstation),
+    TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation),
     @required TResult orElse(),

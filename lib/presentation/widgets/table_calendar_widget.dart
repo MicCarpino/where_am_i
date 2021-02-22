@@ -86,10 +86,9 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget>
           ? context
               .read<MyPresencesActorBloc>()
               .add(MyPresencesActorEvent.added(date))
-          : context.read<MyPresencesActorBloc>().add(
-                MyPresencesActorEvent.removed(
-                    (events.first as Workstation).idWorkstation),
-              ),
+          : context
+              .read<MyPresencesActorBloc>()
+              .add(MyPresencesActorEvent.removed(events.first as Workstation)),
       onDayLongPressed: (day, events, _) => events.isEmpty
           ? context
               .read<MyPresencesActorBloc>()
@@ -111,11 +110,8 @@ class _TableCalendarWidgetState extends State<TableCalendarWidget>
   }
 
   Map<DateTime, List> getEvents() {
-    return  {
-      for (Workstation v in widget.userPresences)
-        v.workstationDate: [v]
+    return {
+      for (Workstation v in widget.userPresences) v.workstationDate: [v]
     };
   }
-
-
 }
