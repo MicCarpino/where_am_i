@@ -14,11 +14,16 @@ class MyPresencesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<MyPresencesWatcherBloc>(
-            create: (context) => getIt<MyPresencesWatcherBloc>(),
-          ),
           BlocProvider<MyPresencesActorBloc>(
-            create: (context) => getIt<MyPresencesActorBloc>(),
+            create: (context) => MyPresencesActorBloc(
+              getIt<WorkstationRepository>(),
+            ),
+          ),
+          BlocProvider<MyPresencesWatcherBloc>(
+            create: (context) => MyPresencesWatcherBloc(
+              getIt<WorkstationRepository>(),
+              context.read<MyPresencesActorBloc>(),
+            ),
           ),
         ],
         child: BlocListener<MyPresencesActorBloc, MyPresencesActorState>(

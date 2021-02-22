@@ -91,10 +91,6 @@ Future<void> init() async {
         removeUserPresence: getIt(),
         getLoggedUser: getIt(),
       ));
-  getIt.registerLazySingleton<MyPresencesActorBloc>(
-      () => MyPresencesActorBloc(getIt<WorkstationRepository>()));
-  getIt.registerLazySingleton<MyPresencesWatcherBloc>(() => MyPresencesWatcherBloc(
-      getIt<WorkstationRepository>(), getIt<MyPresencesActorBloc>()));
   // Use Cases
   //User
   getIt.registerLazySingleton(() => PerformLogIn(getIt()));
