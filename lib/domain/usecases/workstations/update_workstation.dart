@@ -11,6 +11,6 @@ class UpdateWorkstation extends UseCase<Workstation, Workstation> {
 
   Future<Either<Failure, Workstation>> call(
       Workstation updatedWorkstation) async {
-    return await _workstationRepository.updateWorkstation(updatedWorkstation);
+    return await _workstationRepository.update(updatedWorkstation);
   }
 }

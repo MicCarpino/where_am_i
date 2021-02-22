@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/usecases/users/get_logged_user.dart';
 import 'package:where_am_i/domain/usecases/workstations/get_user_presences.dart';

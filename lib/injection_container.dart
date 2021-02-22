@@ -35,7 +35,8 @@ import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart'
 import 'package:where_am_i/domain/usecases/workstations/update_workstation_status.dart';
 import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
-import 'package:where_am_i/presentation/bloc/login/login_event.dart';
+import 'package:where_am_i/presentation/bloc/my_presences/actor/my_presences_actor_bloc.dart';
+import 'package:where_am_i/presentation/bloc/my_presences/watcher/my_presences_watcher_bloc.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/my_presences/my_presences_bloc.dart';
@@ -43,105 +44,110 @@ import 'package:where_am_i/presentation/bloc/presences_management/presences_mana
 import 'package:where_am_i/presentation/bloc/users_management/users_management_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation_assignment/workstation_assignement_bloc.dart';
 
-final sl = GetIt.instance;
+final getIt = GetIt.instance;
 
 Future<void> init() async {
-  sl.registerLazySingleton(() => UserService());
+  getIt.registerLazySingleton(() => UserService());
   // Bloc
-  sl.registerLazySingleton(() => AuthenticationBloc(
-        authenticationRepository: sl(),
-        performLogOut: sl(),
+  getIt.registerLazySingleton(() => AuthenticationBloc(
+        authenticationRepository: getIt(),
+        performLogOut: getIt(),
       ));
-  sl.registerLazySingleton(() => LoginBloc(
-        performLogIn: sl(),
-        performLogOut: sl(),
-        getLoggedUser: sl(),
+  getIt.registerLazySingleton(() => LoginBloc(
+        performLogIn: getIt(),
+        performLogOut: getIt(),
+        getLoggedUser: getIt(),
       ));
-  sl.registerFactory(() => WorkstationBloc(
-        getWorkstationsByDate: sl(),
-        updateWorkstation: sl(),
-        updateAllWorkstations: sl(),
-        userService: sl(),
+  getIt.registerFactory(() => WorkstationBloc(
+        getWorkstationsByDate: getIt(),
+        updateWorkstation: getIt(),
+        updateAllWorkstations: getIt(),
+        userService: getIt(),
       ));
-  sl.registerFactory(() => WorkstationAssignementBloc(
-        getAllUserPresencesToEndOfMonth: sl(),
+  getIt.registerFactory(() => WorkstationAssignementBloc(
+        getAllUserPresencesToEndOfMonth: getIt(),
       ));
-  sl.registerFactory(() => ReservationsBloc(
-        getReservations: sl(),
-        insertReservation: sl(),
-        updateReservationStatus: sl(),
-        deleteReservation: sl(),
+  getIt.registerFactory(() => ReservationsBloc(
+        getReservations: getIt(),
+        insertReservation: getIt(),
+        updateReservationStatus: getIt(),
+        deleteReservation: getIt(),
       ));
-  sl.registerFactory(
-      () => UsersManagementBloc(getUsers: sl(), updateUser: sl()));
-  sl.registerFactory(() => PresencesManagementBloc(
-        getAllUserPresencesByDate: sl(),
-        insertUserPresence: sl(),
-        insertAllUserPresences: sl(),
-        updateUserPresence: sl(),
-        removeUserPresence: sl(),
-        updateUserPresenceStatus: sl(),
+  getIt.registerFactory(
+      () => UsersManagementBloc(getUsers: getIt(), updateUser: getIt()));
+  getIt.registerFactory(() => PresencesManagementBloc(
+        getAllUserPresencesByDate: getIt(),
+        insertUserPresence: getIt(),
+        insertAllUserPresences: getIt(),
+        updateUserPresence: getIt(),
+        removeUserPresence: getIt(),
+        updateUserPresenceStatus: getIt(),
       ));
-  sl.registerFactory(() => MyPresencesBloc(
-        getUserPresences: sl(),
-        insertUserPresence: sl(),
-        insertAllUserPresences: sl(),
-        updateUserPresence: sl(),
-        removeUserPresence: sl(),
-        getLoggedUser: sl(),
+  getIt.registerFactory(() => MyPresencesBloc(
+        getUserPresences: getIt(),
+        insertUserPresence: getIt(),
+        insertAllUserPresences: getIt(),
+        updateUserPresence: getIt(),
+        removeUserPresence: getIt(),
+        getLoggedUser: getIt(),
       ));
-
+  getIt.registerLazySingleton<MyPresencesActorBloc>(
+      () => MyPresencesActorBloc(getIt<WorkstationRepository>()));
+  getIt.registerLazySingleton<MyPresencesWatcherBloc>(() => MyPresencesWatcherBloc(
+      getIt<WorkstationRepository>(), getIt<MyPresencesActorBloc>()));
   // Use Cases
   //User
-  sl.registerLazySingleton(() => PerformLogIn(sl()));
-  sl.registerLazySingleton(() => PerformLogOut(sl()));
-  sl.registerLazySingleton(() => GetLoggedUser(sl()));
-  sl.registerLazySingleton(() => GetAllUsers(sl()));
-  sl.registerLazySingleton(() => GetUserById(sl()));
-  sl.registerLazySingleton(() => GetAllUserByFilter(sl()));
-  sl.registerLazySingleton(() => UpdateUser(sl()));
+  getIt.registerLazySingleton(() => PerformLogIn(getIt()));
+  getIt.registerLazySingleton(() => PerformLogOut(getIt()));
+  getIt.registerLazySingleton(() => GetLoggedUser(getIt()));
+  getIt.registerLazySingleton(() => GetAllUsers(getIt()));
+  getIt.registerLazySingleton(() => GetUserById(getIt()));
+  getIt.registerLazySingleton(() => GetAllUserByFilter(getIt()));
+  getIt.registerLazySingleton(() => UpdateUser(getIt()));
   //Workstation
-  sl.registerLazySingleton(() => GetWorkstationsByDate(sl(), sl()));
-  sl.registerLazySingleton(() => GetAllUserPresencesByDate(sl(), sl()));
-  sl.registerLazySingleton(() => GetAllUserPresencesToEndOfMonth(sl()));
-  sl.registerLazySingleton(() => UpdateWorkstation(sl()));
-  sl.registerLazySingleton(() => UpdateAllWorkstations(sl()));
-  sl.registerLazySingleton(() => UpdateWorkstationStatus(sl()));
-  sl.registerLazySingleton(() => GetUserPresences(sl(), sl()));
-  sl.registerLazySingleton(() => InsertWorkstation(sl()));
-  sl.registerLazySingleton(() => InsertAllWorkstations(sl()));
-  sl.registerLazySingleton(() => RemoveWorkstation(sl()));
+  getIt.registerLazySingleton(() => GetWorkstationsByDate(getIt(), getIt()));
+  getIt
+      .registerLazySingleton(() => GetAllUserPresencesByDate(getIt(), getIt()));
+  getIt.registerLazySingleton(() => GetAllUserPresencesToEndOfMonth(getIt()));
+  getIt.registerLazySingleton(() => UpdateWorkstation(getIt()));
+  getIt.registerLazySingleton(() => UpdateAllWorkstations(getIt()));
+  getIt.registerLazySingleton(() => UpdateWorkstationStatus(getIt()));
+  getIt.registerLazySingleton(() => GetUserPresences(getIt(), getIt()));
+  getIt.registerLazySingleton(() => InsertWorkstation(getIt()));
+  getIt.registerLazySingleton(() => InsertAllWorkstations(getIt()));
+  getIt.registerLazySingleton(() => RemoveWorkstation(getIt()));
   //Reservation
-  sl.registerLazySingleton(() => GetReservationsByDate(sl()));
-  sl.registerLazySingleton(() => InsertReservation(sl()));
-  sl.registerLazySingleton(() => UpdateReservation(sl()));
-  sl.registerLazySingleton(() => DeleteReservation(sl()));
+  getIt.registerLazySingleton(() => GetReservationsByDate(getIt()));
+  getIt.registerLazySingleton(() => InsertReservation(getIt()));
+  getIt.registerLazySingleton(() => UpdateReservation(getIt()));
+  getIt.registerLazySingleton(() => DeleteReservation(getIt()));
 
   // Repository
-  sl.registerLazySingleton<AuthenticationRepository>(() => (AuthRepositoryImpl(
-        localDataSource: sl(),
-        remoteDataSource: sl(),
-      )));
-  sl.registerLazySingleton<UserRepository>(() => (UserRepositoryImpl(
-        localDataSource: sl(),
-        remoteDataSource: sl(),
-      )));
-  sl.registerLazySingleton<WorkstationRepository>(
-      () => (WorkstationRepositoryImpl(
-            localDataSource: sl(),
-            remoteDataSource: sl(),
+  getIt.registerLazySingleton<AuthenticationRepository>(
+      () => (AuthRepositoryImpl(
+            localDataSource: getIt(),
+            remoteDataSource: getIt(),
           )));
-  sl.registerLazySingleton<ReservationRepository>(
+  getIt.registerLazySingleton<UserRepository>(() => (UserRepositoryImpl(
+        localDataSource: getIt(),
+        remoteDataSource: getIt(),
+      )));
+  getIt.registerLazySingleton<WorkstationRepository>(
+      () => (WorkstationRepositoryImpl(
+            localDataSource: getIt(),
+            remoteDataSource: getIt(),
+          )));
+  getIt.registerLazySingleton<ReservationRepository>(
       () => (ReservationRepositoryImpl(
-            localDataSource: sl(),
-            remoteDataSource: sl(),
+            localDataSource: getIt(),
+            remoteDataSource: getIt(),
           )));
   // Data sources
-  sl.registerLazySingleton<LocalDataSource>(
-      () => LocalDataSourceImpl(sharedPreferences: sl()));
+  getIt.registerLazySingleton<LocalDataSource>(
+      () => LocalDataSourceImpl(sharedPreferences: getIt()));
 
-  sl.registerLazySingleton<RemoteDataSource>(() => RemoteDataSourceImpl(
-      onRevoke: () => sl<AuthenticationBloc>().add(
+  getIt.registerLazySingleton<RemoteDataSource>(() => RemoteDataSourceImpl(
+      onRevoke: () => getIt<AuthenticationBloc>().add(
             AuthenticationTokenExpired(),
           )));
   // Core
@@ -150,5 +156,5 @@ Future<void> init() async {
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();
-  sl.registerLazySingleton(() => sharedPreferences);
+  getIt.registerLazySingleton(() => sharedPreferences);
 }

@@ -9,6 +9,6 @@ class RemoveWorkstation extends UseCase<int, int> {
   RemoveWorkstation(this._workstationRepository);
 
   Future<Either<Failure, int>> call(int idWorkstation) async {
-    return await _workstationRepository.deleteWorkstation(idWorkstation);
+    return await _workstationRepository.delete(idWorkstation);
   }
 }

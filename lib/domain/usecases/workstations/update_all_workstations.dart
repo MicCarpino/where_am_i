@@ -10,6 +10,6 @@ class UpdateAllWorkstations extends UseCase<List<Workstation>, List<Workstation>
   UpdateAllWorkstations(this._workstationRepository);
 
   Future<Either<Failure, List<Workstation>>> call(List<Workstation> updatedWorkstation) async {
-    return await _workstationRepository.updateAllWorkstations(updatedWorkstation);
+    return await _workstationRepository.updateAll(updatedWorkstation);
   }
 }

@@ -14,6 +14,6 @@ class InsertWorkstation extends UseCase<Workstation, Workstation> {
   Future<Either<Failure, Workstation>> call(
       Workstation newWorkstation) async {
       // performing remote insert
-      return await _workstationRepository.insertWorkstation(newWorkstation);
+      return await _workstationRepository.insert(newWorkstation);
   }
 }

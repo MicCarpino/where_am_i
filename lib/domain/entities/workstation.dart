@@ -26,6 +26,7 @@ class Workstation extends Equatable {
     this.hasMoreForCurrentMonth = false,
   }) : assert(idResource != null || freeName != null);
 
+
   @override
   List<Object> get props => [
         idWorkstation,

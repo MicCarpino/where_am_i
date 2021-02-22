@@ -14,6 +14,6 @@ class InsertAllWorkstations extends UseCase<List<Workstation>, List<Workstation>
   Future<Either<Failure,  List<Workstation>>> call(
       List<Workstation> newWorkstations) async {
       // performing remote insert
-      return await _workstationRepository.insertAllWorkstations(newWorkstations);
+      return await _workstationRepository.insertAll(newWorkstations);
   }
 }

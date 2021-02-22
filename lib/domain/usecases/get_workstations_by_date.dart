@@ -18,7 +18,7 @@ class GetWorkstationsByDate
   Future<Either<Failure, List<UserWithWorkstation>>> call(DateTime date) async {
     var foldedUsersList = await _userRepository.getAllUsers();
     var foldedWorkstationsList =
-        await _workstationRepository.getAllWorkstationsByDate(date);
+        await _workstationRepository.getAllByDate(date);
     var workstationsWithUserNames = List<UserWithWorkstation>();
 
     //merging user names and surnames in workstations by idResource

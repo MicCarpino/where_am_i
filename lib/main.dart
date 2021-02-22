@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       statusBarColor: dncDarkBlue, // status bar color
     ));
     return BlocProvider(
-      create: (_) => serviceLocator.sl<AuthenticationBloc>(),
+      create: (_) => serviceLocator.getIt<AuthenticationBloc>(),
       child: MaterialApp(
         navigatorKey: _navigatorKey,
         theme: ThemeData(primarySwatch: Colors.lightBlue),

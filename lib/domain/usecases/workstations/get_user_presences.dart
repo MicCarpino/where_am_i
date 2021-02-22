@@ -17,6 +17,6 @@ class GetUserPresences extends UseCase<List<Workstation>, NoParams> {
     return loggedUser.fold(
         (l) => Left(l),
         (r) => _workstationRepository
-            .getAllWorkstationsByIdResource(int.tryParse(r.user.idResource)));
+            .getAllForCurrentUser());
   }
 }

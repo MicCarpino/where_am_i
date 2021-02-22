@@ -11,6 +11,6 @@ class UpdateWorkstationStatus extends UseCase<Workstation, WorkstationStatusPara
 
   Future<Either<Failure, Workstation>> call(
       WorkstationStatusParameters workstationStatusParameters) async {
-    return await _workstationRepository.updateWorkstationStatus(workstationStatusParameters);
+    return await _workstationRepository.updateStatus(workstationStatusParameters);
   }
 }

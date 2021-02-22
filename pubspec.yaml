@@ -21,43 +21,42 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-
-  cupertino_icons: ^1.0.0
-  # Service locator
-  get_it: ^5.0.0
-  # Bloc for state management
-  flutter_bloc: ^6.0.6
-  # Value equality
-  equatable: ^1.2.5
-  # Functional programming thingies
-  dartz: ^0.9.2
-  # Remote API
-  http: ^0.12.0+2
-  # Local cache
-  shared_preferences: ^0.5.12+4
-  # Widget for daily calendar
-  flutter_week_view: ^1.0.0+1
   # AutoSize text view
   auto_size_text: ^2.1.0
-  # Date format
-  intl: ^0.17.0-nullsafety.2
-  # Customizable calendar
-  table_calendar: ^2.3.0
-  # AutoCompleteTestView
-  flutter_typeahead: ^1.8.8
-  # Criptography
+   # Criptography
   cryptography: ^1.4.1
-  # Plugin added just to fix a build error
+  # Functional programming thingies
+  dartz: ^0.9.2
+  # Value equality
+  equatable: ^1.2.5
+  #freezed
+  freezed_annotation: ^0.12.0
+  # Bloc for state management
+  flutter_bloc: ^6.0.6
+   # Plugin added just to fix a build error
   flutter_keyboard_visibility: ^4.0.2
   #icon
   flutter_launcher_icons: ^0.8.1
+   # AutoCompleteTestView
+  flutter_typeahead: ^2.0.0
+   # Widget for daily calendar
+  flutter_week_view: ^1.0.0+1
+  # Service locator
+  get_it: ^6.0.0
+  # Remote API
+  http: ^0.13.0
+  # Date format
+  intl: ^0.17.0-nullsafety.2
+  # Local cache
+  shared_preferences: ^0.5.12+4
+  # Customizable calendar
+  table_calendar: ^2.3.0
+
+dev_dependencies:
+  build_runner: ^1.11.3
+  freezed: ^0.12.7
 
 flutter_icons:
   image_path: "assets/app_icon.png"
   android: true
   ios: true
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  mockito: ^4.1.0

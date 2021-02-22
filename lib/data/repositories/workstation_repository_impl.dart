@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:dartz/dartz.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 
 import 'package:where_am_i/core/error/exceptions.dart';
@@ -13,24 +16,19 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   final RemoteDataSource remoteDataSource;
   final LocalDataSource localDataSource;
 
-  static var cachedWorkstationsList = List<Workstation>();
-  static var cachedUserPresences = List<Workstation>();
+  static var cachedWorkstationsList = List<Workstation>.empty();
 
   WorkstationRepositoryImpl({
     @required this.remoteDataSource,
     @required this.localDataSource,
   });
 
-  List<Workstation> getCachedPresences() => cachedUserPresences;
-
   @override
-  Future<Either<Failure, List<Workstation>>> getAllWorkstationsByDate(
-      DateTime date) async {
+  Future<Either<Failure, List<Workstation>>> getAllByDate(DateTime date) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final workstationsList = await remoteDataSource.getAllWorkstationsByDate(
           loggedUser.authenticationToken, date);
-      cachedWorkstationsList = workstationsList;
       return Right(workstationsList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
@@ -40,14 +38,14 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, List<Workstation>>> getAllWorkstationsByIdResource(
-      int idResource) async {
+  Future<Either<Failure, List<Workstation>>> getAllForCurrentUser() async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final userPresences =
           await remoteDataSource.getAllWorkstationsByIdResource(
-              loggedUser.authenticationToken, idResource.toString());
-      cachedUserPresences = userPresences;
+        loggedUser.authenticationToken,
+        loggedUser.user.idResource,
+      );
       return Right(userPresences);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
@@ -57,9 +55,8 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, List<Workstation>>>
-      getAllWorkstationsByIdResourceToEndOfMonth(
-          String idResource, String date) async {
+  Future<Either<Failure, List<Workstation>>> getAllByIdResourceToEndOfMonth(
+      String idResource, String date) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final userPresencesToEndOfMonth =
@@ -74,8 +71,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, Workstation>> insertWorkstation(
-      Workstation workstation) async {
+  Future<Either<Failure, Workstation>> insert(Workstation workstation) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final insertResult = await remoteDataSource.insertWorkstation(
@@ -89,11 +85,13 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, List<Workstation>>> insertAllWorkstations(List<Workstation> newWorkstations) async {
+  Future<Either<Failure, List<Workstation>>> insertAll(
+      List<Workstation> newWorkstations) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final insertResult = await remoteDataSource.insertAllWorkstations(
-          loggedUser.authenticationToken, newWorkstations.map((e) => e.toWorkstationModel()).toList());
+          loggedUser.authenticationToken,
+          newWorkstations.map((e) => e.toWorkstationModel()).toList());
       return Right(insertResult);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
@@ -103,7 +101,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, Workstation>> updateWorkstation(
+  Future<Either<Failure, Workstation>> update(
       Workstation updatedWorkstation) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
@@ -119,7 +117,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, List<Workstation>>> updateAllWorkstations(
+  Future<Either<Failure, List<Workstation>>> updateAll(
       List<Workstation> updatedWorkstations) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
@@ -135,7 +133,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, Workstation>> updateWorkstationStatus(
+  Future<Either<Failure, Workstation>> updateStatus(
       WorkstationStatusParameters workstationStatusParameters) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
@@ -150,7 +148,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
   }
 
   @override
-  Future<Either<Failure, int>> deleteWorkstation(int idWorkstation) async {
+  Future<Either<Failure, int>> delete(int idWorkstation) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       await remoteDataSource.deleteWorkstation(

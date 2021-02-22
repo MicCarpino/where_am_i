@@ -18,7 +18,7 @@ class GetAllUserPresencesByDate
   Future<Either<Failure, List<UserWithWorkstation>>> call(DateTime date) async {
     var usersList = await _userRepository.getAllUsers();
     var workstationsList =
-        await _workstationRepository.getAllWorkstationsByDate(date);
+        await _workstationRepository.getAllByDate(date);
     List<Workstation> workstations =
         workstationsList.getOrElse(() => null);
     List<User> users = usersList.getOrElse(() => null);

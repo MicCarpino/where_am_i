@@ -15,7 +15,7 @@ class GetAllUserPresencesToEndOfMonth
 
   Future<Either<Failure, List<Workstation>>> call(
       PresencesToEndOfMonthParameters params) async {
-    return  await _workstationRepository.getAllWorkstationsByIdResourceToEndOfMonth(
+    return  await _workstationRepository.getAllByIdResourceToEndOfMonth(
             params.idResource, params.startingDate);
   }
 }
