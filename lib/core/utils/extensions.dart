@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
+import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
+
+import 'constants.dart';
 
 extension StringExtension on String {
   String capitalize() {
@@ -36,7 +39,7 @@ extension TimeOfDayExtension on TimeOfDay {
     }
   }
 
-  double toDouble() => this.hour + this.minute/60.0;
+  double toDouble() => this.hour + this.minute / 60.0;
 
   String toJson() {
     final now = new DateTime.now();
@@ -71,11 +74,18 @@ extension UserWithWorkstationListSorter on List<UserWithWorkstation> {
 
   List<UserWithWorkstation> sortByFreeName() {
     this.sort(
-            (a, b) => a.workstation?.freeName?.compareTo(b.workstation?.freeName));
+        (a, b) => a.workstation?.freeName?.compareTo(b.workstation?.freeName));
     return this;
   }
 }
 
+extension TimeSlotTimes on TimeSlot {
+  TimeOfDay toStartTime() =>
+      this == TimeSlot.evening ? TIME_SLOT_FOURTEEN : TIME_SLOT_NINE;
+
+  TimeOfDay toEndTime() =>
+      this == TimeSlot.morning ? TIME_SLOT_THIRTEEN : TIME_SLOT_EIGHTEEN;
+}
 /*extension FailureErrorMessage on Failure {
   String getErrorMessageFromFailure() {
     String message = "Si è verificato un errore";

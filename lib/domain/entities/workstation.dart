@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
+import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
+import 'package:where_am_i/core/utils/constants.dart';
 
 class Workstation extends Equatable {
   final int idWorkstation;
@@ -25,7 +27,6 @@ class Workstation extends Equatable {
     @required this.status,
     this.hasMoreForCurrentMonth = false,
   }) : assert(idResource != null || freeName != null);
-
 
   @override
   List<Object> get props => [
@@ -61,5 +62,39 @@ class Workstation extends Equatable {
         startTime: this.startTime,
         endTime: this.endTime,
         status: this.status);
+  }
+
+  Workstation copyWith({
+    idWorkstation,
+    idResource,
+    workstationDate,
+    freeName,
+    codeWorkstation,
+    startTime,
+    endTime,
+    status,
+    hasMoreForCurrentMonth,
+  }) {
+    return Workstation(
+        idWorkstation: idWorkstation ?? this.idWorkstation,
+        idResource: idResource ?? this.idResource,
+        workstationDate: workstationDate ?? this.workstationDate,
+        freeName: freeName ?? this.freeName,
+        codeWorkstation: codeWorkstation ?? this.codeWorkstation,
+        startTime: startTime ?? this.startTime,
+        endTime: endTime ?? this.endTime,
+        status: status ?? this.status);
+  }
+
+  TimeSlot getTimeSlot() {
+    if (this.startTime == TIME_SLOT_NINE &&
+        this.endTime == TIME_SLOT_THIRTEEN) {
+      return TimeSlot.morning;
+    } else if (this.startTime == TIME_SLOT_FOURTEEN &&
+        this.endTime == TIME_SLOT_EIGHTEEN) {
+      return TimeSlot.evening;
+    } else {
+      return TimeSlot.fullDay;
+    }
   }
 }

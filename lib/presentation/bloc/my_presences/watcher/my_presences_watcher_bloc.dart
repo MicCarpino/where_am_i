@@ -80,6 +80,10 @@ class MyPresencesWatcherBloc
         }
         add(MyPresencesWatcherEvent.workstationsReceived());
       },
+      multipleInsertSuccess: (value) {
+        cachedUserPresences.addAll(value.workstations);
+        add(MyPresencesWatcherEvent.workstationsReceived());
+      },
       actionInProgress: (value) => state,
       orElse: () {},
     );

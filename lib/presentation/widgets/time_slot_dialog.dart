@@ -9,13 +9,16 @@ import 'package:where_am_i/domain/entities/workstation.dart';
 
 enum TimeSlot { fullDay, morning, evening }
 
-//https://pub.dev/packages/dropdown_date_picker
 class TimeSlotDialog extends StatefulWidget {
   final Workstation workstation;
   final DateTime selectedDate;
   final User user;
 
-  TimeSlotDialog(this.workstation, this.selectedDate, [this.user]);
+  TimeSlotDialog({
+    @required this.workstation,
+    @required this.selectedDate,
+    this.user,
+  });
 
   @override
   _TimeSlotDialogState createState() => _TimeSlotDialogState();
@@ -26,13 +29,11 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   DateTime startingDate;
   DateTime lastDateOfMonth;
   bool startingDateIsBeforeLastDay;
-
   //checkbox value
   bool _isRangeSelectionActive = false;
-
   //dropdown selected item
   DateTime _dropDownSelectedDate;
-  List<DateTime> _availableDates = List<DateTime>();
+  List<DateTime> _availableDates = [];
 
   @override
   void initState() {
@@ -40,8 +41,18 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     startingDate = widget.selectedDate.zeroed();
     // DateTime month starts from 0, so month+1 is to compensate date "taken" from another Datetime
     // while setting 0 as day automatically turn it in the last day of the month
-    lastDateOfMonth =
-        new DateTime(startingDate.year, startingDate.month + 1, 0);
+    lastDateOfMonth = new DateTime(
+      startingDate.year,
+      startingDate.month + 1,
+      0,
+    );
+    if (lastDateOfMonth.weekday == DateTime.sunday) {
+      lastDateOfMonth = new DateTime(
+        lastDateOfMonth.year,
+        lastDateOfMonth.month,
+        lastDateOfMonth.day - 1,
+      );
+    }
     //startingDate cannot be a value after the last day of the month, so it's
     //only necessary to check if is not equal to the last day
     startingDateIsBeforeLastDay =
@@ -49,25 +60,6 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     if (startingDateIsBeforeLastDay) {
       initDropdownValues();
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      elevation: 10,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            _buildTitleSection(),
-            _buildMultiplePresencesSection(),
-            _buildButtonsSection(),
-          ],
-        ),
-      ),
-    );
   }
 
   void initDropdownValues() {
@@ -81,43 +73,60 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     }
   }
 
-  Widget _buildMultiplePresencesSection() {
-    if (startingDateIsBeforeLastDay && widget.workstation == null) {
-      return Column(
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      clipBehavior: Clip.hardEdge,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+      ),
+      elevation: 10,
+      child: Column(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              SizedBox(
-                height: 48.0,
-                width: 24.0,
-                child: Checkbox(
-                    value: _isRangeSelectionActive,
-                    onChanged: (newValue) => setState(() {
-                          _isRangeSelectionActive = newValue;
-                          _dropDownSelectedDate = null;
-                        })),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('Presente per più giornate'),
-              ),
-            ],
-          ),
-          _isRangeSelectionActive
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text("Presente fino a :", style: TextStyle(fontSize: 16)),
-                    _buildDropDown()
-                  ],
-                )
-              : Container()
+          _buildTitleSection(),
+          if (startingDateIsBeforeLastDay && widget.workstation == null)
+            _buildMultiplePresencesSection(),
+          _buildButtonsSection(),
         ],
-      );
-    } else {
-      return Container();
-    }
+      ),
+    );
+  }
+
+  Widget _buildMultiplePresencesSection() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            SizedBox(
+              height: 48.0,
+              width: 24.0,
+              child: Checkbox(
+                  value: _isRangeSelectionActive,
+                  onChanged: (newValue) => setState(() {
+                        _isRangeSelectionActive = newValue;
+                        _dropDownSelectedDate = null;
+                      })),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Presente per più giornate'),
+            ),
+          ],
+        ),
+        _isRangeSelectionActive
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text("Presente fino a :", style: TextStyle(fontSize: 16)),
+                  _buildDropDown()
+                ],
+              )
+            : Container()
+      ],
+    );
   }
 
   Widget _buildDropDown() {
@@ -183,12 +192,12 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     return AspectRatio(
       aspectRatio: 2.5,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: RaisedButton(
             elevation: 5,
             color: Colors.white,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(40),
+                borderRadius: BorderRadius.circular(20),
                 side: BorderSide(color: Colors.blue)),
             child: Text(
               label,
@@ -274,6 +283,23 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
           ? "${formatter.format(widget.selectedDate)}"
           : "${widget.user.surname} ${widget.user.name} per ${formatter.format(widget.selectedDate)}";
     }
-    return Text(text, style: TextStyle(fontSize: 16));
+    return Container(
+      color: dncLightBlue,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+            child: Text(text,maxLines: 2,textAlign: TextAlign.justify,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                )),
+          ),
+        ],
+      ),
+    );
   }
 }

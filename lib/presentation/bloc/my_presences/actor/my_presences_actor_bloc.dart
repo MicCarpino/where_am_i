@@ -8,6 +8,7 @@ import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
+import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
 
 import '../../../../injection_container.dart';
 
@@ -27,75 +28,102 @@ class MyPresencesActorBloc
   Stream<MyPresencesActorState> mapEventToState(
     MyPresencesActorEvent event,
   ) async* {
+    yield const MyPresencesActorState.actionInProgress();
     yield* event.map(
-      added: (e) async* {
-        final currentUserId =
-            getIt<AuthenticationBloc>().state.authenticatedUser.user.idResource;
-        yield const MyPresencesActorState.actionInProgress();
-        Workstation workstation = Workstation(
-          idWorkstation: null,
-          codeWorkstation: null,
-          status: WORKSTATION_STATUS_PENDING,
-          startTime: TIME_SLOT_NINE,
-          endTime: TIME_SLOT_EIGHTEEN,
-          workstationDate: e.date,
-          idResource: currentUserId,
-        );
-        final insertOrFailure =
-            await _workstationRepository.insert(workstation);
-        yield insertOrFailure.fold(
-          (failure) => MyPresencesActorState.insertFailure(failure),
-          (workstation) => MyPresencesActorState.insertSuccess(workstation),
-        );
-      },
-      removed: (e) async* {
-        if (e.workstation.status != WORKSTATION_STATUS_PENDING) {
-          yield MyPresencesActorState.deleteFailure(
-            UnexpectedFailure(WORKSTATION_EDIT_STATUS_ERROR),
-          );
-        } else {
-          yield const MyPresencesActorState.actionInProgress();
-          final removeOrFailure =
-              await _workstationRepository.delete(e.workstation.idWorkstation);
-          yield removeOrFailure.fold(
-            (failure) => MyPresencesActorState.deleteFailure(failure),
-            (idWorkstation) =>
-                MyPresencesActorState.deleteSuccess(idWorkstation),
-          );
-        }
-      },
-      updated: (e) async* {
-        if (e.workstation.status != WORKSTATION_STATUS_PENDING) {
-          yield MyPresencesActorState.updateFailure(
-            UnexpectedFailure(WORKSTATION_EDIT_STATUS_ERROR),
-          );
-        } else {
-          yield const MyPresencesActorState.actionInProgress();
-          final removeOrFailure =
-              await _workstationRepository.update(e.workstation);
-          yield removeOrFailure.fold(
-            (failure) => MyPresencesActorState.updateFailure(failure),
-            (workstation) => MyPresencesActorState.updateSuccess(workstation),
-          );
-        }
-      },
-      editRequested: (e) async* {
-       if(e.day.zeroed().isAtSameMomentOrAfter(DateTime.now().zeroed())){
-         if(e.workstation != null && e.workstation?.status != WORKSTATION_STATUS_PENDING){
-           yield MyPresencesActorState.updateFailure(
-             UnexpectedFailure(WORKSTATION_EDIT_STATUS_ERROR),
-           );
-         } else {
-           yield MyPresencesActorState.showTimeSlotDialog(e.day,e.workstation);
-         }
-       } else {
-         yield const MyPresencesActorState.actionInProgress();
-         yield MyPresencesActorState.updateFailure(
-           UnexpectedFailure(WORKSTATION_EDIT_DATE_ERROR),
-         );
-
-       }
-      },
+      added: (e) => _mapAddedEventToState(e),
+      addedMultiple: (e) => _mapAddedMultipleToState(e),
+      removed: (e) => _mapRemovedEventToState(e),
+      updated: (e) => _mapUpdatedEventToState(e),
+      editRequested: (e) => _mapEditRequestedEventToState(e),
     );
+  }
+
+  Stream<MyPresencesActorState> _mapAddedEventToState(_Added e) async* {
+    final currentUserId =
+        getIt<AuthenticationBloc>().state.authenticatedUser.user.idResource;
+    Workstation workstation = Workstation(
+      idWorkstation: null,
+      codeWorkstation: null,
+      status: WORKSTATION_STATUS_PENDING,
+      startTime: e.timeslot.toStartTime(),
+      endTime: e.timeslot.toEndTime(),
+      workstationDate: e.date,
+      idResource: currentUserId,
+    );
+    final insertOrFailure = await _workstationRepository.insert(workstation);
+    yield insertOrFailure.fold(
+      (failure) => MyPresencesActorState.insertFailure(failure),
+      (workstation) => MyPresencesActorState.insertSuccess(workstation),
+    );
+  }
+
+  Stream<MyPresencesActorState> _mapAddedMultipleToState(
+      _AddedMultiple e) async* {
+    final currentUserId =
+        getIt<AuthenticationBloc>().state.authenticatedUser.user.idResource;
+    final insertOrFailure = await _workstationRepository.insertAll(e.dates
+        .map((date) => Workstation(
+              idWorkstation: null,
+              codeWorkstation: null,
+              status: WORKSTATION_STATUS_PENDING,
+              startTime: e.timeslot.toStartTime(),
+              endTime: e.timeslot.toEndTime(),
+              workstationDate: date,
+              idResource: currentUserId,
+            ))
+        .toList());
+    yield insertOrFailure.fold(
+      (failure) => MyPresencesActorState.multipleInsertFailure(failure),
+      (workstations) =>
+          MyPresencesActorState.multipleInsertSuccess(workstations),
+    );
+  }
+
+  Stream<MyPresencesActorState> _mapRemovedEventToState(_Removed e) async* {
+    if (e.workstation.status != WORKSTATION_STATUS_PENDING) {
+      yield MyPresencesActorState.deleteFailure(
+        UnexpectedFailure(WORKSTATION_EDIT_STATUS_ERROR),
+      );
+    } else {
+      final removeOrFailure =
+          await _workstationRepository.delete(e.workstation.idWorkstation);
+      yield removeOrFailure.fold(
+        (failure) => MyPresencesActorState.deleteFailure(failure),
+        (idWorkstation) => MyPresencesActorState.deleteSuccess(idWorkstation),
+      );
+    }
+  }
+
+  Stream<MyPresencesActorState> _mapUpdatedEventToState(_Updated e) async* {
+    if (e.workstation.status != WORKSTATION_STATUS_PENDING) {
+      yield MyPresencesActorState.updateFailure(
+        UnexpectedFailure(WORKSTATION_EDIT_STATUS_ERROR),
+      );
+    } else {
+      final removeOrFailure =
+          await _workstationRepository.update(e.workstation);
+      yield removeOrFailure.fold(
+        (failure) => MyPresencesActorState.updateFailure(failure),
+        (workstation) => MyPresencesActorState.updateSuccess(workstation),
+      );
+    }
+  }
+
+  Stream<MyPresencesActorState> _mapEditRequestedEventToState(
+      _EditRequested e) async* {
+    if (e.day.zeroed().isAtSameMomentOrAfter(DateTime.now().zeroed())) {
+      if (e.workstation != null &&
+          e.workstation?.status != WORKSTATION_STATUS_PENDING) {
+        yield MyPresencesActorState.updateFailure(
+          UnexpectedFailure(WORKSTATION_EDIT_STATUS_ERROR),
+        );
+      } else {
+        yield MyPresencesActorState.showTimeSlotDialog(e.day, e.workstation);
+      }
+    } else {
+      yield MyPresencesActorState.updateFailure(
+        UnexpectedFailure(WORKSTATION_EDIT_DATE_ERROR),
+      );
+    }
   }
 }

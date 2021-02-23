@@ -14,9 +14,18 @@ class _$MyPresencesActorEventTearOff {
   const _$MyPresencesActorEventTearOff();
 
 // ignore: unused_element
-  _Added added(DateTime date) {
+  _Added added(TimeSlot timeslot, DateTime date) {
     return _Added(
+      timeslot,
       date,
+    );
+  }
+
+// ignore: unused_element
+  _AddedMultiple addedMultiple(TimeSlot timeslot, List<DateTime> dates) {
+    return _AddedMultiple(
+      timeslot,
+      dates,
     );
   }
 
@@ -51,14 +60,16 @@ const $MyPresencesActorEvent = _$MyPresencesActorEventTearOff();
 mixin _$MyPresencesActorEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult added(DateTime date),
+    @required TResult added(TimeSlot timeslot, DateTime date),
+    @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required TResult editRequested(DateTime day, Workstation workstation),
   });
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult added(DateTime date),
+    TResult added(TimeSlot timeslot, DateTime date),
+    TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation),
@@ -67,6 +78,7 @@ mixin _$MyPresencesActorEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object>({
     @required TResult added(_Added value),
+    @required TResult addedMultiple(_AddedMultiple value),
     @required TResult removed(_Removed value),
     @required TResult updated(_Updated value),
     @required TResult editRequested(_EditRequested value),
@@ -74,6 +86,7 @@ mixin _$MyPresencesActorEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
     TResult added(_Added value),
+    TResult addedMultiple(_AddedMultiple value),
     TResult removed(_Removed value),
     TResult updated(_Updated value),
     TResult editRequested(_EditRequested value),
@@ -102,7 +115,7 @@ class _$MyPresencesActorEventCopyWithImpl<$Res>
 abstract class _$AddedCopyWith<$Res> {
   factory _$AddedCopyWith(_Added value, $Res Function(_Added) then) =
       __$AddedCopyWithImpl<$Res>;
-  $Res call({DateTime date});
+  $Res call({TimeSlot timeslot, DateTime date});
 }
 
 /// @nodoc
@@ -117,9 +130,11 @@ class __$AddedCopyWithImpl<$Res>
 
   @override
   $Res call({
+    Object timeslot = freezed,
     Object date = freezed,
   }) {
     return _then(_Added(
+      timeslot == freezed ? _value.timeslot : timeslot as TimeSlot,
       date == freezed ? _value.date : date as DateTime,
     ));
   }
@@ -127,27 +142,36 @@ class __$AddedCopyWithImpl<$Res>
 
 /// @nodoc
 class _$_Added implements _Added {
-  const _$_Added(this.date) : assert(date != null);
+  const _$_Added(this.timeslot, this.date)
+      : assert(timeslot != null),
+        assert(date != null);
 
+  @override
+  final TimeSlot timeslot;
   @override
   final DateTime date;
 
   @override
   String toString() {
-    return 'MyPresencesActorEvent.added(date: $date)';
+    return 'MyPresencesActorEvent.added(timeslot: $timeslot, date: $date)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _Added &&
+            (identical(other.timeslot, timeslot) ||
+                const DeepCollectionEquality()
+                    .equals(other.timeslot, timeslot)) &&
             (identical(other.date, date) ||
                 const DeepCollectionEquality().equals(other.date, date)));
   }
 
   @override
   int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(date);
+      runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(timeslot) ^
+      const DeepCollectionEquality().hash(date);
 
   @JsonKey(ignore: true)
   @override
@@ -157,22 +181,25 @@ class _$_Added implements _Added {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult added(DateTime date),
+    @required TResult added(TimeSlot timeslot, DateTime date),
+    @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required TResult editRequested(DateTime day, Workstation workstation),
   }) {
     assert(added != null);
+    assert(addedMultiple != null);
     assert(removed != null);
     assert(updated != null);
     assert(editRequested != null);
-    return added(date);
+    return added(timeslot, date);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult added(DateTime date),
+    TResult added(TimeSlot timeslot, DateTime date),
+    TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation),
@@ -180,7 +207,7 @@ class _$_Added implements _Added {
   }) {
     assert(orElse != null);
     if (added != null) {
-      return added(date);
+      return added(timeslot, date);
     }
     return orElse();
   }
@@ -189,11 +216,13 @@ class _$_Added implements _Added {
   @optionalTypeArgs
   TResult map<TResult extends Object>({
     @required TResult added(_Added value),
+    @required TResult addedMultiple(_AddedMultiple value),
     @required TResult removed(_Removed value),
     @required TResult updated(_Updated value),
     @required TResult editRequested(_EditRequested value),
   }) {
     assert(added != null);
+    assert(addedMultiple != null);
     assert(removed != null);
     assert(updated != null);
     assert(editRequested != null);
@@ -204,6 +233,7 @@ class _$_Added implements _Added {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
     TResult added(_Added value),
+    TResult addedMultiple(_AddedMultiple value),
     TResult removed(_Removed value),
     TResult updated(_Updated value),
     TResult editRequested(_EditRequested value),
@@ -218,11 +248,160 @@ class _$_Added implements _Added {
 }
 
 abstract class _Added implements MyPresencesActorEvent {
-  const factory _Added(DateTime date) = _$_Added;
+  const factory _Added(TimeSlot timeslot, DateTime date) = _$_Added;
 
+  TimeSlot get timeslot;
   DateTime get date;
   @JsonKey(ignore: true)
   _$AddedCopyWith<_Added> get copyWith;
+}
+
+/// @nodoc
+abstract class _$AddedMultipleCopyWith<$Res> {
+  factory _$AddedMultipleCopyWith(
+          _AddedMultiple value, $Res Function(_AddedMultiple) then) =
+      __$AddedMultipleCopyWithImpl<$Res>;
+  $Res call({TimeSlot timeslot, List<DateTime> dates});
+}
+
+/// @nodoc
+class __$AddedMultipleCopyWithImpl<$Res>
+    extends _$MyPresencesActorEventCopyWithImpl<$Res>
+    implements _$AddedMultipleCopyWith<$Res> {
+  __$AddedMultipleCopyWithImpl(
+      _AddedMultiple _value, $Res Function(_AddedMultiple) _then)
+      : super(_value, (v) => _then(v as _AddedMultiple));
+
+  @override
+  _AddedMultiple get _value => super._value as _AddedMultiple;
+
+  @override
+  $Res call({
+    Object timeslot = freezed,
+    Object dates = freezed,
+  }) {
+    return _then(_AddedMultiple(
+      timeslot == freezed ? _value.timeslot : timeslot as TimeSlot,
+      dates == freezed ? _value.dates : dates as List<DateTime>,
+    ));
+  }
+}
+
+/// @nodoc
+class _$_AddedMultiple implements _AddedMultiple {
+  const _$_AddedMultiple(this.timeslot, this.dates)
+      : assert(timeslot != null),
+        assert(dates != null);
+
+  @override
+  final TimeSlot timeslot;
+  @override
+  final List<DateTime> dates;
+
+  @override
+  String toString() {
+    return 'MyPresencesActorEvent.addedMultiple(timeslot: $timeslot, dates: $dates)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is _AddedMultiple &&
+            (identical(other.timeslot, timeslot) ||
+                const DeepCollectionEquality()
+                    .equals(other.timeslot, timeslot)) &&
+            (identical(other.dates, dates) ||
+                const DeepCollectionEquality().equals(other.dates, dates)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(timeslot) ^
+      const DeepCollectionEquality().hash(dates);
+
+  @JsonKey(ignore: true)
+  @override
+  _$AddedMultipleCopyWith<_AddedMultiple> get copyWith =>
+      __$AddedMultipleCopyWithImpl<_AddedMultiple>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object>({
+    @required TResult added(TimeSlot timeslot, DateTime date),
+    @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    @required TResult removed(Workstation workstation),
+    @required TResult updated(Workstation workstation),
+    @required TResult editRequested(DateTime day, Workstation workstation),
+  }) {
+    assert(added != null);
+    assert(addedMultiple != null);
+    assert(removed != null);
+    assert(updated != null);
+    assert(editRequested != null);
+    return addedMultiple(timeslot, dates);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object>({
+    TResult added(TimeSlot timeslot, DateTime date),
+    TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    TResult removed(Workstation workstation),
+    TResult updated(Workstation workstation),
+    TResult editRequested(DateTime day, Workstation workstation),
+    @required TResult orElse(),
+  }) {
+    assert(orElse != null);
+    if (addedMultiple != null) {
+      return addedMultiple(timeslot, dates);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object>({
+    @required TResult added(_Added value),
+    @required TResult addedMultiple(_AddedMultiple value),
+    @required TResult removed(_Removed value),
+    @required TResult updated(_Updated value),
+    @required TResult editRequested(_EditRequested value),
+  }) {
+    assert(added != null);
+    assert(addedMultiple != null);
+    assert(removed != null);
+    assert(updated != null);
+    assert(editRequested != null);
+    return addedMultiple(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object>({
+    TResult added(_Added value),
+    TResult addedMultiple(_AddedMultiple value),
+    TResult removed(_Removed value),
+    TResult updated(_Updated value),
+    TResult editRequested(_EditRequested value),
+    @required TResult orElse(),
+  }) {
+    assert(orElse != null);
+    if (addedMultiple != null) {
+      return addedMultiple(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _AddedMultiple implements MyPresencesActorEvent {
+  const factory _AddedMultiple(TimeSlot timeslot, List<DateTime> dates) =
+      _$_AddedMultiple;
+
+  TimeSlot get timeslot;
+  List<DateTime> get dates;
+  @JsonKey(ignore: true)
+  _$AddedMultipleCopyWith<_AddedMultiple> get copyWith;
 }
 
 /// @nodoc
@@ -285,12 +464,14 @@ class _$_Removed implements _Removed {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult added(DateTime date),
+    @required TResult added(TimeSlot timeslot, DateTime date),
+    @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required TResult editRequested(DateTime day, Workstation workstation),
   }) {
     assert(added != null);
+    assert(addedMultiple != null);
     assert(removed != null);
     assert(updated != null);
     assert(editRequested != null);
@@ -300,7 +481,8 @@ class _$_Removed implements _Removed {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult added(DateTime date),
+    TResult added(TimeSlot timeslot, DateTime date),
+    TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation),
@@ -317,11 +499,13 @@ class _$_Removed implements _Removed {
   @optionalTypeArgs
   TResult map<TResult extends Object>({
     @required TResult added(_Added value),
+    @required TResult addedMultiple(_AddedMultiple value),
     @required TResult removed(_Removed value),
     @required TResult updated(_Updated value),
     @required TResult editRequested(_EditRequested value),
   }) {
     assert(added != null);
+    assert(addedMultiple != null);
     assert(removed != null);
     assert(updated != null);
     assert(editRequested != null);
@@ -332,6 +516,7 @@ class _$_Removed implements _Removed {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
     TResult added(_Added value),
+    TResult addedMultiple(_AddedMultiple value),
     TResult removed(_Removed value),
     TResult updated(_Updated value),
     TResult editRequested(_EditRequested value),
@@ -413,12 +598,14 @@ class _$_Updated implements _Updated {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult added(DateTime date),
+    @required TResult added(TimeSlot timeslot, DateTime date),
+    @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required TResult editRequested(DateTime day, Workstation workstation),
   }) {
     assert(added != null);
+    assert(addedMultiple != null);
     assert(removed != null);
     assert(updated != null);
     assert(editRequested != null);
@@ -428,7 +615,8 @@ class _$_Updated implements _Updated {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult added(DateTime date),
+    TResult added(TimeSlot timeslot, DateTime date),
+    TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation),
@@ -445,11 +633,13 @@ class _$_Updated implements _Updated {
   @optionalTypeArgs
   TResult map<TResult extends Object>({
     @required TResult added(_Added value),
+    @required TResult addedMultiple(_AddedMultiple value),
     @required TResult removed(_Removed value),
     @required TResult updated(_Updated value),
     @required TResult editRequested(_EditRequested value),
   }) {
     assert(added != null);
+    assert(addedMultiple != null);
     assert(removed != null);
     assert(updated != null);
     assert(editRequested != null);
@@ -460,6 +650,7 @@ class _$_Updated implements _Updated {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
     TResult added(_Added value),
+    TResult addedMultiple(_AddedMultiple value),
     TResult removed(_Removed value),
     TResult updated(_Updated value),
     TResult editRequested(_EditRequested value),
@@ -551,12 +742,14 @@ class _$_EditRequested implements _EditRequested {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult added(DateTime date),
+    @required TResult added(TimeSlot timeslot, DateTime date),
+    @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required TResult editRequested(DateTime day, Workstation workstation),
   }) {
     assert(added != null);
+    assert(addedMultiple != null);
     assert(removed != null);
     assert(updated != null);
     assert(editRequested != null);
@@ -566,7 +759,8 @@ class _$_EditRequested implements _EditRequested {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult added(DateTime date),
+    TResult added(TimeSlot timeslot, DateTime date),
+    TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation),
@@ -583,11 +777,13 @@ class _$_EditRequested implements _EditRequested {
   @optionalTypeArgs
   TResult map<TResult extends Object>({
     @required TResult added(_Added value),
+    @required TResult addedMultiple(_AddedMultiple value),
     @required TResult removed(_Removed value),
     @required TResult updated(_Updated value),
     @required TResult editRequested(_EditRequested value),
   }) {
     assert(added != null);
+    assert(addedMultiple != null);
     assert(removed != null);
     assert(updated != null);
     assert(editRequested != null);
@@ -598,6 +794,7 @@ class _$_EditRequested implements _EditRequested {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
     TResult added(_Added value),
+    TResult addedMultiple(_AddedMultiple value),
     TResult removed(_Removed value),
     TResult updated(_Updated value),
     TResult editRequested(_EditRequested value),
@@ -645,6 +842,20 @@ class _$MyPresencesActorStateTearOff {
 // ignore: unused_element
   _InsertFailure insertFailure(Failure failure) {
     return _InsertFailure(
+      failure,
+    );
+  }
+
+// ignore: unused_element
+  _MultipleInsertSuccess multipleInsertSuccess(List<Workstation> workstations) {
+    return _MultipleInsertSuccess(
+      workstations,
+    );
+  }
+
+// ignore: unused_element
+  _MultipleInsertFailure multipleInsertFailure(Failure failure) {
+    return _MultipleInsertFailure(
       failure,
     );
   }
@@ -699,6 +910,8 @@ mixin _$MyPresencesActorState {
     @required TResult actionInProgress(),
     @required TResult insertSuccess(Workstation workstation),
     @required TResult insertFailure(Failure failure),
+    @required TResult multipleInsertSuccess(List<Workstation> workstations),
+    @required TResult multipleInsertFailure(Failure failure),
     @required TResult deleteSuccess(int idWorkstation),
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
@@ -712,6 +925,8 @@ mixin _$MyPresencesActorState {
     TResult actionInProgress(),
     TResult insertSuccess(Workstation workstation),
     TResult insertFailure(Failure failure),
+    TResult multipleInsertSuccess(List<Workstation> workstations),
+    TResult multipleInsertFailure(Failure failure),
     TResult deleteSuccess(int idWorkstation),
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
@@ -725,6 +940,8 @@ mixin _$MyPresencesActorState {
     @required TResult actionInProgress(_ActionInProgress value),
     @required TResult insertSuccess(_InsertSuccess value),
     @required TResult insertFailure(_InsertFailure value),
+    @required TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    @required TResult multipleInsertFailure(_MultipleInsertFailure value),
     @required TResult deleteSuccess(_DeleteSuccess value),
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
@@ -737,6 +954,8 @@ mixin _$MyPresencesActorState {
     TResult actionInProgress(_ActionInProgress value),
     TResult insertSuccess(_InsertSuccess value),
     TResult insertFailure(_InsertFailure value),
+    TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    TResult multipleInsertFailure(_MultipleInsertFailure value),
     TResult deleteSuccess(_DeleteSuccess value),
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
@@ -804,6 +1023,8 @@ class _$_Initial implements _Initial {
     @required TResult actionInProgress(),
     @required TResult insertSuccess(Workstation workstation),
     @required TResult insertFailure(Failure failure),
+    @required TResult multipleInsertSuccess(List<Workstation> workstations),
+    @required TResult multipleInsertFailure(Failure failure),
     @required TResult deleteSuccess(int idWorkstation),
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
@@ -815,6 +1036,8 @@ class _$_Initial implements _Initial {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -830,6 +1053,8 @@ class _$_Initial implements _Initial {
     TResult actionInProgress(),
     TResult insertSuccess(Workstation workstation),
     TResult insertFailure(Failure failure),
+    TResult multipleInsertSuccess(List<Workstation> workstations),
+    TResult multipleInsertFailure(Failure failure),
     TResult deleteSuccess(int idWorkstation),
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
@@ -851,6 +1076,8 @@ class _$_Initial implements _Initial {
     @required TResult actionInProgress(_ActionInProgress value),
     @required TResult insertSuccess(_InsertSuccess value),
     @required TResult insertFailure(_InsertFailure value),
+    @required TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    @required TResult multipleInsertFailure(_MultipleInsertFailure value),
     @required TResult deleteSuccess(_DeleteSuccess value),
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
@@ -861,6 +1088,8 @@ class _$_Initial implements _Initial {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -876,6 +1105,8 @@ class _$_Initial implements _Initial {
     TResult actionInProgress(_ActionInProgress value),
     TResult insertSuccess(_InsertSuccess value),
     TResult insertFailure(_InsertFailure value),
+    TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    TResult multipleInsertFailure(_MultipleInsertFailure value),
     TResult deleteSuccess(_DeleteSuccess value),
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
@@ -938,6 +1169,8 @@ class _$_ActionInProgress implements _ActionInProgress {
     @required TResult actionInProgress(),
     @required TResult insertSuccess(Workstation workstation),
     @required TResult insertFailure(Failure failure),
+    @required TResult multipleInsertSuccess(List<Workstation> workstations),
+    @required TResult multipleInsertFailure(Failure failure),
     @required TResult deleteSuccess(int idWorkstation),
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
@@ -949,6 +1182,8 @@ class _$_ActionInProgress implements _ActionInProgress {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -964,6 +1199,8 @@ class _$_ActionInProgress implements _ActionInProgress {
     TResult actionInProgress(),
     TResult insertSuccess(Workstation workstation),
     TResult insertFailure(Failure failure),
+    TResult multipleInsertSuccess(List<Workstation> workstations),
+    TResult multipleInsertFailure(Failure failure),
     TResult deleteSuccess(int idWorkstation),
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
@@ -985,6 +1222,8 @@ class _$_ActionInProgress implements _ActionInProgress {
     @required TResult actionInProgress(_ActionInProgress value),
     @required TResult insertSuccess(_InsertSuccess value),
     @required TResult insertFailure(_InsertFailure value),
+    @required TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    @required TResult multipleInsertFailure(_MultipleInsertFailure value),
     @required TResult deleteSuccess(_DeleteSuccess value),
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
@@ -995,6 +1234,8 @@ class _$_ActionInProgress implements _ActionInProgress {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1010,6 +1251,8 @@ class _$_ActionInProgress implements _ActionInProgress {
     TResult actionInProgress(_ActionInProgress value),
     TResult insertSuccess(_InsertSuccess value),
     TResult insertFailure(_InsertFailure value),
+    TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    TResult multipleInsertFailure(_MultipleInsertFailure value),
     TResult deleteSuccess(_DeleteSuccess value),
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
@@ -1095,6 +1338,8 @@ class _$_InsertSuccess implements _InsertSuccess {
     @required TResult actionInProgress(),
     @required TResult insertSuccess(Workstation workstation),
     @required TResult insertFailure(Failure failure),
+    @required TResult multipleInsertSuccess(List<Workstation> workstations),
+    @required TResult multipleInsertFailure(Failure failure),
     @required TResult deleteSuccess(int idWorkstation),
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
@@ -1106,6 +1351,8 @@ class _$_InsertSuccess implements _InsertSuccess {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1121,6 +1368,8 @@ class _$_InsertSuccess implements _InsertSuccess {
     TResult actionInProgress(),
     TResult insertSuccess(Workstation workstation),
     TResult insertFailure(Failure failure),
+    TResult multipleInsertSuccess(List<Workstation> workstations),
+    TResult multipleInsertFailure(Failure failure),
     TResult deleteSuccess(int idWorkstation),
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
@@ -1142,6 +1391,8 @@ class _$_InsertSuccess implements _InsertSuccess {
     @required TResult actionInProgress(_ActionInProgress value),
     @required TResult insertSuccess(_InsertSuccess value),
     @required TResult insertFailure(_InsertFailure value),
+    @required TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    @required TResult multipleInsertFailure(_MultipleInsertFailure value),
     @required TResult deleteSuccess(_DeleteSuccess value),
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
@@ -1152,6 +1403,8 @@ class _$_InsertSuccess implements _InsertSuccess {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1167,6 +1420,8 @@ class _$_InsertSuccess implements _InsertSuccess {
     TResult actionInProgress(_ActionInProgress value),
     TResult insertSuccess(_InsertSuccess value),
     TResult insertFailure(_InsertFailure value),
+    TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    TResult multipleInsertFailure(_MultipleInsertFailure value),
     TResult deleteSuccess(_DeleteSuccess value),
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
@@ -1255,6 +1510,8 @@ class _$_InsertFailure implements _InsertFailure {
     @required TResult actionInProgress(),
     @required TResult insertSuccess(Workstation workstation),
     @required TResult insertFailure(Failure failure),
+    @required TResult multipleInsertSuccess(List<Workstation> workstations),
+    @required TResult multipleInsertFailure(Failure failure),
     @required TResult deleteSuccess(int idWorkstation),
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
@@ -1266,6 +1523,8 @@ class _$_InsertFailure implements _InsertFailure {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1281,6 +1540,8 @@ class _$_InsertFailure implements _InsertFailure {
     TResult actionInProgress(),
     TResult insertSuccess(Workstation workstation),
     TResult insertFailure(Failure failure),
+    TResult multipleInsertSuccess(List<Workstation> workstations),
+    TResult multipleInsertFailure(Failure failure),
     TResult deleteSuccess(int idWorkstation),
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
@@ -1302,6 +1563,8 @@ class _$_InsertFailure implements _InsertFailure {
     @required TResult actionInProgress(_ActionInProgress value),
     @required TResult insertSuccess(_InsertSuccess value),
     @required TResult insertFailure(_InsertFailure value),
+    @required TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    @required TResult multipleInsertFailure(_MultipleInsertFailure value),
     @required TResult deleteSuccess(_DeleteSuccess value),
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
@@ -1312,6 +1575,8 @@ class _$_InsertFailure implements _InsertFailure {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1327,6 +1592,8 @@ class _$_InsertFailure implements _InsertFailure {
     TResult actionInProgress(_ActionInProgress value),
     TResult insertSuccess(_InsertSuccess value),
     TResult insertFailure(_InsertFailure value),
+    TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    TResult multipleInsertFailure(_MultipleInsertFailure value),
     TResult deleteSuccess(_DeleteSuccess value),
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
@@ -1348,6 +1615,358 @@ abstract class _InsertFailure implements MyPresencesActorState {
   Failure get failure;
   @JsonKey(ignore: true)
   _$InsertFailureCopyWith<_InsertFailure> get copyWith;
+}
+
+/// @nodoc
+abstract class _$MultipleInsertSuccessCopyWith<$Res> {
+  factory _$MultipleInsertSuccessCopyWith(_MultipleInsertSuccess value,
+          $Res Function(_MultipleInsertSuccess) then) =
+      __$MultipleInsertSuccessCopyWithImpl<$Res>;
+  $Res call({List<Workstation> workstations});
+}
+
+/// @nodoc
+class __$MultipleInsertSuccessCopyWithImpl<$Res>
+    extends _$MyPresencesActorStateCopyWithImpl<$Res>
+    implements _$MultipleInsertSuccessCopyWith<$Res> {
+  __$MultipleInsertSuccessCopyWithImpl(_MultipleInsertSuccess _value,
+      $Res Function(_MultipleInsertSuccess) _then)
+      : super(_value, (v) => _then(v as _MultipleInsertSuccess));
+
+  @override
+  _MultipleInsertSuccess get _value => super._value as _MultipleInsertSuccess;
+
+  @override
+  $Res call({
+    Object workstations = freezed,
+  }) {
+    return _then(_MultipleInsertSuccess(
+      workstations == freezed
+          ? _value.workstations
+          : workstations as List<Workstation>,
+    ));
+  }
+}
+
+/// @nodoc
+class _$_MultipleInsertSuccess implements _MultipleInsertSuccess {
+  const _$_MultipleInsertSuccess(this.workstations)
+      : assert(workstations != null);
+
+  @override
+  final List<Workstation> workstations;
+
+  @override
+  String toString() {
+    return 'MyPresencesActorState.multipleInsertSuccess(workstations: $workstations)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is _MultipleInsertSuccess &&
+            (identical(other.workstations, workstations) ||
+                const DeepCollectionEquality()
+                    .equals(other.workstations, workstations)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(workstations);
+
+  @JsonKey(ignore: true)
+  @override
+  _$MultipleInsertSuccessCopyWith<_MultipleInsertSuccess> get copyWith =>
+      __$MultipleInsertSuccessCopyWithImpl<_MultipleInsertSuccess>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object>({
+    @required TResult initial(),
+    @required TResult actionInProgress(),
+    @required TResult insertSuccess(Workstation workstation),
+    @required TResult insertFailure(Failure failure),
+    @required TResult multipleInsertSuccess(List<Workstation> workstations),
+    @required TResult multipleInsertFailure(Failure failure),
+    @required TResult deleteSuccess(int idWorkstation),
+    @required TResult deleteFailure(Failure failure),
+    @required TResult updateSuccess(Workstation workstation),
+    @required TResult updateFailure(Failure failure),
+    @required
+        TResult showTimeSlotDialog(DateTime date, Workstation workstation),
+  }) {
+    assert(initial != null);
+    assert(actionInProgress != null);
+    assert(insertSuccess != null);
+    assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
+    assert(deleteSuccess != null);
+    assert(deleteFailure != null);
+    assert(updateSuccess != null);
+    assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
+    return multipleInsertSuccess(workstations);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object>({
+    TResult initial(),
+    TResult actionInProgress(),
+    TResult insertSuccess(Workstation workstation),
+    TResult insertFailure(Failure failure),
+    TResult multipleInsertSuccess(List<Workstation> workstations),
+    TResult multipleInsertFailure(Failure failure),
+    TResult deleteSuccess(int idWorkstation),
+    TResult deleteFailure(Failure failure),
+    TResult updateSuccess(Workstation workstation),
+    TResult updateFailure(Failure failure),
+    TResult showTimeSlotDialog(DateTime date, Workstation workstation),
+    @required TResult orElse(),
+  }) {
+    assert(orElse != null);
+    if (multipleInsertSuccess != null) {
+      return multipleInsertSuccess(workstations);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object>({
+    @required TResult initial(_Initial value),
+    @required TResult actionInProgress(_ActionInProgress value),
+    @required TResult insertSuccess(_InsertSuccess value),
+    @required TResult insertFailure(_InsertFailure value),
+    @required TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    @required TResult multipleInsertFailure(_MultipleInsertFailure value),
+    @required TResult deleteSuccess(_DeleteSuccess value),
+    @required TResult deleteFailure(_DeleteFailure value),
+    @required TResult updateSuccess(_UpdateSuccess value),
+    @required TResult updateFailure(_UpdateFailure value),
+    @required TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
+  }) {
+    assert(initial != null);
+    assert(actionInProgress != null);
+    assert(insertSuccess != null);
+    assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
+    assert(deleteSuccess != null);
+    assert(deleteFailure != null);
+    assert(updateSuccess != null);
+    assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
+    return multipleInsertSuccess(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object>({
+    TResult initial(_Initial value),
+    TResult actionInProgress(_ActionInProgress value),
+    TResult insertSuccess(_InsertSuccess value),
+    TResult insertFailure(_InsertFailure value),
+    TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    TResult multipleInsertFailure(_MultipleInsertFailure value),
+    TResult deleteSuccess(_DeleteSuccess value),
+    TResult deleteFailure(_DeleteFailure value),
+    TResult updateSuccess(_UpdateSuccess value),
+    TResult updateFailure(_UpdateFailure value),
+    TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
+    @required TResult orElse(),
+  }) {
+    assert(orElse != null);
+    if (multipleInsertSuccess != null) {
+      return multipleInsertSuccess(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _MultipleInsertSuccess implements MyPresencesActorState {
+  const factory _MultipleInsertSuccess(List<Workstation> workstations) =
+      _$_MultipleInsertSuccess;
+
+  List<Workstation> get workstations;
+  @JsonKey(ignore: true)
+  _$MultipleInsertSuccessCopyWith<_MultipleInsertSuccess> get copyWith;
+}
+
+/// @nodoc
+abstract class _$MultipleInsertFailureCopyWith<$Res> {
+  factory _$MultipleInsertFailureCopyWith(_MultipleInsertFailure value,
+          $Res Function(_MultipleInsertFailure) then) =
+      __$MultipleInsertFailureCopyWithImpl<$Res>;
+  $Res call({Failure failure});
+}
+
+/// @nodoc
+class __$MultipleInsertFailureCopyWithImpl<$Res>
+    extends _$MyPresencesActorStateCopyWithImpl<$Res>
+    implements _$MultipleInsertFailureCopyWith<$Res> {
+  __$MultipleInsertFailureCopyWithImpl(_MultipleInsertFailure _value,
+      $Res Function(_MultipleInsertFailure) _then)
+      : super(_value, (v) => _then(v as _MultipleInsertFailure));
+
+  @override
+  _MultipleInsertFailure get _value => super._value as _MultipleInsertFailure;
+
+  @override
+  $Res call({
+    Object failure = freezed,
+  }) {
+    return _then(_MultipleInsertFailure(
+      failure == freezed ? _value.failure : failure as Failure,
+    ));
+  }
+}
+
+/// @nodoc
+class _$_MultipleInsertFailure implements _MultipleInsertFailure {
+  const _$_MultipleInsertFailure(this.failure) : assert(failure != null);
+
+  @override
+  final Failure failure;
+
+  @override
+  String toString() {
+    return 'MyPresencesActorState.multipleInsertFailure(failure: $failure)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is _MultipleInsertFailure &&
+            (identical(other.failure, failure) ||
+                const DeepCollectionEquality().equals(other.failure, failure)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(failure);
+
+  @JsonKey(ignore: true)
+  @override
+  _$MultipleInsertFailureCopyWith<_MultipleInsertFailure> get copyWith =>
+      __$MultipleInsertFailureCopyWithImpl<_MultipleInsertFailure>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object>({
+    @required TResult initial(),
+    @required TResult actionInProgress(),
+    @required TResult insertSuccess(Workstation workstation),
+    @required TResult insertFailure(Failure failure),
+    @required TResult multipleInsertSuccess(List<Workstation> workstations),
+    @required TResult multipleInsertFailure(Failure failure),
+    @required TResult deleteSuccess(int idWorkstation),
+    @required TResult deleteFailure(Failure failure),
+    @required TResult updateSuccess(Workstation workstation),
+    @required TResult updateFailure(Failure failure),
+    @required
+        TResult showTimeSlotDialog(DateTime date, Workstation workstation),
+  }) {
+    assert(initial != null);
+    assert(actionInProgress != null);
+    assert(insertSuccess != null);
+    assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
+    assert(deleteSuccess != null);
+    assert(deleteFailure != null);
+    assert(updateSuccess != null);
+    assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
+    return multipleInsertFailure(failure);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object>({
+    TResult initial(),
+    TResult actionInProgress(),
+    TResult insertSuccess(Workstation workstation),
+    TResult insertFailure(Failure failure),
+    TResult multipleInsertSuccess(List<Workstation> workstations),
+    TResult multipleInsertFailure(Failure failure),
+    TResult deleteSuccess(int idWorkstation),
+    TResult deleteFailure(Failure failure),
+    TResult updateSuccess(Workstation workstation),
+    TResult updateFailure(Failure failure),
+    TResult showTimeSlotDialog(DateTime date, Workstation workstation),
+    @required TResult orElse(),
+  }) {
+    assert(orElse != null);
+    if (multipleInsertFailure != null) {
+      return multipleInsertFailure(failure);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object>({
+    @required TResult initial(_Initial value),
+    @required TResult actionInProgress(_ActionInProgress value),
+    @required TResult insertSuccess(_InsertSuccess value),
+    @required TResult insertFailure(_InsertFailure value),
+    @required TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    @required TResult multipleInsertFailure(_MultipleInsertFailure value),
+    @required TResult deleteSuccess(_DeleteSuccess value),
+    @required TResult deleteFailure(_DeleteFailure value),
+    @required TResult updateSuccess(_UpdateSuccess value),
+    @required TResult updateFailure(_UpdateFailure value),
+    @required TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
+  }) {
+    assert(initial != null);
+    assert(actionInProgress != null);
+    assert(insertSuccess != null);
+    assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
+    assert(deleteSuccess != null);
+    assert(deleteFailure != null);
+    assert(updateSuccess != null);
+    assert(updateFailure != null);
+    assert(showTimeSlotDialog != null);
+    return multipleInsertFailure(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object>({
+    TResult initial(_Initial value),
+    TResult actionInProgress(_ActionInProgress value),
+    TResult insertSuccess(_InsertSuccess value),
+    TResult insertFailure(_InsertFailure value),
+    TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    TResult multipleInsertFailure(_MultipleInsertFailure value),
+    TResult deleteSuccess(_DeleteSuccess value),
+    TResult deleteFailure(_DeleteFailure value),
+    TResult updateSuccess(_UpdateSuccess value),
+    TResult updateFailure(_UpdateFailure value),
+    TResult showTimeSlotDialog(_ShowTimeSlotDialog value),
+    @required TResult orElse(),
+  }) {
+    assert(orElse != null);
+    if (multipleInsertFailure != null) {
+      return multipleInsertFailure(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _MultipleInsertFailure implements MyPresencesActorState {
+  const factory _MultipleInsertFailure(Failure failure) =
+      _$_MultipleInsertFailure;
+
+  Failure get failure;
+  @JsonKey(ignore: true)
+  _$MultipleInsertFailureCopyWith<_MultipleInsertFailure> get copyWith;
 }
 
 /// @nodoc
@@ -1416,6 +2035,8 @@ class _$_DeleteSuccess implements _DeleteSuccess {
     @required TResult actionInProgress(),
     @required TResult insertSuccess(Workstation workstation),
     @required TResult insertFailure(Failure failure),
+    @required TResult multipleInsertSuccess(List<Workstation> workstations),
+    @required TResult multipleInsertFailure(Failure failure),
     @required TResult deleteSuccess(int idWorkstation),
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
@@ -1427,6 +2048,8 @@ class _$_DeleteSuccess implements _DeleteSuccess {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1442,6 +2065,8 @@ class _$_DeleteSuccess implements _DeleteSuccess {
     TResult actionInProgress(),
     TResult insertSuccess(Workstation workstation),
     TResult insertFailure(Failure failure),
+    TResult multipleInsertSuccess(List<Workstation> workstations),
+    TResult multipleInsertFailure(Failure failure),
     TResult deleteSuccess(int idWorkstation),
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
@@ -1463,6 +2088,8 @@ class _$_DeleteSuccess implements _DeleteSuccess {
     @required TResult actionInProgress(_ActionInProgress value),
     @required TResult insertSuccess(_InsertSuccess value),
     @required TResult insertFailure(_InsertFailure value),
+    @required TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    @required TResult multipleInsertFailure(_MultipleInsertFailure value),
     @required TResult deleteSuccess(_DeleteSuccess value),
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
@@ -1473,6 +2100,8 @@ class _$_DeleteSuccess implements _DeleteSuccess {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1488,6 +2117,8 @@ class _$_DeleteSuccess implements _DeleteSuccess {
     TResult actionInProgress(_ActionInProgress value),
     TResult insertSuccess(_InsertSuccess value),
     TResult insertFailure(_InsertFailure value),
+    TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    TResult multipleInsertFailure(_MultipleInsertFailure value),
     TResult deleteSuccess(_DeleteSuccess value),
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
@@ -1576,6 +2207,8 @@ class _$_DeleteFailure implements _DeleteFailure {
     @required TResult actionInProgress(),
     @required TResult insertSuccess(Workstation workstation),
     @required TResult insertFailure(Failure failure),
+    @required TResult multipleInsertSuccess(List<Workstation> workstations),
+    @required TResult multipleInsertFailure(Failure failure),
     @required TResult deleteSuccess(int idWorkstation),
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
@@ -1587,6 +2220,8 @@ class _$_DeleteFailure implements _DeleteFailure {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1602,6 +2237,8 @@ class _$_DeleteFailure implements _DeleteFailure {
     TResult actionInProgress(),
     TResult insertSuccess(Workstation workstation),
     TResult insertFailure(Failure failure),
+    TResult multipleInsertSuccess(List<Workstation> workstations),
+    TResult multipleInsertFailure(Failure failure),
     TResult deleteSuccess(int idWorkstation),
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
@@ -1623,6 +2260,8 @@ class _$_DeleteFailure implements _DeleteFailure {
     @required TResult actionInProgress(_ActionInProgress value),
     @required TResult insertSuccess(_InsertSuccess value),
     @required TResult insertFailure(_InsertFailure value),
+    @required TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    @required TResult multipleInsertFailure(_MultipleInsertFailure value),
     @required TResult deleteSuccess(_DeleteSuccess value),
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
@@ -1633,6 +2272,8 @@ class _$_DeleteFailure implements _DeleteFailure {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1648,6 +2289,8 @@ class _$_DeleteFailure implements _DeleteFailure {
     TResult actionInProgress(_ActionInProgress value),
     TResult insertSuccess(_InsertSuccess value),
     TResult insertFailure(_InsertFailure value),
+    TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    TResult multipleInsertFailure(_MultipleInsertFailure value),
     TResult deleteSuccess(_DeleteSuccess value),
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
@@ -1737,6 +2380,8 @@ class _$_UpdateSuccess implements _UpdateSuccess {
     @required TResult actionInProgress(),
     @required TResult insertSuccess(Workstation workstation),
     @required TResult insertFailure(Failure failure),
+    @required TResult multipleInsertSuccess(List<Workstation> workstations),
+    @required TResult multipleInsertFailure(Failure failure),
     @required TResult deleteSuccess(int idWorkstation),
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
@@ -1748,6 +2393,8 @@ class _$_UpdateSuccess implements _UpdateSuccess {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1763,6 +2410,8 @@ class _$_UpdateSuccess implements _UpdateSuccess {
     TResult actionInProgress(),
     TResult insertSuccess(Workstation workstation),
     TResult insertFailure(Failure failure),
+    TResult multipleInsertSuccess(List<Workstation> workstations),
+    TResult multipleInsertFailure(Failure failure),
     TResult deleteSuccess(int idWorkstation),
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
@@ -1784,6 +2433,8 @@ class _$_UpdateSuccess implements _UpdateSuccess {
     @required TResult actionInProgress(_ActionInProgress value),
     @required TResult insertSuccess(_InsertSuccess value),
     @required TResult insertFailure(_InsertFailure value),
+    @required TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    @required TResult multipleInsertFailure(_MultipleInsertFailure value),
     @required TResult deleteSuccess(_DeleteSuccess value),
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
@@ -1794,6 +2445,8 @@ class _$_UpdateSuccess implements _UpdateSuccess {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1809,6 +2462,8 @@ class _$_UpdateSuccess implements _UpdateSuccess {
     TResult actionInProgress(_ActionInProgress value),
     TResult insertSuccess(_InsertSuccess value),
     TResult insertFailure(_InsertFailure value),
+    TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    TResult multipleInsertFailure(_MultipleInsertFailure value),
     TResult deleteSuccess(_DeleteSuccess value),
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
@@ -1897,6 +2552,8 @@ class _$_UpdateFailure implements _UpdateFailure {
     @required TResult actionInProgress(),
     @required TResult insertSuccess(Workstation workstation),
     @required TResult insertFailure(Failure failure),
+    @required TResult multipleInsertSuccess(List<Workstation> workstations),
+    @required TResult multipleInsertFailure(Failure failure),
     @required TResult deleteSuccess(int idWorkstation),
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
@@ -1908,6 +2565,8 @@ class _$_UpdateFailure implements _UpdateFailure {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1923,6 +2582,8 @@ class _$_UpdateFailure implements _UpdateFailure {
     TResult actionInProgress(),
     TResult insertSuccess(Workstation workstation),
     TResult insertFailure(Failure failure),
+    TResult multipleInsertSuccess(List<Workstation> workstations),
+    TResult multipleInsertFailure(Failure failure),
     TResult deleteSuccess(int idWorkstation),
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
@@ -1944,6 +2605,8 @@ class _$_UpdateFailure implements _UpdateFailure {
     @required TResult actionInProgress(_ActionInProgress value),
     @required TResult insertSuccess(_InsertSuccess value),
     @required TResult insertFailure(_InsertFailure value),
+    @required TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    @required TResult multipleInsertFailure(_MultipleInsertFailure value),
     @required TResult deleteSuccess(_DeleteSuccess value),
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
@@ -1954,6 +2617,8 @@ class _$_UpdateFailure implements _UpdateFailure {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -1969,6 +2634,8 @@ class _$_UpdateFailure implements _UpdateFailure {
     TResult actionInProgress(_ActionInProgress value),
     TResult insertSuccess(_InsertSuccess value),
     TResult insertFailure(_InsertFailure value),
+    TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    TResult multipleInsertFailure(_MultipleInsertFailure value),
     TResult deleteSuccess(_DeleteSuccess value),
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),
@@ -2067,6 +2734,8 @@ class _$_ShowTimeSlotDialog implements _ShowTimeSlotDialog {
     @required TResult actionInProgress(),
     @required TResult insertSuccess(Workstation workstation),
     @required TResult insertFailure(Failure failure),
+    @required TResult multipleInsertSuccess(List<Workstation> workstations),
+    @required TResult multipleInsertFailure(Failure failure),
     @required TResult deleteSuccess(int idWorkstation),
     @required TResult deleteFailure(Failure failure),
     @required TResult updateSuccess(Workstation workstation),
@@ -2078,6 +2747,8 @@ class _$_ShowTimeSlotDialog implements _ShowTimeSlotDialog {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -2093,6 +2764,8 @@ class _$_ShowTimeSlotDialog implements _ShowTimeSlotDialog {
     TResult actionInProgress(),
     TResult insertSuccess(Workstation workstation),
     TResult insertFailure(Failure failure),
+    TResult multipleInsertSuccess(List<Workstation> workstations),
+    TResult multipleInsertFailure(Failure failure),
     TResult deleteSuccess(int idWorkstation),
     TResult deleteFailure(Failure failure),
     TResult updateSuccess(Workstation workstation),
@@ -2114,6 +2787,8 @@ class _$_ShowTimeSlotDialog implements _ShowTimeSlotDialog {
     @required TResult actionInProgress(_ActionInProgress value),
     @required TResult insertSuccess(_InsertSuccess value),
     @required TResult insertFailure(_InsertFailure value),
+    @required TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    @required TResult multipleInsertFailure(_MultipleInsertFailure value),
     @required TResult deleteSuccess(_DeleteSuccess value),
     @required TResult deleteFailure(_DeleteFailure value),
     @required TResult updateSuccess(_UpdateSuccess value),
@@ -2124,6 +2799,8 @@ class _$_ShowTimeSlotDialog implements _ShowTimeSlotDialog {
     assert(actionInProgress != null);
     assert(insertSuccess != null);
     assert(insertFailure != null);
+    assert(multipleInsertSuccess != null);
+    assert(multipleInsertFailure != null);
     assert(deleteSuccess != null);
     assert(deleteFailure != null);
     assert(updateSuccess != null);
@@ -2139,6 +2816,8 @@ class _$_ShowTimeSlotDialog implements _ShowTimeSlotDialog {
     TResult actionInProgress(_ActionInProgress value),
     TResult insertSuccess(_InsertSuccess value),
     TResult insertFailure(_InsertFailure value),
+    TResult multipleInsertSuccess(_MultipleInsertSuccess value),
+    TResult multipleInsertFailure(_MultipleInsertFailure value),
     TResult deleteSuccess(_DeleteSuccess value),
     TResult deleteFailure(_DeleteFailure value),
     TResult updateSuccess(_UpdateSuccess value),

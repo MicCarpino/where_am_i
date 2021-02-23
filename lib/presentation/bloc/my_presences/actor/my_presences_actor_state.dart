@@ -7,10 +7,16 @@ abstract class MyPresencesActorState with _$MyPresencesActorState {
   const factory MyPresencesActorState.actionInProgress() = _ActionInProgress;
 
   const factory MyPresencesActorState.insertSuccess(Workstation workstation) =
-      _InsertSuccess;
+  _InsertSuccess;
 
   const factory MyPresencesActorState.insertFailure(Failure failure) =
-      _InsertFailure;
+  _InsertFailure;
+
+  const factory MyPresencesActorState.multipleInsertSuccess(List<Workstation> workstations) =
+  _MultipleInsertSuccess;
+
+  const factory MyPresencesActorState.multipleInsertFailure(Failure failure) =
+  _MultipleInsertFailure;
 
   const factory MyPresencesActorState.deleteSuccess(int idWorkstation) =
       _DeleteSuccess;

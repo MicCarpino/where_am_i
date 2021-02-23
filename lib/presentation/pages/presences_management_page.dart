@@ -222,14 +222,15 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   }
 
   _onUserClick(UserWithWorkstation userWithWorkstation) {
-    return userWithWorkstation?.workstation?.status != WORKSTATION_STATUS_PENDING
+    return userWithWorkstation?.workstation?.status !=
+            WORKSTATION_STATUS_PENDING
         ? showDialog(
             context: context,
             builder: (BuildContext context) {
               return TimeSlotDialog(
-                userWithWorkstation.workstation,
-                this.visualizedDate,
-                userWithWorkstation.user,
+                workstation: userWithWorkstation.workstation,
+                selectedDate: this.visualizedDate,
+                user: userWithWorkstation.user,
               );
             }).then((value) {
             //checking if callback result contains a value
