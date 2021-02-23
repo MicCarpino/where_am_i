@@ -4,13 +4,13 @@ import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/error/failure.dart';
-import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/authenticated_user.dart';
 import 'package:where_am_i/domain/repositories/authentication_repository.dart';
 
+enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 class AuthRepositoryImpl implements AuthenticationRepository {
   final RemoteDataSource remoteDataSource;

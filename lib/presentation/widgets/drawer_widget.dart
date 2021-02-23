@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
 
+enum Pages {
+  workplaces_page,
+  my_presences_page,
+  presences_management_page,
+  users_management_page
+}
 
 final sl = GetIt.instance;
 

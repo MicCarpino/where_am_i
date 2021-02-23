@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:where_am_i/core/utils/enums.dart';
+import 'package:where_am_i/data/repositories/auth_repository_impl.dart';
 import 'package:where_am_i/domain/entities/authenticated_user.dart';
 import 'package:where_am_i/domain/repositories/authentication_repository.dart';
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
