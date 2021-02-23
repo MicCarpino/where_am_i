@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/data/models/workstation_model.dart';
-import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
+import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 
 class Workstation extends Equatable {

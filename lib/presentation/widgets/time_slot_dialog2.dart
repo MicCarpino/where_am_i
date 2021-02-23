@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
-import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
+import 'package:where_am_i/core/utils/enums.dart';
 
 class TimeSlotDialog2 extends StatefulWidget {
   final DateTime selectedDate;

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import 'package:where_am_i/presentation/bloc/my_presences/actor/my_presences_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/my_presences/watcher/my_presences_watcher_bloc.dart';
 import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 import 'package:where_am_i/presentation/widgets/table_calendar_widget.dart';
-import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
 import 'package:where_am_i/presentation/widgets/time_slot_dialog2.dart';
+import 'package:where_am_i/core/utils/enums.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 
 import '../../injection_container.dart';
 

@@ -2,76 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
+import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
 import 'package:where_am_i/presentation/widgets/workplace.dart';
 
 final sl = GetIt.instance;
-
-enum Rooms { room_26B, room_26A_Floor1, room_26A_Floor2, room_24, room_staff }
-
-extension RoomsTitles on Rooms {
-  String roomIdTitle() {
-    switch (this) {
-      case Rooms.room_26B:
-        return "Civico 26/B";
-      case Rooms.room_26A_Floor1:
-        return "Civico 26/A";
-      case Rooms.room_24:
-        return "Civico 24";
-      default:
-        return null;
-    }
-  }
-
-  // ignore: missing_return
-  String get roomTitle {
-    switch (this) {
-      case Rooms.room_26B:
-        return 'Civico 26/B';
-      case Rooms.room_26A_Floor1:
-        return 'Civico 26/A 1°piano';
-      case Rooms.room_26A_Floor2:
-        return 'Civico 26/A 2°piano';
-      case Rooms.room_24:
-        return 'Civico 24';
-      case Rooms.room_staff:
-        return 'Amministrazione/Dirigenza';
-    }
-  }
-
-  int get reservationRoomId {
-    switch (this) {
-      case Rooms.room_26B:
-        return 26;
-      case Rooms.room_26A_Floor2:
-        return 262;
-      case Rooms.room_24:
-        return 24;
-      default:
-        return null;
-    }
-  }
-
-  String get reservationRoomLabel{
-    Map<int, String> reservationsRoomTitles = {
-      26: "Civico 26/B",
-      262: "Civico 26/A",
-      24: "Civico 24",
-    };
-    return reservationsRoomTitles[this.reservationRoomId];
-  }
-
-  String get reservationRoomSuffix{
-    Map<int, String> reservationsRoomTitles = {
-      26: "26/B",
-      262: "26/A",
-      24: "24",
-    };
-    return reservationsRoomTitles[this.reservationRoomId];
-  }
-}
 
 class WorkplacesPage extends StatefulWidget {
   final Function(String) setTitle;

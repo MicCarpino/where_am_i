@@ -11,6 +11,7 @@ import 'package:where_am_i/presentation/screen/splash_screen.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 import 'package:where_am_i/presentation/screen/home_screen.dart';
 import 'package:where_am_i/presentation/screen/login_screen.dart';
+import 'core/utils/enums.dart';
 import 'injection_container.dart' as serviceLocator;
 
 Future<void> main() async {

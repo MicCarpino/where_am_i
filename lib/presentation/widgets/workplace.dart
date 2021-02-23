@@ -8,7 +8,7 @@ import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/pages/reservation_form_page.dart';
-import 'package:where_am_i/presentation/pages/workplaces_page.dart';
+import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 import 'package:where_am_i/presentation/widgets/reservations_calendar.dart';
