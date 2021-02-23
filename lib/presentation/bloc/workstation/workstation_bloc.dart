@@ -59,7 +59,7 @@ class WorkstationBloc extends Bloc<WorkstationEvent, WorkstationState> {
       //saving last fetch result to perform update without needing to download a new list
       currentWorkstationList = workstations;
       //retrieving user's workstation code for current day
-      if (dateToFetch.zeroed().isAtSameMomentAs(DateTime.now().zeroed())) {
+      if (dateToFetch.isAtSameMomentTimeLess(DateTime.now())) {
         _searchForCurrentUserWorkstation(workstations);
       }
       print('workstations : ${workstations.toList()}');

@@ -59,6 +59,16 @@ extension DateTimeToZero on DateTime {
   bool isAtSameMomentOrAfter(DateTime otherDate) {
     return this.isAfter(otherDate) || this.isAtSameMomentAs(otherDate);
   }
+
+  bool isAfterTimeLess(DateTime otherDate){
+    return this.zeroed().isAfter(otherDate.zeroed());
+  }
+  bool isBeforeTimeLess(DateTime otherDate){
+    return this.zeroed().isBefore(otherDate.zeroed());
+  }
+  bool isAtSameMomentTimeLess(DateTime otherDate){
+    return this.zeroed().isAtSameMomentAs(otherDate.zeroed());
+  }
 }
 
 extension UserWithWorkstationListSorter on List<UserWithWorkstation> {

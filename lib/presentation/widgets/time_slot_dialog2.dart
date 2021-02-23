@@ -171,8 +171,6 @@ class _TimeSlotDialog2State extends State<TimeSlotDialog2> {
         selectedDates.addAll(_availableDates.sublist(0, index + 1));
       }
     }
-    var c = {timeSlot: selectedDates};
-    var s = c;
     Navigator.pop(context, {timeSlot:selectedDates});
   }
 
@@ -222,7 +220,8 @@ class _TimeSlotDialog2State extends State<TimeSlotDialog2> {
 
   void initDropdownValues() {
     DateTime date = startingDate.add(Duration(days: 1));
-    while (!date.isAfter(lastDateOfMonth)) {
+    //should set to zero othwerwise on legal hour switch the hours is set to 1AM
+    while (!date.isAfterTimeLess(lastDateOfMonth)) {
       if (date.weekday != DateTime.saturday &&
           date.weekday != DateTime.sunday) {
         _availableDates.add(date);

@@ -111,7 +111,8 @@ class MyPresencesActorBloc
 
   Stream<MyPresencesActorState> _mapEditRequestedEventToState(
       _EditRequested e) async* {
-    if (e.day.zeroed().isAtSameMomentOrAfter(DateTime.now().zeroed())) {
+    //date to edit previous current date
+    if (!e.day.isBeforeTimeLess(DateTime.now())) {
       if (e.workstation != null &&
           e.workstation?.status != WORKSTATION_STATUS_PENDING) {
         yield MyPresencesActorState.updateFailure(
