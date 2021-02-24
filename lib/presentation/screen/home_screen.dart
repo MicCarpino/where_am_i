@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/presentation/pages/presences_management_page2.dart';
 import 'package:where_am_i/presentation/pages/workplaces_page.dart';
 import 'package:where_am_i/presentation/pages/my_presences_page.dart';
 import 'package:where_am_i/presentation/pages/presences_management_page.dart';
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return MyPresencesPage();
         break;
       case Pages.presences_management_page:
-        return PresencesManagementPage();
+        return PresencesManagementPage2();
         break;
       case Pages.users_management_page:
         return UsersManagementPage();
