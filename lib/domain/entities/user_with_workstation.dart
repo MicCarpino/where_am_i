@@ -26,4 +26,11 @@ class UserWithWorkstation extends Equatable {
     }
     return label;
   }
+
+  UserWithWorkstation copyWith({User user, Workstation workstation}) {
+    return UserWithWorkstation(
+      user: user ?? this.user,
+      workstation: workstation ?? this.workstation,
+    );
+  }
 }

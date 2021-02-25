@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
-import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
 
 import 'constants.dart';
+import 'enums.dart';
 
 extension StringExtension on String {
   String capitalize() {

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
+import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
+import 'package:where_am_i/presentation/bloc/my_presences/actor/my_presences_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/actor/presences_management_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/watcher/presences_management_watcher_bloc.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
@@ -74,19 +78,19 @@ class _PresencesManagementPage2State extends State<PresencesManagementPage2> {
                           user: value.user,
                         );
                       }).then((result) {
-                    /*if (result != null &&
-                    result is Map<TimeSlot, List<DateTime>>) {
-                  _handleDialogResult(context, result, value.workstation);
-                }*/
+                    if (result != null &&
+                        result is Map<TimeSlot, List<DateTime>>) {
+                      _handleDialogResult(
+                          context, result, value.workstation, value.user);
+                    }
                   }),
               orElse: () {});
         },
         child: Column(
           children: [
             Builder(
-              builder: (context) => DatePicker(
-                (newDate) => _onDateChanged(context, newDate)
-              ),
+              builder: (context) =>
+                  DatePicker((newDate) => _onDateChanged(context, newDate)),
             ),
             Row(children: [_buildSearchBar(), _buildAddExternalUserButton()]),
             BlocBuilder<PresencesManagementWatcherBloc,
@@ -169,5 +173,37 @@ class _PresencesManagementPage2State extends State<PresencesManagementPage2> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
+  }
+
+  void _handleDialogResult(
+      BuildContext context,
+      Map<TimeSlot, List<DateTime>> result,
+      Workstation workstation,
+      User user) {
+    if (workstation == null) {
+      final dates = result.values.first;
+      context.read<PresencesManagementActorBloc>().add(
+            dates.length > 1
+                ? PresencesManagementActorEvent.addedMultiple(
+                    timeSlot: result.keys.first,
+                    dates: List.from(dates),
+                    idResource: user.idResource,
+                  )
+                : PresencesManagementActorEvent.added(
+                    timeSlot: result.keys.first,
+                    date: dates.first,
+                    idResource: user.idResource,
+                  ),
+          );
+    } else {
+      //edit case
+      var selectedSlot = result.keys.first;
+      context.read<PresencesManagementActorBloc>().add(
+            PresencesManagementActorEvent.updated(workstation.copyWith(
+              startTime: selectedSlot.toStartTime(),
+              endTime: selectedSlot.toEndTime(),
+            )),
+          );
+    }
   }
 }

@@ -14,18 +14,30 @@ class _$PresencesManagementActorEventTearOff {
   const _$PresencesManagementActorEventTearOff();
 
 // ignore: unused_element
-  _Added added(TimeSlot timeslot, DateTime date) {
+  _Added added(
+      {@required TimeSlot timeSlot,
+      @required DateTime date,
+      String idResource,
+      String freeName}) {
     return _Added(
-      timeslot,
-      date,
+      timeSlot: timeSlot,
+      date: date,
+      idResource: idResource,
+      freeName: freeName,
     );
   }
 
 // ignore: unused_element
-  _AddedMultiple addedMultiple(TimeSlot timeslot, List<DateTime> dates) {
+  _AddedMultiple addedMultiple(
+      {@required TimeSlot timeSlot,
+      @required List<DateTime> dates,
+      String idResource,
+      String freeName}) {
     return _AddedMultiple(
-      timeslot,
-      dates,
+      timeSlot: timeSlot,
+      dates: dates,
+      idResource: idResource,
+      freeName: freeName,
     );
   }
 
@@ -62,8 +74,12 @@ const $PresencesManagementActorEvent = _$PresencesManagementActorEventTearOff();
 mixin _$PresencesManagementActorEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult added(TimeSlot timeslot, DateTime date),
-    @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    @required
+        TResult added(TimeSlot timeSlot, DateTime date, String idResource,
+            String freeName),
+    @required
+        TResult addedMultiple(TimeSlot timeSlot, List<DateTime> dates,
+            String idResource, String freeName),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required
@@ -71,8 +87,10 @@ mixin _$PresencesManagementActorEvent {
   });
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult added(TimeSlot timeslot, DateTime date),
-    TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    TResult added(
+        TimeSlot timeSlot, DateTime date, String idResource, String freeName),
+    TResult addedMultiple(TimeSlot timeSlot, List<DateTime> dates,
+        String idResource, String freeName),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation, User user),
@@ -119,7 +137,8 @@ class _$PresencesManagementActorEventCopyWithImpl<$Res>
 abstract class _$AddedCopyWith<$Res> {
   factory _$AddedCopyWith(_Added value, $Res Function(_Added) then) =
       __$AddedCopyWithImpl<$Res>;
-  $Res call({TimeSlot timeslot, DateTime date});
+  $Res call(
+      {TimeSlot timeSlot, DateTime date, String idResource, String freeName});
 }
 
 /// @nodoc
@@ -134,48 +153,69 @@ class __$AddedCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object timeslot = freezed,
+    Object timeSlot = freezed,
     Object date = freezed,
+    Object idResource = freezed,
+    Object freeName = freezed,
   }) {
     return _then(_Added(
-      timeslot == freezed ? _value.timeslot : timeslot as TimeSlot,
-      date == freezed ? _value.date : date as DateTime,
+      timeSlot: timeSlot == freezed ? _value.timeSlot : timeSlot as TimeSlot,
+      date: date == freezed ? _value.date : date as DateTime,
+      idResource:
+          idResource == freezed ? _value.idResource : idResource as String,
+      freeName: freeName == freezed ? _value.freeName : freeName as String,
     ));
   }
 }
 
 /// @nodoc
 class _$_Added implements _Added {
-  const _$_Added(this.timeslot, this.date)
-      : assert(timeslot != null),
+  const _$_Added(
+      {@required this.timeSlot,
+      @required this.date,
+      this.idResource,
+      this.freeName})
+      : assert(timeSlot != null),
         assert(date != null);
 
   @override
-  final TimeSlot timeslot;
+  final TimeSlot timeSlot;
   @override
   final DateTime date;
+  @override
+  final String idResource;
+  @override
+  final String freeName;
 
   @override
   String toString() {
-    return 'PresencesManagementActorEvent.added(timeslot: $timeslot, date: $date)';
+    return 'PresencesManagementActorEvent.added(timeSlot: $timeSlot, date: $date, idResource: $idResource, freeName: $freeName)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _Added &&
-            (identical(other.timeslot, timeslot) ||
+            (identical(other.timeSlot, timeSlot) ||
                 const DeepCollectionEquality()
-                    .equals(other.timeslot, timeslot)) &&
+                    .equals(other.timeSlot, timeSlot)) &&
             (identical(other.date, date) ||
-                const DeepCollectionEquality().equals(other.date, date)));
+                const DeepCollectionEquality().equals(other.date, date)) &&
+            (identical(other.idResource, idResource) ||
+                const DeepCollectionEquality()
+                    .equals(other.idResource, idResource)) &&
+            (identical(other.freeName, freeName) ||
+                const DeepCollectionEquality()
+                    .equals(other.freeName, freeName)));
   }
 
   @override
   int get hashCode =>
       runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(timeslot) ^
-      const DeepCollectionEquality().hash(date);
+      const DeepCollectionEquality().hash(timeSlot) ^
+      const DeepCollectionEquality().hash(date) ^
+      const DeepCollectionEquality().hash(idResource) ^
+      const DeepCollectionEquality().hash(freeName);
 
   @JsonKey(ignore: true)
   @override
@@ -185,8 +225,12 @@ class _$_Added implements _Added {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult added(TimeSlot timeslot, DateTime date),
-    @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    @required
+        TResult added(TimeSlot timeSlot, DateTime date, String idResource,
+            String freeName),
+    @required
+        TResult addedMultiple(TimeSlot timeSlot, List<DateTime> dates,
+            String idResource, String freeName),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required
@@ -197,14 +241,16 @@ class _$_Added implements _Added {
     assert(removed != null);
     assert(updated != null);
     assert(editRequested != null);
-    return added(timeslot, date);
+    return added(timeSlot, date, idResource, freeName);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult added(TimeSlot timeslot, DateTime date),
-    TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    TResult added(
+        TimeSlot timeSlot, DateTime date, String idResource, String freeName),
+    TResult addedMultiple(TimeSlot timeSlot, List<DateTime> dates,
+        String idResource, String freeName),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation, User user),
@@ -212,7 +258,7 @@ class _$_Added implements _Added {
   }) {
     assert(orElse != null);
     if (added != null) {
-      return added(timeslot, date);
+      return added(timeSlot, date, idResource, freeName);
     }
     return orElse();
   }
@@ -253,10 +299,16 @@ class _$_Added implements _Added {
 }
 
 abstract class _Added implements PresencesManagementActorEvent {
-  const factory _Added(TimeSlot timeslot, DateTime date) = _$_Added;
+  const factory _Added(
+      {@required TimeSlot timeSlot,
+      @required DateTime date,
+      String idResource,
+      String freeName}) = _$_Added;
 
-  TimeSlot get timeslot;
+  TimeSlot get timeSlot;
   DateTime get date;
+  String get idResource;
+  String get freeName;
   @JsonKey(ignore: true)
   _$AddedCopyWith<_Added> get copyWith;
 }
@@ -266,7 +318,11 @@ abstract class _$AddedMultipleCopyWith<$Res> {
   factory _$AddedMultipleCopyWith(
           _AddedMultiple value, $Res Function(_AddedMultiple) then) =
       __$AddedMultipleCopyWithImpl<$Res>;
-  $Res call({TimeSlot timeslot, List<DateTime> dates});
+  $Res call(
+      {TimeSlot timeSlot,
+      List<DateTime> dates,
+      String idResource,
+      String freeName});
 }
 
 /// @nodoc
@@ -282,48 +338,69 @@ class __$AddedMultipleCopyWithImpl<$Res>
 
   @override
   $Res call({
-    Object timeslot = freezed,
+    Object timeSlot = freezed,
     Object dates = freezed,
+    Object idResource = freezed,
+    Object freeName = freezed,
   }) {
     return _then(_AddedMultiple(
-      timeslot == freezed ? _value.timeslot : timeslot as TimeSlot,
-      dates == freezed ? _value.dates : dates as List<DateTime>,
+      timeSlot: timeSlot == freezed ? _value.timeSlot : timeSlot as TimeSlot,
+      dates: dates == freezed ? _value.dates : dates as List<DateTime>,
+      idResource:
+          idResource == freezed ? _value.idResource : idResource as String,
+      freeName: freeName == freezed ? _value.freeName : freeName as String,
     ));
   }
 }
 
 /// @nodoc
 class _$_AddedMultiple implements _AddedMultiple {
-  const _$_AddedMultiple(this.timeslot, this.dates)
-      : assert(timeslot != null),
+  const _$_AddedMultiple(
+      {@required this.timeSlot,
+      @required this.dates,
+      this.idResource,
+      this.freeName})
+      : assert(timeSlot != null),
         assert(dates != null);
 
   @override
-  final TimeSlot timeslot;
+  final TimeSlot timeSlot;
   @override
   final List<DateTime> dates;
+  @override
+  final String idResource;
+  @override
+  final String freeName;
 
   @override
   String toString() {
-    return 'PresencesManagementActorEvent.addedMultiple(timeslot: $timeslot, dates: $dates)';
+    return 'PresencesManagementActorEvent.addedMultiple(timeSlot: $timeSlot, dates: $dates, idResource: $idResource, freeName: $freeName)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _AddedMultiple &&
-            (identical(other.timeslot, timeslot) ||
+            (identical(other.timeSlot, timeSlot) ||
                 const DeepCollectionEquality()
-                    .equals(other.timeslot, timeslot)) &&
+                    .equals(other.timeSlot, timeSlot)) &&
             (identical(other.dates, dates) ||
-                const DeepCollectionEquality().equals(other.dates, dates)));
+                const DeepCollectionEquality().equals(other.dates, dates)) &&
+            (identical(other.idResource, idResource) ||
+                const DeepCollectionEquality()
+                    .equals(other.idResource, idResource)) &&
+            (identical(other.freeName, freeName) ||
+                const DeepCollectionEquality()
+                    .equals(other.freeName, freeName)));
   }
 
   @override
   int get hashCode =>
       runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(timeslot) ^
-      const DeepCollectionEquality().hash(dates);
+      const DeepCollectionEquality().hash(timeSlot) ^
+      const DeepCollectionEquality().hash(dates) ^
+      const DeepCollectionEquality().hash(idResource) ^
+      const DeepCollectionEquality().hash(freeName);
 
   @JsonKey(ignore: true)
   @override
@@ -333,8 +410,12 @@ class _$_AddedMultiple implements _AddedMultiple {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult added(TimeSlot timeslot, DateTime date),
-    @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    @required
+        TResult added(TimeSlot timeSlot, DateTime date, String idResource,
+            String freeName),
+    @required
+        TResult addedMultiple(TimeSlot timeSlot, List<DateTime> dates,
+            String idResource, String freeName),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required
@@ -345,14 +426,16 @@ class _$_AddedMultiple implements _AddedMultiple {
     assert(removed != null);
     assert(updated != null);
     assert(editRequested != null);
-    return addedMultiple(timeslot, dates);
+    return addedMultiple(timeSlot, dates, idResource, freeName);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult added(TimeSlot timeslot, DateTime date),
-    TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    TResult added(
+        TimeSlot timeSlot, DateTime date, String idResource, String freeName),
+    TResult addedMultiple(TimeSlot timeSlot, List<DateTime> dates,
+        String idResource, String freeName),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation, User user),
@@ -360,7 +443,7 @@ class _$_AddedMultiple implements _AddedMultiple {
   }) {
     assert(orElse != null);
     if (addedMultiple != null) {
-      return addedMultiple(timeslot, dates);
+      return addedMultiple(timeSlot, dates, idResource, freeName);
     }
     return orElse();
   }
@@ -401,11 +484,16 @@ class _$_AddedMultiple implements _AddedMultiple {
 }
 
 abstract class _AddedMultiple implements PresencesManagementActorEvent {
-  const factory _AddedMultiple(TimeSlot timeslot, List<DateTime> dates) =
-      _$_AddedMultiple;
+  const factory _AddedMultiple(
+      {@required TimeSlot timeSlot,
+      @required List<DateTime> dates,
+      String idResource,
+      String freeName}) = _$_AddedMultiple;
 
-  TimeSlot get timeslot;
+  TimeSlot get timeSlot;
   List<DateTime> get dates;
+  String get idResource;
+  String get freeName;
   @JsonKey(ignore: true)
   _$AddedMultipleCopyWith<_AddedMultiple> get copyWith;
 }
@@ -470,8 +558,12 @@ class _$_Removed implements _Removed {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult added(TimeSlot timeslot, DateTime date),
-    @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    @required
+        TResult added(TimeSlot timeSlot, DateTime date, String idResource,
+            String freeName),
+    @required
+        TResult addedMultiple(TimeSlot timeSlot, List<DateTime> dates,
+            String idResource, String freeName),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required
@@ -488,8 +580,10 @@ class _$_Removed implements _Removed {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult added(TimeSlot timeslot, DateTime date),
-    TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    TResult added(
+        TimeSlot timeSlot, DateTime date, String idResource, String freeName),
+    TResult addedMultiple(TimeSlot timeSlot, List<DateTime> dates,
+        String idResource, String freeName),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation, User user),
@@ -605,8 +699,12 @@ class _$_Updated implements _Updated {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult added(TimeSlot timeslot, DateTime date),
-    @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    @required
+        TResult added(TimeSlot timeSlot, DateTime date, String idResource,
+            String freeName),
+    @required
+        TResult addedMultiple(TimeSlot timeSlot, List<DateTime> dates,
+            String idResource, String freeName),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required
@@ -623,8 +721,10 @@ class _$_Updated implements _Updated {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult added(TimeSlot timeslot, DateTime date),
-    TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    TResult added(
+        TimeSlot timeSlot, DateTime date, String idResource, String freeName),
+    TResult addedMultiple(TimeSlot timeSlot, List<DateTime> dates,
+        String idResource, String freeName),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation, User user),
@@ -758,8 +858,12 @@ class _$_EditRequested implements _EditRequested {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult added(TimeSlot timeslot, DateTime date),
-    @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    @required
+        TResult added(TimeSlot timeSlot, DateTime date, String idResource,
+            String freeName),
+    @required
+        TResult addedMultiple(TimeSlot timeSlot, List<DateTime> dates,
+            String idResource, String freeName),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
     @required
@@ -776,8 +880,10 @@ class _$_EditRequested implements _EditRequested {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult added(TimeSlot timeslot, DateTime date),
-    TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
+    TResult added(
+        TimeSlot timeSlot, DateTime date, String idResource, String freeName),
+    TResult addedMultiple(TimeSlot timeSlot, List<DateTime> dates,
+        String idResource, String freeName),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
     TResult editRequested(DateTime day, Workstation workstation, User user),

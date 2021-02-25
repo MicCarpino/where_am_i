@@ -50,12 +50,6 @@ class MyPresencesWatcherBloc
     );
   }
 
-  @override
-  Future<void> close() {
-    _presencesSubscription.cancel();
-    return super.close();
-  }
-
   void _handleActorStateChange(MyPresencesActorState state) {
     state.maybeMap(
       insertSuccess: (value) {
@@ -85,5 +79,11 @@ class MyPresencesWatcherBloc
       actionInProgress: (value) => state,
       orElse: () {},
     );
+  }
+
+  @override
+  Future<void> close() {
+    _presencesSubscription.cancel();
+    return super.close();
   }
 }

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/my_presences/actor/my_presences_actor_bloc.dart';
-import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
-
 import 'presences_marker.dart';
 
 class TableCalendarWidget extends StatefulWidget {

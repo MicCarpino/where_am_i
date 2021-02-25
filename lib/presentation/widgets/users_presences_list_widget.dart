@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/actor/presences_management_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/watcher/presences_management_watcher_bloc.dart';
@@ -30,7 +31,7 @@ class UsersPresencesList extends StatelessWidget {
                     ...value.usersPending
                         .map((e) => PresencesManagementTile(
                               userWithWorkstation: e,
-                              onSingleClick: () => _onResourceClick(context,e),
+                              onSingleClick: () => _onResourceClick(context, e),
                               onLongClick: () => _onResourceLongClick,
                               onStatusButtonClick: (newStatusParams) => null,
                             ))
@@ -48,7 +49,7 @@ class UsersPresencesList extends StatelessWidget {
                     ...value.usersConfirmed
                         .map((e) => PresencesManagementTile(
                               userWithWorkstation: e,
-                              onSingleClick: () => _onResourceClick(context,e),
+                              onSingleClick: () => _onResourceClick(context, e),
                               onLongClick: () => _onResourceLongClick,
                             ))
                         .toList(),
@@ -65,7 +66,7 @@ class UsersPresencesList extends StatelessWidget {
                     ...value.usersRefusedOrAbsent
                         .map((e) => PresencesManagementTile(
                               userWithWorkstation: e,
-                              onSingleClick: () => _onResourceClick(context,e),
+                              onSingleClick: () => _onResourceClick(context, e),
                               onLongClick: () => _onResourceLongClick,
                             ))
                         .toList(),
@@ -80,16 +81,31 @@ class UsersPresencesList extends StatelessWidget {
   }
 
   _onResourceClick(
-    BuildContext context,
-    UserWithWorkstation userWithWorkstation,
-  ) {
-    context
-        .read<PresencesManagementActorBloc>()
-        .add(PresencesManagementActorEvent.editRequested(visualizedDate));
-    print('boh');
+      BuildContext context, UserWithWorkstation userWithWorkstation) {
+    context.read<PresencesManagementActorBloc>().add(
+          PresencesManagementActorEvent.editRequested(
+            visualizedDate,
+            userWithWorkstation.workstation,
+            userWithWorkstation.user,
+          ),
+        );
   }
 
-  _onResourceLongClick() {}
+  _onResourceLongClick(
+      BuildContext context, UserWithWorkstation userWithWorkstation) {
+    context.read<PresencesManagementActorBloc>().add(
+          userWithWorkstation.workstation != null
+              ? PresencesManagementActorEvent.removed(
+                  userWithWorkstation.workstation,
+                )
+              : PresencesManagementActorEvent.added(
+                  timeSlot: TimeSlot.fullDay,
+                  date: visualizedDate,
+                  idResource: userWithWorkstation.user?.idResource,
+                  freeName: userWithWorkstation.workstation?.freeName,
+                ),
+        );
+  }
 
 /* _onUserLongClick(UserWithWorkstation userWithWorkstation) {
     if (userWithWorkstation.workstation?.status == 0) {

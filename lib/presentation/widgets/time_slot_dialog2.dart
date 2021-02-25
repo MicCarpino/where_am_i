@@ -2,17 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
-import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
 
 class TimeSlotDialog2 extends StatefulWidget {
   final DateTime selectedDate;
   final Workstation workstation;
   final User user;
 
-  TimeSlotDialog2({@required this.selectedDate, this.workstation,this.user});
+  TimeSlotDialog2({@required this.selectedDate, this.workstation, this.user});
 
   @override
   _TimeSlotDialog2State createState() => _TimeSlotDialog2State();
@@ -50,6 +50,8 @@ class _TimeSlotDialog2State extends State<TimeSlotDialog2> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           _buildTitleSection(),
+          if (widget.user != null || widget.workstation?.freeName != null)
+            _buildNameSection(),
           //not last day of month and not updating a presence
           if (startingDateIsBeforeLastDay && widget.workstation == null)
             _buildMultiplePresencesSection(),
@@ -173,7 +175,7 @@ class _TimeSlotDialog2State extends State<TimeSlotDialog2> {
         selectedDates.addAll(_availableDates.sublist(0, index + 1));
       }
     }
-    Navigator.pop(context, {timeSlot:selectedDates});
+    Navigator.pop(context, {timeSlot: selectedDates});
   }
 
   Widget _buildTitleSection() {
@@ -242,5 +244,27 @@ class _TimeSlotDialog2State extends State<TimeSlotDialog2> {
     } else {
       return TimeSlot.fullDay;
     }
+  }
+
+  _buildNameSection() {
+    String title;
+    if (widget.user != null) {
+      title = '${widget.user.surname} ${widget.user.name} ';
+    } else {
+      title = widget.workstation.freeName;
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              )),
+        ),
+      ],
+    );
   }
 }

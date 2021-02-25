@@ -23,18 +23,9 @@ class PresencesManagementWatcherBloc extends Bloc<
     this.userRepository,
     this.presencesManagementActorBloc,
   ) : super(PresencesManagementWatcherState.initial()) {
-    _presencesSubscription = presencesManagementActorBloc.listen((state) {
-      state.map(
-        initial: (value) {},
-        actionInProgress: (value) {},
-        insertSuccess: (value) {},
-        multipleInsertSuccess: (value) {},
-        deleteSuccess: (value) {},
-        updateSuccess: (value) {},
-        actionFailure: (value) {},
-        showTimeSlotDialog: (value) {},
-      );
-    });
+    _presencesSubscription = presencesManagementActorBloc
+        .listen((state) => _handleActorStateChange(state));
+
     add(PresencesManagementWatcherEvent.getAllUsersPresencesByDate(
         DateTime.now()));
   }
@@ -50,57 +41,69 @@ class PresencesManagementWatcherBloc extends Bloc<
     PresencesManagementWatcherEvent event,
   ) async* {
     yield* event.map(
-      getAllUsersPresencesByDate: (e) async* {
-        print(e.date.toString());
-        yield const PresencesManagementWatcherState.loadInProgress();
-        final workstationsOrFailure =
-            await workstationRepository.getAllByDate(e.date);
-        final usersOrFailure = await userRepository.getAllUsers();
-        final workstations = workstationsOrFailure.getOrElse(() => null);
-        final users = usersOrFailure.getOrElse(() => null);
-        if (users != null && workstations != null) {
-          add(PresencesManagementWatcherEvent.presencesReceived(
-            _mergeUserWithWorkstations(users, workstations),
-          ));
-        } else {
-          yield PresencesManagementWatcherState.loadFailure();
-        }
-      },
-      presencesReceived: (e) async* {
-        //WORKSTATION PENDING - can't have free names
-        final resourcesPending = e.usersWithWorkstations
-            .where((e) => e.workstation?.status == WORKSTATION_STATUS_PENDING)
-            .toList()
-              ..sortBySurnameAndName();
-
-        //WORKSTATIONS CONFIRMED
-        final freeNamesConfirmed = e.usersWithWorkstations
-            .where((element) =>
-                element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
-                element.user == null)
-            .toList()
-              ..sortByFreeName();
-        final usersConfirmed = e.usersWithWorkstations
-            .where((element) =>
-                element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
-                element.user != null)
-            .toList()
-              ..sortBySurnameAndName();
-        final resourcesConfirmed = freeNamesConfirmed..addAll(usersConfirmed);
-        //WORKSTATIONS REFUSED or NOT PRESENT
-        final resourcesRefusedOrAbsent = e.usersWithWorkstations
-            .where((e) =>
-                e.workstation == null ||
-                e.workstation?.status == WORKSTATION_STATUS_REFUSED)
-            .toList()
-              ..sortBySurnameAndName();
-        yield PresencesManagementWatcherState.loadSuccess(
-          resourcesPending ?? List.empty(),
-          resourcesConfirmed ?? List.empty(),
-          resourcesRefusedOrAbsent ?? List.empty(),
-        );
-      },
+      getAllUsersPresencesByDate: (e) => _mapGetPresencesToState(e),
+      presencesReceived: (e) => _mapPresencesReceivedToState(e),
       onFilterUpdated: (e) async* {},
+    );
+  }
+
+  Stream<PresencesManagementWatcherState> _mapGetPresencesToState(
+      _GetUserPresences e) async* {
+    yield const PresencesManagementWatcherState.loadInProgress();
+    final workstationsOrFailure =
+        await workstationRepository.getAllByDate(e.date);
+    final usersOrFailure = await userRepository.getAllUsers();
+    final workstations = workstationsOrFailure.getOrElse(() => null);
+    final users = usersOrFailure.getOrElse(() => null);
+    if (users != null && workstations != null) {
+      final usersWithWorkstations =
+          _mergeUserWithWorkstations(users, workstations);
+      cachedUsersPresences = usersWithWorkstations;
+      add(
+        PresencesManagementWatcherEvent.presencesReceived(
+            usersWithWorkstations),
+      );
+    } else {
+      yield PresencesManagementWatcherState.loadFailure();
+    }
+  }
+
+  Stream<PresencesManagementWatcherState> _mapPresencesReceivedToState(
+      _PresencesReceived e) async* {
+    //WORKSTATION PENDING - can't have free names
+    final resourcesPending = e.usersWithWorkstations
+        .where((e) => e.workstation?.status == WORKSTATION_STATUS_PENDING)
+        .toList()
+          ..sortBySurnameAndName();
+
+    //WORKSTATIONS CONFIRMED
+    final freeNamesConfirmed = e.usersWithWorkstations
+        .where((element) =>
+            element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
+            element.user == null)
+        .toList()
+          ..sortByFreeName();
+    final usersConfirmed = e.usersWithWorkstations
+        .where((element) =>
+            element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
+            element.user != null)
+        .toList()
+          ..sortBySurnameAndName();
+    final resourcesConfirmed = freeNamesConfirmed..addAll(usersConfirmed);
+
+    //WORKSTATIONS REFUSED or NOT PRESENT
+    final resourcesRefusedOrAbsent = e.usersWithWorkstations
+        .where((e) =>
+            e.workstation == null ||
+            e.workstation?.status == WORKSTATION_STATUS_REFUSED)
+        .toList()
+          ..sortBySurnameAndName();
+
+    //PUBLISH
+    yield PresencesManagementWatcherState.loadSuccess(
+      resourcesPending ?? List.empty(),
+      resourcesConfirmed ?? List.empty(),
+      resourcesRefusedOrAbsent ?? List.empty(),
     );
   }
 
@@ -115,5 +118,58 @@ class PresencesManagementWatcherBloc extends Bloc<
               user: user,
               workstation: workstations.singleWhereOrNull((workstation) =>
                   workstation.idResource == user.idResource))));
+  }
+
+  void _handleActorStateChange(PresencesManagementActorState state) {
+    state.maybeMap(
+      insertSuccess: (value) {
+        _updateCachedList(value.workstation);
+        add(PresencesManagementWatcherEvent.presencesReceived(
+            cachedUsersPresences));
+      },
+      multipleInsertSuccess: (value) {
+        value.workstations.forEach((wrkstn) => _updateCachedList(wrkstn));
+        add(PresencesManagementWatcherEvent.presencesReceived(
+            cachedUsersPresences));
+      },
+      deleteSuccess: (value) {
+        final index = cachedUsersPresences.indexWhere((element) =>
+            element.workstation.idWorkstation == value.idWorkstation);
+        if (index != -1) {
+          cachedUsersPresences[index] =
+              cachedUsersPresences[index].copyWith(workstation: null);
+          add(PresencesManagementWatcherEvent.presencesReceived(
+              cachedUsersPresences));
+        }
+      },
+      updateSuccess: (value) {
+        _updateCachedList(value.workstation);
+        add(PresencesManagementWatcherEvent.presencesReceived(
+            cachedUsersPresences));
+      },
+      actionInProgress: (value) => state,
+      orElse: () {},
+    );
+  }
+
+  void _updateCachedList(Workstation workstation) {
+    if (workstation.idResource != null) {
+      final index = cachedUsersPresences.indexWhere(
+          (element) => element.user.idResource == workstation.idResource);
+      if (index != -1) {
+        cachedUsersPresences[index] =
+            cachedUsersPresences[index].copyWith(workstation: workstation);
+      }
+    } else {
+      cachedUsersPresences.add(
+        UserWithWorkstation(user: null, workstation: workstation),
+      );
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _presencesSubscription.cancel();
+    return super.close();
   }
 }

@@ -13,6 +13,7 @@ import 'package:where_am_i/presentation/widgets/presences_management_tile.dart';
 import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 import 'package:where_am_i/presentation/widgets/text_input_dialog.dart';
 import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
+import 'package:where_am_i/presentation/widgets/time_slot_dialog2.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -227,7 +228,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
         ? showDialog(
             context: context,
             builder: (BuildContext context) {
-              return TimeSlotDialog(
+              return TimeSlotDialog2(
                 workstation: userWithWorkstation.workstation,
                 selectedDate: this.visualizedDate,
                 user: userWithWorkstation.user,
