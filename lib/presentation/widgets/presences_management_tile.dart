@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 
@@ -7,8 +6,7 @@ class PresencesManagementTile extends StatelessWidget {
   final UserWithWorkstation userWithWorkstation;
   final Function() onSingleClick;
   final Function() onLongClick;
-  final Function(WorkstationStatusParameters newStatusParams)
-      onStatusButtonClick;
+  final Function(int selectedStatus) onStatusButtonClick;
 
   const PresencesManagementTile({
     @required this.userWithWorkstation,
@@ -95,12 +93,8 @@ class PresencesManagementTile extends StatelessWidget {
                 Icons.check,
                 color: Colors.white,
               ),
-              onPressed: () => onStatusButtonClick(
-                WorkstationStatusParameters(
-                  idWorkstation: userWithWorkstation.workstation.idWorkstation,
-                  status: WORKSTATION_STATUS_CONFIRMED,
-                ),
-              ),
+              onPressed: () =>
+                  onStatusButtonClick(WORKSTATION_STATUS_CONFIRMED),
             ),
             SizedBox(width: 8.0),
             //refuse button
@@ -111,10 +105,7 @@ class PresencesManagementTile extends StatelessWidget {
                 color: Colors.white,
               ),
               onPressed: () => onStatusButtonClick(
-                WorkstationStatusParameters(
-                  idWorkstation: userWithWorkstation.workstation.idWorkstation,
-                  status: WORKSTATION_STATUS_REFUSED,
-                ),
+                WORKSTATION_STATUS_REFUSED,
               ),
             )
           ],

@@ -77,7 +77,7 @@ class PresencesManagementActorBloc
       workstationDate: date,
       idResource: e.idResource,
       freeName: e.freeName,
-    ))
+    ),)
         .toList());
     yield insertOrFailure.fold(
           (failure) => PresencesManagementActorState.actionFailure(failure),
