@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
+import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
 
 class TimeSlotDialog2 extends StatefulWidget {
   final DateTime selectedDate;
   final Workstation workstation;
+  final User user;
 
-  TimeSlotDialog2({@required this.selectedDate, this.workstation});
+  TimeSlotDialog2({@required this.selectedDate, this.workstation,this.user});
 
   @override
   _TimeSlotDialog2State createState() => _TimeSlotDialog2State();

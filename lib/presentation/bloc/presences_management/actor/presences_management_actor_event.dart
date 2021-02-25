@@ -19,5 +19,5 @@ abstract class PresencesManagementActorEvent with _$PresencesManagementActorEven
   _Updated;
 
   const factory PresencesManagementActorEvent.editRequested(DateTime day,
-      [Workstation workstation]) = _EditRequested;
+      [Workstation workstation, User user]) = _EditRequested;
 }

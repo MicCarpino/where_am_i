@@ -44,10 +44,12 @@ class _$PresencesManagementActorEventTearOff {
   }
 
 // ignore: unused_element
-  _EditRequested editRequested(DateTime day, [Workstation workstation]) {
+  _EditRequested editRequested(DateTime day,
+      [Workstation workstation, User user]) {
     return _EditRequested(
       day,
       workstation,
+      user,
     );
   }
 }
@@ -64,7 +66,8 @@ mixin _$PresencesManagementActorEvent {
     @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
-    @required TResult editRequested(DateTime day, Workstation workstation),
+    @required
+        TResult editRequested(DateTime day, Workstation workstation, User user),
   });
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
@@ -72,7 +75,7 @@ mixin _$PresencesManagementActorEvent {
     TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
-    TResult editRequested(DateTime day, Workstation workstation),
+    TResult editRequested(DateTime day, Workstation workstation, User user),
     @required TResult orElse(),
   });
   @optionalTypeArgs
@@ -186,7 +189,8 @@ class _$_Added implements _Added {
     @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
-    @required TResult editRequested(DateTime day, Workstation workstation),
+    @required
+        TResult editRequested(DateTime day, Workstation workstation, User user),
   }) {
     assert(added != null);
     assert(addedMultiple != null);
@@ -203,7 +207,7 @@ class _$_Added implements _Added {
     TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
-    TResult editRequested(DateTime day, Workstation workstation),
+    TResult editRequested(DateTime day, Workstation workstation, User user),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -333,7 +337,8 @@ class _$_AddedMultiple implements _AddedMultiple {
     @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
-    @required TResult editRequested(DateTime day, Workstation workstation),
+    @required
+        TResult editRequested(DateTime day, Workstation workstation, User user),
   }) {
     assert(added != null);
     assert(addedMultiple != null);
@@ -350,7 +355,7 @@ class _$_AddedMultiple implements _AddedMultiple {
     TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
-    TResult editRequested(DateTime day, Workstation workstation),
+    TResult editRequested(DateTime day, Workstation workstation, User user),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -469,7 +474,8 @@ class _$_Removed implements _Removed {
     @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
-    @required TResult editRequested(DateTime day, Workstation workstation),
+    @required
+        TResult editRequested(DateTime day, Workstation workstation, User user),
   }) {
     assert(added != null);
     assert(addedMultiple != null);
@@ -486,7 +492,7 @@ class _$_Removed implements _Removed {
     TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
-    TResult editRequested(DateTime day, Workstation workstation),
+    TResult editRequested(DateTime day, Workstation workstation, User user),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -603,7 +609,8 @@ class _$_Updated implements _Updated {
     @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
-    @required TResult editRequested(DateTime day, Workstation workstation),
+    @required
+        TResult editRequested(DateTime day, Workstation workstation, User user),
   }) {
     assert(added != null);
     assert(addedMultiple != null);
@@ -620,7 +627,7 @@ class _$_Updated implements _Updated {
     TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
-    TResult editRequested(DateTime day, Workstation workstation),
+    TResult editRequested(DateTime day, Workstation workstation, User user),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -678,7 +685,7 @@ abstract class _$EditRequestedCopyWith<$Res> {
   factory _$EditRequestedCopyWith(
           _EditRequested value, $Res Function(_EditRequested) then) =
       __$EditRequestedCopyWithImpl<$Res>;
-  $Res call({DateTime day, Workstation workstation});
+  $Res call({DateTime day, Workstation workstation, User user});
 }
 
 /// @nodoc
@@ -696,26 +703,31 @@ class __$EditRequestedCopyWithImpl<$Res>
   $Res call({
     Object day = freezed,
     Object workstation = freezed,
+    Object user = freezed,
   }) {
     return _then(_EditRequested(
       day == freezed ? _value.day : day as DateTime,
       workstation == freezed ? _value.workstation : workstation as Workstation,
+      user == freezed ? _value.user : user as User,
     ));
   }
 }
 
 /// @nodoc
 class _$_EditRequested implements _EditRequested {
-  const _$_EditRequested(this.day, [this.workstation]) : assert(day != null);
+  const _$_EditRequested(this.day, [this.workstation, this.user])
+      : assert(day != null);
 
   @override
   final DateTime day;
   @override
   final Workstation workstation;
+  @override
+  final User user;
 
   @override
   String toString() {
-    return 'PresencesManagementActorEvent.editRequested(day: $day, workstation: $workstation)';
+    return 'PresencesManagementActorEvent.editRequested(day: $day, workstation: $workstation, user: $user)';
   }
 
   @override
@@ -726,14 +738,17 @@ class _$_EditRequested implements _EditRequested {
                 const DeepCollectionEquality().equals(other.day, day)) &&
             (identical(other.workstation, workstation) ||
                 const DeepCollectionEquality()
-                    .equals(other.workstation, workstation)));
+                    .equals(other.workstation, workstation)) &&
+            (identical(other.user, user) ||
+                const DeepCollectionEquality().equals(other.user, user)));
   }
 
   @override
   int get hashCode =>
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(day) ^
-      const DeepCollectionEquality().hash(workstation);
+      const DeepCollectionEquality().hash(workstation) ^
+      const DeepCollectionEquality().hash(user);
 
   @JsonKey(ignore: true)
   @override
@@ -747,14 +762,15 @@ class _$_EditRequested implements _EditRequested {
     @required TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     @required TResult removed(Workstation workstation),
     @required TResult updated(Workstation workstation),
-    @required TResult editRequested(DateTime day, Workstation workstation),
+    @required
+        TResult editRequested(DateTime day, Workstation workstation, User user),
   }) {
     assert(added != null);
     assert(addedMultiple != null);
     assert(removed != null);
     assert(updated != null);
     assert(editRequested != null);
-    return editRequested(day, workstation);
+    return editRequested(day, workstation, user);
   }
 
   @override
@@ -764,12 +780,12 @@ class _$_EditRequested implements _EditRequested {
     TResult addedMultiple(TimeSlot timeslot, List<DateTime> dates),
     TResult removed(Workstation workstation),
     TResult updated(Workstation workstation),
-    TResult editRequested(DateTime day, Workstation workstation),
+    TResult editRequested(DateTime day, Workstation workstation, User user),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
     if (editRequested != null) {
-      return editRequested(day, workstation);
+      return editRequested(day, workstation, user);
     }
     return orElse();
   }
@@ -810,11 +826,12 @@ class _$_EditRequested implements _EditRequested {
 }
 
 abstract class _EditRequested implements PresencesManagementActorEvent {
-  const factory _EditRequested(DateTime day, [Workstation workstation]) =
-      _$_EditRequested;
+  const factory _EditRequested(DateTime day,
+      [Workstation workstation, User user]) = _$_EditRequested;
 
   DateTime get day;
   Workstation get workstation;
+  User get user;
   @JsonKey(ignore: true)
   _$EditRequestedCopyWith<_EditRequested> get copyWith;
 }

@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:where_am_i/core/error/failure.dart';
+import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/enums.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
@@ -22,14 +24,23 @@ class PresencesManagementActorBloc
 
   @override
   Stream<PresencesManagementActorState> mapEventToState(
-      PresencesManagementActorEvent event,) async* {
+    PresencesManagementActorEvent event,
+  ) async* {
     yield const PresencesManagementActorState.actionInProgress();
     yield* event.map(
       added: (e) async* {},
       addedMultiple: (e) async* {},
       removed: (e) async* {},
       updated: (e) async* {},
-      editRequested: (e) async* {},
+      editRequested: (e) async* {
+        if (e.day.isBeforeTimeLess(DateTime.now())) {
+          yield PresencesManagementActorState.actionFailure(
+              UnexpectedFailure(WORKSTATION_EDIT_DATE_ERROR));
+        } else {
+          yield PresencesManagementActorState.showTimeSlotDialog(
+              e.day, e.workstation, e.user);
+        }
+      },
     );
   }
 }

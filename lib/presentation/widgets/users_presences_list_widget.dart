@@ -6,6 +6,10 @@ import 'package:where_am_i/presentation/bloc/presences_management/watcher/presen
 import 'package:where_am_i/presentation/widgets/presences_management_tile.dart';
 
 class UsersPresencesList extends StatelessWidget {
+  const UsersPresencesList(this.visualizedDate);
+
+  final DateTime visualizedDate;
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PresencesManagementWatcherBloc,
@@ -16,37 +20,56 @@ class UsersPresencesList extends StatelessWidget {
               return Expanded(
                 child: ListView(children: [
                   if (value.usersPending.isNotEmpty) ...[
-                    Text('da gestire'),
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      child: Text(
+                        'DA GESTIRE',
+                        style: TextStyle(color: Colors.blue, fontSize: 16),
+                      ),
+                    ),
                     ...value.usersPending
                         .map((e) => PresencesManagementTile(
                               userWithWorkstation: e,
-                              onLongClick: () => null,
-                              onSingleClick: () => null,
+                              onSingleClick: () => _onResourceClick(context,e),
+                              onLongClick: () => _onResourceLongClick,
                               onStatusButtonClick: (newStatusParams) => null,
                             ))
-                        .toList()
+                        .toList(),
+                    Divider(color: Colors.grey, indent: 8, endIndent: 8),
                   ],
                   if (value.usersConfirmed.isNotEmpty) ...[
-                    Text('confermati'),
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      child: Text(
+                        'PRESENTI',
+                        style: TextStyle(color: Colors.blue, fontSize: 16),
+                      ),
+                    ),
                     ...value.usersConfirmed
                         .map((e) => PresencesManagementTile(
                               userWithWorkstation: e,
-                              onLongClick: () => null,
-                              onSingleClick: () => null,
-                              onStatusButtonClick: (newStatusParams) => null,
+                              onSingleClick: () => _onResourceClick(context,e),
+                              onLongClick: () => _onResourceLongClick,
                             ))
-                        .toList()
+                        .toList(),
+                    Divider(color: Colors.grey, indent: 8, endIndent: 8),
                   ],
-                  if (value.usersPending.isNotEmpty) ...[
-                    Text('boh'),
+                  ...[
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      child: Text(
+                        'NON PRESENTI',
+                        style: TextStyle(color: Colors.blue, fontSize: 16),
+                      ),
+                    ),
                     ...value.usersRefusedOrAbsent
                         .map((e) => PresencesManagementTile(
                               userWithWorkstation: e,
-                              onLongClick: () => null,
-                              onSingleClick: () => null,
-                              onStatusButtonClick: (newStatusParams) => null,
+                              onSingleClick: () => _onResourceClick(context,e),
+                              onLongClick: () => _onResourceLongClick,
                             ))
-                        .toList()
+                        .toList(),
+                    Divider(color: Colors.grey, indent: 8, endIndent: 8),
                   ],
                 ]),
               );
@@ -55,6 +78,18 @@ class UsersPresencesList extends StatelessWidget {
       },
     );
   }
+
+  _onResourceClick(
+    BuildContext context,
+    UserWithWorkstation userWithWorkstation,
+  ) {
+    context
+        .read<PresencesManagementActorBloc>()
+        .add(PresencesManagementActorEvent.editRequested(visualizedDate));
+    print('boh');
+  }
+
+  _onResourceLongClick() {}
 
 /* _onUserLongClick(UserWithWorkstation userWithWorkstation) {
     if (userWithWorkstation.workstation?.status == 0) {

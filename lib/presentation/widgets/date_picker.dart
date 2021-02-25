@@ -5,26 +5,15 @@ import 'package:where_am_i/core/utils/constants.dart';
 
 class DatePicker extends StatefulWidget {
   final Function(DateTime date) onDateChanged;
-
   DatePicker(this.onDateChanged);
 
   @override
   _DatePickerState createState() =>
-      _DatePickerState(onDateChanged: this.onDateChanged);
+      _DatePickerState();
 }
 
 class _DatePickerState extends State<DatePicker> {
-  _DatePickerState({@required this.onDateChanged});
-
-  final Function(DateTime date) onDateChanged;
-  DateTime visualizedDate;
-
-  @override
-  void initState() {
-    //set date to current date where minutes,seconds,milliseconds are '0'
-    visualizedDate = DateTime.now().zeroed();
-    super.initState();
-  }
+  DateTime visualizedDate = DateTime.now().zeroed();
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +38,8 @@ class _DatePickerState extends State<DatePicker> {
                         days: visualizedDate.weekday == DateTime.monday ? 2 : 1,
                       ),
                     );
-                    onDateChanged(visualizedDate);
                   });
+                  widget.onDateChanged(visualizedDate);
                 },
               ),
             ),
@@ -77,8 +66,8 @@ class _DatePickerState extends State<DatePicker> {
                             visualizedDate.weekday == DateTime.saturday ? 2 : 1,
                       ),
                     );
-                    onDateChanged(visualizedDate);
                   });
+                  widget.onDateChanged(visualizedDate);
                 },
               ),
             ),
@@ -105,7 +94,7 @@ class _DatePickerState extends State<DatePicker> {
       if (selectedDate != null) {
         setState(() {
           visualizedDate = selectedDate.zeroed();
-          onDateChanged(visualizedDate);
+          widget.onDateChanged(visualizedDate);
         });
       }
     });

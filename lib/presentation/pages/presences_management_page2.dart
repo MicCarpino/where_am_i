@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
@@ -9,6 +8,7 @@ import 'package:where_am_i/presentation/bloc/presences_management/watcher/presen
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
 import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 import 'package:where_am_i/presentation/widgets/text_input_dialog.dart';
+import 'package:where_am_i/presentation/widgets/time_slot_dialog2.dart';
 import 'package:where_am_i/presentation/widgets/users_presences_list_widget.dart';
 import '../../injection_container.dart';
 
@@ -65,41 +65,53 @@ class _PresencesManagementPage2State extends State<PresencesManagementPage2> {
               actionInProgress: (value) {},
               actionFailure: (f) =>
                   showSnackbar(context, f.failure.getErrorMessageFromFailure()),
-              showTimeSlotDialog: (value) {},
+              showTimeSlotDialog: (value) => showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return TimeSlotDialog2(
+                          selectedDate: value.date,
+                          workstation: value.workstation,
+                          user: value.user,
+                        );
+                      }).then((result) {
+                    /*if (result != null &&
+                    result is Map<TimeSlot, List<DateTime>>) {
+                  _handleDialogResult(context, result, value.workstation);
+                }*/
+                  }),
               orElse: () {});
         },
-        child: BlocBuilder<PresencesManagementWatcherBloc,
-            PresencesManagementWatcherState>(
-          builder: (context, state) {
-            return state.map(
-              initial: (_) => Container(),
-              loadInProgress: (_) =>
-                  const Center(child: CircularProgressIndicator()),
-              loadSuccess: (state) => Column(
-                children: [
-                  DatePicker(_onDateChanged),
-                  Row(
-                    children: [
-                      _buildSearchBar(),
-                      _buildAddExternalUserButton()
-                    ],
-                  ),
-                  UsersPresencesList(),
-                ],
+        child: Column(
+          children: [
+            Builder(
+              builder: (context) => DatePicker(
+                (newDate) => _onDateChanged(context, newDate)
               ),
-              loadFailure: (_) => Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  child: Center(
-                    child: RetryWidget(
-                      onTryAgainPressed: () => context
-                          .read<PresencesManagementWatcherBloc>()
-                          .add(PresencesManagementWatcherEvent
-                              .getAllUsersPresencesByDate(visualizedDate)),
-                    ),
-                  )),
-            );
-          },
+            ),
+            Row(children: [_buildSearchBar(), _buildAddExternalUserButton()]),
+            BlocBuilder<PresencesManagementWatcherBloc,
+                PresencesManagementWatcherState>(
+              builder: (context, state) {
+                return state.map(
+                  initial: (_) => Container(),
+                  loadInProgress: (_) => Expanded(
+                      child: const Center(child: CircularProgressIndicator())),
+                  loadSuccess: (state) => UsersPresencesList(visualizedDate),
+                  loadFailure: (_) => Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: Center(
+                        child: RetryWidget(
+                          onTryAgainPressed: () => context
+                              .read<PresencesManagementWatcherBloc>()
+                              .add(PresencesManagementWatcherEvent
+                                  .getAllUsersPresencesByDate(visualizedDate)),
+                        ),
+                      )),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -143,10 +155,14 @@ class _PresencesManagementPage2State extends State<PresencesManagementPage2> {
             : null);
   }
 
-  _onDateChanged(DateTime newDate) {
+  _onDateChanged(BuildContext context, DateTime newDate) {
     setState(() {
       visualizedDate = newDate;
     });
+    context.read<PresencesManagementWatcherBloc>().add(
+          PresencesManagementWatcherEvent.getAllUsersPresencesByDate(
+              visualizedDate),
+        );
   }
 
   void showSnackbar(BuildContext context, String message) {

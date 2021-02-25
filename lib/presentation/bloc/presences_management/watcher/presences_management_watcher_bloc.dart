@@ -51,6 +51,7 @@ class PresencesManagementWatcherBloc extends Bloc<
   ) async* {
     yield* event.map(
       getAllUsersPresencesByDate: (e) async* {
+        print(e.date.toString());
         yield const PresencesManagementWatcherState.loadInProgress();
         final workstationsOrFailure =
             await workstationRepository.getAllByDate(e.date);

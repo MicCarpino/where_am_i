@@ -14,7 +14,7 @@ class PresencesManagementTile extends StatelessWidget {
     @required this.userWithWorkstation,
     @required this.onSingleClick,
     @required this.onLongClick,
-    @required this.onStatusButtonClick,
+    this.onStatusButtonClick,
   });
 
   @override
