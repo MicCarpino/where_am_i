@@ -134,10 +134,12 @@ class PresencesManagementWatcherBloc extends Bloc<
       },
       deleteSuccess: (value) {
         final index = cachedUsersPresences.indexWhere((element) =>
-            element.workstation.idWorkstation == value.idWorkstation);
+            element.workstation?.idWorkstation == value.idWorkstation);
         if (index != -1) {
-          cachedUsersPresences[index] =
-              cachedUsersPresences[index].copyWith(workstation: null);
+          cachedUsersPresences[index] = UserWithWorkstation(
+            user: cachedUsersPresences[index].user,
+            workstation: null,
+          );
           add(PresencesManagementWatcherEvent.presencesReceived(
               cachedUsersPresences));
         }

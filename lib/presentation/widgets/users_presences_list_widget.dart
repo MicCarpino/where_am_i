@@ -50,7 +50,7 @@ class UsersPresencesList extends StatelessWidget {
                         .map((e) => PresencesManagementTile(
                               userWithWorkstation: e,
                               onSingleClick: () => _onResourceClick(context, e),
-                              onLongClick: () => _onResourceLongClick,
+                              onLongClick: () => _onResourceLongClick(context, e),
                             ))
                         .toList(),
                     Divider(color: Colors.grey, indent: 8, endIndent: 8),
@@ -67,7 +67,7 @@ class UsersPresencesList extends StatelessWidget {
                         .map((e) => PresencesManagementTile(
                               userWithWorkstation: e,
                               onSingleClick: () => _onResourceClick(context, e),
-                              onLongClick: () => _onResourceLongClick,
+                              onLongClick: () => _onResourceLongClick(context,e),
                             ))
                         .toList(),
                     Divider(color: Colors.grey, indent: 8, endIndent: 8),
