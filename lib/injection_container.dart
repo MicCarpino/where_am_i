@@ -37,7 +37,6 @@ import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
-import 'package:where_am_i/presentation/bloc/presences_management/presences_management_bloc.dart';
 import 'package:where_am_i/presentation/bloc/users_management/users_management_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation_assignment/workstation_assignement_bloc.dart';
 
@@ -72,14 +71,6 @@ Future<void> init() async {
       ));
   getIt.registerFactory(
       () => UsersManagementBloc(getUsers: getIt(), updateUser: getIt()));
-  getIt.registerFactory(() => PresencesManagementBloc(
-        getAllUserPresencesByDate: getIt(),
-        insertUserPresence: getIt(),
-        insertAllUserPresences: getIt(),
-        updateUserPresence: getIt(),
-        removeUserPresence: getIt(),
-        updateUserPresenceStatus: getIt(),
-      ));
 
   // Use Cases
   //User

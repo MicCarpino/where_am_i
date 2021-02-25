@@ -1,23 +1,18 @@
-/*
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 
 class TimeSlotDialog extends StatefulWidget {
-  final Workstation workstation;
   final DateTime selectedDate;
+  final Workstation workstation;
   final User user;
 
-  TimeSlotDialog({
-    @required this.workstation,
-    @required this.selectedDate,
-    this.user,
-  });
+  TimeSlotDialog({@required this.selectedDate, this.workstation, this.user});
 
   @override
   _TimeSlotDialogState createState() => _TimeSlotDialogState();
@@ -28,8 +23,10 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   DateTime startingDate;
   DateTime lastDateOfMonth;
   bool startingDateIsBeforeLastDay;
+
   //checkbox value
   bool _isRangeSelectionActive = false;
+
   //dropdown selected item
   DateTime _dropDownSelectedDate;
   List<DateTime> _availableDates = [];
@@ -37,39 +34,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   @override
   void initState() {
     super.initState();
-    startingDate = widget.selectedDate.zeroed();
-    // DateTime month starts from 0, so month+1 is to compensate date "taken" from another Datetime
-    // while setting 0 as day automatically turn it in the last day of the month
-    lastDateOfMonth = new DateTime(
-      startingDate.year,
-      startingDate.month + 1,
-      0,
-    );
-    if (lastDateOfMonth.weekday == DateTime.sunday) {
-      lastDateOfMonth = new DateTime(
-        lastDateOfMonth.year,
-        lastDateOfMonth.month,
-        lastDateOfMonth.day - 1,
-      );
-    }
-    //startingDate cannot be a value after the last day of the month, so it's
-    //only necessary to check if is not equal to the last day
-    startingDateIsBeforeLastDay =
-        !startingDate.isAtSameMomentAs(lastDateOfMonth);
-    if (startingDateIsBeforeLastDay) {
-      initDropdownValues();
-    }
-  }
-
-  void initDropdownValues() {
-    DateTime date = startingDate.add(Duration(days: 1));
-    while (!date.isAfter(lastDateOfMonth)) {
-      if (date.weekday != DateTime.saturday &&
-          date.weekday != DateTime.sunday) {
-        _availableDates.add(date);
-      }
-      date = date.add(Duration(days: 1));
-    }
+    initValues();
   }
 
   @override
@@ -85,174 +50,188 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           _buildTitleSection(),
+          if (widget.user != null || widget.workstation?.freeName != null)
+            _buildNameSection(),
+          //not last day of month and not updating a presence
           if (startingDateIsBeforeLastDay && widget.workstation == null)
             _buildMultiplePresencesSection(),
-          _buildButtonsSection(),
+          _buildButtons(),
         ],
       ),
     );
   }
 
   Widget _buildMultiplePresencesSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              SizedBox(
+                height: 48.0,
+                width: 24.0,
+                child: Checkbox(
+                    value: _isRangeSelectionActive,
+                    onChanged: (newValue) => setState(() {
+                      _isRangeSelectionActive = newValue;
+                      _dropDownSelectedDate = null;
+                    })),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  'Presente per più giornate',
+                  style: const TextStyle(fontSize: 15),
+                ),
+              ),
+            ],
+          ),
+          if (_isRangeSelectionActive) _buildDropDownSection()
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDropDownSection() {
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            SizedBox(
-              height: 48.0,
-              width: 24.0,
-              child: Checkbox(
-                  value: _isRangeSelectionActive,
-                  onChanged: (newValue) => setState(() {
-                        _isRangeSelectionActive = newValue;
-                        _dropDownSelectedDate = null;
-                      })),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Presente per più giornate'),
-            ),
-          ],
-        ),
-        _isRangeSelectionActive
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text("Presente fino a :", style: TextStyle(fontSize: 16)),
-                  _buildDropDown()
-                ],
-              )
-            : Container()
+        Text("Presente fino a :", style: TextStyle(fontSize: 16)),
+        DropdownButton<DateTime>(
+          value: _dropDownSelectedDate,
+          hint: Text('Ultimo giorno di presenza'),
+          items: _availableDates
+              .map((date) => new DropdownMenuItem<DateTime>(
+            value: date,
+            child: new Text(formatter.format(date)),
+          ))
+              .toList(),
+          onChanged: (value) => setState(() => _dropDownSelectedDate = value),
+        )
       ],
     );
   }
 
-  Widget _buildDropDown() {
-    return DropdownButton<DateTime>(
-      value: _dropDownSelectedDate,
-      hint: Text('Ultimo giorno di presenza'),
-      items: _availableDates
-          .map((date) => new DropdownMenuItem<DateTime>(
-                value: date,
-                child: new Text(formatter.format(date)),
-              ))
-          .toList(),
-      onChanged: (value) {
-        setState(() {
-          _dropDownSelectedDate = value;
-        });
-        print(value);
-      },
-    );
-  }
-
-  Widget _buildButtonsSection() {
+  Widget _buildButtons() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: _buildButtons(),
+        children: TimeSlot.values
+            .where((timeSlot) {
+          //edit case, generating only options not equals to actual time slot
+          if (widget.workstation != null) {
+            return timeSlot != widget.workstation.getTimeSlot();
+          }
+          //displaying all buttons if performing multiple insert
+          return _isRangeSelectionActive
+              ? true
+          //else only morning/afternoon buttons
+              : timeSlot != TimeSlot.fullDay;
+        })
+            .map((timeSlot) => _buildTimeSlotButton(timeSlot))
+            .toList(),
       ),
     );
   }
 
-  List<Widget> _buildButtons() {
-    var buttonsToBuild = TimeSlot.values.where((element) {
-      if (widget.workstation != null) {
-        var workstationTimeSlot = getWorkstationTimeSlot(widget.workstation);
-        //skipping full day
-        if (element == workstationTimeSlot) {
-          return false;
-        }
-      } else if (element == TimeSlot.fullDay && !_isRangeSelectionActive) {
-        return false;
-      }
-      return true;
-    });
-    return buttonsToBuild.map((e) => _buildTimeSlotButton(context, e)).toList();
-  }
-
-  Widget _buildTimeSlotButton(BuildContext context, TimeSlot timeSlot) {
+  Widget _buildTimeSlotButton(TimeSlot timeSlot) {
     String label = "TUTTO IL GIORNO";
-    TimeOfDay startTime = TIME_SLOT_NINE;
-    TimeOfDay endTime = TIME_SLOT_EIGHTEEN;
     if (timeSlot == TimeSlot.morning) {
       label = "MATTINA";
-      endTime = TIME_SLOT_THIRTEEN;
     } else if (timeSlot == TimeSlot.evening) {
       label = "POMERIGGIO";
-      startTime = TIME_SLOT_FOURTEEN;
-    } else if (timeSlot == TimeSlot.fullDay) {
-      label = "TUTTO IL GIORNO";
     }
     return AspectRatio(
       aspectRatio: 2.5,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: RaisedButton(
-            elevation: 5,
-            color: Colors.white,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-                side: BorderSide(color: Colors.blue)),
-            child: Text(
-              label,
-              style: TextStyle(fontSize: 20, color: Colors.blue),
-              textAlign: TextAlign.center,
-            ),
-            onPressed: () {
-              if (widget.workstation?.status == WORKSTATION_STATUS_REFUSED) {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Attenzione"),
-                        content: Text(
-                            "La presenza per questa risorsa è stata rifiutata. Confermando verranno apportate le modifiche e lo stato della richiesta verrà automaticamente confermato."),
-                        actions: [
-                          FlatButton(
-                              child: Text("Annulla"),
-                              onPressed: () => Navigator.pop(context)),
-                          FlatButton(
-                              child: Text("OK"),
-                              onPressed: () {
-                                Navigator.pop(context);
-                                _closeDialogAndSubmit(
-                                    context, startTime, endTime);
-                              })
-                        ],
-                      );
-                    });
-              } else {
-                _closeDialogAndSubmit(context, startTime, endTime);
-              }
-            }),
+        child: MaterialButton(
+          elevation: 5,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(color: Colors.blue)),
+          child: Text(
+            label,
+            style: TextStyle(fontSize: 20, color: Colors.blue),
+            textAlign: TextAlign.center,
+          ),
+          onPressed: () => _closeDialogAndSubmit(timeSlot),
+        ),
       ),
     );
   }
 
-  void _closeDialogAndSubmit(
-      BuildContext context, TimeOfDay startTime, TimeOfDay endTime) {
-    List<DateTime> datesList = [startingDate];
+  void _closeDialogAndSubmit(TimeSlot timeSlot) {
+    List<DateTime> selectedDates = [startingDate];
     if (_dropDownSelectedDate != null) {
       int index = _availableDates.indexOf(_dropDownSelectedDate);
       if (index != -1) {
-        datesList.addAll(_availableDates.sublist(0, index + 1));
+        selectedDates.addAll(_availableDates.sublist(0, index + 1));
       }
     }
-    Navigator.pop(
-        context,
-        datesList
-            .map((date) => PresenceNewParameters(
-                date: date,
-                startTime: startTime,
-                endTime: endTime,
-                idResource:
-                    widget.user?.idResource ?? widget.workstation?.idResource))
-            .toList());
+    Navigator.pop(context, {timeSlot: selectedDates});
+  }
+
+  Widget _buildTitleSection() {
+    String title =
+        "${widget.workstation == null ? 'Inserisci' : 'Modifica'} presenza per ${formatter.format(widget.selectedDate)}";
+
+    return Container(
+      color: dncLightBlue,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding:
+            const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 18, color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void initValues() {
+    startingDate = widget.selectedDate.zeroed();
+    // DateTime month starts from 0, so month+1 is to compensate date "taken" from another Datetime
+    // while setting 0 as day automatically turn it in the last day of the month
+    lastDateOfMonth =
+    new DateTime(startingDate.year, startingDate.month + 1, 0);
+    if (lastDateOfMonth.weekday == DateTime.sunday) {
+      lastDateOfMonth = new DateTime(
+        lastDateOfMonth.year,
+        lastDateOfMonth.month,
+        lastDateOfMonth.day - 1,
+      );
+    }
+    //startingDate cannot be a value after the last day of the month, so it's
+    //only necessary to check if is not equal to the last day
+    startingDateIsBeforeLastDay =
+    !startingDate.isAtSameMomentAs(lastDateOfMonth);
+    if (startingDateIsBeforeLastDay) {
+      initDropdownValues();
+    }
+  }
+
+  void initDropdownValues() {
+    DateTime date = startingDate.add(Duration(days: 1));
+    //should set to zero othwerwise on legal hour switch the hours is set to 1AM
+    while (!date.isAfterTimeLess(lastDateOfMonth)) {
+      if (date.weekday != DateTime.saturday &&
+          date.weekday != DateTime.sunday) {
+        _availableDates.add(date);
+      }
+      date = date.add(Duration(days: 1));
+    }
   }
 
   TimeSlot getWorkstationTimeSlot(Workstation workstation) {
@@ -267,39 +246,25 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     }
   }
 
-  Widget _buildTitleSection() {
-    String text;
-    if (widget.workstation != null) {
-      text = "Modifica presenza di ";
-      text += widget.user != null
-          ? "${widget.user.name} ${widget.user.surname} per ${formatter.format(widget.selectedDate)}"
-          : widget.workstation.freeName != null
-              ? "${widget.workstation.freeName} per ${formatter.format(widget.selectedDate)}"
-              : formatter.format(widget.selectedDate);
+  _buildNameSection() {
+    String title;
+    if (widget.user != null) {
+      title = '${widget.user.surname} ${widget.user.name} ';
     } else {
-      text = "Inserisci presenza per ";
-      text += widget.user == null
-          ? "${formatter.format(widget.selectedDate)}"
-          : "${widget.user.surname} ${widget.user.name} per ${formatter.format(widget.selectedDate)}";
+      title = widget.workstation.freeName;
     }
-    return Container(
-      color: dncLightBlue,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-            child: Text(text,maxLines: 2,textAlign: TextAlign.justify,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                )),
-          ),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Text(title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              )),
+        ),
+      ],
     );
   }
 }
-*/
