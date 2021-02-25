@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user.dart';
@@ -51,7 +49,7 @@ class PresencesManagementWatcherBloc extends Bloc<
   Stream<PresencesManagementWatcherState> mapEventToState(
     PresencesManagementWatcherEvent event,
   ) async* {
-    event.map(
+    yield* event.map(
       getAllUsersPresencesByDate: (e) async* {
         yield const PresencesManagementWatcherState.loadInProgress();
         final workstationsOrFailure =
@@ -68,20 +66,37 @@ class PresencesManagementWatcherBloc extends Bloc<
         }
       },
       presencesReceived: (e) async* {
-        var usersPending = e.usersWithWorkstations
+        //WORKSTATION PENDING - can't have free names
+        final resourcesPending = e.usersWithWorkstations
             .where((e) => e.workstation?.status == WORKSTATION_STATUS_PENDING)
             .toList()
-            .sortBySurnameAndName();
-        var usersConfirmed = e.usersWithWorkstations
-            .where((e) => e.workstation?.status == WORKSTATION_STATUS_CONFIRMED)
-            .toList();
-        var usersRefusedOrAbsent;
-        //TODO: sort lists
+              ..sortBySurnameAndName();
 
+        //WORKSTATIONS CONFIRMED
+        final freeNamesConfirmed = e.usersWithWorkstations
+            .where((element) =>
+                element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
+                element.user == null)
+            .toList()
+              ..sortByFreeName();
+        final usersConfirmed = e.usersWithWorkstations
+            .where((element) =>
+                element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
+                element.user != null)
+            .toList()
+              ..sortBySurnameAndName();
+        final resourcesConfirmed = freeNamesConfirmed..addAll(usersConfirmed);
+        //WORKSTATIONS REFUSED or NOT PRESENT
+        final resourcesRefusedOrAbsent = e.usersWithWorkstations
+            .where((e) =>
+                e.workstation == null ||
+                e.workstation?.status == WORKSTATION_STATUS_REFUSED)
+            .toList()
+              ..sortBySurnameAndName();
         yield PresencesManagementWatcherState.loadSuccess(
-          usersPending ?? List.empty(),
-          usersConfirmed ?? List.empty(),
-          usersRefusedOrAbsent ?? List.empty(),
+          resourcesPending ?? List.empty(),
+          resourcesConfirmed ?? List.empty(),
+          resourcesRefusedOrAbsent ?? List.empty(),
         );
       },
       onFilterUpdated: (e) async* {},
