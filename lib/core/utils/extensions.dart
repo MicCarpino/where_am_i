@@ -11,6 +11,12 @@ extension StringExtension on String {
   }
 }
 
+extension StringContainsCaseInsensitive on String {
+  bool containsCaseInsensitive(String otherString){
+    return this.toLowerCase().contains(otherString);
+  }
+}
+
 extension TimeOfDayExtension on TimeOfDay {
   bool isBefore(TimeOfDay otherTime) {
     if (this.hour < otherTime.hour) {

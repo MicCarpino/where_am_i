@@ -1,97 +1,191 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/enums.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/actor/presences_management_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/watcher/presences_management_watcher_bloc.dart';
 import 'package:where_am_i/presentation/widgets/presences_management_tile.dart';
+import 'package:where_am_i/presentation/widgets/text_input_dialog.dart';
 
-class UsersPresencesList extends StatelessWidget {
+class UsersPresencesList extends StatefulWidget {
   const UsersPresencesList(this.visualizedDate);
 
   final DateTime visualizedDate;
 
   @override
+  _UsersPresencesListState createState() => _UsersPresencesListState();
+}
+
+class _UsersPresencesListState extends State<UsersPresencesList> {
+  TextEditingController _textFieldController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _textFieldController.addListener(() {
+      context.read<PresencesManagementWatcherBloc>().add(
+            PresencesManagementWatcherEvent.onFilterUpdated(
+                _textFieldController.text),
+          );
+    });
+  }
+
+  @override
+  void dispose() {
+    _textFieldController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PresencesManagementWatcherBloc,
-        PresencesManagementWatcherState>(
-      builder: (context, state) {
-        return state.maybeMap(
-            loadSuccess: (value) {
-              return Expanded(
-                child: ListView(children: [
-                  if (value.usersPending.isNotEmpty) ...[
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      child: Text(
-                        'DA GESTIRE',
-                        style: TextStyle(color: Colors.blue, fontSize: 16),
+    return Expanded(
+        child: Column(children: [
+      Row(children: [_buildSearchBar(), _buildAddExternalUserButton()]),
+      BlocBuilder<PresencesManagementWatcherBloc,
+          PresencesManagementWatcherState>(
+        builder: (context, watcherState) {
+          return watcherState.maybeMap(
+              loadSuccess: (state) {
+                return Expanded(
+                  child: ListView(children: [
+                    if (state.usersPending.isNotEmpty) ...[
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        child: Text(
+                          'DA GESTIRE',
+                          style: TextStyle(color: Colors.blue, fontSize: 16),
+                        ),
                       ),
-                    ),
-                    ...value.usersPending
-                        .map((e) => PresencesManagementTile(
-                              userWithWorkstation: e,
-                              onSingleClick: () => null,
-                              onLongClick: () => null,
-                              onStatusButtonClick: (newStatus) =>
-                                  _onStatusButtonClick(
-                                context,
-                                e.workstation.copyWith(status: newStatus),
-                              ),
-                            ))
-                        .toList(),
-                    Divider(color: Colors.grey, indent: 8, endIndent: 8),
-                  ],
-                  if (value.usersConfirmed.isNotEmpty) ...[
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      child: Text(
-                        'PRESENTI',
-                        style: TextStyle(color: Colors.blue, fontSize: 16),
+                      ...state.usersPending
+                          .map((e) => PresencesManagementTile(
+                                userWithWorkstation: e,
+                                onSingleClick: () => null,
+                                onLongClick: () => null,
+                                onStatusButtonClick: (newStatus) =>
+                                    _onStatusButtonClick(
+                                  context,
+                                  e.workstation.copyWith(status: newStatus),
+                                ),
+                              ))
+                          .toList(),
+                      Divider(color: Colors.grey, indent: 8, endIndent: 8),
+                    ],
+                    if (state.usersConfirmed.isNotEmpty) ...[
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        child: Text(
+                          'PRESENTI',
+                          style: TextStyle(color: Colors.blue, fontSize: 16),
+                        ),
                       ),
-                    ),
-                    ...value.usersConfirmed
-                        .map((e) => PresencesManagementTile(
-                              userWithWorkstation: e,
-                              onSingleClick: () => _onResourceClick(context, e),
-                              onLongClick: () =>
-                                  _onResourceLongClick(context, e),
-                            ))
-                        .toList(),
-                    Divider(color: Colors.grey, indent: 8, endIndent: 8),
-                  ],
-                  ...[
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      child: Text(
-                        'NON PRESENTI',
-                        style: TextStyle(color: Colors.blue, fontSize: 16),
+                      ...state.usersConfirmed
+                          .map((e) => PresencesManagementTile(
+                                userWithWorkstation: e,
+                                onSingleClick: () =>
+                                    _onResourceClick(context, e),
+                                onLongClick: () =>
+                                    _onResourceLongClick(context, e),
+                              ))
+                          .toList(),
+                      Divider(color: Colors.grey, indent: 8, endIndent: 8),
+                    ],
+                    ...[
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        child: Text(
+                          'NON PRESENTI',
+                          style: TextStyle(color: Colors.blue, fontSize: 16),
+                        ),
                       ),
+                      ...state.usersRefusedOrAbsent
+                          .map((e) => PresencesManagementTile(
+                                userWithWorkstation: e,
+                                onSingleClick: () =>
+                                    _onResourceClick(context, e),
+                                onLongClick: () =>
+                                    _onResourceLongClick(context, e),
+                              ))
+                          .toList(),
+                      Divider(color: Colors.grey, indent: 8, endIndent: 8),
+                    ],
+                  ]),
+                );
+              },
+              filteredList: (state) {
+                return Expanded(
+                  child: ListView.separated(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    separatorBuilder: (_, index) =>
+                        Divider(color: Colors.black26),
+                    itemBuilder: (_, index) => PresencesManagementTile(
+                      userWithWorkstation: state.filteredPresences[index],
+                      onSingleClick: () => _onResourceClick(
+                          context, state.filteredPresences[index]),
+                      onLongClick: () => _onResourceLongClick(
+                          context, state.filteredPresences[index]),
+                      onStatusButtonClick: (newStatus) {
+                        _onStatusButtonClick(
+                            context,
+                            state.filteredPresences[index].workstation
+                                .copyWith(status: newStatus));
+                      },
                     ),
-                    ...value.usersRefusedOrAbsent
-                        .map((e) => PresencesManagementTile(
-                              userWithWorkstation: e,
-                              onSingleClick: () => _onResourceClick(context, e),
-                              onLongClick: () =>
-                                  _onResourceLongClick(context, e),
-                            ))
-                        .toList(),
-                    Divider(color: Colors.grey, indent: 8, endIndent: 8),
-                  ],
-                ]),
-              );
-            },
-            orElse: () => Container());
-      },
+                    itemCount: state.filteredPresences.length,
+                  ),
+                );
+              },
+              orElse: () => Container());
+        },
+      )
+    ]));
+  }
+
+  Widget _buildSearchBar() {
+    return Expanded(
+      child: TextField(
+        controller: _textFieldController,
+        maxLines: 1,
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.only(top: 14.0),
+            border: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.red),
+            ),
+            prefixIcon: _textFieldController.text.isEmpty
+                ? Icon(Icons.search, color: Colors.black)
+                : IconButton(
+                    icon: Icon(Icons.clear, color: Colors.black),
+                    onPressed: () => _textFieldController.clear(),
+                  )),
+      ),
     );
+  }
+
+  Widget _buildAddExternalUserButton() {
+    return IconButton(
+        icon: Icon(Icons.person_add,
+            color: widget.visualizedDate.isBeforeTimeLess(DateTime.now())
+                ? Colors.black87
+                : Colors.grey),
+        onPressed: () => widget.visualizedDate.isBeforeTimeLess(DateTime.now())
+            ? showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return TextInputDialog(
+                      messageText: "Aggiungi risorsa non presente in elenco",
+                      //TODO: add external user event
+                      onAddButtonPressed: (String externalUser) => null);
+                })
+            : null);
   }
 
   _onResourceClick(
       BuildContext context, UserWithWorkstation userWithWorkstation) {
     context.read<PresencesManagementActorBloc>().add(
           PresencesManagementActorEvent.editRequested(
-            visualizedDate,
+            widget.visualizedDate,
             userWithWorkstation.workstation,
             userWithWorkstation.user,
           ),
@@ -107,7 +201,7 @@ class UsersPresencesList extends StatelessWidget {
                 )
               : PresencesManagementActorEvent.added(
                   timeSlot: TimeSlot.fullDay,
-                  date: visualizedDate,
+                  date: widget.visualizedDate,
                   idResource: userWithWorkstation.user?.idResource,
                   freeName: userWithWorkstation.workstation?.freeName,
                 ),

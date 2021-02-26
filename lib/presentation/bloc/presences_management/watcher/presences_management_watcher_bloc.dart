@@ -43,7 +43,26 @@ class PresencesManagementWatcherBloc extends Bloc<
     yield* event.map(
       getAllUsersPresencesByDate: (e) => _mapGetPresencesToState(e),
       presencesReceived: (e) => _mapPresencesReceivedToState(e),
-      onFilterUpdated: (e) async* {},
+      onFilterUpdated: (e) async* {
+        if (e.filterString != null && e.filterString.isNotEmpty) {
+          var c = cachedUsersPresences.where((element) {
+            if (element.user != null) {
+              return element.user.name
+                      .containsCaseInsensitive(e.filterString) ||
+                  element.user.surname.containsCaseInsensitive(e.filterString);
+            } else if (element.workstation.freeName != null) {
+              return element.workstation.freeName
+                  .containsCaseInsensitive(e.filterString);
+            } else {
+              return false;
+            }
+          }).toList();
+          yield PresencesManagementWatcherState.filteredList(c);
+        } else {
+          add(PresencesManagementWatcherEvent.presencesReceived(
+              cachedUsersPresences));
+        }
+      },
     );
   }
 

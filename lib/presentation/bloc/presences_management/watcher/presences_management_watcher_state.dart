@@ -15,4 +15,6 @@ abstract class PresencesManagementWatcherState
   ) = _LoadSuccess;
 
   const factory PresencesManagementWatcherState.loadFailure() = _LoadFailure;
+
+  const factory PresencesManagementWatcherState.filteredList( List<UserWithWorkstation> filteredPresences) = _FilteredList;
 }
