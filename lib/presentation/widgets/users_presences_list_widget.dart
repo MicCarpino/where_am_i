@@ -11,7 +11,6 @@ import 'package:where_am_i/presentation/widgets/text_input_dialog.dart';
 
 class UsersPresencesList extends StatefulWidget {
   const UsersPresencesList(this.visualizedDate);
-
   final DateTime visualizedDate;
 
   @override

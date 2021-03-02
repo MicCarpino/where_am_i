@@ -45,7 +45,7 @@ class PresencesManagementWatcherBloc extends Bloc<
       presencesReceived: (e) => _mapPresencesReceivedToState(e),
       onFilterUpdated: (e) async* {
         if (e.filterString != null && e.filterString.isNotEmpty) {
-          var c = cachedUsersPresences.where((element) {
+          final filteredList = cachedUsersPresences.where((element) {
             if (element.user != null) {
               return element.user.name
                       .containsCaseInsensitive(e.filterString) ||
@@ -53,11 +53,10 @@ class PresencesManagementWatcherBloc extends Bloc<
             } else if (element.workstation.freeName != null) {
               return element.workstation.freeName
                   .containsCaseInsensitive(e.filterString);
-            } else {
-              return false;
             }
+            return false;
           }).toList();
-          yield PresencesManagementWatcherState.filteredList(c);
+          yield PresencesManagementWatcherState.filteredList(filteredList);
         } else {
           add(PresencesManagementWatcherEvent.presencesReceived(
               cachedUsersPresences));
