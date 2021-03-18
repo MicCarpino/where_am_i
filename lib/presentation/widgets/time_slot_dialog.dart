@@ -45,18 +45,20 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
         borderRadius: BorderRadius.all(Radius.circular(16)),
       ),
       elevation: 10,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          _buildTitleSection(),
-          if (widget.user != null || widget.workstation?.freeName != null)
-            _buildNameSection(),
-          //not last day of month and not updating a presence
-          if (startingDateIsBeforeLastDay && widget.workstation == null)
-            _buildMultiplePresencesSection(),
-          _buildButtons(),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _buildTitleSection(),
+            if (widget.user != null || widget.workstation?.freeName != null)
+              _buildNameSection(),
+            //not last day of month and not updating a presence
+            if (startingDateIsBeforeLastDay && widget.workstation == null)
+              _buildMultiplePresencesSection(),
+            _buildButtons(),
+          ],
+        ),
       ),
     );
   }
