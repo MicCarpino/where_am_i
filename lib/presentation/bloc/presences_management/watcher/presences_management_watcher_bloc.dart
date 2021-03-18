@@ -90,7 +90,9 @@ class PresencesManagementWatcherBloc extends Bloc<
       _PresencesReceived e) async* {
     //WORKSTATION PENDING - can't have free names
     final resourcesPending = e.usersWithWorkstations
-        .where((e) => e.workstation?.status == WORKSTATION_STATUS_PENDING)
+        .where((e) =>
+            e.user != null &&
+            e.workstation?.status == WORKSTATION_STATUS_PENDING)
         .toList()
           ..sortBySurnameAndName();
 
@@ -141,12 +143,14 @@ class PresencesManagementWatcherBloc extends Bloc<
   void _handleActorStateChange(PresencesManagementActorState state) {
     state.maybeMap(
       insertSuccess: (value) {
-        _updateCachedList(value.workstation);
+        _addToCachedList(value.workstation);
         add(PresencesManagementWatcherEvent.presencesReceived(
             cachedUsersPresences));
       },
       multipleInsertSuccess: (value) {
-        value.workstations.forEach((wrkstn) => _updateCachedList(wrkstn));
+        value.workstations.forEach(
+          (workstation) => _addToCachedList(workstation),
+        );
         add(PresencesManagementWatcherEvent.presencesReceived(
             cachedUsersPresences));
       },
@@ -167,23 +171,30 @@ class PresencesManagementWatcherBloc extends Bloc<
         add(PresencesManagementWatcherEvent.presencesReceived(
             cachedUsersPresences));
       },
-      actionInProgress: (value) => state,
       orElse: () {},
     );
   }
 
-  void _updateCachedList(Workstation workstation) {
+  void _addToCachedList(Workstation workstation) {
     if (workstation.idResource != null) {
       final index = cachedUsersPresences.indexWhere(
-          (element) => element.user.idResource == workstation.idResource);
+          (element) => element.user?.idResource == workstation.idResource);
       if (index != -1) {
         cachedUsersPresences[index] =
             cachedUsersPresences[index].copyWith(workstation: workstation);
       }
-    } else {
-      cachedUsersPresences.add(
-        UserWithWorkstation(user: null, workstation: workstation),
-      );
+    } else if (workstation.freeName != null) {
+      cachedUsersPresences
+          .add(UserWithWorkstation(user: null, workstation: workstation));
+    }
+  }
+
+  void _updateCachedList(Workstation workstation) {
+    final index = cachedUsersPresences.indexWhere((element) =>
+        element.workstation?.idWorkstation == workstation.idWorkstation);
+    if (index != -1) {
+      cachedUsersPresences[index] =
+          cachedUsersPresences[index].copyWith(workstation: workstation);
     }
   }
 

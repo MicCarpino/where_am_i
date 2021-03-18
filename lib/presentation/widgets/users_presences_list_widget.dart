@@ -42,8 +42,7 @@ class _UsersPresencesListState extends State<UsersPresencesList> {
     return Expanded(
         child: Column(children: [
       Row(children: [_buildSearchBar(), _buildAddExternalUserButton()]),
-      BlocBuilder<PresencesManagementWatcherBloc,
-          PresencesManagementWatcherState>(
+      BlocBuilder<PresencesManagementWatcherBloc, PresencesManagementWatcherState>(
         builder: (context, watcherState) {
           return watcherState.maybeMap(
               loadSuccess: (state) {

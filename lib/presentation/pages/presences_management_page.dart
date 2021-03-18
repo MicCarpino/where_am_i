@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user.dart';
@@ -44,10 +45,11 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
           PresencesManagementActorState>(
         listener: (context, state) {
           state.maybeMap(
-              initial: (value) {},
-              actionInProgress: (value) {},
-              actionFailure: (f) =>
-                  showSnackbar(context, f.failure.getErrorMessageFromFailure()),
+              actionFailure: (f) => ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(f.failure.getErrorMessageFromFailure()),
+                    ),
+                  ),
               showTimeSlotDialog: (value) => showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -101,9 +103,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   }
 
   _onDateChanged(BuildContext context, DateTime newDate) {
-    setState(() {
-      visualizedDate = newDate;
-    });
+    setState(() => visualizedDate = newDate);
     context.read<PresencesManagementWatcherBloc>().add(
           PresencesManagementWatcherEvent.getAllUsersPresencesByDate(
               visualizedDate),
@@ -141,6 +141,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
       var selectedSlot = result.keys.first;
       context.read<PresencesManagementActorBloc>().add(
             PresencesManagementActorEvent.updated(workstation.copyWith(
+              status: WORKSTATION_STATUS_CONFIRMED,
               startTime: selectedSlot.toStartTime(),
               endTime: selectedSlot.toEndTime(),
             )),
