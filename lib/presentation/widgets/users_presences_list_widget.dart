@@ -7,7 +7,7 @@ import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/actor/presences_management_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/watcher/presences_management_watcher_bloc.dart';
 import 'package:where_am_i/presentation/widgets/presences_management_tile.dart';
-import 'package:where_am_i/presentation/widgets/text_input_dialog.dart';
+import 'package:where_am_i/presentation/widgets/add_external_user_dialog.dart';
 
 class UsersPresencesList extends StatefulWidget {
   const UsersPresencesList(this.visualizedDate);
@@ -165,20 +165,24 @@ class _UsersPresencesListState extends State<UsersPresencesList> {
 
   Widget _buildAddExternalUserButton() {
     return IconButton(
-        icon: Icon(Icons.person_add,
-            color: widget.visualizedDate.isBeforeTimeLess(DateTime.now())
-                ? Colors.black87
-                : Colors.grey),
-        onPressed: () => widget.visualizedDate.isBeforeTimeLess(DateTime.now())
-            ? showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return TextInputDialog(
-                      messageText: "Aggiungi risorsa non presente in elenco",
-                      //TODO: add external user event
-                      onAddButtonPressed: (String externalUser) => null);
-                })
-            : null);
+      icon: Icon(Icons.person_add,
+          color: widget.visualizedDate.isBeforeTimeLess(DateTime.now())
+              ? Colors.grey
+              : Colors.black87),
+      onPressed: () => widget.visualizedDate.isBeforeTimeLess(DateTime.now())
+          ? null
+          : showDialog(
+              context: context,
+              builder: (BuildContext _) {
+                return BlocProvider.value(
+                  value: context.read<PresencesManagementActorBloc>(),
+                  child: AddExternalUserDialog(
+                    messageText: "Aggiungi risorsa non presente in elenco",
+                    date: widget.visualizedDate,
+                  ),
+                );
+              }),
+    );
   }
 
   _onResourceClick(

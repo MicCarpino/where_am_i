@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:meta/meta.dart';
+import 'package:where_am_i/core/utils/enums.dart';
+import 'package:where_am_i/presentation/bloc/presences_management/actor/presences_management_actor_bloc.dart';
 
-class TextInputDialog extends StatelessWidget {
+class AddExternalUserDialog extends StatelessWidget {
   final String messageText;
-  final Function(String inputText) onAddButtonPressed;
+  final DateTime date;
 
-  TextInputDialog({
+  AddExternalUserDialog({
     @required this.messageText,
-    @required this.onAddButtonPressed,
+    @required this.date,
   });
 
   final TextEditingController _textEditingController =
-  new TextEditingController();
+      new TextEditingController();
   final _textFormFieldKey = GlobalKey<FormState>();
 
   @override
@@ -26,17 +29,17 @@ class TextInputDialog extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(this.messageText,
-                  style: TextStyle(fontSize: 16, color: Colors.black54)),
+              Text(
+                this.messageText,
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+              ),
               Form(
                 key: _textFormFieldKey,
                 child: TextFormField(
                     controller: _textEditingController,
                     autofocus: true,
                     validator: (text) {
-                      if (text == null || text
-                          .trim()
-                          .isEmpty) {
+                      if (text == null || text.trim().isEmpty) {
                         return 'Inserire un nominativo valido';
                       }
                       return null;
@@ -48,28 +51,25 @@ class TextInputDialog extends StatelessWidget {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    FlatButton(
-                      onPressed: () => Navigator.pop(context)
-                      ,
-                      child: Text(
-                        "Annulla",
-                        style: TextStyle(color: dncBlue),
-                      ),
-                      color: Colors.transparent,
-                      padding: EdgeInsets.all(8),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text("Annulla", style: TextStyle(color: dncBlue)),
                     ),
                     SizedBox(width: 16),
-                    FlatButton(
+                    TextButton(
                       onPressed: () {
                         if (_textFormFieldKey.currentState.validate()) {
-                          this.onAddButtonPressed(_textEditingController.text
-                              .trim());
+                          context
+                              .read<PresencesManagementActorBloc>()
+                              .add(PresencesManagementActorEvent.added(
+                                timeSlot: TimeSlot.fullDay,
+                                date: date,
+                                freeName: _textEditingController.text.trim(),
+                              ));
                           Navigator.pop(context);
                         }
                       },
                       child: Text("Aggiungi", style: TextStyle(color: dncBlue)),
-                      color: Colors.transparent,
-                      padding: EdgeInsets.all(8),
                     ),
                   ],
                 ),

@@ -155,10 +155,12 @@ class PresencesManagementWatcherBloc extends Bloc<
         final index = cachedUsersPresences.indexWhere((element) =>
             element.workstation?.idWorkstation == value.idWorkstation);
         if (index != -1) {
-          cachedUsersPresences[index] = UserWithWorkstation(
-            user: cachedUsersPresences[index].user,
-            workstation: null,
-          );
+          cachedUsersPresences[index].user != null
+              ? cachedUsersPresences[index] = UserWithWorkstation(
+                  user: cachedUsersPresences[index].user,
+                  workstation: null,
+                )
+              : cachedUsersPresences.removeAt(index);
           _publishListUpdateResult();
         }
       },
