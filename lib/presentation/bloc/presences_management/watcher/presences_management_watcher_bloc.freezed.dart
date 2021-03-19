@@ -505,9 +505,11 @@ class _$PresencesManagementWatcherStateTearOff {
   }
 
 // ignore: unused_element
-  _FilteredList filteredList(List<UserWithWorkstation> filteredPresences) {
+  _FilteredList filteredList(
+      List<UserWithWorkstation> filteredPresences, String filterString) {
     return _FilteredList(
       filteredPresences,
+      filterString,
     );
   }
 }
@@ -529,7 +531,9 @@ mixin _$PresencesManagementWatcherState {
             List<UserWithWorkstation> usersConfirmed,
             List<UserWithWorkstation> usersRefusedOrAbsent),
     @required TResult loadFailure(),
-    @required TResult filteredList(List<UserWithWorkstation> filteredPresences),
+    @required
+        TResult filteredList(
+            List<UserWithWorkstation> filteredPresences, String filterString),
   });
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
@@ -540,7 +544,8 @@ mixin _$PresencesManagementWatcherState {
         List<UserWithWorkstation> usersConfirmed,
         List<UserWithWorkstation> usersRefusedOrAbsent),
     TResult loadFailure(),
-    TResult filteredList(List<UserWithWorkstation> filteredPresences),
+    TResult filteredList(
+        List<UserWithWorkstation> filteredPresences, String filterString),
     @required TResult orElse(),
   });
   @optionalTypeArgs
@@ -625,7 +630,9 @@ class _$_Initial implements _Initial {
             List<UserWithWorkstation> usersConfirmed,
             List<UserWithWorkstation> usersRefusedOrAbsent),
     @required TResult loadFailure(),
-    @required TResult filteredList(List<UserWithWorkstation> filteredPresences),
+    @required
+        TResult filteredList(
+            List<UserWithWorkstation> filteredPresences, String filterString),
   }) {
     assert(initial != null);
     assert(loadInProgress != null);
@@ -645,7 +652,8 @@ class _$_Initial implements _Initial {
         List<UserWithWorkstation> usersConfirmed,
         List<UserWithWorkstation> usersRefusedOrAbsent),
     TResult loadFailure(),
-    TResult filteredList(List<UserWithWorkstation> filteredPresences),
+    TResult filteredList(
+        List<UserWithWorkstation> filteredPresences, String filterString),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -741,7 +749,9 @@ class _$_LoadInProgress implements _LoadInProgress {
             List<UserWithWorkstation> usersConfirmed,
             List<UserWithWorkstation> usersRefusedOrAbsent),
     @required TResult loadFailure(),
-    @required TResult filteredList(List<UserWithWorkstation> filteredPresences),
+    @required
+        TResult filteredList(
+            List<UserWithWorkstation> filteredPresences, String filterString),
   }) {
     assert(initial != null);
     assert(loadInProgress != null);
@@ -761,7 +771,8 @@ class _$_LoadInProgress implements _LoadInProgress {
         List<UserWithWorkstation> usersConfirmed,
         List<UserWithWorkstation> usersRefusedOrAbsent),
     TResult loadFailure(),
-    TResult filteredList(List<UserWithWorkstation> filteredPresences),
+    TResult filteredList(
+        List<UserWithWorkstation> filteredPresences, String filterString),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -910,7 +921,9 @@ class _$_LoadSuccess implements _LoadSuccess {
             List<UserWithWorkstation> usersConfirmed,
             List<UserWithWorkstation> usersRefusedOrAbsent),
     @required TResult loadFailure(),
-    @required TResult filteredList(List<UserWithWorkstation> filteredPresences),
+    @required
+        TResult filteredList(
+            List<UserWithWorkstation> filteredPresences, String filterString),
   }) {
     assert(initial != null);
     assert(loadInProgress != null);
@@ -930,7 +943,8 @@ class _$_LoadSuccess implements _LoadSuccess {
         List<UserWithWorkstation> usersConfirmed,
         List<UserWithWorkstation> usersRefusedOrAbsent),
     TResult loadFailure(),
-    TResult filteredList(List<UserWithWorkstation> filteredPresences),
+    TResult filteredList(
+        List<UserWithWorkstation> filteredPresences, String filterString),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1035,7 +1049,9 @@ class _$_LoadFailure implements _LoadFailure {
             List<UserWithWorkstation> usersConfirmed,
             List<UserWithWorkstation> usersRefusedOrAbsent),
     @required TResult loadFailure(),
-    @required TResult filteredList(List<UserWithWorkstation> filteredPresences),
+    @required
+        TResult filteredList(
+            List<UserWithWorkstation> filteredPresences, String filterString),
   }) {
     assert(initial != null);
     assert(loadInProgress != null);
@@ -1055,7 +1071,8 @@ class _$_LoadFailure implements _LoadFailure {
         List<UserWithWorkstation> usersConfirmed,
         List<UserWithWorkstation> usersRefusedOrAbsent),
     TResult loadFailure(),
-    TResult filteredList(List<UserWithWorkstation> filteredPresences),
+    TResult filteredList(
+        List<UserWithWorkstation> filteredPresences, String filterString),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1109,7 +1126,7 @@ abstract class _$FilteredListCopyWith<$Res> {
   factory _$FilteredListCopyWith(
           _FilteredList value, $Res Function(_FilteredList) then) =
       __$FilteredListCopyWithImpl<$Res>;
-  $Res call({List<UserWithWorkstation> filteredPresences});
+  $Res call({List<UserWithWorkstation> filteredPresences, String filterString});
 }
 
 /// @nodoc
@@ -1126,26 +1143,31 @@ class __$FilteredListCopyWithImpl<$Res>
   @override
   $Res call({
     Object filteredPresences = freezed,
+    Object filterString = freezed,
   }) {
     return _then(_FilteredList(
       filteredPresences == freezed
           ? _value.filteredPresences
           : filteredPresences as List<UserWithWorkstation>,
+      filterString == freezed ? _value.filterString : filterString as String,
     ));
   }
 }
 
 /// @nodoc
 class _$_FilteredList implements _FilteredList {
-  const _$_FilteredList(this.filteredPresences)
-      : assert(filteredPresences != null);
+  const _$_FilteredList(this.filteredPresences, this.filterString)
+      : assert(filteredPresences != null),
+        assert(filterString != null);
 
   @override
   final List<UserWithWorkstation> filteredPresences;
+  @override
+  final String filterString;
 
   @override
   String toString() {
-    return 'PresencesManagementWatcherState.filteredList(filteredPresences: $filteredPresences)';
+    return 'PresencesManagementWatcherState.filteredList(filteredPresences: $filteredPresences, filterString: $filterString)';
   }
 
   @override
@@ -1154,13 +1176,17 @@ class _$_FilteredList implements _FilteredList {
         (other is _FilteredList &&
             (identical(other.filteredPresences, filteredPresences) ||
                 const DeepCollectionEquality()
-                    .equals(other.filteredPresences, filteredPresences)));
+                    .equals(other.filteredPresences, filteredPresences)) &&
+            (identical(other.filterString, filterString) ||
+                const DeepCollectionEquality()
+                    .equals(other.filterString, filterString)));
   }
 
   @override
   int get hashCode =>
       runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(filteredPresences);
+      const DeepCollectionEquality().hash(filteredPresences) ^
+      const DeepCollectionEquality().hash(filterString);
 
   @JsonKey(ignore: true)
   @override
@@ -1178,14 +1204,16 @@ class _$_FilteredList implements _FilteredList {
             List<UserWithWorkstation> usersConfirmed,
             List<UserWithWorkstation> usersRefusedOrAbsent),
     @required TResult loadFailure(),
-    @required TResult filteredList(List<UserWithWorkstation> filteredPresences),
+    @required
+        TResult filteredList(
+            List<UserWithWorkstation> filteredPresences, String filterString),
   }) {
     assert(initial != null);
     assert(loadInProgress != null);
     assert(loadSuccess != null);
     assert(loadFailure != null);
     assert(filteredList != null);
-    return filteredList(filteredPresences);
+    return filteredList(filteredPresences, filterString);
   }
 
   @override
@@ -1198,12 +1226,13 @@ class _$_FilteredList implements _FilteredList {
         List<UserWithWorkstation> usersConfirmed,
         List<UserWithWorkstation> usersRefusedOrAbsent),
     TResult loadFailure(),
-    TResult filteredList(List<UserWithWorkstation> filteredPresences),
+    TResult filteredList(
+        List<UserWithWorkstation> filteredPresences, String filterString),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
     if (filteredList != null) {
-      return filteredList(filteredPresences);
+      return filteredList(filteredPresences, filterString);
     }
     return orElse();
   }
@@ -1244,10 +1273,12 @@ class _$_FilteredList implements _FilteredList {
 }
 
 abstract class _FilteredList implements PresencesManagementWatcherState {
-  const factory _FilteredList(List<UserWithWorkstation> filteredPresences) =
+  const factory _FilteredList(
+          List<UserWithWorkstation> filteredPresences, String filterString) =
       _$_FilteredList;
 
   List<UserWithWorkstation> get filteredPresences;
+  String get filterString;
   @JsonKey(ignore: true)
   _$FilteredListCopyWith<_FilteredList> get copyWith;
 }

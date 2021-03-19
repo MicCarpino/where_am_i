@@ -56,7 +56,8 @@ class PresencesManagementWatcherBloc extends Bloc<
             }
             return false;
           }).toList();
-          yield PresencesManagementWatcherState.filteredList(filteredList);
+          yield PresencesManagementWatcherState.filteredList(
+              filteredList, e.filterString);
         } else {
           add(PresencesManagementWatcherEvent.presencesReceived(
               cachedUsersPresences));
@@ -140,19 +141,15 @@ class PresencesManagementWatcherBloc extends Bloc<
                   workstation.idResource == user.idResource))));
   }
 
-  void _handleActorStateChange(PresencesManagementActorState state) {
-    state.maybeMap(
+  void _handleActorStateChange(PresencesManagementActorState actorState) {
+    actorState.maybeMap(
       insertSuccess: (value) {
         _addToCachedList(value.workstation);
-        add(PresencesManagementWatcherEvent.presencesReceived(
-            cachedUsersPresences));
+        _publishListUpdateResult();
       },
       multipleInsertSuccess: (value) {
-        value.workstations.forEach(
-          (workstation) => _addToCachedList(workstation),
-        );
-        add(PresencesManagementWatcherEvent.presencesReceived(
-            cachedUsersPresences));
+        value.workstations.forEach((wrkstn) => _addToCachedList(wrkstn));
+        _publishListUpdateResult();
       },
       deleteSuccess: (value) {
         final index = cachedUsersPresences.indexWhere((element) =>
@@ -162,14 +159,12 @@ class PresencesManagementWatcherBloc extends Bloc<
             user: cachedUsersPresences[index].user,
             workstation: null,
           );
-          add(PresencesManagementWatcherEvent.presencesReceived(
-              cachedUsersPresences));
+          _publishListUpdateResult();
         }
       },
       updateSuccess: (value) {
         _updateCachedList(value.workstation);
-        add(PresencesManagementWatcherEvent.presencesReceived(
-            cachedUsersPresences));
+        _publishListUpdateResult();
       },
       orElse: () {},
     );
@@ -196,6 +191,15 @@ class PresencesManagementWatcherBloc extends Bloc<
       cachedUsersPresences[index] =
           cachedUsersPresences[index].copyWith(workstation: workstation);
     }
+  }
+
+  void _publishListUpdateResult() {
+    state.maybeMap(
+      orElse: () => add(PresencesManagementWatcherEvent.presencesReceived(
+          cachedUsersPresences)),
+      filteredList: (value) => add(
+          PresencesManagementWatcherEvent.onFilterUpdated(value.filterString)),
+    );
   }
 
   @override
