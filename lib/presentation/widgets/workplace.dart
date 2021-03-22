@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
@@ -24,7 +25,7 @@ class WorkplaceBuilder extends StatelessWidget {
   final DateTime visualizedDate;
   final Rooms room;
 
-  WorkplaceBuilder(this.visualizedDate, this.room);
+  WorkplaceBuilder({@required this.visualizedDate, @required this.room});
 
   @override
   Widget build(BuildContext context) {

@@ -36,6 +36,7 @@ import 'package:where_am_i/domain/usecases/workstations/update_workstation_statu
 import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
+import 'package:where_am_i/presentation/bloc/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/users_management/users_management_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation_assignment/workstation_assignement_bloc.dart';
@@ -60,6 +61,7 @@ Future<void> init() async {
         updateAllWorkstations: getIt(),
         userService: getIt(),
       ));
+  getIt.registerFactory(() => WorkstationWatcherBloc(getIt(), getIt()));
   getIt.registerFactory(() => WorkstationAssignementBloc(
         getAllUserPresencesToEndOfMonth: getIt(),
       ));
