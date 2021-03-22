@@ -61,7 +61,6 @@ Future<void> init() async {
         updateAllWorkstations: getIt(),
         userService: getIt(),
       ));
-  getIt.registerFactory(() => WorkstationWatcherBloc(getIt(), getIt()));
   getIt.registerFactory(() => WorkstationAssignementBloc(
         getAllUserPresencesToEndOfMonth: getIt(),
       ));

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
+import 'package:where_am_i/domain/repositories/user_repository.dart';
+import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
+import 'package:where_am_i/presentation/bloc/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
@@ -38,17 +41,19 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => sl<WorkstationBloc>(),
-        ),
+        BlocProvider(create: (_) => sl<WorkstationBloc>()),
         BlocProvider<ReservationsBloc>(
             create: (_) => sl<ReservationsBloc>()
               ..add(FetchReservationsList(dateToFetch: _visualizedDate))),
+        BlocProvider<WorkstationActorBloc>(
+            create: (_) => WorkstationActorBloc(
+                workstationRepository: sl<WorkstationRepository>())),
         BlocProvider<WorkstationWatcherBloc>(
-          create: (_) => sl<WorkstationWatcherBloc>()
-            ..add(
-              WorkstationWatcherEvent.fetchWorkstations(_visualizedDate),
-            ),
+          create: (_) => WorkstationWatcherBloc(
+            workstationRepository: sl<WorkstationRepository>(),
+            userRepository: sl<UserRepository>(),
+            workstationActorBloc: context.read<WorkstationActorBloc>(),
+          )..add(WorkstationWatcherEvent.fetchWorkstations(_visualizedDate)),
         ),
       ],
       child: Builder(
