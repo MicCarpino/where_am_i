@@ -5,7 +5,15 @@ import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
+import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
+import 'package:where_am_i/presentation/widgets/reservations_calendar.dart';
+import 'package:where_am_i/presentation/widgets/retry_widget.dart';
+import 'package:where_am_i/presentation/widgets/room_24.dart';
+import 'package:where_am_i/presentation/widgets/room_26A_F1.dart';
+import 'package:where_am_i/presentation/widgets/room_26A_F2.dart';
+import 'package:where_am_i/presentation/widgets/room_26B.dart';
+import 'package:where_am_i/presentation/widgets/room_staff.dart';
 import 'package:where_am_i/presentation/widgets/workplace.dart';
 
 class WorkplacesPage extends StatefulWidget {
@@ -28,43 +36,114 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      DatePicker(this._onDateChanged),
-      Expanded(
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider<WorkstationBloc>(
-                create: (context) => sl<WorkstationBloc>()),
-            BlocProvider<ReservationsBloc>(
-                create: (context) => sl<ReservationsBloc>()),
-            BlocProvider<WorkstationWatcherBloc>(
-                create: (context) => sl<WorkstationWatcherBloc>()),
-          ],
-          child: PageView.builder(
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (BuildContext context, int index) {
-              return WorkplaceBuilder(
-                visualizedDate: _visualizedDate,
-                room: Rooms.values[index],
-              );
-            },
-            onPageChanged: (pageIndex) {
-              widget.setTitle(Rooms.values[pageIndex].roomTitle);
-            },
-            itemCount: Rooms.values.length,
-          ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => sl<WorkstationBloc>(),
         ),
-      )
-    ]);
+        BlocProvider<ReservationsBloc>(
+            create: (_) => sl<ReservationsBloc>()
+              ..add(FetchReservationsList(dateToFetch: _visualizedDate))),
+        BlocProvider<WorkstationWatcherBloc>(
+          create: (_) => sl<WorkstationWatcherBloc>()
+            ..add(
+              WorkstationWatcherEvent.fetchWorkstations(_visualizedDate),
+            ),
+        ),
+      ],
+      child: Builder(
+        builder: (newContext) => Column(
+          children: [
+            DatePicker((newDate) {
+              setState(() => this._visualizedDate = newDate);
+              newContext
+                  .read<WorkstationWatcherBloc>()
+                  .add(WorkstationWatcherEvent.fetchWorkstations(newDate));
+              newContext
+                  .read<ReservationsBloc>()
+                  .add(FetchReservationsList(dateToFetch: newDate));
+            }),
+            Expanded(
+              child: PageView.builder(
+                itemCount: Rooms.values.length,
+                itemBuilder: (_, index) {
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        _buildWorkstationsSection(index),
+                        if (Rooms.values[index].reservationRoomId != null)
+                          _buildReservationsSection(index)
+                      ],
+                    ),
+                  );
+                },
+                onPageChanged: (pageIndex) {
+                  widget.setTitle(Rooms.values[pageIndex].roomTitle);
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
-  _onDateChanged(DateTime newDate) {
-    setState(() => this._visualizedDate = newDate);
-    context
-        .read<WorkstationWatcherBloc>()
-        .add(WorkstationWatcherEvent.fetchWorkstations(newDate));
-    context
-        .read<ReservationsBloc>()
-        .add(FetchReservationsList(dateToFetch: newDate));
+  Widget _buildWorkstationsSection(int index) {
+    return BlocBuilder<WorkstationWatcherBloc, WorkstationWatcherState>(
+      builder: (_, state) {
+        return state.map(
+          initial: (_) => Container(),
+          loadInProgress: (_) => CircularLoading(),
+          loadSuccess: (value) {
+            switch (Rooms.values[index]) {
+              case Rooms.room_26B:
+                return Room26B();
+              case Rooms.room_24:
+                return Room24();
+              case Rooms.room_26A_Floor1:
+                return Room26AF1();
+              case Rooms.room_26A_Floor2:
+                return Room26AF2();
+              case Rooms.room_staff:
+                return RoomStaff();
+              default:
+                return Container();
+            }
+          },
+          loadFailure: (_) => RetryWidget(
+            onTryAgainPressed: () => context.read<WorkstationWatcherBloc>().add(
+                  WorkstationWatcherEvent.fetchWorkstations(_visualizedDate),
+                ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildReservationsSection(int index) {
+    return BlocBuilder<ReservationsBloc, ReservationState>(
+      builder: (_, state) {
+        if (state is ReservationsFetchLoadingState) {
+          return CircularLoading();
+        } else if (state is ReservationsFetchCompletedState) {
+          return ReservationsCalendar(
+            reservationsList: state.reservationsList
+                .where((reservation) =>
+                    reservation.idRoom == Rooms.values[index].reservationRoomId)
+                .toList(),
+            allowChangesForCurrentDate: true,
+          );
+        } else {
+          return Center(
+              child: RetryWidget(
+            onTryAgainPressed: () => context
+                .read<ReservationsBloc>()
+                .add(FetchReservationsList(dateToFetch: _visualizedDate)),
+          ));
+        }
+      },
+    );
   }
 }
