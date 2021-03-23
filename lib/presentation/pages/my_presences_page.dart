@@ -8,7 +8,7 @@ import 'package:where_am_i/presentation/bloc/my_presences/actor/my_presences_act
 import 'package:where_am_i/presentation/bloc/my_presences/watcher/my_presences_watcher_bloc.dart';
 import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 import 'package:where_am_i/presentation/widgets/table_calendar_widget.dart';
-import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
+import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/presentation/widgets/dialogs/time_slot_dialog.dart';
 import '../../injection_container.dart';
 
 class MyPresencesPage extends StatelessWidget {

@@ -5,7 +5,7 @@ import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/presentation/bloc/users_management/users_management_bloc.dart';
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
-import 'package:where_am_i/presentation/widgets/edit_role_dialog.dart';
+import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/presentation/widgets/dialogs/edit_role_dialog.dart';
 import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 
 final sl = GetIt.instance;

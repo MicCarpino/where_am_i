@@ -11,7 +11,7 @@ import 'package:where_am_i/presentation/bloc/presences_management/actor/presence
 import 'package:where_am_i/presentation/bloc/presences_management/watcher/presences_management_watcher_bloc.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
 import 'package:where_am_i/presentation/widgets/retry_widget.dart';
-import 'package:where_am_i/presentation/widgets/time_slot_dialog.dart';
+import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/presentation/widgets/dialogs/time_slot_dialog.dart';
 import 'package:where_am_i/presentation/widgets/users_presences_list_widget.dart';
 import '../../injection_container.dart';
 

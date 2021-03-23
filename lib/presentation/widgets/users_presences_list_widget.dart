@@ -7,7 +7,7 @@ import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/actor/presences_management_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/watcher/presences_management_watcher_bloc.dart';
 import 'package:where_am_i/presentation/widgets/presences_management_tile.dart';
-import 'package:where_am_i/presentation/widgets/add_external_user_dialog.dart';
+import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/presentation/widgets/dialogs/add_external_user_dialog.dart';
 
 class UsersPresencesList extends StatefulWidget {
   const UsersPresencesList(this.visualizedDate);

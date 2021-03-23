@@ -37,6 +37,7 @@ class WorkstationWatcherBloc
   Stream<WorkstationWatcherState> mapEventToState(
     WorkstationWatcherEvent event,
   ) async* {
+    yield WorkstationWatcherState.loadInProgress();
     print('fetching workstation for ${event.date}');
     final workstationsOrFailure =
         await workstationRepository.getAllByDate(event.date);

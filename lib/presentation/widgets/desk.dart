@@ -3,23 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
-import 'package:where_am_i/data/user_service.dart';
-import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
-import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
+import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
+import 'package:where_am_i/presentation/bloc/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/presentation/pages/assignable_users_page.dart';
 import 'package:where_am_i/presentation/widgets/workstation_marker.dart';
-import '../../injection_container.dart';
 
 class Desk extends StatefulWidget {
-  final List<UserWithWorkstation> allUsersWithWorkstation;
+  final List<UserWithWorkstation> usersWithWorkstations;
   final int workstationCode;
-  final bool allowChangesForCurrentDate;
+  final bool allowChangesForCurrentDate = true;
 
   Desk({
-    @required this.allUsersWithWorkstation,
+    @required this.usersWithWorkstations,
     @required this.workstationCode,
-    @required this.allowChangesForCurrentDate,
   });
 
   @override
@@ -27,33 +24,26 @@ class Desk extends StatefulWidget {
 }
 
 class _DeskState extends State<Desk> {
-  User loggedUser;
-  WorkstationBloc _workstationBloc;
-  bool isDeskOfLoggedUser;
   String resourceLabel;
-  List<UserWithWorkstation> workstationsForDesk;
+  final isDeskOfLoggedUser = false;
+  var loggedUser;
 
   @override
   void initState() {
     super.initState();
-    _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
-    loggedUser = getIt<UserService>().getLoggedUser;
-    workstationsForDesk = widget.allUsersWithWorkstation
-        .where((element) =>
-            element.workstation?.codeWorkstation ==
-            widget.workstationCode.toString())
-        .toList();
-    isDeskOfLoggedUser = workstationsForDesk?.any(
-        (element) => element.workstation.idResource == loggedUser.idResource);
     resourceLabel = _getResourceLabel();
+    loggedUser =
+        context.read<AuthenticationBloc>().state.authenticatedUser.user;
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: CustomPaint(
-          painter: WorkstationMarker(
-              workstationsForDesk?.map((e) => e.workstation)?.toList() ?? []),
+          painter: WorkstationMarker(widget.usersWithWorkstations
+                  .map((e) => e.workstation)
+                  ?.toList() ??
+              []),
           child: FlatButton(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
@@ -87,7 +77,7 @@ class _DeskState extends State<Desk> {
         context,
         MaterialPageRoute(
           builder: (newContext) => BlocProvider.value(
-            value: _workstationBloc,
+            value: context.read<WorkstationWatcherBloc>(),
             child: AssignableUsersPage(
               selectedWorkstationCode: widget.workstationCode.toString(),
             ),
@@ -95,12 +85,7 @@ class _DeskState extends State<Desk> {
         ),
       );
     } else {
-      var occupants = widget.allUsersWithWorkstation
-          .where((element) =>
-              element.workstation.codeWorkstation ==
-              widget.workstationCode.toString())
-          .toList();
-      if (occupants.length > 1) {
+      if (widget.usersWithWorkstations.length > 1) {
         showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -110,7 +95,7 @@ class _DeskState extends State<Desk> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
-                    children: _generateOccupantsList(occupants),
+                    children: _generateOccupantsList(widget.usersWithWorkstations),
                   ),
                 ),
               );
@@ -150,10 +135,10 @@ class _DeskState extends State<Desk> {
   }
 
   String _getResourceLabel() {
-    if (workstationsForDesk == null || workstationsForDesk.isEmpty) {
+    if (widget.usersWithWorkstations == null || widget.usersWithWorkstations.isEmpty) {
       return null;
-    } else if (workstationsForDesk.length == 1) {
-      UserWithWorkstation userWithWorkstation = workstationsForDesk.first;
+    } else if (widget.usersWithWorkstations.length == 1) {
+      UserWithWorkstation userWithWorkstation = widget.usersWithWorkstations.first;
       if (userWithWorkstation.user != null) {
         return '${userWithWorkstation.user.surname.toUpperCase()} ${userWithWorkstation.user.name.toUpperCase()}';
       } else if (userWithWorkstation.workstation?.freeName != null) {
@@ -164,7 +149,7 @@ class _DeskState extends State<Desk> {
     } else {
       //more then one resource for workstation
       String label;
-      workstationsForDesk.forEach((element) {
+      widget.usersWithWorkstations.forEach((element) {
         TimeOfDay endTime = element.workstation.endTime;
         TimeOfDay currentTime = TimeOfDay.now();
         //from midnight to 13 show resource assigned for morning slot

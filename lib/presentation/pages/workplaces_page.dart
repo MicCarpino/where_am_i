@@ -12,11 +12,11 @@ import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
 import 'package:where_am_i/presentation/widgets/reservations_calendar.dart';
 import 'package:where_am_i/presentation/widgets/retry_widget.dart';
-import 'package:where_am_i/presentation/widgets/room_24.dart';
-import 'package:where_am_i/presentation/widgets/room_26A_F1.dart';
-import 'package:where_am_i/presentation/widgets/room_26A_F2.dart';
-import 'package:where_am_i/presentation/widgets/room_26B.dart';
-import 'package:where_am_i/presentation/widgets/room_staff.dart';
+import 'package:where_am_i/presentation/widgets/workplaces/room_24.dart';
+import 'package:where_am_i/presentation/widgets/workplaces/room_26A_F1.dart';
+import 'package:where_am_i/presentation/widgets/workplaces/room_26A_F2.dart';
+import 'package:where_am_i/presentation/widgets/workplaces/room_26B.dart';
+import 'package:where_am_i/presentation/widgets/workplaces/room_staff.dart';
 import '../../injection_container.dart';
 
 class WorkplacesPage extends StatefulWidget {
@@ -96,12 +96,6 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
   }
 
   Widget _buildWorkstationsSection(int index) {
-    return BlocBuilder<WorkstationWatcherBloc, WorkstationWatcherState>(
-      builder: (_, state) {
-        return state.map(
-          initial: (_) => Container(),
-          loadInProgress: (_) => CircularLoading(),
-          loadSuccess: (value) {
             switch (Rooms.values[index]) {
               case Rooms.room_26B:
                 return Room26B();
@@ -115,17 +109,8 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
                 return RoomStaff();
               default:
                 return Container();
-            }
-          },
-          loadFailure: (_) => RetryWidget(
-            onTryAgainPressed: () => context.read<WorkstationWatcherBloc>().add(
-                  WorkstationWatcherEvent.fetchWorkstations(_visualizedDate),
-                ),
-          ),
-        );
-      },
-    );
-  }
+            };
+          }
 
   Widget _buildReservationsSection(int index) {
     return BlocBuilder<ReservationsBloc, ReservationState>(
