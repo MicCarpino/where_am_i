@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/core/utils/constants.dart';
@@ -13,7 +12,7 @@ import 'package:where_am_i/presentation/bloc/workstation_assignment/workstation_
 import 'package:where_am_i/presentation/widgets/circular_loading.dart';
 import 'package:where_am_i/presentation/widgets/custom_expansion_tile.dart';
 
-final sl = GetIt.instance;
+import '../../injection_container.dart';
 
 class AssignableUsersPage extends StatefulWidget {
   final String selectedWorkstationCode;
@@ -38,7 +37,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
   @override
   void initState() {
     super.initState();
-    _workstationAssignmentBloc = sl<WorkstationAssignementBloc>();
+    _workstationAssignmentBloc = getIt<WorkstationAssignementBloc>();
     _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
   }
 
@@ -89,7 +88,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
               setState(() {
                 isUpdating = false;
               });
-              Scaffold.of(context).showSnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.errorMessage)),
               );
             }

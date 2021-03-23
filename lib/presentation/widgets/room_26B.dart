@@ -8,9 +8,13 @@ class Room26B extends StatelessWidget {
   final List<UserWithWorkstation> workstations;
   final bool allowChangesForCurrentDate;
 
-  Room26B({this.workstations = const [], this.allowChangesForCurrentDate});
+  Room26B(
+    this.allowChangesForCurrentDate, {
+    this.workstations = const [],
+  });
 
-  final  codeConvert = WorkstationCodesConverter();
+  final codeConverter = WorkstationCodesConverter();
+
   @override
   Widget build(BuildContext context) {
     return GridView.count(
@@ -21,7 +25,7 @@ class Room26B extends StatelessWidget {
         mainAxisSpacing: 0,
         crossAxisSpacing: 15,
         children: List.generate(18, (index) {
-          var newWorkstationCode = codeConvert.convertNewToOldWorkstationCode(index);
+          var newWorkstationCode = codeConverter.toOldWorkstationCode(index);
           return Desk(
             allUsersWithWorkstation: workstations,
             workstationCode: newWorkstationCode,

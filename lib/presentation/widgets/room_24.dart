@@ -30,7 +30,7 @@ class Room24 extends StatelessWidget {
               crossAxisSpacing: 0,
               children: List.generate(8, (index) {
                 int newCodeWorkstation =
-              codeConvert.convertNewToOldWorkstationCode(
+              codeConvert.toOldWorkstationCode(
                   R24_1_INDEX + index);
                 return Desk(
                   allUsersWithWorkstation: workstations,
@@ -50,7 +50,7 @@ class Room24 extends StatelessWidget {
               crossAxisSpacing: 0,
               children: List.generate(8, (index) {
                 int newCodeWorkstation =
-                    codeConvert.convertNewToOldWorkstationCode(
+                    codeConvert.toOldWorkstationCode(
                         R24_2_INDEX + index);
                 var workstationsForDesk = workstations
                     .where((element) =>

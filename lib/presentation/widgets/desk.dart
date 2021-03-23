@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/data/user_service.dart';
@@ -10,8 +9,7 @@ import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/pages/assignable_users_page.dart';
 import 'package:where_am_i/presentation/widgets/workstation_marker.dart';
-
-final sl = GetIt.instance;
+import '../../injection_container.dart';
 
 class Desk extends StatefulWidget {
   final List<UserWithWorkstation> allUsersWithWorkstation;
@@ -39,7 +37,7 @@ class _DeskState extends State<Desk> {
   void initState() {
     super.initState();
     _workstationBloc = BlocProvider.of<WorkstationBloc>(context);
-    loggedUser = sl<UserService>().getLoggedUser;
+    loggedUser = getIt<UserService>().getLoggedUser;
     workstationsForDesk = widget.allUsersWithWorkstation
         .where((element) =>
             element.workstation?.codeWorkstation ==

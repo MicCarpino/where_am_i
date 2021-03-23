@@ -1,7 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:where_am_i/data/user_service.dart';
-
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/data/repositories/workstation_repository_impl.dart';
@@ -36,7 +35,6 @@ import 'package:where_am_i/domain/usecases/workstations/update_workstation_statu
 import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
-import 'package:where_am_i/presentation/bloc/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/users_management/users_management_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation_assignment/workstation_assignement_bloc.dart';

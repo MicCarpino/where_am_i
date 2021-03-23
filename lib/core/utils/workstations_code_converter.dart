@@ -1,16 +1,13 @@
-
 class WorkstationCodesConverter {
   //Because of automatic generation through list in some workplaces, desks order
   // is different from the original android version which was drawn manually
-  int convertNewToOldWorkstationCode(int newWorkstationCode) {
+  int toOldWorkstationCode(int newWorkstationCode) {
     int workstationCode = newWorkstationCode;
     if (newWorkstationCode <= 18) {
       workstationCode = _getOldWorkstationCodeFor26b[newWorkstationCode];
-    }
-    if (newWorkstationCode >= 19 && newWorkstationCode <= 34) {
+    } else if (newWorkstationCode >= 19 && newWorkstationCode <= 34) {
       workstationCode = _getOldWorkstationCodeFor24[newWorkstationCode];
-    }
-    if (newWorkstationCode >= 76 && newWorkstationCode <= 87) {
+    } else if (newWorkstationCode >= 76 && newWorkstationCode <= 87) {
       workstationCode = _getOldWorkstationCodeFor26AF1Room1[newWorkstationCode];
     }
     return workstationCode;
@@ -57,6 +54,7 @@ class WorkstationCodesConverter {
     32: 33,
     34: 34
   };
+
   //left current code, right old code
   final _getOldWorkstationCodeFor26AF1Room1 = {
     76: 76,

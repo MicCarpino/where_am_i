@@ -17,7 +17,7 @@ import 'package:where_am_i/presentation/widgets/room_26A_F1.dart';
 import 'package:where_am_i/presentation/widgets/room_26A_F2.dart';
 import 'package:where_am_i/presentation/widgets/room_26B.dart';
 import 'package:where_am_i/presentation/widgets/room_staff.dart';
-import 'package:where_am_i/presentation/widgets/workplace.dart';
+import '../../injection_container.dart';
 
 class WorkplacesPage extends StatefulWidget {
   WorkplacesPage(this.setTitle);
@@ -41,17 +41,17 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => sl<WorkstationBloc>()),
+        BlocProvider(create: (_) => getIt<WorkstationBloc>()),
         BlocProvider<ReservationsBloc>(
-            create: (_) => sl<ReservationsBloc>()
+            create: (_) => getIt<ReservationsBloc>()
               ..add(FetchReservationsList(dateToFetch: _visualizedDate))),
         BlocProvider<WorkstationActorBloc>(
-            create: (_) => WorkstationActorBloc(
-                workstationRepository: sl<WorkstationRepository>())),
+            create: (context) => WorkstationActorBloc(
+                workstationRepository: getIt<WorkstationRepository>())),
         BlocProvider<WorkstationWatcherBloc>(
-          create: (_) => WorkstationWatcherBloc(
-            workstationRepository: sl<WorkstationRepository>(),
-            userRepository: sl<UserRepository>(),
+          create: (context) => WorkstationWatcherBloc(
+            workstationRepository: getIt<WorkstationRepository>(),
+            userRepository: getIt<UserRepository>(),
             workstationActorBloc: context.read<WorkstationActorBloc>(),
           )..add(WorkstationWatcherEvent.fetchWorkstations(_visualizedDate)),
         ),

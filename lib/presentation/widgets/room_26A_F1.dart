@@ -36,7 +36,7 @@ class Room26AF1 extends StatelessWidget {
                     crossAxisSpacing: 0,
                     children: List.generate(6, (index) {
                       int newWorkstationCode =
-                          codeConverter.convertNewToOldWorkstationCode(
+                          codeConverter.toOldWorkstationCode(
                               R26A_FLOOR1_ROOM1_1_INDEX + index);
                       return Desk(
                         allUsersWithWorkstation: workstations,
@@ -55,7 +55,7 @@ class Room26AF1 extends StatelessWidget {
                     crossAxisSpacing: 0,
                     children: List.generate(6, (index) {
                       int newWorkstationCode =
-                          codeConverter.convertNewToOldWorkstationCode(
+                          codeConverter.toOldWorkstationCode(
                               R26A_FLOOR1_ROOM1_2_INDEX + index);
                       return Desk(
                         allUsersWithWorkstation: workstations,
@@ -77,7 +77,7 @@ class Room26AF1 extends StatelessWidget {
               crossAxisSpacing: 0,
               children: List.generate(4, (index) {
                 int newWorkstationCode =
-                    codeConverter.convertNewToOldWorkstationCode(
+                    codeConverter.toOldWorkstationCode(
                         R26A_FLOOR1_ROOM2_INDEX + index);
                 var workstationsForDesk = workstations
                     .where((element) =>

@@ -76,7 +76,7 @@ class Room26AF2 extends StatelessWidget {
               crossAxisSpacing: 0,
               children: List.generate(6, (index) {
                 int newWorkstationCode =
-                    codeConverter.convertNewToOldWorkstationCode(
+                    codeConverter.toOldWorkstationCode(
                         ROOM_26AF2_STARTING_INDEX + index);
                 var workstationsForDesk = workstations
                     .where((element) =>
