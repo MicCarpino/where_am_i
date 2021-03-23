@@ -9,7 +9,8 @@ import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/pages/reservation_form_page.dart';
-import 'file:///C:/Users/DNC/FlutterProjects/where_am_i/lib/presentation/widgets/dialogs/reservations_details_dialog.dart';
+
+import 'dialogs/reservations_details_dialog.dart';
 
 //https://pub.dev/packages/flutter_week_view
 

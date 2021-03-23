@@ -6,8 +6,10 @@ import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
+import 'package:where_am_i/presentation/bloc/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/presentation/pages/assignable_users_page.dart';
+import 'package:where_am_i/presentation/pages/workstation_assignment_page.dart';
 import 'package:where_am_i/presentation/widgets/workstation_marker.dart';
 
 class Desk extends StatefulWidget {
@@ -32,7 +34,7 @@ class _DeskState extends State<Desk> {
   @override
   void initState() {
     super.initState();
-    resourceLabel = _getResourceLabel();
+    resourceLabel = _getDeskLabel();
     loggedUser =
         context.read<AuthenticationBloc>().state.authenticatedUser.user;
   }
@@ -77,13 +79,18 @@ class _DeskState extends State<Desk> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => BlocProvider.value(
-            value: context.read<WorkstationWatcherBloc>(),
-            child: AssignableUsersPage(
-              selectedWorkstationCode: widget.workstationCode.toString(),
-            ),
-          ),
-        ),
+            builder: (_) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider.value(
+                      value: context.read<WorkstationWatcherBloc>(),
+                    ),
+                    BlocProvider.value(
+                      value: context.read<WorkstationActorBloc>(),
+                    ),
+                  ],
+                  child: WorkstationAssignmentPage(selectedWorkstationCode: widget.workstationCode),
+                  ),
+                ),
       );
     } else {
       if (widget.usersWithWorkstations.length > 1) {
@@ -130,7 +137,7 @@ class _DeskState extends State<Desk> {
           ..add(Divider());
   }
 
-  String _getResourceLabel() {
+  String _getDeskLabel() {
     if (widget.usersWithWorkstations.isNullOrEmpty()) {
       return null;
     } else if (widget.usersWithWorkstations.length == 1) {
