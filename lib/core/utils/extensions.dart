@@ -12,7 +12,7 @@ extension StringExtension on String {
 }
 
 extension StringContainsCaseInsensitive on String {
-  bool containsCaseInsensitive(String otherString){
+  bool containsCaseInsensitive(String otherString) {
     return this.toLowerCase().contains(otherString);
   }
 }
@@ -65,13 +65,15 @@ extension DateTimeToZero on DateTime {
     return this.isAfter(otherDate) || this.isAtSameMomentAs(otherDate);
   }
 
-  bool isAfterTimeLess(DateTime otherDate){
+  bool isAfterTimeLess(DateTime otherDate) {
     return this.zeroed().isAfter(otherDate.zeroed());
   }
-  bool isBeforeTimeLess(DateTime otherDate){
+
+  bool isBeforeTimeLess(DateTime otherDate) {
     return this.zeroed().isBefore(otherDate.zeroed());
   }
-  bool isAtSameMomentTimeLess(DateTime otherDate){
+
+  bool isAtSameMomentTimeLess(DateTime otherDate) {
     return this.zeroed().isAtSameMomentAs(otherDate.zeroed());
   }
 }
@@ -101,18 +103,7 @@ extension TimeSlotTimes on TimeSlot {
   TimeOfDay toEndTime() =>
       this == TimeSlot.morning ? TIME_SLOT_THIRTEEN : TIME_SLOT_EIGHTEEN;
 }
-/*extension FailureErrorMessage on Failure {
-  String getErrorMessageFromFailure() {
-    String message = "Si è verificato un errore";
-    if (this is ServerFailure) {
-      message = (this as ServerFailure).errorMessage;
-    } else if (this is UnexpectedFailure) {
-      message = (this as UnexpectedFailure).errorMessage;
-    } else if (this is CacheFailure) {
-      message = "Errore cache";
-    }
-    print('FAILURE TYPE ${this.toString()}');
-    print('FAILURE MSG: $message');
-    return message;
-  }
-}*/
+
+extension IterableNullOrEmpty on Iterable {
+  bool isNullOrEmpty() => this == null || this.isEmpty;
+}

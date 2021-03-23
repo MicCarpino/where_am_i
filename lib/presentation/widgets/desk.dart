@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
+import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/watcher/workstation_watcher_bloc.dart';
@@ -26,7 +27,7 @@ class Desk extends StatefulWidget {
 class _DeskState extends State<Desk> {
   String resourceLabel;
   final isDeskOfLoggedUser = false;
-  var loggedUser;
+  User loggedUser;
 
   @override
   void initState() {
@@ -44,7 +45,7 @@ class _DeskState extends State<Desk> {
                   .map((e) => e.workstation)
                   ?.toList() ??
               []),
-          child: FlatButton(
+          child: MaterialButton(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
                 side: BorderSide(
@@ -52,11 +53,11 @@ class _DeskState extends State<Desk> {
                     width: isDeskOfLoggedUser ? 2.5 : 1.0),
               ),
               //allow edit if user's role is staff or higher
-              onPressed: () => _onWorkstationClick(),
+              onPressed: () => _onDeskClick(),
               child: resourceLabel != null
                   ? AutoSizeText(
-                      resourceLabel?.replaceAll(" ", "\n"),
-                      maxLines: resourceLabel?.split(" ")?.length,
+                      resourceLabel.replaceAll(" ", "\n"),
+                      maxLines: resourceLabel.split(" ")?.length,
                       minFontSize: 10,
                       maxFontSize: 14,
                       softWrap: false,
@@ -71,12 +72,12 @@ class _DeskState extends State<Desk> {
     );
   }
 
-  _onWorkstationClick() {
-    if (loggedUser.idRole >= ROLE_STAFF && widget.allowChangesForCurrentDate) {
+  _onDeskClick() {
+    if (loggedUser.isStaffOrAdmin()) {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (newContext) => BlocProvider.value(
+          builder: (_) => BlocProvider.value(
             value: context.read<WorkstationWatcherBloc>(),
             child: AssignableUsersPage(
               selectedWorkstationCode: widget.workstationCode.toString(),
@@ -95,7 +96,7 @@ class _DeskState extends State<Desk> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
-                    children: _generateOccupantsList(widget.usersWithWorkstations),
+                    children: _generateOccupantsList(),
                   ),
                 ),
               );
@@ -106,67 +107,44 @@ class _DeskState extends State<Desk> {
     }
   }
 
-//beltramo 14-18
-  List<Widget> _generateOccupantsList(List<UserWithWorkstation> occupants) {
-    List<Widget> list = [];
-    occupants.sort((a, b) {
-      var aStartTime = a.workstation.startTime.toDouble();
-      var bStartTime = b.workstation.startTime.toDouble();
-      var aEndTime = a.workstation.startTime.toDouble();
-      var bEndTime = b.workstation.startTime.toDouble();
-      var abc = aStartTime.compareTo(bStartTime);
-      return abc != 0 ? abc : aEndTime.compareTo(bEndTime);
-    });
-    for (var index = 0; index < occupants.length; index++) {
-      var w = occupants[index].workstation;
-      String name = occupants[index].getResourceLabel();
-      list.add(Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
-        child: Text(
-          '${w.startTime.format(context)} - ${w.endTime.format(context)} $name',
-          style: TextStyle(fontSize: 16),
-        ),
-      ));
-      if (index + 1 < occupants.length) {
-        list.add(Divider());
-      }
-    }
-    return list;
+  List<Widget> _generateOccupantsList() {
+    final occupants = widget.usersWithWorkstations
+      ..sort((a, b) {
+        var aStartTime = a.workstation.startTime.toDouble();
+        var bStartTime = b.workstation.startTime.toDouble();
+        var aEndTime = a.workstation.startTime.toDouble();
+        var bEndTime = b.workstation.startTime.toDouble();
+        var abc = aStartTime.compareTo(bStartTime);
+        return abc != 0 ? abc : aEndTime.compareTo(bEndTime);
+      });
+    return occupants
+        .map<Widget>((e) => Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+              child: Text(
+                '${e.workstation.startTime.format(context)} - ${e.workstation.endTime.format(context)} ${e.getResourceLabel()}',
+                style: TextStyle(fontSize: 16),
+              ),
+            ))
+        .toList()
+          ..add(Divider());
   }
 
   String _getResourceLabel() {
-    if (widget.usersWithWorkstations == null || widget.usersWithWorkstations.isEmpty) {
+    if (widget.usersWithWorkstations.isNullOrEmpty()) {
       return null;
     } else if (widget.usersWithWorkstations.length == 1) {
-      UserWithWorkstation userWithWorkstation = widget.usersWithWorkstations.first;
-      if (userWithWorkstation.user != null) {
-        return '${userWithWorkstation.user.surname.toUpperCase()} ${userWithWorkstation.user.name.toUpperCase()}';
-      } else if (userWithWorkstation.workstation?.freeName != null) {
-        return userWithWorkstation.workstation.freeName.toUpperCase();
-      } else {
-        return null;
-      }
+      return widget.usersWithWorkstations.first
+          .getResourceLabel()
+          .toUpperCase();
     } else {
       //more then one resource for workstation
-      String label;
-      widget.usersWithWorkstations.forEach((element) {
-        TimeOfDay endTime = element.workstation.endTime;
-        TimeOfDay currentTime = TimeOfDay.now();
-        //from midnight to 13 show resource assigned for morning slot
-        //after 13 to midnight show resource assigned for evening slot
-        if ((currentTime.hour < 13 && endTime == TIME_SLOT_THIRTEEN) ||
-            (currentTime.hour >= 13 && endTime == TIME_SLOT_EIGHTEEN)) {
-          if (element.user != null) {
-            label =
-                '${element.user.surname.toUpperCase()} ${element.user.name.toUpperCase()}';
-          } else if (element.workstation?.freeName != null) {
-            label = element.workstation.freeName.toUpperCase();
-          }
-        } else {
-          return;
-        }
-      });
-      return label;
+      return widget.usersWithWorkstations
+          .firstWhere((element) => TimeOfDay.now().hour < 13
+              ? element.workstation.endTime == TIME_SLOT_THIRTEEN
+              : element.workstation.endTime == TIME_SLOT_EIGHTEEN)
+          .getResourceLabel()
+          .toUpperCase();
     }
   }
 }

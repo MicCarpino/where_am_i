@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/models/user_model.dart';
 
 class User extends Equatable {
@@ -20,4 +21,8 @@ class User extends Equatable {
 
   UserModel toUserModel() => UserModel(
       idResource: idResource, idRole: idRole, name: name, surname: surname);
+
+  bool isStaffOrAdmin(){
+    return this.idRole >= ROLE_STAFF;
+  }
 }
