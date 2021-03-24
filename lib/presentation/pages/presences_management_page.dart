@@ -7,6 +7,7 @@ import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
+import 'package:where_am_i/presentation/bloc/date_picker/date_picker_cubit.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/actor/presences_management_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/watcher/presences_management_watcher_bloc.dart';
 import 'package:where_am_i/presentation/widgets/date_picker.dart';
@@ -15,15 +16,7 @@ import 'package:where_am_i/presentation/widgets/retry_widget.dart';
 import 'package:where_am_i/presentation/widgets/users_presences_list_widget.dart';
 import '../../injection_container.dart';
 
-class PresencesManagementPage extends StatefulWidget {
-  @override
-  _PresencesManagementPageState createState() =>
-      _PresencesManagementPageState();
-}
-
-class _PresencesManagementPageState extends State<PresencesManagementPage> {
-  DateTime visualizedDate = DateTime.now().zeroed();
-
+class PresencesManagementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -40,6 +33,7 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
             context.read<PresencesManagementActorBloc>(),
           ),
         ),
+        BlocProvider<DatePickerCubit>(create: (context) => DatePickerCubit()),
       ],
       child: BlocListener<PresencesManagementActorBloc,
           PresencesManagementActorState>(
@@ -87,12 +81,19 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
                         child: RetryWidget(
                           onTryAgainPressed: () => context
                               .read<PresencesManagementWatcherBloc>()
-                              .add(PresencesManagementWatcherEvent
-                                  .getAllUsersPresencesByDate(visualizedDate)),
+                              .add(
+                                PresencesManagementWatcherEvent
+                                    .getAllUsersPresencesByDate(
+                                  context
+                                      .read<DatePickerCubit>()
+                                      .state
+                                      .visualizedDate,
+                                ),
+                              ),
                         ),
                       )),
                   // loadSuccess and filteredList state
-                  orElse: () => UsersPresencesList(visualizedDate),
+                  orElse: () => UsersPresencesList(),
                 );
               },
             ),
@@ -103,10 +104,8 @@ class _PresencesManagementPageState extends State<PresencesManagementPage> {
   }
 
   _onDateChanged(BuildContext context, DateTime newDate) {
-    setState(() => visualizedDate = newDate);
     context.read<PresencesManagementWatcherBloc>().add(
-          PresencesManagementWatcherEvent.getAllUsersPresencesByDate(
-              visualizedDate),
+          PresencesManagementWatcherEvent.getAllUsersPresencesByDate(newDate),
         );
   }
 

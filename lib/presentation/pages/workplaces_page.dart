@@ -4,6 +4,7 @@ import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
+import 'package:where_am_i/presentation/bloc/date_picker/date_picker_cubit.dart';
 import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/watcher/workstation_watcher_bloc.dart';
@@ -55,6 +56,7 @@ class _WorkplacesPageState extends State<WorkplacesPage> {
             workstationActorBloc: context.read<WorkstationActorBloc>(),
           )..add(WorkstationWatcherEvent.fetchWorkstations(_visualizedDate)),
         ),
+        BlocProvider<DatePickerCubit>(create: (context) => DatePickerCubit()),
       ],
       child: Builder(
         builder: (newContext) => Column(

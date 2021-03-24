@@ -6,16 +6,15 @@ import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
+import 'package:where_am_i/presentation/bloc/date_picker/date_picker_cubit.dart';
 import 'package:where_am_i/presentation/bloc/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/workstation/watcher/workstation_watcher_bloc.dart';
-import 'package:where_am_i/presentation/pages/assignable_users_page.dart';
 import 'package:where_am_i/presentation/pages/workstation_assignment_page.dart';
 import 'package:where_am_i/presentation/widgets/workstation_marker.dart';
 
 class Desk extends StatefulWidget {
   final List<UserWithWorkstation> usersWithWorkstations;
   final int workstationCode;
-  final bool allowChangesForCurrentDate = true;
 
   Desk({
     @required this.usersWithWorkstations,
@@ -30,6 +29,7 @@ class _DeskState extends State<Desk> {
   String resourceLabel;
   final isDeskOfLoggedUser = false;
   User loggedUser;
+  bool isEditAllowed;
 
   @override
   void initState() {
@@ -37,6 +37,7 @@ class _DeskState extends State<Desk> {
     resourceLabel = _getDeskLabel();
     loggedUser =
         context.read<AuthenticationBloc>().state.authenticatedUser.user;
+    isEditAllowed = context.read<DatePickerCubit>().isEditAllowed();
   }
 
   @override
@@ -66,31 +67,34 @@ class _DeskState extends State<Desk> {
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.visible,
                       style: TextStyle(
-                          color: widget.allowChangesForCurrentDate
-                              ? Colors.black
-                              : Colors.black45),
+                        color: isEditAllowed ? Colors.black : Colors.black45,
+                      ),
                     )
                   : Container())),
     );
   }
 
   _onDeskClick() {
-    if (loggedUser.isStaffOrAdmin()) {
+    if (loggedUser.isStaffOrAdmin() && isEditAllowed) {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (_) => MultiBlocProvider(
-                  providers: [
-                    BlocProvider.value(
-                      value: context.read<WorkstationWatcherBloc>(),
-                    ),
-                    BlocProvider.value(
-                      value: context.read<WorkstationActorBloc>(),
-                    ),
-                  ],
-                  child: WorkstationAssignmentPage(selectedWorkstationCode: widget.workstationCode),
-                  ),
-                ),
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider.value(
+                value: context.read<WorkstationWatcherBloc>(),
+              ),
+              BlocProvider.value(
+                value: context.read<WorkstationActorBloc>(),
+              ),
+              BlocProvider.value(
+                value: context.read<DatePickerCubit>(),
+              ),
+            ],
+            child: WorkstationAssignmentPage(
+                selectedWorkstationCode: widget.workstationCode),
+          ),
+        ),
       );
     } else {
       if (widget.usersWithWorkstations.length > 1) {

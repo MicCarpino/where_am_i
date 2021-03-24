@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/enums.dart';
-import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
+import 'package:where_am_i/presentation/bloc/date_picker/date_picker_cubit.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/actor/presences_management_actor_bloc.dart';
 import 'package:where_am_i/presentation/bloc/presences_management/watcher/presences_management_watcher_bloc.dart';
 import 'package:where_am_i/presentation/widgets/dialogs/add_external_user_dialog.dart';
 import 'package:where_am_i/presentation/widgets/presences_management_tile.dart';
 
 class UsersPresencesList extends StatefulWidget {
-  const UsersPresencesList(this.visualizedDate);
-
-  final DateTime visualizedDate;
-
   @override
   _UsersPresencesListState createState() => _UsersPresencesListState();
 }
@@ -164,24 +160,23 @@ class _UsersPresencesListState extends State<UsersPresencesList> {
   }
 
   Widget _buildAddExternalUserButton() {
+    final isEditAllowed = context.read<DatePickerCubit>().isEditAllowed();
     return IconButton(
       icon: Icon(Icons.person_add,
-          color: widget.visualizedDate.isBeforeTimeLess(DateTime.now())
-              ? Colors.grey
-              : Colors.black87),
-      onPressed: () => widget.visualizedDate.isBeforeTimeLess(DateTime.now())
-          ? null
-          : showDialog(
+          color: isEditAllowed ? Colors.black87 : Colors.grey),
+      onPressed: () => isEditAllowed
+          ? showDialog(
               context: context,
               builder: (BuildContext _) {
                 return BlocProvider.value(
                   value: context.read<PresencesManagementActorBloc>(),
                   child: AddExternalUserDialog(
                     messageText: "Aggiungi risorsa non presente in elenco",
-                    date: widget.visualizedDate,
+                    date: context.read<DatePickerCubit>().state.visualizedDate,
                   ),
                 );
-              }),
+              })
+          : null,
     );
   }
 
@@ -189,7 +184,7 @@ class _UsersPresencesListState extends State<UsersPresencesList> {
       BuildContext context, UserWithWorkstation userWithWorkstation) {
     context.read<PresencesManagementActorBloc>().add(
           PresencesManagementActorEvent.editRequested(
-            widget.visualizedDate,
+            context.read<DatePickerCubit>().state.visualizedDate,
             userWithWorkstation.workstation,
             userWithWorkstation.user,
           ),
@@ -205,7 +200,7 @@ class _UsersPresencesListState extends State<UsersPresencesList> {
                 )
               : PresencesManagementActorEvent.added(
                   timeSlot: TimeSlot.fullDay,
-                  date: widget.visualizedDate,
+                  date: context.read<DatePickerCubit>().state.visualizedDate,
                   idResource: userWithWorkstation.user?.idResource,
                   freeName: userWithWorkstation.workstation?.freeName,
                 ),
