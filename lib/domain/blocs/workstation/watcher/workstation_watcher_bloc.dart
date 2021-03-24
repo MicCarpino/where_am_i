@@ -37,26 +37,37 @@ class WorkstationWatcherBloc
   Stream<WorkstationWatcherState> mapEventToState(
     WorkstationWatcherEvent event,
   ) async* {
-    yield WorkstationWatcherState.loadInProgress();
-    print('fetching workstation for ${event.date}');
-    final workstationsOrFailure =
-        await workstationRepository.getAllByDate(event.date);
-    final usersOrFailure = await userRepository.getAllUsers();
-
-    yield usersOrFailure.fold(
-      (usersFailure) => WorkstationWatcherState.loadFailure(
-        usersFailure.getErrorMessageFromFailure(),
-      ),
-      (users) => workstationsOrFailure.fold(
-        (workstationFailure) => WorkstationWatcherState.loadFailure(
-          workstationFailure.getErrorMessageFromFailure(),
-        ),
-        (workstations) {
-          final usersWithWorkstations =
-              _mergeUserWithWorkstations(users, workstations);
-          return WorkstationWatcherState.loadSuccess(usersWithWorkstations);
-        },
-      ),
+    yield* event.map(
+      fetchPresences: (value) async* {
+        yield WorkstationWatcherState.loadInProgress();
+        print('fetching workstation for ${value.date}');
+        final workstationsOrFailure =
+            await workstationRepository.getAllByDate(value.date);
+        final usersOrFailure = await userRepository.getAllUsers();
+        yield usersOrFailure.fold(
+          (usersFailure) => WorkstationWatcherState.loadFailure(
+            usersFailure.getErrorMessageFromFailure(),
+          ),
+          (users) => workstationsOrFailure.fold(
+            (workstationFailure) => WorkstationWatcherState.loadFailure(
+              workstationFailure.getErrorMessageFromFailure(),
+            ),
+            (workstations) {
+              cachedUsersPresences =
+                  _mergeUserWithWorkstations(users, workstations);
+              return WorkstationWatcherState.loadSuccess(cachedUsersPresences);
+            },
+          ),
+        );
+      },
+      onPresencesUpdated: (value) async* {
+        //TODO: without loadInProgress state the update doesn't occurs not even with "copyWith"
+        yield WorkstationWatcherState.loadInProgress();
+        yield state.maybeMap(
+            orElse: () => WorkstationWatcherState.loadSuccess(value.presences),
+            loadSuccess: (successState) =>
+                successState.copyWith(usersWithWorkstations: value.presences));
+      },
     );
   }
 
@@ -73,10 +84,9 @@ class WorkstationWatcherBloc
                   workstation.idResource == user.idResource))));
   }
 
-  Stream<WorkstationWatcherState> _handleActorStateChange(
-      WorkstationActorState state) async* {
-    state.maybeMap(
-      updateSuccess: (value) async* {
+  void _handleActorStateChange(WorkstationActorState actorState) {
+    actorState.maybeMap(
+      updateSuccess: (value) {
         final updatedIndex = cachedUsersPresences.indexWhere((element) =>
             element.workstation.idWorkstation ==
             value.workstation.idWorkstation);
@@ -85,9 +95,9 @@ class WorkstationWatcherBloc
               cachedUsersPresences[updatedIndex]
                   .copyWith(workstation: value.workstation);
         }
-        yield WorkstationWatcherState.loadSuccess(cachedUsersPresences);
+        add(WorkstationWatcherEvent.onPresencesUpdated(cachedUsersPresences));
       },
-      multipleUpdateSuccess: (value) async* {
+      multipleUpdateSuccess: (value) {
         value.workstations.map((workstation) {
           final updatedIndex = cachedUsersPresences.indexWhere((element) =>
               element.workstation.idWorkstation == workstation.idWorkstation);
@@ -97,7 +107,7 @@ class WorkstationWatcherBloc
                     .copyWith(workstation: workstation);
           }
         });
-        yield WorkstationWatcherState.loadSuccess(cachedUsersPresences);
+        WorkstationWatcherState.loadSuccess(cachedUsersPresences);
       },
       orElse: () {},
     );

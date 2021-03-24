@@ -234,7 +234,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                             List<Workstation> workstationsToAssign =
                                 _userPresencesChecked.entries.map((e) {
                               if (e.value) {
-                                return e.key.assignWorkstationCode(
+                                return e.key.setWorkstationCode(
                                     widget.selectedWorkstationCode);
                               }
                             }).toList();
@@ -302,13 +302,13 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
 
   _performSingleAssignment(Workstation workstation) {
     Workstation updatedWorkstation =
-        workstation.assignWorkstationCode(widget.selectedWorkstationCode);
+        workstation.setWorkstationCode(widget.selectedWorkstationCode);
     _workstationBloc
         .add(OnSingleWorkstationUpdate(workstation: updatedWorkstation));
   }
 
   _clearWorkstation(Workstation workstation) {
-    Workstation updatedWorkstation = workstation.assignWorkstationCode(null);
+    Workstation updatedWorkstation = workstation.setWorkstationCode(null);
     _workstationBloc
         .add(OnSingleWorkstationUpdate(workstation: updatedWorkstation));
   }

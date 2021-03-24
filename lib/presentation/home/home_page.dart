@@ -54,65 +54,73 @@ class _HomePageState extends State<HomePage> {
             workstationRepository: getIt<WorkstationRepository>(),
             userRepository: getIt<UserRepository>(),
             workstationActorBloc: context.read<WorkstationActorBloc>(),
-          )..add(WorkstationWatcherEvent.fetchWorkstations(_visualizedDate)),
+          )..add(WorkstationWatcherEvent.fetchPresences(_visualizedDate)),
         ),
         BlocProvider<DatePickerCubit>(create: (context) => DatePickerCubit()),
       ],
       child: Builder(
-        builder: (newContext) => Column(
-          children: [
-            DatePicker((newDate) {
-              setState(() => this._visualizedDate = newDate);
-              newContext
-                  .read<WorkstationWatcherBloc>()
-                  .add(WorkstationWatcherEvent.fetchWorkstations(newDate));
-              newContext
-                  .read<ReservationsBloc>()
-                  .add(FetchReservationsList(dateToFetch: newDate));
-            }),
-            Expanded(
-              child: PageView.builder(
-                itemCount: Rooms.values.length,
-                itemBuilder: (_, index) {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        _buildWorkstationsSection(index),
-                        if (Rooms.values[index].reservationRoomId != null)
-                          _buildReservationsSection(index)
-                      ],
-                    ),
-                  );
-                },
-                onPageChanged: (pageIndex) {
-                  widget.setTitle(Rooms.values[pageIndex].roomTitle);
-                },
-              ),
-            )
-          ],
+        builder: (newContext) =>
+            BlocListener<WorkstationActorBloc, WorkstationActorState>(
+          listener: (context, state) => state.maybeMap(
+            orElse: () {},
+            actionFailure: (value) => ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(value.failure.getErrorMessageFromFailure()))),
+          ),
+          child: Column(
+            children: [
+              DatePicker((newDate) {
+                setState(() => this._visualizedDate = newDate);
+                newContext
+                    .read<WorkstationWatcherBloc>()
+                    .add(WorkstationWatcherEvent.fetchPresences(newDate));
+                newContext
+                    .read<ReservationsBloc>()
+                    .add(FetchReservationsList(dateToFetch: newDate));
+              }),
+              Expanded(
+                child: PageView.builder(
+                  itemCount: Rooms.values.length,
+                  itemBuilder: (_, index) {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          _buildWorkstationsSection(index),
+                          if (Rooms.values[index].reservationRoomId != null)
+                            _buildReservationsSection(index)
+                        ],
+                      ),
+                    );
+                  },
+                  onPageChanged: (pageIndex) {
+                    widget.setTitle(Rooms.values[pageIndex].roomTitle);
+                  },
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildWorkstationsSection(int index) {
-            switch (Rooms.values[index]) {
-              case Rooms.room_26B:
-                return Room26B();
-              case Rooms.room_24:
-                return Room24();
-              case Rooms.room_26A_Floor1:
-                return Room26AF1();
-              case Rooms.room_26A_Floor2:
-                return Room26AF2();
-              case Rooms.room_staff:
-                return RoomStaff();
-              default:
-                return Container();
-            };
-          }
+    switch (Rooms.values[index]) {
+      case Rooms.room_26B:
+        return Room26B();
+      case Rooms.room_24:
+        return Room24();
+      case Rooms.room_26A_Floor1:
+        return Room26AF1();
+      case Rooms.room_26A_Floor2:
+        return Room26AF2();
+      case Rooms.room_staff:
+        return RoomStaff();
+      default:
+        return Container();
+    }
+  }
 
   Widget _buildReservationsSection(int index) {
     return BlocBuilder<ReservationsBloc, ReservationState>(

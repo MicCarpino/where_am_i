@@ -52,7 +52,7 @@ class Workstation extends Equatable {
         status: status,
       );
 
-  Workstation assignWorkstationCode(String workstationCode) {
+  Workstation setWorkstationCode(String workstationCode) {
     return Workstation(
         idWorkstation: this.idWorkstation,
         idResource: this.idResource,

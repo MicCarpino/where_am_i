@@ -85,7 +85,7 @@ class Room24 extends StatelessWidget {
           },
           loadFailure: (_) => RetryWidget(
             onTryAgainPressed: () => context.read<WorkstationWatcherBloc>().add(
-                  WorkstationWatcherEvent.fetchWorkstations(DateTime.now()),
+                  WorkstationWatcherEvent.fetchPresences(DateTime.now()),
                 ),
           ),
         );

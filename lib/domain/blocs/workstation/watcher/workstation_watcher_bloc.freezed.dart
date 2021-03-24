@@ -14,9 +14,16 @@ class _$WorkstationWatcherEventTearOff {
   const _$WorkstationWatcherEventTearOff();
 
 // ignore: unused_element
-  _FetchWorkstations fetchWorkstations(DateTime date) {
-    return _FetchWorkstations(
+  _FetchPresences fetchPresences(DateTime date) {
+    return _FetchPresences(
       date,
+    );
+  }
+
+// ignore: unused_element
+  _OnPresencesUpdated onPresencesUpdated(List<UserWithWorkstation> presences) {
+    return _OnPresencesUpdated(
+      presences,
     );
   }
 }
@@ -27,29 +34,28 @@ const $WorkstationWatcherEvent = _$WorkstationWatcherEventTearOff();
 
 /// @nodoc
 mixin _$WorkstationWatcherEvent {
-  DateTime get date;
-
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult fetchWorkstations(DateTime date),
+    @required TResult fetchPresences(DateTime date),
+    @required TResult onPresencesUpdated(List<UserWithWorkstation> presences),
   });
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult fetchWorkstations(DateTime date),
+    TResult fetchPresences(DateTime date),
+    TResult onPresencesUpdated(List<UserWithWorkstation> presences),
     @required TResult orElse(),
   });
   @optionalTypeArgs
   TResult map<TResult extends Object>({
-    @required TResult fetchWorkstations(_FetchWorkstations value),
+    @required TResult fetchPresences(_FetchPresences value),
+    @required TResult onPresencesUpdated(_OnPresencesUpdated value),
   });
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
-    TResult fetchWorkstations(_FetchWorkstations value),
+    TResult fetchPresences(_FetchPresences value),
+    TResult onPresencesUpdated(_OnPresencesUpdated value),
     @required TResult orElse(),
   });
-
-  @JsonKey(ignore: true)
-  $WorkstationWatcherEventCopyWith<WorkstationWatcherEvent> get copyWith;
 }
 
 /// @nodoc
@@ -57,7 +63,6 @@ abstract class $WorkstationWatcherEventCopyWith<$Res> {
   factory $WorkstationWatcherEventCopyWith(WorkstationWatcherEvent value,
           $Res Function(WorkstationWatcherEvent) then) =
       _$WorkstationWatcherEventCopyWithImpl<$Res>;
-  $Res call({DateTime date});
 }
 
 /// @nodoc
@@ -68,64 +73,53 @@ class _$WorkstationWatcherEventCopyWithImpl<$Res>
   final WorkstationWatcherEvent _value;
   // ignore: unused_field
   final $Res Function(WorkstationWatcherEvent) _then;
-
-  @override
-  $Res call({
-    Object date = freezed,
-  }) {
-    return _then(_value.copyWith(
-      date: date == freezed ? _value.date : date as DateTime,
-    ));
-  }
 }
 
 /// @nodoc
-abstract class _$FetchWorkstationsCopyWith<$Res>
-    implements $WorkstationWatcherEventCopyWith<$Res> {
-  factory _$FetchWorkstationsCopyWith(
-          _FetchWorkstations value, $Res Function(_FetchWorkstations) then) =
-      __$FetchWorkstationsCopyWithImpl<$Res>;
-  @override
+abstract class _$FetchPresencesCopyWith<$Res> {
+  factory _$FetchPresencesCopyWith(
+          _FetchPresences value, $Res Function(_FetchPresences) then) =
+      __$FetchPresencesCopyWithImpl<$Res>;
   $Res call({DateTime date});
 }
 
 /// @nodoc
-class __$FetchWorkstationsCopyWithImpl<$Res>
+class __$FetchPresencesCopyWithImpl<$Res>
     extends _$WorkstationWatcherEventCopyWithImpl<$Res>
-    implements _$FetchWorkstationsCopyWith<$Res> {
-  __$FetchWorkstationsCopyWithImpl(
-      _FetchWorkstations _value, $Res Function(_FetchWorkstations) _then)
-      : super(_value, (v) => _then(v as _FetchWorkstations));
+    implements _$FetchPresencesCopyWith<$Res> {
+  __$FetchPresencesCopyWithImpl(
+      _FetchPresences _value, $Res Function(_FetchPresences) _then)
+      : super(_value, (v) => _then(v as _FetchPresences));
 
   @override
-  _FetchWorkstations get _value => super._value as _FetchWorkstations;
+  _FetchPresences get _value => super._value as _FetchPresences;
 
   @override
   $Res call({
     Object date = freezed,
   }) {
-    return _then(_FetchWorkstations(
+    return _then(_FetchPresences(
       date == freezed ? _value.date : date as DateTime,
     ));
   }
 }
 
 /// @nodoc
-class _$_FetchWorkstations implements _FetchWorkstations {
-  const _$_FetchWorkstations(this.date) : assert(date != null);
+class _$_FetchPresences implements _FetchPresences {
+  const _$_FetchPresences(this.date) : assert(date != null);
 
   @override
   final DateTime date;
 
   @override
   String toString() {
-    return 'WorkstationWatcherEvent.fetchWorkstations(date: $date)';
+    return 'WorkstationWatcherEvent.fetchPresences(date: $date)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _FetchWorkstations &&
+        (other is _FetchPresences &&
             (identical(other.date, date) ||
                 const DeepCollectionEquality().equals(other.date, date)));
   }
@@ -136,27 +130,30 @@ class _$_FetchWorkstations implements _FetchWorkstations {
 
   @JsonKey(ignore: true)
   @override
-  _$FetchWorkstationsCopyWith<_FetchWorkstations> get copyWith =>
-      __$FetchWorkstationsCopyWithImpl<_FetchWorkstations>(this, _$identity);
+  _$FetchPresencesCopyWith<_FetchPresences> get copyWith =>
+      __$FetchPresencesCopyWithImpl<_FetchPresences>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult fetchWorkstations(DateTime date),
+    @required TResult fetchPresences(DateTime date),
+    @required TResult onPresencesUpdated(List<UserWithWorkstation> presences),
   }) {
-    assert(fetchWorkstations != null);
-    return fetchWorkstations(date);
+    assert(fetchPresences != null);
+    assert(onPresencesUpdated != null);
+    return fetchPresences(date);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult fetchWorkstations(DateTime date),
+    TResult fetchPresences(DateTime date),
+    TResult onPresencesUpdated(List<UserWithWorkstation> presences),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
-    if (fetchWorkstations != null) {
-      return fetchWorkstations(date);
+    if (fetchPresences != null) {
+      return fetchPresences(date);
     }
     return orElse();
   }
@@ -164,34 +161,156 @@ class _$_FetchWorkstations implements _FetchWorkstations {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object>({
-    @required TResult fetchWorkstations(_FetchWorkstations value),
+    @required TResult fetchPresences(_FetchPresences value),
+    @required TResult onPresencesUpdated(_OnPresencesUpdated value),
   }) {
-    assert(fetchWorkstations != null);
-    return fetchWorkstations(this);
+    assert(fetchPresences != null);
+    assert(onPresencesUpdated != null);
+    return fetchPresences(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
-    TResult fetchWorkstations(_FetchWorkstations value),
+    TResult fetchPresences(_FetchPresences value),
+    TResult onPresencesUpdated(_OnPresencesUpdated value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
-    if (fetchWorkstations != null) {
-      return fetchWorkstations(this);
+    if (fetchPresences != null) {
+      return fetchPresences(this);
     }
     return orElse();
   }
 }
 
-abstract class _FetchWorkstations implements WorkstationWatcherEvent {
-  const factory _FetchWorkstations(DateTime date) = _$_FetchWorkstations;
+abstract class _FetchPresences implements WorkstationWatcherEvent {
+  const factory _FetchPresences(DateTime date) = _$_FetchPresences;
+
+  DateTime get date;
+  @JsonKey(ignore: true)
+  _$FetchPresencesCopyWith<_FetchPresences> get copyWith;
+}
+
+/// @nodoc
+abstract class _$OnPresencesUpdatedCopyWith<$Res> {
+  factory _$OnPresencesUpdatedCopyWith(
+          _OnPresencesUpdated value, $Res Function(_OnPresencesUpdated) then) =
+      __$OnPresencesUpdatedCopyWithImpl<$Res>;
+  $Res call({List<UserWithWorkstation> presences});
+}
+
+/// @nodoc
+class __$OnPresencesUpdatedCopyWithImpl<$Res>
+    extends _$WorkstationWatcherEventCopyWithImpl<$Res>
+    implements _$OnPresencesUpdatedCopyWith<$Res> {
+  __$OnPresencesUpdatedCopyWithImpl(
+      _OnPresencesUpdated _value, $Res Function(_OnPresencesUpdated) _then)
+      : super(_value, (v) => _then(v as _OnPresencesUpdated));
 
   @override
-  DateTime get date;
+  _OnPresencesUpdated get _value => super._value as _OnPresencesUpdated;
+
   @override
+  $Res call({
+    Object presences = freezed,
+  }) {
+    return _then(_OnPresencesUpdated(
+      presences == freezed
+          ? _value.presences
+          : presences as List<UserWithWorkstation>,
+    ));
+  }
+}
+
+/// @nodoc
+class _$_OnPresencesUpdated implements _OnPresencesUpdated {
+  const _$_OnPresencesUpdated(this.presences) : assert(presences != null);
+
+  @override
+  final List<UserWithWorkstation> presences;
+
+  @override
+  String toString() {
+    return 'WorkstationWatcherEvent.onPresencesUpdated(presences: $presences)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is _OnPresencesUpdated &&
+            (identical(other.presences, presences) ||
+                const DeepCollectionEquality()
+                    .equals(other.presences, presences)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(presences);
+
   @JsonKey(ignore: true)
-  _$FetchWorkstationsCopyWith<_FetchWorkstations> get copyWith;
+  @override
+  _$OnPresencesUpdatedCopyWith<_OnPresencesUpdated> get copyWith =>
+      __$OnPresencesUpdatedCopyWithImpl<_OnPresencesUpdated>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object>({
+    @required TResult fetchPresences(DateTime date),
+    @required TResult onPresencesUpdated(List<UserWithWorkstation> presences),
+  }) {
+    assert(fetchPresences != null);
+    assert(onPresencesUpdated != null);
+    return onPresencesUpdated(presences);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object>({
+    TResult fetchPresences(DateTime date),
+    TResult onPresencesUpdated(List<UserWithWorkstation> presences),
+    @required TResult orElse(),
+  }) {
+    assert(orElse != null);
+    if (onPresencesUpdated != null) {
+      return onPresencesUpdated(presences);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object>({
+    @required TResult fetchPresences(_FetchPresences value),
+    @required TResult onPresencesUpdated(_OnPresencesUpdated value),
+  }) {
+    assert(fetchPresences != null);
+    assert(onPresencesUpdated != null);
+    return onPresencesUpdated(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object>({
+    TResult fetchPresences(_FetchPresences value),
+    TResult onPresencesUpdated(_OnPresencesUpdated value),
+    @required TResult orElse(),
+  }) {
+    assert(orElse != null);
+    if (onPresencesUpdated != null) {
+      return onPresencesUpdated(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _OnPresencesUpdated implements WorkstationWatcherEvent {
+  const factory _OnPresencesUpdated(List<UserWithWorkstation> presences) =
+      _$_OnPresencesUpdated;
+
+  List<UserWithWorkstation> get presences;
+  @JsonKey(ignore: true)
+  _$OnPresencesUpdatedCopyWith<_OnPresencesUpdated> get copyWith;
 }
 
 /// @nodoc

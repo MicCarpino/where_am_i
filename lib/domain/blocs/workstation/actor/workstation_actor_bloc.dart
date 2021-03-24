@@ -22,9 +22,9 @@ class WorkstationActorBloc
   Stream<WorkstationActorState> mapEventToState(
     WorkstationActorEvent event,
   ) async* {
-    event.map(
+    yield const WorkstationActorState.actionInProgress();
+    yield* event.map(
       update: (value) async* {
-        yield WorkstationActorState.actionInProgress();
         final updateResult =
             await workstationRepository.update(value.workstation);
         yield updateResult.fold(
