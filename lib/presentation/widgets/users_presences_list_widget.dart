@@ -160,7 +160,8 @@ class _UsersPresencesListState extends State<UsersPresencesList> {
   }
 
   Widget _buildAddExternalUserButton() {
-    final isEditAllowed = context.read<DatePickerCubit>().isEditAllowed();
+    final isEditAllowed =
+    BlocProvider.of<DatePickerCubit>(context).isEditAllowed();
     return IconButton(
       icon: Icon(Icons.person_add,
           color: isEditAllowed ? Colors.black87 : Colors.grey),
