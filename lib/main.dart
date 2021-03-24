@@ -5,13 +5,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/repositories/auth_repository_impl.dart';
-import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
-import 'package:where_am_i/presentation/pages/my_presences_page.dart';
-import 'package:where_am_i/presentation/screen/splash_screen.dart';
-import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
-import 'package:where_am_i/presentation/screen/home_screen.dart';
-import 'package:where_am_i/presentation/screen/login_screen.dart';
-import 'injection_container.dart' as serviceLocator;
+import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
+import 'package:where_am_i/injection_container.dart' as serviceLocator;
+import 'package:where_am_i/presentation/home/home_screen.dart';
+import 'package:where_am_i/presentation/login/login_screen.dart';
+import 'package:where_am_i/presentation/login/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

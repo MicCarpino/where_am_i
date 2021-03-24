@@ -15,7 +15,6 @@ enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 enum Rooms { room_26B, room_26A_Floor1, room_26A_Floor2, room_24, room_staff }
 
-
 extension RoomsTitles on Rooms {
   String roomIdTitle() {
     switch (this) {

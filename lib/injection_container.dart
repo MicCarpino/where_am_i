@@ -32,12 +32,13 @@ import 'package:where_am_i/domain/usecases/workstations/remove_workstation.dart'
 import 'package:where_am_i/domain/usecases/workstations/update_all_workstations.dart';
 import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
 import 'package:where_am_i/domain/usecases/workstations/update_workstation_status.dart';
-import 'package:where_am_i/presentation/bloc/authentication/authentication_bloc.dart';
-import 'package:where_am_i/presentation/bloc/login/login_bloc.dart';
-import 'package:where_am_i/presentation/bloc/reservation/reservation_bloc.dart';
-import 'package:where_am_i/presentation/bloc/workstation/workstation_bloc.dart';
-import 'package:where_am_i/presentation/bloc/users_management/users_management_bloc.dart';
-import 'package:where_am_i/presentation/bloc/workstation_assignment/workstation_assignement_bloc.dart';
+
+import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
+import 'package:where_am_i/domain/blocs/login/login_bloc.dart';
+import 'package:where_am_i/domain/blocs/reservation/reservation_bloc.dart';
+import 'package:where_am_i/domain/blocs/users_management/users_management_bloc.dart';
+import 'package:where_am_i/domain/blocs/workstation/workstation_bloc.dart';
+import 'package:where_am_i/domain/blocs/workstation_assignment/workstation_assignement_bloc.dart';
 
 final getIt = GetIt.instance;
 
