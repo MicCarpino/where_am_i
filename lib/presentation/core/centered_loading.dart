@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 
-class CircularLoading extends StatelessWidget {
+class CenteredLoading extends StatelessWidget {
   final double width;
   final double height;
 
-  CircularLoading({this.width, this.height});
+  CenteredLoading({this.width, this.height});
 
   @override
   Widget build(BuildContext context) {

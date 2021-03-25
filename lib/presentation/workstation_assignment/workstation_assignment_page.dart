@@ -1,22 +1,28 @@
-import 'dart:math';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
+import 'package:where_am_i/domain/blocs/date_picker/date_picker_cubit.dart';
 import 'package:where_am_i/domain/blocs/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/domain/blocs/workstation/assignment/workstation_assignment_bloc.dart';
+import 'package:where_am_i/domain/blocs/workstation/multiple_assignment/workstation_multiple_assignment_cubit.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
+import 'package:where_am_i/domain/entities/workstation.dart';
+import 'package:where_am_i/domain/repositories/workstation_repository.dart';
+import 'package:where_am_i/injection_container.dart';
+import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/custom_expansion_tile.dart';
+import 'package:where_am_i/presentation/core/retry_widget.dart';
 
 class WorkstationAssignmentPage extends StatelessWidget {
-  const WorkstationAssignmentPage({@required this.selectedWorkstationCode});
+  WorkstationAssignmentPage({@required this.selectedWorkstationCode});
 
   final int selectedWorkstationCode;
 
-  // final ValueNotifier<Key> _expanded = ValueNotifier(null);
+  final ValueNotifier<Key> _expanded = ValueNotifier(null);
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +143,9 @@ class WorkstationAssignmentPage extends StatelessWidget {
         child: ListView(
           shrinkWrap: true,
           children: assignableUsers
-              .map((e) => _buildSimpleListTile(context, e))
+              .map((e) => e.workstation.hasMoreForCurrentMonth
+                  ? _buildExpandableListTile(context, e)
+                  : _buildSimpleListTile(context, e))
               .toList(),
         ),
       ),
@@ -148,92 +156,97 @@ class WorkstationAssignmentPage extends StatelessWidget {
     BuildContext context,
     UserWithWorkstation userWithWorkstation,
   ) {
-    String startTime =
-        userWithWorkstation.workstation.startTime.format(context);
-    String endTime = userWithWorkstation.workstation.endTime.format(context);
-
     return ListTile(
       title: Text(userWithWorkstation.getResourceLabel()),
-      subtitle: Text(
-        "$startTime - $endTime",
-        style: TextStyle(color: Colors.black54, fontSize: 14),
-      ),onTap: () => context.read<WorkstationActorBloc>().add(
-      WorkstationActorEvent.update(
-        userWithWorkstation.workstation.setWorkstationCode(selectedWorkstationCode.toString()),
-      ),
-    ),
+      subtitle: _buildSlotTimeLabel(context, userWithWorkstation.workstation),
+      onTap: () => context.read<WorkstationActorBloc>().add(
+            WorkstationActorEvent.update(
+              userWithWorkstation.workstation
+                  .setWorkstationCode(selectedWorkstationCode.toString()),
+            ),
+          ),
     );
   }
 
-/*CustomExpansionTile _buildExpansionTile(
+  Widget _buildExpandableListTile(
     BuildContext context,
     UserWithWorkstation userWithWorkstation,
   ) {
-    String startTime =
-        userWithWorkstation.workstation.startTime.format(context);
-    String endTime = userWithWorkstation.workstation.endTime.format(context);
-    return CustomExpansionTile(
-      onHeaderClick: () {
-        //single assingment
-      },
-      expansionCallback: (hasExpanded) {
-        if (hasExpanded) {
-          // _clearPresencesFetched();
-          //_fetchPresencesToEndOfMonth(item);
-        }
-      },
-      subtitleWidget: Text(
-        "$startTime - $endTime",
-        style: TextStyle(color: Colors.black54, fontSize: 14),
+    return BlocProvider<WorkstationMultipleAssignmentCubit>(
+      create: (_) => WorkstationMultipleAssignmentCubit(
+        workstationRepository: getIt<WorkstationRepository>(),
       ),
-      expandedItem: _expanded,
-      key: Key(userWithWorkstation.workstation.idWorkstation.toString()),
-      title: Text(userWithWorkstation.getResourceLabel()),
-      children: <Widget>[
-        BlocBuilder(
-            cubit: _workstationAssignmentBloc,
-            builder: (context, state) {
-              if (state is PresencesToEndOfMonthErrorState) {
-                return Text('ERROR');
-              } else if (state is PresencesToEndOfMonthCompleteState) {
-                var presencesToEndOfMonth = state.presencesToEndOfMonth;
-                state.presencesToEndOfMonth.forEach((element) {
-                  _userPresencesChecked.putIfAbsent(element, () => true);
-                });
-                return Column(children: [
-                  ..._buildCheckBoxList(presencesToEndOfMonth),
-                  isUpdating
-                      ? CircularLoading(width: 50, height: 50)
-                      : FlatButton(
-                          onPressed: () {
-                            List<Workstation> workstationsToAssign =
-                                _userPresencesChecked.entries.map((e) {
-                              if (e.value) {
-                                return e.key.assignWorkstationCode(
-                                    widget.selectedWorkstationCode);
-                              }
-                            }).toList();
-                            workstationsToAssign
-                                .retainWhere((element) => element != null);
-                            _workstationBloc.add(
-                              OnMultipleWorkstationsUpdate(
-                                  updatedWorkstations: workstationsToAssign),
-                            );
-                          },
-                          child: Text(
-                            'CONFERMA',
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              side: BorderSide(color: Colors.blue)),
-                        )
-                ]);
-              } else {
-                return CircularLoading();
-              }
-            })
-      ],
+      child: Builder(
+        builder: (newContext) => CustomExpansionTile(
+          onHeaderClick: () {
+            newContext.read<WorkstationActorBloc>().add(
+                  WorkstationActorEvent.update(
+                    userWithWorkstation.workstation
+                        .setWorkstationCode(selectedWorkstationCode.toString()),
+                  ),
+                );
+          },
+          expansionCallback: (hasExpanded) {
+            if (hasExpanded) {
+              var date =
+                  newContext.read<DatePickerCubit>().state.visualizedDate;
+              newContext
+                  .read<WorkstationMultipleAssignmentCubit>()
+                  .fetchUserPresencesToEndOfMonth(
+                      userWithWorkstation.user.idResource, date);
+            }
+          },
+          subtitleWidget:
+              _buildSlotTimeLabel(context, userWithWorkstation.workstation),
+          expandedItem: _expanded,
+          key: Key(userWithWorkstation.workstation.idWorkstation.toString()),
+          title: Text(userWithWorkstation.getResourceLabel()),
+          children: <Widget>[
+            BlocBuilder<WorkstationMultipleAssignmentCubit,
+                WorkstationMultipleAssignmentState>(
+              builder: (aContext, state) => state.map(
+                  loadingState: (value) => CenteredLoading(),
+                  loadedState: (value) => ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: value.presences.length,
+                        itemBuilder: (context, index) {
+                          var item = value.presences[index];
+                          return CheckboxListTile(
+                            title: Text(
+                              DateFormat.yMMMMd('it_IT')
+                                  .format(item.workstationDate),
+                            ),
+                            subtitle: _buildSlotTimeLabel(context, item),
+                            value: index == 0,
+                            onChanged: (value) => null,
+                          );
+                        },
+                      ),
+                  errorState: (value) => RetryWidget(
+                        onTryAgainPressed: () {
+                          var date = newContext
+                              .read<DatePickerCubit>()
+                              .state
+                              .visualizedDate;
+                          context
+                              .read<WorkstationMultipleAssignmentCubit>()
+                              .fetchUserPresencesToEndOfMonth(
+                                  userWithWorkstation.user.idResource, date);
+                        },
+                      )),
+            ),
+          ],
+        ),
+      ),
     );
-  }*/
+  }
+
+  Widget _buildSlotTimeLabel(BuildContext context, Workstation workstation) {
+    String startTime = workstation.startTime.format(context);
+    String endTime = workstation.endTime.format(context);
+    return Text(
+      "$startTime - $endTime",
+      style: TextStyle(color: Colors.black54, fontSize: 14),
+    );
+  }
 }

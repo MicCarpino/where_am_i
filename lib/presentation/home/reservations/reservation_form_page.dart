@@ -13,7 +13,7 @@ import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/usecases/users/get_all_user_by_filter.dart';
 import 'package:where_am_i/domain/usecases/users/get_user_by_id.dart';
 import 'package:where_am_i/data/user_service.dart';
-import 'package:where_am_i/presentation/core/circular_loading.dart';
+import 'package:where_am_i/presentation/core/centered_loading.dart';
 
 enum TimePickerType { startPicker, endPicker }
 
@@ -90,7 +90,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                   cubit: _reservationBloc,
                   builder: (context, state) {
                     if (state is ReservationUpdatingState) {
-                      return Center(child: CircularLoading());
+                      return Center(child: CenteredLoading());
                     } else {
                       return _buildButtonsSection();
                     }

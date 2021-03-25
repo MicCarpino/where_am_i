@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/core/utils/workstations_code_converter.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
-import 'package:where_am_i/presentation/core/circular_loading.dart';
+import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/home/workstations/desk.dart';
 
@@ -23,7 +23,7 @@ class Room26AF1 extends StatelessWidget {
       builder: (_, state) {
         return state.map(
           initial: (_) => Container(),
-          loadInProgress: (_) => CircularLoading(),
+          loadInProgress: (_) => CenteredLoading(),
           loadSuccess: (value) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,

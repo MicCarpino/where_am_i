@@ -9,7 +9,7 @@ import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_
 import 'package:where_am_i/domain/blocs/workstation/workstation_bloc.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
-import 'package:where_am_i/presentation/core/circular_loading.dart';
+import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/date_picker.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/home/reservations/reservations_calendar.dart';
@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
     return BlocBuilder<ReservationsBloc, ReservationState>(
       builder: (_, state) {
         if (state is ReservationsFetchLoadingState) {
-          return CircularLoading();
+          return CenteredLoading();
         } else if (state is ReservationsFetchCompletedState) {
           return ReservationsCalendar(
             reservationsList: state.reservationsList

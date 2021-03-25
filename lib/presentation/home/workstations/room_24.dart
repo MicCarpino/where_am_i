@@ -5,7 +5,7 @@ import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_
 import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/home/workstations/desk.dart';
 
-import '../../core/circular_loading.dart';
+import '../../core/centered_loading.dart';
 
 //starting index
 const R24_1_INDEX = 19;
@@ -21,7 +21,7 @@ class Room24 extends StatelessWidget {
       builder: (_, state) {
         return state.map(
           initial: (_) => Container(),
-          loadInProgress: (_) => CircularLoading(),
+          loadInProgress: (_) => CenteredLoading(),
           loadSuccess: (value) {
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

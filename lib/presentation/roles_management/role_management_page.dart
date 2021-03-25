@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/blocs/users_management/users_management_bloc.dart';
 import 'package:where_am_i/domain/entities/user.dart';
-import 'package:where_am_i/presentation/core/circular_loading.dart';
+import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/roles_management/edit_role_dialog.dart';
 
@@ -47,7 +47,7 @@ class _RolesManagementPageState extends State<RolesManagementPage> {
         if (state is UsersListReadyState) {
           return _buildUsersList(state);
         } else if (state is UsersListLoadingState) {
-          return Center(child: CircularLoading());
+          return Center(child: CenteredLoading());
         } else {
           return Container(
               width: double.infinity,

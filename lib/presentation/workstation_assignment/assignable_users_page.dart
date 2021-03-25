@@ -9,7 +9,7 @@ import 'package:where_am_i/domain/blocs/workstation/workstation_bloc.dart';
 import 'package:where_am_i/domain/blocs/workstation_assignment/workstation_assignement_bloc.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
-import 'package:where_am_i/presentation/core/circular_loading.dart';
+import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/custom_expansion_tile.dart';
 
 import '../../injection_container.dart';
@@ -76,7 +76,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                     ..._buildAssignableResourcesList(assignableResources)
                   ]);
             } else {
-              return CircularLoading();
+              return CenteredLoading();
             }
           },
           listener: (context, state) {
@@ -228,7 +228,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                 return Column(children: [
                   ..._buildCheckBoxList(presencesToEndOfMonth),
                   isUpdating
-                      ? CircularLoading(width: 50, height: 50)
+                      ? CenteredLoading(width: 50, height: 50)
                       : FlatButton(
                           onPressed: () {
                             List<Workstation> workstationsToAssign =
@@ -255,7 +255,7 @@ class _AssignableUsersPageState extends State<AssignableUsersPage> {
                         )
                 ]);
               } else {
-                return CircularLoading();
+                return CenteredLoading();
               }
             })
       ],
