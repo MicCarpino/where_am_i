@@ -88,7 +88,7 @@ class WorkstationWatcherBloc
     actorState.maybeMap(
       updateSuccess: (value) {
         final updatedIndex = cachedUsersPresences.indexWhere((element) =>
-            element.workstation.idWorkstation ==
+            element.workstation?.idWorkstation ==
             value.workstation.idWorkstation);
         if (updatedIndex != -1) {
           cachedUsersPresences[updatedIndex] =
