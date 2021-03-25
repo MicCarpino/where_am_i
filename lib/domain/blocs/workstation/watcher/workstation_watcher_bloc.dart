@@ -107,7 +107,7 @@ class WorkstationWatcherBloc
                     .copyWith(workstation: workstation);
           }
         });
-        WorkstationWatcherState.loadSuccess(cachedUsersPresences);
+        add(WorkstationWatcherEvent.onPresencesUpdated(cachedUsersPresences));
       },
       orElse: () {},
     );

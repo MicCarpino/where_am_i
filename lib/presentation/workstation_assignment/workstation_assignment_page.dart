@@ -16,6 +16,7 @@ import 'package:where_am_i/injection_container.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/custom_expansion_tile.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
+import 'package:where_am_i/presentation/workstation_assignment/presences_checklist.dart';
 
 class WorkstationAssignmentPage extends StatelessWidget {
   WorkstationAssignmentPage({@required this.selectedWorkstationCode});
@@ -206,21 +207,9 @@ class WorkstationAssignmentPage extends StatelessWidget {
                 WorkstationMultipleAssignmentState>(
               builder: (aContext, state) => state.map(
                   loadingState: (value) => CenteredLoading(),
-                  loadedState: (value) => ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: value.presences.length,
-                        itemBuilder: (context, index) {
-                          var item = value.presences[index];
-                          return CheckboxListTile(
-                            title: Text(
-                              DateFormat.yMMMMd('it_IT')
-                                  .format(item.workstationDate),
-                            ),
-                            subtitle: _buildSlotTimeLabel(context, item),
-                            value: index == 0,
-                            onChanged: (value) => null,
-                          );
-                        },
+                  loadedState: (value) => PresencesChecklist(
+                        codeWorkstation: selectedWorkstationCode,
+                        presences: value.presences,
                       ),
                   errorState: (value) => RetryWidget(
                         onTryAgainPressed: () {

@@ -11,11 +11,8 @@ import 'package:where_am_i/domain/repositories/reservation_repository.dart';
 import 'package:where_am_i/domain/repositories/authentication_repository.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
-import 'package:where_am_i/domain/usecases/get_all_user_presences_to_end_of_month.dart';
-import 'package:where_am_i/domain/usecases/get_workstations_by_date.dart';
 import 'package:where_am_i/domain/usecases/perform_log_in.dart';
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
-import 'package:where_am_i/domain/usecases/get_all_users_presences_by_date.dart';
 import 'package:where_am_i/domain/usecases/reservations/delete_reservation.dart';
 import 'package:where_am_i/domain/usecases/reservations/get_reservations_by_date.dart';
 import 'package:where_am_i/domain/usecases/reservations/insert_reservation.dart';
@@ -25,20 +22,10 @@ import 'package:where_am_i/domain/usecases/users/get_all_users.dart';
 import 'package:where_am_i/domain/usecases/users/get_logged_user.dart';
 import 'package:where_am_i/domain/usecases/users/get_user_by_id.dart';
 import 'package:where_am_i/domain/usecases/users/update_user.dart';
-import 'package:where_am_i/domain/usecases/workstations/get_user_presences.dart';
-import 'package:where_am_i/domain/usecases/workstations/insert_all_workstations.dart';
-import 'package:where_am_i/domain/usecases/workstations/insert_workstation.dart';
-import 'package:where_am_i/domain/usecases/workstations/remove_workstation.dart';
-import 'package:where_am_i/domain/usecases/workstations/update_all_workstations.dart';
-import 'package:where_am_i/domain/usecases/workstations/update_workstation.dart';
-import 'package:where_am_i/domain/usecases/workstations/update_workstation_status.dart';
-
 import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
 import 'package:where_am_i/domain/blocs/login/login_bloc.dart';
 import 'package:where_am_i/domain/blocs/reservation/reservation_bloc.dart';
 import 'package:where_am_i/domain/blocs/users_management/users_management_bloc.dart';
-import 'package:where_am_i/domain/blocs/workstation/workstation_bloc.dart';
-import 'package:where_am_i/domain/blocs/workstation_assignment/workstation_assignement_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -53,15 +40,6 @@ Future<void> init() async {
         performLogIn: getIt(),
         performLogOut: getIt(),
         getLoggedUser: getIt(),
-      ));
-  getIt.registerFactory(() => WorkstationBloc(
-        getWorkstationsByDate: getIt(),
-        updateWorkstation: getIt(),
-        updateAllWorkstations: getIt(),
-        userService: getIt(),
-      ));
-  getIt.registerFactory(() => WorkstationAssignementBloc(
-        getAllUserPresencesToEndOfMonth: getIt(),
       ));
   getIt.registerFactory(() => ReservationsBloc(
         getReservations: getIt(),
@@ -81,18 +59,6 @@ Future<void> init() async {
   getIt.registerLazySingleton(() => GetUserById(getIt()));
   getIt.registerLazySingleton(() => GetAllUserByFilter(getIt()));
   getIt.registerLazySingleton(() => UpdateUser(getIt()));
-  //Workstation
-  getIt.registerLazySingleton(() => GetWorkstationsByDate(getIt(), getIt()));
-  getIt
-      .registerLazySingleton(() => GetAllUserPresencesByDate(getIt(), getIt()));
-  getIt.registerLazySingleton(() => GetAllUserPresencesToEndOfMonth(getIt()));
-  getIt.registerLazySingleton(() => UpdateWorkstation(getIt()));
-  getIt.registerLazySingleton(() => UpdateAllWorkstations(getIt()));
-  getIt.registerLazySingleton(() => UpdateWorkstationStatus(getIt()));
-  getIt.registerLazySingleton(() => GetUserPresences(getIt(), getIt()));
-  getIt.registerLazySingleton(() => InsertWorkstation(getIt()));
-  getIt.registerLazySingleton(() => InsertAllWorkstations(getIt()));
-  getIt.registerLazySingleton(() => RemoveWorkstation(getIt()));
   //Reservation
   getIt.registerLazySingleton(() => GetReservationsByDate(getIt()));
   getIt.registerLazySingleton(() => InsertReservation(getIt()));

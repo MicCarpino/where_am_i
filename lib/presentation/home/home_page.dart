@@ -6,7 +6,6 @@ import 'package:where_am_i/domain/blocs/date_picker/date_picker_cubit.dart';
 import 'package:where_am_i/domain/blocs/reservation/reservation_bloc.dart';
 import 'package:where_am_i/domain/blocs/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
-import 'package:where_am_i/domain/blocs/workstation/workstation_bloc.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
@@ -42,7 +41,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => getIt<WorkstationBloc>()),
         BlocProvider<ReservationsBloc>(
             create: (_) => getIt<ReservationsBloc>()
               ..add(FetchReservationsList(dateToFetch: _visualizedDate))),
