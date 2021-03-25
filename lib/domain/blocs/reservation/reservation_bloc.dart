@@ -33,7 +33,9 @@ class ReservationsBloc extends Bloc<ReservationsEvent, ReservationState> {
         _insertReservation = insertReservation,
         _updateReservation = updateReservationStatus,
         _deleteReservation = deleteReservation,
-        super(ReservationInitial());
+        super(ReservationInitial()) {
+    add(FetchReservationsList(dateToFetch: DateTime.now().zeroed()));
+  }
 
   @override
   Stream<ReservationState> mapEventToState(

@@ -7,16 +7,15 @@ enum Pages {
 
 enum TimeSlot { fullDay, morning, evening }
 
-
 enum TimePickerType { startPicker, endPicker }
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
-
 enum Rooms { room_26B, room_26A_Floor1, room_26A_Floor2, room_24, room_staff }
 
 extension RoomsTitles on Rooms {
-  String roomIdTitle() {
+
+  String reservationTitle() {
     switch (this) {
       case Rooms.room_26B:
         return "Civico 26/B";
@@ -29,7 +28,7 @@ extension RoomsTitles on Rooms {
     }
   }
 
-  String get roomTitle {
+  String get title {
     switch (this) {
       case Rooms.room_26B:
         return 'Civico 26/B';
@@ -41,10 +40,12 @@ extension RoomsTitles on Rooms {
         return 'Civico 24';
       case Rooms.room_staff:
         return 'Amministrazione/Dirigenza';
+      default:
+        return null;
     }
   }
 
-  int get reservationRoomId {
+  int get idRoom {
     switch (this) {
       case Rooms.room_26B:
         return 26;
@@ -57,21 +58,21 @@ extension RoomsTitles on Rooms {
     }
   }
 
-  String get reservationRoomLabel{
+  String get reservationRoomLabel {
     Map<int, String> reservationsRoomTitles = {
       26: "Civico 26/B",
       262: "Civico 26/A",
       24: "Civico 24",
     };
-    return reservationsRoomTitles[this.reservationRoomId];
+    return reservationsRoomTitles[this.idRoom];
   }
 
-  String get reservationRoomSuffix{
+  String get reservationRoomSuffix {
     Map<int, String> reservationsRoomTitles = {
       26: "26/B",
       262: "26/A",
       24: "24",
     };
-    return reservationsRoomTitles[this.reservationRoomId];
+    return reservationsRoomTitles[this.idRoom];
   }
 }

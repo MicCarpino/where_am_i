@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meta/meta.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/blocs/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
@@ -24,6 +25,8 @@ class WorkstationWatcherBloc
   }) : super(WorkstationWatcherState.initial()) {
     _workstationActorSubscription =
         workstationActorBloc.listen((state) => _handleActorStateChange(state));
+
+    add(WorkstationWatcherEvent.fetchPresences(DateTime.now().zeroed()));
   }
 
   final WorkstationRepository workstationRepository;

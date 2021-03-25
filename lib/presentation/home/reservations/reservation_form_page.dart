@@ -1,4 +1,24 @@
 import 'package:flutter/material.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:where_am_i/core/utils/constants.dart';
+
+class ReservationFormPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        backgroundColor: dncBlue,
+        iconTheme: IconThemeData(color: Colors.white),
+      ),
+      body: Text('reservations'),
+    );
+  }
+}
+
+/*
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
@@ -436,7 +456,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
   }
 
   Widget _buildIdRoomSection() {
-    List<int> c = Rooms.values.map((e) => e.reservationRoomId).toList();
+    List<int> c = Rooms.values.map((e) => e.idRoom).toList();
     c.removeWhere((element) => element == null);
     return widget.reservation != null && loggedUser.idRole >= ROLE_STAFF
         ? DropdownButton(
@@ -446,7 +466,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                       value: roomId,
                       child: Text(Rooms.values
                           .singleWhere(
-                              (element) => element.reservationRoomId == roomId)
+                              (element) => element.idRoom == roomId)
                           .reservationRoomLabel),
                     ))
                 .toList(),
@@ -463,3 +483,4 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     return userFetchResult.fold((l) => null, (user) => user);
   }
 }
+*/
