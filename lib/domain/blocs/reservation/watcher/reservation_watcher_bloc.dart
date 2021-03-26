@@ -20,12 +20,39 @@ class ReservationWatcherBloc
     @required this.reservationActorBloc,
   }) : super(ReservationWatcherState.initial()) {
     add(ReservationWatcherEvent.fetchReservations(DateTime.now().zeroed()));
-    _reservationActorSubscription =
-        reservationActorBloc.listen((actorState) {});
+    _reservationActorSubscription = reservationActorBloc.listen((actorState) {
+      actorState.maybeMap(
+          insertSuccess: (value) {
+            cachedReservations.add(value.reservation);
+            add(ReservationWatcherEvent.onReservationsUpdate(
+                cachedReservations));
+          },
+          updateSuccess: (value) {
+            final index = cachedReservations.indexWhere((element) =>
+                element.idReservation == value.reservation.idReservation);
+            if (index != -1) {
+              cachedReservations[index] = value.reservation;
+            }
+            add(ReservationWatcherEvent.onReservationsUpdate(
+                cachedReservations));
+          },
+          deleteSuccess: (value) {
+            final index = cachedReservations.indexWhere(
+                (element) => element.idReservation == value.idReservation);
+            if (index != -1) {
+              cachedReservations.removeAt(index);
+            }
+            add(ReservationWatcherEvent.onReservationsUpdate(
+                cachedReservations));
+          },
+          orElse: () {});
+    });
   }
 
   final ReservationRepository reservationRepository;
   final ReservationActorBloc reservationActorBloc;
+
+  List<Reservation> cachedReservations = [];
   StreamSubscription _reservationActorSubscription;
 
   @override
@@ -38,11 +65,22 @@ class ReservationWatcherBloc
         final fetchResult =
             await reservationRepository.getAllReservationsByDate(value.date);
         yield fetchResult.fold(
-          (failure) => ReservationWatcherState.loadFailure(failure.getErrorMessageFromFailure()),
-          (reservations) => ReservationWatcherState.loadSuccess(reservations),
+          (failure) => ReservationWatcherState.loadFailure(
+              failure.getErrorMessageFromFailure()),
+          (reservations) {
+            cachedReservations = reservations;
+            return ReservationWatcherState.loadSuccess(reservations);
+          },
         );
       },
-      onReservationsUpdate: (value) async* {},
+      onReservationsUpdate: (value) async* {
+        yield ReservationWatcherState.loadInProgress();
+        yield state.maybeMap(
+          orElse: () => ReservationWatcherState.loadSuccess(value.reservations),
+          loadSuccess: (value) =>
+              value.copyWith(reservations: value.reservations),
+        );
+      },
     );
   }
 

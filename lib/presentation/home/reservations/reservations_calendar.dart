@@ -58,17 +58,16 @@ class ReservationsCalendar extends StatelessWidget {
         fontWeight: FontWeight.bold,
       ),
       title: reservation.description,
-      description:'',
+      description: '',
       start: DateTime.now().zeroed().add(
             Duration(
                 hours: reservation.startHour,
                 minutes: reservation.startMinutes),
           ),
       end: DateTime.now().zeroed().add(
-        Duration(
-            hours: reservation.endHour,
-            minutes: reservation.endMinutes),
-      ),
+            Duration(
+                hours: reservation.endHour, minutes: reservation.endMinutes),
+          ),
       onTap: () => showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -89,7 +88,7 @@ class ReservationsCalendar extends StatelessWidget {
         if (isEditableByDate && (isStaffOrAdmin || isEditableByUser)) {
           return showDialog(
             context: context,
-            builder: (BuildContext context) => _showEditReservationOptions(
+            builder: (_) => _showEditReservationOptions(
                 context, reservation, isStaffOrAdmin),
           );
         }
@@ -170,9 +169,9 @@ class ReservationsCalendar extends StatelessWidget {
                   ),
                 ]),
                 onTap: () {
-                  /* _reservationBloc.add(DeleteReservationEvent(
-                      idReservation: reservation.idReservation));
-                  Navigator.of(context).pop();*/
+                  context.read<ReservationActorBloc>().add(
+                      ReservationActorEvent.delete(reservation.idReservation));
+                  Navigator.of(context).pop();
                 }),
           ],
         ),

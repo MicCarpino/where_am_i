@@ -7,12 +7,11 @@ abstract class ReservationRepository {
   Future<Either<Failure, List<Reservation>>> getAllReservationsByDate(
       DateTime date);
 
-  Future<Either<Failure, List<Reservation>>> insertReservation(
+  Future<Either<Failure, Reservation>> insertReservation(
       Reservation reservation);
 
-  Future<Either<Failure, List<Reservation>>> deleteReservation(
-      int idReservation);
-
-  Future<Either<Failure, List<Reservation>>> updateReservation(
+  Future<Either<Failure, Reservation>> updateReservation(
       Reservation reservation);
+
+  Future<Either<Failure, int>> deleteReservation(int idReservation);
 }

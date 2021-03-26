@@ -13,10 +13,6 @@ import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import 'package:where_am_i/domain/usecases/perform_log_in.dart';
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
-import 'package:where_am_i/domain/usecases/reservations/delete_reservation.dart';
-import 'package:where_am_i/domain/usecases/reservations/get_reservations_by_date.dart';
-import 'package:where_am_i/domain/usecases/reservations/insert_reservation.dart';
-import 'package:where_am_i/domain/usecases/reservations/update_reservation_status.dart';
 import 'package:where_am_i/domain/usecases/users/get_all_user_by_filter.dart';
 import 'package:where_am_i/domain/usecases/users/get_all_users.dart';
 import 'package:where_am_i/domain/usecases/users/get_logged_user.dart';
@@ -24,7 +20,6 @@ import 'package:where_am_i/domain/usecases/users/get_user_by_id.dart';
 import 'package:where_am_i/domain/usecases/users/update_user.dart';
 import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
 import 'package:where_am_i/domain/blocs/login/login_bloc.dart';
-import 'package:where_am_i/domain/blocs/reservation/reservation_bloc.dart';
 import 'package:where_am_i/domain/blocs/users_management/users_management_bloc.dart';
 
 final getIt = GetIt.instance;
@@ -41,12 +36,6 @@ Future<void> init() async {
         performLogOut: getIt(),
         getLoggedUser: getIt(),
       ));
-  getIt.registerFactory(() => ReservationsBloc(
-        getReservations: getIt(),
-        insertReservation: getIt(),
-        updateReservationStatus: getIt(),
-        deleteReservation: getIt(),
-      ));
   getIt.registerFactory(
       () => UsersManagementBloc(getUsers: getIt(), updateUser: getIt()));
 
@@ -59,12 +48,6 @@ Future<void> init() async {
   getIt.registerLazySingleton(() => GetUserById(getIt()));
   getIt.registerLazySingleton(() => GetAllUserByFilter(getIt()));
   getIt.registerLazySingleton(() => UpdateUser(getIt()));
-  //Reservation
-  getIt.registerLazySingleton(() => GetReservationsByDate(getIt()));
-  getIt.registerLazySingleton(() => InsertReservation(getIt()));
-  getIt.registerLazySingleton(() => UpdateReservation(getIt()));
-  getIt.registerLazySingleton(() => DeleteReservation(getIt()));
-
   // Repository
   getIt.registerLazySingleton<AuthenticationRepository>(
       () => (AuthRepositoryImpl(

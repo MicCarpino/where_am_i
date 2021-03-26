@@ -69,11 +69,11 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   String formatDateToString(DateTime date) =>
       DateFormat('yyyy-MM-dd').format(date);
 
-   _handleFailureResult(http.Response response) {
+  _handleFailureResult(http.Response response) {
     if (response.statusCode == 401) {
       print('CALLING LOGOUT ON 401');
       onRevoke.call();
-     throw UnauthorizedException();
+      throw UnauthorizedException();
     } else {
       throw ServerException(response.body);
     }
@@ -163,22 +163,23 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return WorkstationModel.fromJson(json.decode(response.body));
     } else {
-      return  _handleFailureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
   @override
-  Future<List<WorkstationModel>> insertAllWorkstations(String token, List<WorkstationModel> list) async {
+  Future<List<WorkstationModel>> insertAllWorkstations(
+      String token, List<WorkstationModel> list) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/insertAll');
     var body = json.encode(
         list.map((workstationModel) => workstationModel.toJson()).toList());
     final response = await http
         .post(uri,
-        headers: {
-          HttpHeaders.authorizationHeader: token,
-          HttpHeaders.contentTypeHeader: 'application/json'
-        },
-        body: body)
+            headers: {
+              HttpHeaders.authorizationHeader: token,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: body)
         .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       List<dynamic> workstationsList = json.decode(response.body);
@@ -313,12 +314,16 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   @override
   Future<ReservationModel> insertReservation(
       String token, ReservationModel reservationModel) async {
-    var uri = Uri.https(
-        BASE_URL, '/WhereAmI/reservation', reservationModel.toQueryParams());
-    final response = await http.post(uri, headers: {
-      HttpHeaders.authorizationHeader: token,
-      HttpHeaders.contentTypeHeader: 'application/json'
-    }).timeout(HTTP_TIMEOUT);
+    var body = json.encode(reservationModel.toJson());
+    var uri = Uri.https(BASE_URL, '/WhereAmI/reservation');
+    final response = await http
+        .post(uri,
+            headers: {
+              HttpHeaders.authorizationHeader: token,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: body)
+        .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return ReservationModel.fromJson(json.decode(response.body));
     } else {
@@ -328,20 +333,20 @@ class RemoteDataSourceImpl implements RemoteDataSource {
 
   @override
   Future<ReservationModel> updateReservation(
-      String token, ReservationModel reservation) async {
+      String token, ReservationModel reservationModel) async {
+    var body = json.encode(reservationModel.toJson());
     var uri = Uri.https(
       BASE_URL,
-      '/WhereAmI/reservation/${reservation.idReservation}',
-      reservation.toQueryParams(),
+      '/WhereAmI/reservation/${reservationModel.idReservation}',
     );
     final response = await http.put(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'
-    }).timeout(HTTP_TIMEOUT);
+    },body: body).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return ReservationModel.fromJson(json.decode(response.body));
     } else {
-      return  _handleFailureResult(response);
+      return _handleFailureResult(response);
     }
   }
 
@@ -358,5 +363,4 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       return _handleFailureResult(response);
     }
   }
-
 }

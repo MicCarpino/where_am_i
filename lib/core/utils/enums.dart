@@ -14,7 +14,6 @@ enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 enum Rooms { room_26B, room_26A_Floor1, room_26A_Floor2, room_24, room_staff }
 
 extension RoomsTitles on Rooms {
-
   String reservationTitle() {
     switch (this) {
       case Rooms.room_26B:
@@ -58,21 +57,16 @@ extension RoomsTitles on Rooms {
     }
   }
 
-  String get reservationRoomLabel {
-    Map<int, String> reservationsRoomTitles = {
-      26: "Civico 26/B",
-      262: "Civico 26/A",
-      24: "Civico 24",
-    };
-    return reservationsRoomTitles[this.idRoom];
-  }
-
-  String get reservationRoomSuffix {
-    Map<int, String> reservationsRoomTitles = {
-      26: "26/B",
-      262: "26/A",
-      24: "24",
-    };
-    return reservationsRoomTitles[this.idRoom];
+  String get reservationRoomTitle {
+    switch (this) {
+      case Rooms.room_26B:
+        return "Saletta riunioni 26/B";
+      case Rooms.room_26A_Floor2:
+        return "Saletta riunioni 26/A";
+      case Rooms.room_24:
+        return "Saletta riunioni 24";
+      default:
+        return null;
+    }
   }
 }

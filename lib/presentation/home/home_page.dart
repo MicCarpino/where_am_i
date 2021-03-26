@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/enums.dart';
+import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/blocs/date_picker/date_picker_cubit.dart';
-import 'package:where_am_i/domain/blocs/reservation/reservation_bloc.dart';
 import 'package:where_am_i/domain/blocs/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/domain/blocs/reservation/watcher/reservation_watcher_bloc.dart';
@@ -138,29 +138,32 @@ class HomePage extends StatelessWidget {
               loadSuccess: (value) => Column(
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(room.title),
+                      Text(room.reservationRoomTitle,style: roomLabelStyle),
                       IconButton(
-                          icon: Icon(Icons.add),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider.value(
-                                      value:
-                                          context.read<ReservationActorBloc>(),
-                                    ),
-                                    BlocProvider.value(
-                                      value: context.read<DatePickerCubit>(),
-                                    ),
-                                  ],
-                                  child: ReservationFormPage(),
+                        icon: Icon(
+                          Icons.add_circle_sharp,
+                          color: Colors.black54,
+                          size: 32,
+                        ),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MultiBlocProvider(
+                              providers: [
+                                BlocProvider.value(
+                                  value: context.read<ReservationActorBloc>(),
                                 ),
-                              ),
-                            );
-                          })
+                                BlocProvider.value(
+                                  value: context.read<DatePickerCubit>(),
+                                ),
+                              ],
+                              child: ReservationFormPage(),
+                            ),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                   ReservationsCalendar(

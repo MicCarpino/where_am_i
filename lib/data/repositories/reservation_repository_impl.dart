@@ -12,8 +12,6 @@ class ReservationRepositoryImpl implements ReservationRepository {
   final RemoteDataSource remoteDataSource;
   final LocalDataSource localDataSource;
 
-  static var cachedReservationList = List<Reservation>();
-
   ReservationRepositoryImpl({
     @required this.remoteDataSource,
     @required this.localDataSource,
@@ -26,7 +24,6 @@ class ReservationRepositoryImpl implements ReservationRepository {
       var loggedUser = await localDataSource.getCachedUser();
       final reservationsList = await remoteDataSource.getAllReservationsByDate(
           loggedUser.authenticationToken, date);
-      cachedReservationList = reservationsList;
       return Right(reservationsList);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
@@ -36,14 +33,13 @@ class ReservationRepositoryImpl implements ReservationRepository {
   }
 
   @override
-  Future<Either<Failure, List<Reservation>>> insertReservation(
+  Future<Either<Failure, Reservation>> insertReservation(
       Reservation reservation) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final insertResult = await remoteDataSource.insertReservation(
           loggedUser.authenticationToken, reservation.toReservationModel());
-      cachedReservationList.add(insertResult);
-      return Right(cachedReservationList);
+      return Right(insertResult);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
     } on Exception catch (e) {
@@ -52,16 +48,13 @@ class ReservationRepositoryImpl implements ReservationRepository {
   }
 
   @override
-  Future<Either<Failure, List<Reservation>>> updateReservation(
+  Future<Either<Failure, Reservation>> updateReservation(
       Reservation reservation) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final updateResult = await remoteDataSource.updateReservation(
           loggedUser.authenticationToken, reservation.toReservationModel());
-      var indexOfUpdatedReservation = cachedReservationList.indexWhere(
-              (element) => element.idReservation == updateResult.idReservation);
-      cachedReservationList[indexOfUpdatedReservation] = updateResult;
-      return Right(cachedReservationList);
+      return Right(updateResult);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
     } on Exception catch (e) {
@@ -70,15 +63,12 @@ class ReservationRepositoryImpl implements ReservationRepository {
   }
 
   @override
-  Future<Either<Failure, List<Reservation>>> deleteReservation(
-      int idReservation) async {
+  Future<Either<Failure, int>> deleteReservation(int idReservation) async {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       await remoteDataSource.deleteReservation(
           loggedUser.authenticationToken, idReservation);
-      cachedReservationList
-          .removeWhere((element) => element.idReservation == idReservation);
-      return Right(cachedReservationList);
+      return Right(idReservation);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
     } on Exception catch (e) {
