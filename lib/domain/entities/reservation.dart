@@ -32,8 +32,7 @@ class Reservation extends Equatable {
   });
 
   @override
-  List<Object> get props =>
-      [
+  List<Object> get props => [
         idReservation,
         reservationDate,
         idRoom,
@@ -48,17 +47,47 @@ class Reservation extends Equatable {
         status
       ];
 
-  ReservationModel toReservationModel() =>
-      ReservationModel(idReservation: (idReservation),
-          reservationDate: reservationDate,
-          idRoom: idRoom,
-          idHandler: idHandler,
-          freeHandler: freeHandler,
-          startMinutes: startMinutes,
-          endMinutes: endMinutes,
-          startHour: startHour,
-          endHour: endHour,
-          description: description,
-          participants: participants,
-          status: status);
+  ReservationModel toReservationModel() => ReservationModel(
+      idReservation: (idReservation),
+      reservationDate: reservationDate,
+      idRoom: idRoom,
+      idHandler: idHandler,
+      freeHandler: freeHandler,
+      startMinutes: startMinutes,
+      endMinutes: endMinutes,
+      startHour: startHour,
+      endHour: endHour,
+      description: description,
+      participants: participants,
+      status: status);
+
+  Reservation copyWith({
+    int idReservation,
+    DateTime reservationDate,
+    int idRoom,
+    int idHandler,
+    String freeHandler,
+    int startMinutes,
+    int endMinutes,
+    int startHour,
+    int endHour,
+    String description,
+    List<String> participants,
+    int status,
+  }) {
+    return Reservation(
+      idReservation: idReservation ?? this.idReservation,
+      reservationDate: reservationDate ?? this.reservationDate,
+      idRoom: idRoom ?? this.idRoom,
+      idHandler: idHandler ?? this.idHandler,
+      freeHandler: freeHandler ?? this.freeHandler,
+      startMinutes: startMinutes ?? this.startMinutes,
+      endMinutes: endMinutes ?? this.endMinutes,
+      startHour: startHour ?? this.startHour,
+      endHour: endHour ?? this.endHour,
+      description: description ?? this.description,
+      participants: participants ?? this.participants,
+      status: status ?? this.status,
+    );
+  }
 }

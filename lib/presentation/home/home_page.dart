@@ -26,6 +26,7 @@ class HomePage extends StatelessWidget {
   HomePage(this.setTitle);
 
   final Function(String) setTitle;
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -80,8 +81,8 @@ class HomePage extends StatelessWidget {
                     .read<WorkstationWatcherBloc>()
                     .add(WorkstationWatcherEvent.fetchPresences(newDate));
                 newContext
-                    .read<ReservationsBloc>()
-                    .add(FetchReservationsList(dateToFetch: newDate));
+                    .read<ReservationWatcherBloc>()
+                    .add(ReservationWatcherEvent.fetchReservations(newDate));
               }),
               Expanded(
                 child: PageView.builder(
@@ -94,7 +95,8 @@ class HomePage extends StatelessWidget {
                         children: [
                           _buildWorkstationsSection(Rooms.values[index]),
                           if (Rooms.values[index].idRoom != null)
-                            _buildReservationsSection(newContext,Rooms.values[index])
+                            _buildReservationsSection(
+                                newContext, Rooms.values[index])
                         ],
                       ),
                     );
@@ -162,17 +164,20 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                   ReservationsCalendar(
-                    reservationsList: value.reservations,
-                    allowChangesForCurrentDate: false,
+                    reservationsList: value.reservations
+                        .where((element) => element.idRoom == room.idRoom)
+                        .toList(),
                   ),
                 ],
               ),
-              loadFailure: (value) => Center(
-                  child: RetryWidget(
-                onTryAgainPressed: () => context
-                    .read<ReservationsBloc>()
-                    .add(FetchReservationsList(dateToFetch: DateTime.now())),
-              )),
+              loadFailure: (value) =>
+                  Center(child: RetryWidget(onTryAgainPressed: () {
+                final date =
+                    context.read<DatePickerCubit>().state.visualizedDate;
+                context
+                    .read<ReservationWatcherBloc>()
+                    .add(ReservationWatcherEvent.fetchReservations(date));
+              })),
             ));
   }
 }
