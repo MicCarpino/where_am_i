@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/enums.dart';
+import 'package:where_am_i/presentation/home/reservations/form/date_picker_form_field.dart';
+import 'package:where_am_i/presentation/home/reservations/form/subject_form_field.dart';
+import 'package:where_am_i/domain/blocs/reservation/form/reservation_form_bloc.dart';
 
 class ReservationFormPage extends StatelessWidget {
   @override
@@ -11,51 +15,27 @@ class ReservationFormPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: dncBlue,
         iconTheme: IconThemeData(color: Colors.white),
+        title: BlocBuilder<ReservationFormBloc, ReservationFormState>(
+          builder: (context, state) =>
+              Text(state.isEditing ? 'Modifica' : 'Inserisci'),
+        ),
       ),
-      body: Text('reservations'),
+      body: SingleChildScrollView(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          SubjectFormField(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: ReservationTimePicker.values
+                .map((e) => DatePickerFormField(e))
+                .toList(),
+          )
+        ]),
+      ),
     );
   }
 }
 
 /*
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:where_am_i/core/utils/constants.dart';
-import 'package:where_am_i/core/utils/enums.dart';
-import 'package:where_am_i/core/utils/extensions.dart';
-import 'package:where_am_i/core/utils/styles.dart';
-import 'package:where_am_i/domain/blocs/reservation/reservation_bloc.dart';
-import 'package:where_am_i/domain/entities/reservation.dart';
-import 'package:where_am_i/domain/entities/user.dart';
-import 'package:where_am_i/domain/usecases/users/get_all_user_by_filter.dart';
-import 'package:where_am_i/domain/usecases/users/get_user_by_id.dart';
-import 'package:where_am_i/data/user_service.dart';
-import 'package:where_am_i/presentation/core/centered_loading.dart';
-
-enum TimePickerType { startPicker, endPicker }
-
-final serviceLocator = GetIt.instance;
-
-class ReservationFormPage extends StatefulWidget {
-  final DateTime reservationDate;
-  final int idRoom;
-  final Reservation reservation;
-
-  const ReservationFormPage({
-    this.reservationDate,
-    this.idRoom,
-    this.reservation,
-  }) : assert(
-            reservation != null || (reservationDate != null && idRoom != null));
-
-  @override
-  _ReservationFormPageState createState() => _ReservationFormPageState();
-}
-
-class _ReservationFormPageState extends State<ReservationFormPage> {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _subjectTextController = TextEditingController();

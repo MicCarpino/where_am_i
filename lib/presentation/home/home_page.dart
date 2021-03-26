@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/styles.dart';
+import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
 import 'package:where_am_i/domain/blocs/date_picker/date_picker_cubit.dart';
 import 'package:where_am_i/domain/blocs/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/domain/blocs/reservation/watcher/reservation_watcher_bloc.dart';
 import 'package:where_am_i/domain/blocs/reservation/actor/reservation_actor_bloc.dart';
+import 'package:where_am_i/domain/blocs/reservation/form/reservation_form_bloc.dart';
 import 'package:where_am_i/domain/repositories/reservation_repository.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/date_picker.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
-import 'package:where_am_i/presentation/home/reservations/reservation_form_page.dart';
+import 'package:where_am_i/presentation/home/reservations/form/reservation_form_page.dart';
 import 'package:where_am_i/presentation/home/reservations/reservations_calendar.dart';
 import 'package:where_am_i/presentation/home/workstations/room_24.dart';
 import 'package:where_am_i/presentation/home/workstations/room_26A_F1.dart';
@@ -140,7 +142,7 @@ class HomePage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(room.reservationRoomTitle,style: roomLabelStyle),
+                      Text(room.reservationRoomTitle, style: roomLabelStyle),
                       IconButton(
                         icon: Icon(
                           Icons.add_circle_sharp,
@@ -157,6 +159,22 @@ class HomePage extends StatelessWidget {
                                 ),
                                 BlocProvider.value(
                                   value: context.read<DatePickerCubit>(),
+                                ),
+                                BlocProvider<ReservationFormBloc>(
+                                  create: (context) => ReservationFormBloc()
+                                    ..add(ReservationFormEvent.initializeEmpty(
+                                      room.idRoom,
+                                      context
+                                          .read<DatePickerCubit>()
+                                          .state
+                                          .visualizedDate,
+                                      int.tryParse(context
+                                          .read<AuthenticationBloc>()
+                                          .state
+                                          .authenticatedUser
+                                          .user
+                                          .idResource),
+                                    )),
                                 ),
                               ],
                               child: ReservationFormPage(),

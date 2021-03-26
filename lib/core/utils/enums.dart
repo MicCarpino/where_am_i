@@ -7,8 +7,6 @@ enum Pages {
 
 enum TimeSlot { fullDay, morning, evening }
 
-enum TimePickerType { startPicker, endPicker }
-
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
 enum Rooms { room_26B, room_26A_Floor1, room_26A_Floor2, room_24, room_staff }
@@ -65,6 +63,23 @@ extension RoomsTitles on Rooms {
         return "Saletta riunioni 26/A";
       case Rooms.room_24:
         return "Saletta riunioni 24";
+      default:
+        return null;
+    }
+  }
+}
+
+
+enum ReservationTimePicker { startPicker, endPicker }
+
+
+extension Reservation on ReservationTimePicker {
+  String get title {
+    switch (this) {
+      case ReservationTimePicker.startPicker:
+        return "Ora inizio";
+      case ReservationTimePicker.endPicker:
+        return "Ora fine";
       default:
         return null;
     }
