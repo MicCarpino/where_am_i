@@ -25,4 +25,8 @@ class User extends Equatable {
   bool isStaffOrAdmin(){
     return this.idRole >= ROLE_STAFF;
   }
+
+  String getSurnameAndName(){
+    return '$surname $name';
+  }
 }

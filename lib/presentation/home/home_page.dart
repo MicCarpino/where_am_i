@@ -155,6 +155,9 @@ class HomePage extends StatelessWidget {
                             builder: (_) => MultiBlocProvider(
                               providers: [
                                 BlocProvider.value(
+                                  value: context.read<AuthenticationBloc>(),
+                                ),
+                                BlocProvider.value(
                                   value: context.read<ReservationActorBloc>(),
                                 ),
                                 BlocProvider.value(

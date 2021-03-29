@@ -24,7 +24,7 @@ class DatePickerFormField extends StatelessWidget {
             MaterialButton(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: dncBlue)),
+                  side: BorderSide(color: dncBlue,width: 1.25)),
               onPressed: () async {
                 FocusScope.of(context).unfocus();
                 await showTimePicker(

@@ -40,7 +40,9 @@ abstract class ReservationForm with _$ReservationForm {
         idReservation: reservation.idReservation,
         idRoom: reservation.idRoom,
         date: reservation.reservationDate,
-        idHandler: reservation.idHandler,participants: reservation.participants,status: reservation.status,
+        idHandler: reservation.idHandler,
+        participants: reservation.participants,
+        status: reservation.status,
         subjectForm: SubjectForm.pure(reservation.description),
         startTimeForm: TimeForm.pure(
           TimeOfDay(
