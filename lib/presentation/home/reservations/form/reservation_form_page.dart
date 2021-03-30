@@ -44,8 +44,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
         body: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
           child: BlocBuilder<ReservationFormBloc, ReservationFormState>(
-            buildWhen: (previous, current) =>
-                previous.isSaving != current.isSaving,
+            buildWhen: (p, c) => p.isEditing != c.isEditing,
             builder: (context, state) => Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,50 +87,55 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                 ParticipantsFormField(),
                 // Buttons section
                 SizedBox(height: 16),
-                state.isSaving
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                            CenteredLoading(
-                              height: 40,
-                            )
-                          ])
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          MaterialButton(
-                            color: dncBlue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Text(
-                              'ANNULLA',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          SizedBox(width: 16.0),
-                          MaterialButton(
-                            color: dncBlue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Text(
-                              'CONFERMA',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            onPressed: () => context
-                                .read<ReservationFormBloc>()
-                                .add(ReservationFormEvent.saveSubmitted()),
-                          ),
-                          SizedBox(width: 8.0),
-                        ],
-                      )
+                BlocBuilder<ReservationFormBloc, ReservationFormState>(
+                    buildWhen: (previous, current) =>
+                        previous.isSaving != current.isSaving,
+                    builder: (context, state) => state.isSaving
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [CenteredLoading(height: 40)])
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              MaterialButton(
+                                color: dncBlue,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Text(
+                                  'ANNULLA',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                              SizedBox(width: 16.0),
+                              MaterialButton(
+                                color: dncBlue,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Text(
+                                  'CONFERMA',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                onPressed: () => context
+                                    .read<ReservationFormBloc>()
+                                    .add(ReservationFormEvent.saveSubmitted()),
+                              ),
+                              SizedBox(width: 8.0),
+                            ],
+                          ))
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    context.read<ReservationFormBloc>().close();
+    super.dispose();
   }
 }

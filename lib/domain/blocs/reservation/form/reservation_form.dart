@@ -31,8 +31,8 @@ abstract class ReservationForm with _$ReservationForm {
         participants: [],
         status: RESERVATION_PENDING,
         subjectForm: SubjectForm.pure(''),
-        startTimeForm: TimeForm.pure(TimeOfDay(hour: 9, minute: 0)),
-        endTimeForm: TimeForm.pure(TimeOfDay(hour: 18, minute: 0)),
+        startTimeForm: TimeForm.dirty(TimeOfDay(hour: 9, minute: 0)),
+        endTimeForm: TimeForm.dirty(TimeOfDay(hour: 18, minute: 0)),
       );
 
   factory ReservationForm.fromDomain(Reservation reservation) =>
@@ -43,14 +43,14 @@ abstract class ReservationForm with _$ReservationForm {
         idHandler: reservation.idHandler,
         participants: reservation.participants,
         status: reservation.status,
-        subjectForm: SubjectForm.pure(reservation.description),
-        startTimeForm: TimeForm.pure(
+        subjectForm: SubjectForm.dirty(reservation.description),
+        startTimeForm: TimeForm.dirty(
           TimeOfDay(
             hour: reservation.startHour,
             minute: reservation.startMinutes,
           ),
         ),
-        endTimeForm: TimeForm.pure(
+        endTimeForm: TimeForm.dirty(
           TimeOfDay(
             hour: reservation.endHour,
             minute: reservation.endMinutes,

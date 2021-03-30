@@ -7,10 +7,4 @@ abstract class ReservationFormState with _$ReservationFormState {
     @required bool isEditing,
     @required bool isSaving,
   }) = _ReservationFormState;
-
-  factory ReservationFormState.initial() => ReservationFormState(
-        reservationForm: ReservationForm.initial(0, DateTime.now(), 0),
-        isEditing: false,
-        isSaving: false,
-      );
 }

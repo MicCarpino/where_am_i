@@ -3,22 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/domain/blocs/reservation/form/reservation_form_bloc.dart';
 
 class SubjectFormField extends StatelessWidget {
-  final controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ReservationFormBloc, ReservationFormState>(
-      listenWhen: (previous, current) =>
-          previous.reservationForm.subjectForm !=
-          current.reservationForm.subjectForm,
-      listener: (context, state) => controller.value = controller.value
-          .copyWith(text: state.reservationForm.subjectForm.value),
+    return BlocBuilder<ReservationFormBloc, ReservationFormState>(
       buildWhen: (previous, current) =>
-          previous.reservationForm.subjectForm !=
-          current.reservationForm.subjectForm,
+          previous.reservationForm.subjectForm.value !=
+          current.reservationForm.subjectForm.value,
       builder: (context, state) {
         return TextFormField(
-          controller: controller,
+          initialValue: state.reservationForm.subjectForm.value,
           decoration: InputDecoration(
               errorText: state.reservationForm.subjectForm.invalid
                   ? 'Campo obbligatorio'

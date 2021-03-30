@@ -2,14 +2,6 @@ part of 'reservation_form_bloc.dart';
 
 @freezed
 abstract class ReservationFormEvent with _$ReservationFormEvent {
-  const factory ReservationFormEvent.initializeEmpty(
-    int idRoom,
-    DateTime date,
-    int idHandler,
-  ) = _InitializeEmpty;
-
-  const factory ReservationFormEvent.initializeEdit(Reservation reservation) =
-      _InitializeEdit;
 
   const factory ReservationFormEvent.idRoomChanged(int idRoom) = _IdRoomChanged;
 

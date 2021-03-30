@@ -4,6 +4,7 @@ import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
 import 'package:where_am_i/domain/blocs/date_picker/date_picker_cubit.dart';
+import 'package:where_am_i/domain/blocs/reservation/form/reservation_form.dart';
 import 'package:where_am_i/domain/blocs/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/domain/blocs/reservation/watcher/reservation_watcher_bloc.dart';
@@ -165,21 +166,25 @@ class HomePage extends StatelessWidget {
                                 ),
                                 BlocProvider<ReservationFormBloc>(
                                   create: (context) => ReservationFormBloc(
-                                    reservationActorBloc:
-                                        context.read<ReservationActorBloc>(),
-                                  )..add(ReservationFormEvent.initializeEmpty(
-                                      room.idRoom,
-                                      context
-                                          .read<DatePickerCubit>()
-                                          .state
-                                          .visualizedDate,
-                                      int.tryParse(context
-                                          .read<AuthenticationBloc>()
-                                          .state
-                                          .authenticatedUser
-                                          .user
-                                          .idResource),
-                                    )),
+                                      reservationActorBloc:
+                                          context.read<ReservationActorBloc>(),
+                                      initialState: ReservationFormState(
+                                        reservationForm:
+                                            ReservationForm.initial(
+                                                room.idRoom,
+                                                context
+                                                    .read<DatePickerCubit>()
+                                                    .state
+                                                    .visualizedDate,
+                                                int.tryParse(context
+                                                    .read<AuthenticationBloc>()
+                                                    .state
+                                                    .authenticatedUser
+                                                    .user
+                                                    .idResource)),
+                                        isEditing: false,
+                                        isSaving: false,
+                                      )),
                                 ),
                               ],
                               child: ReservationFormPage(),

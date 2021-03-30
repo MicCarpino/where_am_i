@@ -18,8 +18,10 @@ part 'reservation_form_bloc.freezed.dart';
 
 class ReservationFormBloc
     extends Bloc<ReservationFormEvent, ReservationFormState> {
-  ReservationFormBloc({@required this.reservationActorBloc})
-      : super(ReservationFormState.initial()) {
+  ReservationFormBloc({
+    @required this.reservationActorBloc,
+    @required ReservationFormState initialState,
+  }) : super(initialState) {
     _reservationActorSubscription = reservationActorBloc.listen((actorState) {
       actorState.maybeMap(
           orElse: () {},
@@ -35,21 +37,6 @@ class ReservationFormBloc
     ReservationFormEvent event,
   ) async* {
     yield* event.map(
-      initializeEmpty: (value) async* {
-        yield state.copyWith(
-          reservationForm: ReservationForm.initial(
-            value.idRoom,
-            value.date,
-            value.idHandler,
-          ),
-        );
-      },
-      initializeEdit: (value) async* {
-        yield state.copyWith(
-          reservationForm: ReservationForm.fromDomain(value.reservation),
-          isEditing: true,
-        );
-      },
       idRoomChanged: (value) async* {
         yield state.copyWith(
           reservationForm: state.reservationForm.copyWith(idRoom: value.idRoom),

@@ -14,22 +14,6 @@ class _$ReservationFormEventTearOff {
   const _$ReservationFormEventTearOff();
 
 // ignore: unused_element
-  _InitializeEmpty initializeEmpty(int idRoom, DateTime date, int idHandler) {
-    return _InitializeEmpty(
-      idRoom,
-      date,
-      idHandler,
-    );
-  }
-
-// ignore: unused_element
-  _InitializeEdit initializeEdit(Reservation reservation) {
-    return _InitializeEdit(
-      reservation,
-    );
-  }
-
-// ignore: unused_element
   _IdRoomChanged idRoomChanged(int idRoom) {
     return _IdRoomChanged(
       idRoom,
@@ -83,8 +67,6 @@ const $ReservationFormEvent = _$ReservationFormEventTearOff();
 mixin _$ReservationFormEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    @required TResult initializeEdit(Reservation reservation),
     @required TResult idRoomChanged(int idRoom),
     @required TResult startTimeChanged(TimeOfDay startTime),
     @required TResult endTimeChanged(TimeOfDay endTime),
@@ -95,8 +77,6 @@ mixin _$ReservationFormEvent {
   });
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    TResult initializeEdit(Reservation reservation),
     TResult idRoomChanged(int idRoom),
     TResult startTimeChanged(TimeOfDay startTime),
     TResult endTimeChanged(TimeOfDay endTime),
@@ -108,8 +88,6 @@ mixin _$ReservationFormEvent {
   });
   @optionalTypeArgs
   TResult map<TResult extends Object>({
-    @required TResult initializeEmpty(_InitializeEmpty value),
-    @required TResult initializeEdit(_InitializeEdit value),
     @required TResult idRoomChanged(_IdRoomChanged value),
     @required TResult startTimeChanged(_StartTimeChanged value),
     @required TResult endTimeChanged(_EndTimeChanged value),
@@ -120,8 +98,6 @@ mixin _$ReservationFormEvent {
   });
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
-    TResult initializeEmpty(_InitializeEmpty value),
-    TResult initializeEdit(_InitializeEdit value),
     TResult idRoomChanged(_IdRoomChanged value),
     TResult startTimeChanged(_StartTimeChanged value),
     TResult endTimeChanged(_EndTimeChanged value),
@@ -148,347 +124,6 @@ class _$ReservationFormEventCopyWithImpl<$Res>
   final ReservationFormEvent _value;
   // ignore: unused_field
   final $Res Function(ReservationFormEvent) _then;
-}
-
-/// @nodoc
-abstract class _$InitializeEmptyCopyWith<$Res> {
-  factory _$InitializeEmptyCopyWith(
-          _InitializeEmpty value, $Res Function(_InitializeEmpty) then) =
-      __$InitializeEmptyCopyWithImpl<$Res>;
-  $Res call({int idRoom, DateTime date, int idHandler});
-}
-
-/// @nodoc
-class __$InitializeEmptyCopyWithImpl<$Res>
-    extends _$ReservationFormEventCopyWithImpl<$Res>
-    implements _$InitializeEmptyCopyWith<$Res> {
-  __$InitializeEmptyCopyWithImpl(
-      _InitializeEmpty _value, $Res Function(_InitializeEmpty) _then)
-      : super(_value, (v) => _then(v as _InitializeEmpty));
-
-  @override
-  _InitializeEmpty get _value => super._value as _InitializeEmpty;
-
-  @override
-  $Res call({
-    Object idRoom = freezed,
-    Object date = freezed,
-    Object idHandler = freezed,
-  }) {
-    return _then(_InitializeEmpty(
-      idRoom == freezed ? _value.idRoom : idRoom as int,
-      date == freezed ? _value.date : date as DateTime,
-      idHandler == freezed ? _value.idHandler : idHandler as int,
-    ));
-  }
-}
-
-/// @nodoc
-class _$_InitializeEmpty implements _InitializeEmpty {
-  const _$_InitializeEmpty(this.idRoom, this.date, this.idHandler)
-      : assert(idRoom != null),
-        assert(date != null),
-        assert(idHandler != null);
-
-  @override
-  final int idRoom;
-  @override
-  final DateTime date;
-  @override
-  final int idHandler;
-
-  @override
-  String toString() {
-    return 'ReservationFormEvent.initializeEmpty(idRoom: $idRoom, date: $date, idHandler: $idHandler)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other is _InitializeEmpty &&
-            (identical(other.idRoom, idRoom) ||
-                const DeepCollectionEquality().equals(other.idRoom, idRoom)) &&
-            (identical(other.date, date) ||
-                const DeepCollectionEquality().equals(other.date, date)) &&
-            (identical(other.idHandler, idHandler) ||
-                const DeepCollectionEquality()
-                    .equals(other.idHandler, idHandler)));
-  }
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^
-      const DeepCollectionEquality().hash(idRoom) ^
-      const DeepCollectionEquality().hash(date) ^
-      const DeepCollectionEquality().hash(idHandler);
-
-  @JsonKey(ignore: true)
-  @override
-  _$InitializeEmptyCopyWith<_InitializeEmpty> get copyWith =>
-      __$InitializeEmptyCopyWithImpl<_InitializeEmpty>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object>({
-    @required TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    @required TResult initializeEdit(Reservation reservation),
-    @required TResult idRoomChanged(int idRoom),
-    @required TResult startTimeChanged(TimeOfDay startTime),
-    @required TResult endTimeChanged(TimeOfDay endTime),
-    @required TResult descriptionChanged(String description),
-    @required TResult participantsChanged(List<String> participants),
-    @required TResult saveSubmitted(),
-    @required TResult saveFailed(),
-  }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
-    assert(idRoomChanged != null);
-    assert(startTimeChanged != null);
-    assert(endTimeChanged != null);
-    assert(descriptionChanged != null);
-    assert(participantsChanged != null);
-    assert(saveSubmitted != null);
-    assert(saveFailed != null);
-    return initializeEmpty(idRoom, date, idHandler);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object>({
-    TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    TResult initializeEdit(Reservation reservation),
-    TResult idRoomChanged(int idRoom),
-    TResult startTimeChanged(TimeOfDay startTime),
-    TResult endTimeChanged(TimeOfDay endTime),
-    TResult descriptionChanged(String description),
-    TResult participantsChanged(List<String> participants),
-    TResult saveSubmitted(),
-    TResult saveFailed(),
-    @required TResult orElse(),
-  }) {
-    assert(orElse != null);
-    if (initializeEmpty != null) {
-      return initializeEmpty(idRoom, date, idHandler);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object>({
-    @required TResult initializeEmpty(_InitializeEmpty value),
-    @required TResult initializeEdit(_InitializeEdit value),
-    @required TResult idRoomChanged(_IdRoomChanged value),
-    @required TResult startTimeChanged(_StartTimeChanged value),
-    @required TResult endTimeChanged(_EndTimeChanged value),
-    @required TResult descriptionChanged(_DescriptionChanged value),
-    @required TResult participantsChanged(_ParticipantsChanged value),
-    @required TResult saveSubmitted(_SaveSubmitted value),
-    @required TResult saveFailed(_SaveFailed value),
-  }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
-    assert(idRoomChanged != null);
-    assert(startTimeChanged != null);
-    assert(endTimeChanged != null);
-    assert(descriptionChanged != null);
-    assert(participantsChanged != null);
-    assert(saveSubmitted != null);
-    assert(saveFailed != null);
-    return initializeEmpty(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object>({
-    TResult initializeEmpty(_InitializeEmpty value),
-    TResult initializeEdit(_InitializeEdit value),
-    TResult idRoomChanged(_IdRoomChanged value),
-    TResult startTimeChanged(_StartTimeChanged value),
-    TResult endTimeChanged(_EndTimeChanged value),
-    TResult descriptionChanged(_DescriptionChanged value),
-    TResult participantsChanged(_ParticipantsChanged value),
-    TResult saveSubmitted(_SaveSubmitted value),
-    TResult saveFailed(_SaveFailed value),
-    @required TResult orElse(),
-  }) {
-    assert(orElse != null);
-    if (initializeEmpty != null) {
-      return initializeEmpty(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _InitializeEmpty implements ReservationFormEvent {
-  const factory _InitializeEmpty(int idRoom, DateTime date, int idHandler) =
-      _$_InitializeEmpty;
-
-  int get idRoom;
-  DateTime get date;
-  int get idHandler;
-  @JsonKey(ignore: true)
-  _$InitializeEmptyCopyWith<_InitializeEmpty> get copyWith;
-}
-
-/// @nodoc
-abstract class _$InitializeEditCopyWith<$Res> {
-  factory _$InitializeEditCopyWith(
-          _InitializeEdit value, $Res Function(_InitializeEdit) then) =
-      __$InitializeEditCopyWithImpl<$Res>;
-  $Res call({Reservation reservation});
-}
-
-/// @nodoc
-class __$InitializeEditCopyWithImpl<$Res>
-    extends _$ReservationFormEventCopyWithImpl<$Res>
-    implements _$InitializeEditCopyWith<$Res> {
-  __$InitializeEditCopyWithImpl(
-      _InitializeEdit _value, $Res Function(_InitializeEdit) _then)
-      : super(_value, (v) => _then(v as _InitializeEdit));
-
-  @override
-  _InitializeEdit get _value => super._value as _InitializeEdit;
-
-  @override
-  $Res call({
-    Object reservation = freezed,
-  }) {
-    return _then(_InitializeEdit(
-      reservation == freezed ? _value.reservation : reservation as Reservation,
-    ));
-  }
-}
-
-/// @nodoc
-class _$_InitializeEdit implements _InitializeEdit {
-  const _$_InitializeEdit(this.reservation) : assert(reservation != null);
-
-  @override
-  final Reservation reservation;
-
-  @override
-  String toString() {
-    return 'ReservationFormEvent.initializeEdit(reservation: $reservation)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other is _InitializeEdit &&
-            (identical(other.reservation, reservation) ||
-                const DeepCollectionEquality()
-                    .equals(other.reservation, reservation)));
-  }
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(reservation);
-
-  @JsonKey(ignore: true)
-  @override
-  _$InitializeEditCopyWith<_InitializeEdit> get copyWith =>
-      __$InitializeEditCopyWithImpl<_InitializeEdit>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object>({
-    @required TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    @required TResult initializeEdit(Reservation reservation),
-    @required TResult idRoomChanged(int idRoom),
-    @required TResult startTimeChanged(TimeOfDay startTime),
-    @required TResult endTimeChanged(TimeOfDay endTime),
-    @required TResult descriptionChanged(String description),
-    @required TResult participantsChanged(List<String> participants),
-    @required TResult saveSubmitted(),
-    @required TResult saveFailed(),
-  }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
-    assert(idRoomChanged != null);
-    assert(startTimeChanged != null);
-    assert(endTimeChanged != null);
-    assert(descriptionChanged != null);
-    assert(participantsChanged != null);
-    assert(saveSubmitted != null);
-    assert(saveFailed != null);
-    return initializeEdit(reservation);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object>({
-    TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    TResult initializeEdit(Reservation reservation),
-    TResult idRoomChanged(int idRoom),
-    TResult startTimeChanged(TimeOfDay startTime),
-    TResult endTimeChanged(TimeOfDay endTime),
-    TResult descriptionChanged(String description),
-    TResult participantsChanged(List<String> participants),
-    TResult saveSubmitted(),
-    TResult saveFailed(),
-    @required TResult orElse(),
-  }) {
-    assert(orElse != null);
-    if (initializeEdit != null) {
-      return initializeEdit(reservation);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object>({
-    @required TResult initializeEmpty(_InitializeEmpty value),
-    @required TResult initializeEdit(_InitializeEdit value),
-    @required TResult idRoomChanged(_IdRoomChanged value),
-    @required TResult startTimeChanged(_StartTimeChanged value),
-    @required TResult endTimeChanged(_EndTimeChanged value),
-    @required TResult descriptionChanged(_DescriptionChanged value),
-    @required TResult participantsChanged(_ParticipantsChanged value),
-    @required TResult saveSubmitted(_SaveSubmitted value),
-    @required TResult saveFailed(_SaveFailed value),
-  }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
-    assert(idRoomChanged != null);
-    assert(startTimeChanged != null);
-    assert(endTimeChanged != null);
-    assert(descriptionChanged != null);
-    assert(participantsChanged != null);
-    assert(saveSubmitted != null);
-    assert(saveFailed != null);
-    return initializeEdit(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object>({
-    TResult initializeEmpty(_InitializeEmpty value),
-    TResult initializeEdit(_InitializeEdit value),
-    TResult idRoomChanged(_IdRoomChanged value),
-    TResult startTimeChanged(_StartTimeChanged value),
-    TResult endTimeChanged(_EndTimeChanged value),
-    TResult descriptionChanged(_DescriptionChanged value),
-    TResult participantsChanged(_ParticipantsChanged value),
-    TResult saveSubmitted(_SaveSubmitted value),
-    TResult saveFailed(_SaveFailed value),
-    @required TResult orElse(),
-  }) {
-    assert(orElse != null);
-    if (initializeEdit != null) {
-      return initializeEdit(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class _InitializeEdit implements ReservationFormEvent {
-  const factory _InitializeEdit(Reservation reservation) = _$_InitializeEdit;
-
-  Reservation get reservation;
-  @JsonKey(ignore: true)
-  _$InitializeEditCopyWith<_InitializeEdit> get copyWith;
 }
 
 /// @nodoc
@@ -552,8 +187,6 @@ class _$_IdRoomChanged implements _IdRoomChanged {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    @required TResult initializeEdit(Reservation reservation),
     @required TResult idRoomChanged(int idRoom),
     @required TResult startTimeChanged(TimeOfDay startTime),
     @required TResult endTimeChanged(TimeOfDay endTime),
@@ -562,8 +195,6 @@ class _$_IdRoomChanged implements _IdRoomChanged {
     @required TResult saveSubmitted(),
     @required TResult saveFailed(),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -577,8 +208,6 @@ class _$_IdRoomChanged implements _IdRoomChanged {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    TResult initializeEdit(Reservation reservation),
     TResult idRoomChanged(int idRoom),
     TResult startTimeChanged(TimeOfDay startTime),
     TResult endTimeChanged(TimeOfDay endTime),
@@ -598,8 +227,6 @@ class _$_IdRoomChanged implements _IdRoomChanged {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object>({
-    @required TResult initializeEmpty(_InitializeEmpty value),
-    @required TResult initializeEdit(_InitializeEdit value),
     @required TResult idRoomChanged(_IdRoomChanged value),
     @required TResult startTimeChanged(_StartTimeChanged value),
     @required TResult endTimeChanged(_EndTimeChanged value),
@@ -608,8 +235,6 @@ class _$_IdRoomChanged implements _IdRoomChanged {
     @required TResult saveSubmitted(_SaveSubmitted value),
     @required TResult saveFailed(_SaveFailed value),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -623,8 +248,6 @@ class _$_IdRoomChanged implements _IdRoomChanged {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
-    TResult initializeEmpty(_InitializeEmpty value),
-    TResult initializeEdit(_InitializeEdit value),
     TResult idRoomChanged(_IdRoomChanged value),
     TResult startTimeChanged(_StartTimeChanged value),
     TResult endTimeChanged(_EndTimeChanged value),
@@ -712,8 +335,6 @@ class _$_StartTimeChanged implements _StartTimeChanged {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    @required TResult initializeEdit(Reservation reservation),
     @required TResult idRoomChanged(int idRoom),
     @required TResult startTimeChanged(TimeOfDay startTime),
     @required TResult endTimeChanged(TimeOfDay endTime),
@@ -722,8 +343,6 @@ class _$_StartTimeChanged implements _StartTimeChanged {
     @required TResult saveSubmitted(),
     @required TResult saveFailed(),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -737,8 +356,6 @@ class _$_StartTimeChanged implements _StartTimeChanged {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    TResult initializeEdit(Reservation reservation),
     TResult idRoomChanged(int idRoom),
     TResult startTimeChanged(TimeOfDay startTime),
     TResult endTimeChanged(TimeOfDay endTime),
@@ -758,8 +375,6 @@ class _$_StartTimeChanged implements _StartTimeChanged {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object>({
-    @required TResult initializeEmpty(_InitializeEmpty value),
-    @required TResult initializeEdit(_InitializeEdit value),
     @required TResult idRoomChanged(_IdRoomChanged value),
     @required TResult startTimeChanged(_StartTimeChanged value),
     @required TResult endTimeChanged(_EndTimeChanged value),
@@ -768,8 +383,6 @@ class _$_StartTimeChanged implements _StartTimeChanged {
     @required TResult saveSubmitted(_SaveSubmitted value),
     @required TResult saveFailed(_SaveFailed value),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -783,8 +396,6 @@ class _$_StartTimeChanged implements _StartTimeChanged {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
-    TResult initializeEmpty(_InitializeEmpty value),
-    TResult initializeEdit(_InitializeEdit value),
     TResult idRoomChanged(_IdRoomChanged value),
     TResult startTimeChanged(_StartTimeChanged value),
     TResult endTimeChanged(_EndTimeChanged value),
@@ -871,8 +482,6 @@ class _$_EndTimeChanged implements _EndTimeChanged {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    @required TResult initializeEdit(Reservation reservation),
     @required TResult idRoomChanged(int idRoom),
     @required TResult startTimeChanged(TimeOfDay startTime),
     @required TResult endTimeChanged(TimeOfDay endTime),
@@ -881,8 +490,6 @@ class _$_EndTimeChanged implements _EndTimeChanged {
     @required TResult saveSubmitted(),
     @required TResult saveFailed(),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -896,8 +503,6 @@ class _$_EndTimeChanged implements _EndTimeChanged {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    TResult initializeEdit(Reservation reservation),
     TResult idRoomChanged(int idRoom),
     TResult startTimeChanged(TimeOfDay startTime),
     TResult endTimeChanged(TimeOfDay endTime),
@@ -917,8 +522,6 @@ class _$_EndTimeChanged implements _EndTimeChanged {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object>({
-    @required TResult initializeEmpty(_InitializeEmpty value),
-    @required TResult initializeEdit(_InitializeEdit value),
     @required TResult idRoomChanged(_IdRoomChanged value),
     @required TResult startTimeChanged(_StartTimeChanged value),
     @required TResult endTimeChanged(_EndTimeChanged value),
@@ -927,8 +530,6 @@ class _$_EndTimeChanged implements _EndTimeChanged {
     @required TResult saveSubmitted(_SaveSubmitted value),
     @required TResult saveFailed(_SaveFailed value),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -942,8 +543,6 @@ class _$_EndTimeChanged implements _EndTimeChanged {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
-    TResult initializeEmpty(_InitializeEmpty value),
-    TResult initializeEdit(_InitializeEdit value),
     TResult idRoomChanged(_IdRoomChanged value),
     TResult startTimeChanged(_StartTimeChanged value),
     TResult endTimeChanged(_EndTimeChanged value),
@@ -1031,8 +630,6 @@ class _$_DescriptionChanged implements _DescriptionChanged {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    @required TResult initializeEdit(Reservation reservation),
     @required TResult idRoomChanged(int idRoom),
     @required TResult startTimeChanged(TimeOfDay startTime),
     @required TResult endTimeChanged(TimeOfDay endTime),
@@ -1041,8 +638,6 @@ class _$_DescriptionChanged implements _DescriptionChanged {
     @required TResult saveSubmitted(),
     @required TResult saveFailed(),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -1056,8 +651,6 @@ class _$_DescriptionChanged implements _DescriptionChanged {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    TResult initializeEdit(Reservation reservation),
     TResult idRoomChanged(int idRoom),
     TResult startTimeChanged(TimeOfDay startTime),
     TResult endTimeChanged(TimeOfDay endTime),
@@ -1077,8 +670,6 @@ class _$_DescriptionChanged implements _DescriptionChanged {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object>({
-    @required TResult initializeEmpty(_InitializeEmpty value),
-    @required TResult initializeEdit(_InitializeEdit value),
     @required TResult idRoomChanged(_IdRoomChanged value),
     @required TResult startTimeChanged(_StartTimeChanged value),
     @required TResult endTimeChanged(_EndTimeChanged value),
@@ -1087,8 +678,6 @@ class _$_DescriptionChanged implements _DescriptionChanged {
     @required TResult saveSubmitted(_SaveSubmitted value),
     @required TResult saveFailed(_SaveFailed value),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -1102,8 +691,6 @@ class _$_DescriptionChanged implements _DescriptionChanged {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
-    TResult initializeEmpty(_InitializeEmpty value),
-    TResult initializeEdit(_InitializeEdit value),
     TResult idRoomChanged(_IdRoomChanged value),
     TResult startTimeChanged(_StartTimeChanged value),
     TResult endTimeChanged(_EndTimeChanged value),
@@ -1195,8 +782,6 @@ class _$_ParticipantsChanged implements _ParticipantsChanged {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    @required TResult initializeEdit(Reservation reservation),
     @required TResult idRoomChanged(int idRoom),
     @required TResult startTimeChanged(TimeOfDay startTime),
     @required TResult endTimeChanged(TimeOfDay endTime),
@@ -1205,8 +790,6 @@ class _$_ParticipantsChanged implements _ParticipantsChanged {
     @required TResult saveSubmitted(),
     @required TResult saveFailed(),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -1220,8 +803,6 @@ class _$_ParticipantsChanged implements _ParticipantsChanged {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    TResult initializeEdit(Reservation reservation),
     TResult idRoomChanged(int idRoom),
     TResult startTimeChanged(TimeOfDay startTime),
     TResult endTimeChanged(TimeOfDay endTime),
@@ -1241,8 +822,6 @@ class _$_ParticipantsChanged implements _ParticipantsChanged {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object>({
-    @required TResult initializeEmpty(_InitializeEmpty value),
-    @required TResult initializeEdit(_InitializeEdit value),
     @required TResult idRoomChanged(_IdRoomChanged value),
     @required TResult startTimeChanged(_StartTimeChanged value),
     @required TResult endTimeChanged(_EndTimeChanged value),
@@ -1251,8 +830,6 @@ class _$_ParticipantsChanged implements _ParticipantsChanged {
     @required TResult saveSubmitted(_SaveSubmitted value),
     @required TResult saveFailed(_SaveFailed value),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -1266,8 +843,6 @@ class _$_ParticipantsChanged implements _ParticipantsChanged {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
-    TResult initializeEmpty(_InitializeEmpty value),
-    TResult initializeEdit(_InitializeEdit value),
     TResult idRoomChanged(_IdRoomChanged value),
     TResult startTimeChanged(_StartTimeChanged value),
     TResult endTimeChanged(_EndTimeChanged value),
@@ -1333,8 +908,6 @@ class _$_SaveSubmitted implements _SaveSubmitted {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    @required TResult initializeEdit(Reservation reservation),
     @required TResult idRoomChanged(int idRoom),
     @required TResult startTimeChanged(TimeOfDay startTime),
     @required TResult endTimeChanged(TimeOfDay endTime),
@@ -1343,8 +916,6 @@ class _$_SaveSubmitted implements _SaveSubmitted {
     @required TResult saveSubmitted(),
     @required TResult saveFailed(),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -1358,8 +929,6 @@ class _$_SaveSubmitted implements _SaveSubmitted {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    TResult initializeEdit(Reservation reservation),
     TResult idRoomChanged(int idRoom),
     TResult startTimeChanged(TimeOfDay startTime),
     TResult endTimeChanged(TimeOfDay endTime),
@@ -1379,8 +948,6 @@ class _$_SaveSubmitted implements _SaveSubmitted {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object>({
-    @required TResult initializeEmpty(_InitializeEmpty value),
-    @required TResult initializeEdit(_InitializeEdit value),
     @required TResult idRoomChanged(_IdRoomChanged value),
     @required TResult startTimeChanged(_StartTimeChanged value),
     @required TResult endTimeChanged(_EndTimeChanged value),
@@ -1389,8 +956,6 @@ class _$_SaveSubmitted implements _SaveSubmitted {
     @required TResult saveSubmitted(_SaveSubmitted value),
     @required TResult saveFailed(_SaveFailed value),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -1404,8 +969,6 @@ class _$_SaveSubmitted implements _SaveSubmitted {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
-    TResult initializeEmpty(_InitializeEmpty value),
-    TResult initializeEdit(_InitializeEdit value),
     TResult idRoomChanged(_IdRoomChanged value),
     TResult startTimeChanged(_StartTimeChanged value),
     TResult endTimeChanged(_EndTimeChanged value),
@@ -1466,8 +1029,6 @@ class _$_SaveFailed implements _SaveFailed {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object>({
-    @required TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    @required TResult initializeEdit(Reservation reservation),
     @required TResult idRoomChanged(int idRoom),
     @required TResult startTimeChanged(TimeOfDay startTime),
     @required TResult endTimeChanged(TimeOfDay endTime),
@@ -1476,8 +1037,6 @@ class _$_SaveFailed implements _SaveFailed {
     @required TResult saveSubmitted(),
     @required TResult saveFailed(),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -1491,8 +1050,6 @@ class _$_SaveFailed implements _SaveFailed {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
-    TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
-    TResult initializeEdit(Reservation reservation),
     TResult idRoomChanged(int idRoom),
     TResult startTimeChanged(TimeOfDay startTime),
     TResult endTimeChanged(TimeOfDay endTime),
@@ -1512,8 +1069,6 @@ class _$_SaveFailed implements _SaveFailed {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object>({
-    @required TResult initializeEmpty(_InitializeEmpty value),
-    @required TResult initializeEdit(_InitializeEdit value),
     @required TResult idRoomChanged(_IdRoomChanged value),
     @required TResult startTimeChanged(_StartTimeChanged value),
     @required TResult endTimeChanged(_EndTimeChanged value),
@@ -1522,8 +1077,6 @@ class _$_SaveFailed implements _SaveFailed {
     @required TResult saveSubmitted(_SaveSubmitted value),
     @required TResult saveFailed(_SaveFailed value),
   }) {
-    assert(initializeEmpty != null);
-    assert(initializeEdit != null);
     assert(idRoomChanged != null);
     assert(startTimeChanged != null);
     assert(endTimeChanged != null);
@@ -1537,8 +1090,6 @@ class _$_SaveFailed implements _SaveFailed {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
-    TResult initializeEmpty(_InitializeEmpty value),
-    TResult initializeEdit(_InitializeEdit value),
     TResult idRoomChanged(_IdRoomChanged value),
     TResult startTimeChanged(_StartTimeChanged value),
     TResult endTimeChanged(_EndTimeChanged value),

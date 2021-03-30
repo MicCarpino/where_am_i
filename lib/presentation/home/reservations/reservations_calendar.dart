@@ -6,6 +6,7 @@ import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
 import 'package:where_am_i/domain/blocs/date_picker/date_picker_cubit.dart';
+import 'package:where_am_i/domain/blocs/reservation/form/reservation_form.dart';
 import 'package:where_am_i/domain/blocs/reservation/form/reservation_form_bloc.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/presentation/home/reservations/reservations_details_dialog.dart';
@@ -169,12 +170,17 @@ class ReservationsCalendar extends StatelessWidget {
                             value: context.read<DatePickerCubit>(),
                           ),
                           BlocProvider<ReservationFormBloc>(
-                            create: (context) => ReservationFormBloc(
-                              reservationActorBloc:
-                                  context.read<ReservationActorBloc>(),
-                            )..add(ReservationFormEvent.initializeEdit(
-                                reservation)),
-                          ),
+                              create: (context) => ReservationFormBloc(
+                                    reservationActorBloc:
+                                        context.read<ReservationActorBloc>(),
+                                    initialState: ReservationFormState(
+                                      reservationForm:
+                                          ReservationForm.fromDomain(
+                                              reservation),
+                                      isEditing: true,
+                                      isSaving: false,
+                                    ),
+                                  )),
                         ],
                         child: ReservationFormPage(),
                       ),
