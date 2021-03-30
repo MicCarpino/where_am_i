@@ -8,10 +8,14 @@ class SubjectFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ReservationFormBloc, ReservationFormState>(
-      listener: (context, state) {
-        controller.value = controller.value
-            .copyWith(text: state.reservationForm.subjectForm.value);
-      },
+      listenWhen: (previous, current) =>
+          previous.reservationForm.subjectForm !=
+          current.reservationForm.subjectForm,
+      listener: (context, state) => controller.value = controller.value
+          .copyWith(text: state.reservationForm.subjectForm.value),
+      buildWhen: (previous, current) =>
+          previous.reservationForm.subjectForm !=
+          current.reservationForm.subjectForm,
       builder: (context, state) {
         return TextFormField(
           controller: controller,

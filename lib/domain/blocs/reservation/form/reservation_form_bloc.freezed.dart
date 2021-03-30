@@ -1376,13 +1376,11 @@ class _$ReservationFormStateTearOff {
   _ReservationFormState call(
       {@required ReservationForm reservationForm,
       @required bool isEditing,
-      @required bool isSaving,
-      @required Option<Either<Failure, Unit>> saveFailureOrSuccessOption}) {
+      @required bool isSaving}) {
     return _ReservationFormState(
       reservationForm: reservationForm,
       isEditing: isEditing,
       isSaving: isSaving,
-      saveFailureOrSuccessOption: saveFailureOrSuccessOption,
     );
   }
 }
@@ -1396,7 +1394,6 @@ mixin _$ReservationFormState {
   ReservationForm get reservationForm;
   bool get isEditing;
   bool get isSaving;
-  Option<Either<Failure, Unit>> get saveFailureOrSuccessOption;
 
   @JsonKey(ignore: true)
   $ReservationFormStateCopyWith<ReservationFormState> get copyWith;
@@ -1407,11 +1404,7 @@ abstract class $ReservationFormStateCopyWith<$Res> {
   factory $ReservationFormStateCopyWith(ReservationFormState value,
           $Res Function(ReservationFormState) then) =
       _$ReservationFormStateCopyWithImpl<$Res>;
-  $Res call(
-      {ReservationForm reservationForm,
-      bool isEditing,
-      bool isSaving,
-      Option<Either<Failure, Unit>> saveFailureOrSuccessOption});
+  $Res call({ReservationForm reservationForm, bool isEditing, bool isSaving});
 
   $ReservationFormCopyWith<$Res> get reservationForm;
 }
@@ -1430,7 +1423,6 @@ class _$ReservationFormStateCopyWithImpl<$Res>
     Object reservationForm = freezed,
     Object isEditing = freezed,
     Object isSaving = freezed,
-    Object saveFailureOrSuccessOption = freezed,
   }) {
     return _then(_value.copyWith(
       reservationForm: reservationForm == freezed
@@ -1438,9 +1430,6 @@ class _$ReservationFormStateCopyWithImpl<$Res>
           : reservationForm as ReservationForm,
       isEditing: isEditing == freezed ? _value.isEditing : isEditing as bool,
       isSaving: isSaving == freezed ? _value.isSaving : isSaving as bool,
-      saveFailureOrSuccessOption: saveFailureOrSuccessOption == freezed
-          ? _value.saveFailureOrSuccessOption
-          : saveFailureOrSuccessOption as Option<Either<Failure, Unit>>,
     ));
   }
 
@@ -1462,11 +1451,7 @@ abstract class _$ReservationFormStateCopyWith<$Res>
           $Res Function(_ReservationFormState) then) =
       __$ReservationFormStateCopyWithImpl<$Res>;
   @override
-  $Res call(
-      {ReservationForm reservationForm,
-      bool isEditing,
-      bool isSaving,
-      Option<Either<Failure, Unit>> saveFailureOrSuccessOption});
+  $Res call({ReservationForm reservationForm, bool isEditing, bool isSaving});
 
   @override
   $ReservationFormCopyWith<$Res> get reservationForm;
@@ -1488,7 +1473,6 @@ class __$ReservationFormStateCopyWithImpl<$Res>
     Object reservationForm = freezed,
     Object isEditing = freezed,
     Object isSaving = freezed,
-    Object saveFailureOrSuccessOption = freezed,
   }) {
     return _then(_ReservationFormState(
       reservationForm: reservationForm == freezed
@@ -1496,9 +1480,6 @@ class __$ReservationFormStateCopyWithImpl<$Res>
           : reservationForm as ReservationForm,
       isEditing: isEditing == freezed ? _value.isEditing : isEditing as bool,
       isSaving: isSaving == freezed ? _value.isSaving : isSaving as bool,
-      saveFailureOrSuccessOption: saveFailureOrSuccessOption == freezed
-          ? _value.saveFailureOrSuccessOption
-          : saveFailureOrSuccessOption as Option<Either<Failure, Unit>>,
     ));
   }
 }
@@ -1508,12 +1489,10 @@ class _$_ReservationFormState implements _ReservationFormState {
   const _$_ReservationFormState(
       {@required this.reservationForm,
       @required this.isEditing,
-      @required this.isSaving,
-      @required this.saveFailureOrSuccessOption})
+      @required this.isSaving})
       : assert(reservationForm != null),
         assert(isEditing != null),
-        assert(isSaving != null),
-        assert(saveFailureOrSuccessOption != null);
+        assert(isSaving != null);
 
   @override
   final ReservationForm reservationForm;
@@ -1521,12 +1500,10 @@ class _$_ReservationFormState implements _ReservationFormState {
   final bool isEditing;
   @override
   final bool isSaving;
-  @override
-  final Option<Either<Failure, Unit>> saveFailureOrSuccessOption;
 
   @override
   String toString() {
-    return 'ReservationFormState(reservationForm: $reservationForm, isEditing: $isEditing, isSaving: $isSaving, saveFailureOrSuccessOption: $saveFailureOrSuccessOption)';
+    return 'ReservationFormState(reservationForm: $reservationForm, isEditing: $isEditing, isSaving: $isSaving)';
   }
 
   @override
@@ -1541,12 +1518,7 @@ class _$_ReservationFormState implements _ReservationFormState {
                     .equals(other.isEditing, isEditing)) &&
             (identical(other.isSaving, isSaving) ||
                 const DeepCollectionEquality()
-                    .equals(other.isSaving, isSaving)) &&
-            (identical(other.saveFailureOrSuccessOption,
-                    saveFailureOrSuccessOption) ||
-                const DeepCollectionEquality().equals(
-                    other.saveFailureOrSuccessOption,
-                    saveFailureOrSuccessOption)));
+                    .equals(other.isSaving, isSaving)));
   }
 
   @override
@@ -1554,8 +1526,7 @@ class _$_ReservationFormState implements _ReservationFormState {
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(reservationForm) ^
       const DeepCollectionEquality().hash(isEditing) ^
-      const DeepCollectionEquality().hash(isSaving) ^
-      const DeepCollectionEquality().hash(saveFailureOrSuccessOption);
+      const DeepCollectionEquality().hash(isSaving);
 
   @JsonKey(ignore: true)
   @override
@@ -1566,11 +1537,9 @@ class _$_ReservationFormState implements _ReservationFormState {
 
 abstract class _ReservationFormState implements ReservationFormState {
   const factory _ReservationFormState(
-          {@required ReservationForm reservationForm,
-          @required bool isEditing,
-          @required bool isSaving,
-          @required Option<Either<Failure, Unit>> saveFailureOrSuccessOption}) =
-      _$_ReservationFormState;
+      {@required ReservationForm reservationForm,
+      @required bool isEditing,
+      @required bool isSaving}) = _$_ReservationFormState;
 
   @override
   ReservationForm get reservationForm;
@@ -1578,8 +1547,6 @@ abstract class _ReservationFormState implements ReservationFormState {
   bool get isEditing;
   @override
   bool get isSaving;
-  @override
-  Option<Either<Failure, Unit>> get saveFailureOrSuccessOption;
   @override
   @JsonKey(ignore: true)
   _$ReservationFormStateCopyWith<_ReservationFormState> get copyWith;

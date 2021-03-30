@@ -21,7 +21,6 @@ class Reservation extends Equatable {
     @required this.reservationDate,
     @required this.idRoom,
     @required this.idHandler,
-    @required this.freeHandler,
     @required this.startMinutes,
     @required this.endMinutes,
     @required this.startHour,
@@ -29,6 +28,7 @@ class Reservation extends Equatable {
     @required this.description,
     @required this.participants,
     @required this.status,
+    this.freeHandler,
   });
 
   @override

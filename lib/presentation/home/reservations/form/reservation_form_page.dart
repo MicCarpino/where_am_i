@@ -10,6 +10,7 @@ import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/home/reservations/form/date_picker_form_field.dart';
 import 'package:where_am_i/presentation/home/reservations/form/participants_form_field.dart';
+import 'package:where_am_i/domain/blocs/reservation/actor/reservation_actor_bloc.dart';
 import 'package:where_am_i/presentation/home/reservations/form/subject_form_field.dart';
 import 'package:where_am_i/domain/blocs/reservation/form/reservation_form_bloc.dart';
 
@@ -34,6 +35,8 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
         child: BlocBuilder<ReservationFormBloc, ReservationFormState>(
+          buildWhen: (previous, current) =>
+              previous.isSaving != current.isSaving,
           builder: (context, state) => Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,

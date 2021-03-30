@@ -164,8 +164,10 @@ class HomePage extends StatelessWidget {
                                   value: context.read<DatePickerCubit>(),
                                 ),
                                 BlocProvider<ReservationFormBloc>(
-                                  create: (context) => ReservationFormBloc()
-                                    ..add(ReservationFormEvent.initializeEmpty(
+                                  create: (context) => ReservationFormBloc(
+                                    reservationActorBloc:
+                                        context.read<ReservationActorBloc>(),
+                                  )..add(ReservationFormEvent.initializeEmpty(
                                       room.idRoom,
                                       context
                                           .read<DatePickerCubit>()
