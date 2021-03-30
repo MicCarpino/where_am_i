@@ -65,7 +65,7 @@ class ReservationFormBloc
       participantsChanged: (value) async* {
         yield state.copyWith(
           reservationForm:
-              state.reservationForm.copyWith(participants: value.participants),
+              state.reservationForm.copyWith(participants:value.participants),
         );
       },
       saved: (value) async* {},

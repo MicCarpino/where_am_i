@@ -1374,7 +1374,7 @@ class _$ReservationFormStateTearOff {
 
 // ignore: unused_element
   _ReservationFormState call(
-      {ReservationForm reservationForm,
+      {@required ReservationForm reservationForm,
       @required bool isEditing,
       @required bool isSaving,
       @required Option<Either<Failure, Unit>> saveFailureOrSuccessOption}) {
@@ -1506,11 +1506,12 @@ class __$ReservationFormStateCopyWithImpl<$Res>
 /// @nodoc
 class _$_ReservationFormState implements _ReservationFormState {
   const _$_ReservationFormState(
-      {this.reservationForm,
+      {@required this.reservationForm,
       @required this.isEditing,
       @required this.isSaving,
       @required this.saveFailureOrSuccessOption})
-      : assert(isEditing != null),
+      : assert(reservationForm != null),
+        assert(isEditing != null),
         assert(isSaving != null),
         assert(saveFailureOrSuccessOption != null);
 
@@ -1565,7 +1566,7 @@ class _$_ReservationFormState implements _ReservationFormState {
 
 abstract class _ReservationFormState implements ReservationFormState {
   const factory _ReservationFormState(
-          {ReservationForm reservationForm,
+          {@required ReservationForm reservationForm,
           @required bool isEditing,
           @required bool isSaving,
           @required Option<Either<Failure, Unit>> saveFailureOrSuccessOption}) =
