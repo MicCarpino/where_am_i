@@ -97,6 +97,7 @@ class HomePage extends StatelessWidget {
                       child: Column(
                         children: [
                           _buildWorkstationsSection(Rooms.values[index]),
+                          SizedBox(height: 16),
                           if (Rooms.values[index].idRoom != null)
                             _buildReservationsSection(
                                 newContext, Rooms.values[index])
@@ -144,50 +145,55 @@ class HomePage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(room.reservationRoomTitle, style: roomLabelStyle),
-                      IconButton(
-                        icon: Icon(
-                          Icons.add_circle_sharp,
-                          color: Colors.black54,
-                          size: 32,
-                        ),
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => MultiBlocProvider(
-                              providers: [
-                                BlocProvider.value(
-                                  value: context.read<AuthenticationBloc>(),
-                                ),
-                                BlocProvider.value(
-                                  value: context.read<ReservationActorBloc>(),
-                                ),
-                                BlocProvider.value(
-                                  value: context.read<DatePickerCubit>(),
-                                ),
-                                BlocProvider<ReservationFormBloc>(
-                                  create: (context) => ReservationFormBloc(
-                                      reservationActorBloc:
-                                          context.read<ReservationActorBloc>(),
-                                      initialState: ReservationFormState(
-                                        reservationForm:
-                                            ReservationForm.initial(
-                                                room.idRoom,
-                                                context
-                                                    .read<DatePickerCubit>()
-                                                    .state
-                                                    .visualizedDate,
-                                                int.tryParse(context
-                                                    .read<AuthenticationBloc>()
-                                                    .state
-                                                    .authenticatedUser
-                                                    .user
-                                                    .idResource)),
-                                        isEditing: false,
-                                        isSaving: false,
-                                      )),
-                                ),
-                              ],
-                              child: ReservationFormPage(),
+                      Visibility(
+                        visible:
+                            context.read<DatePickerCubit>().isEditAllowed(),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.add_circle_sharp,
+                            color: Colors.black54,
+                            size: 32,
+                          ),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => MultiBlocProvider(
+                                providers: [
+                                  BlocProvider.value(
+                                    value: context.read<AuthenticationBloc>(),
+                                  ),
+                                  BlocProvider.value(
+                                    value: context.read<ReservationActorBloc>(),
+                                  ),
+                                  BlocProvider.value(
+                                    value: context.read<DatePickerCubit>(),
+                                  ),
+                                  BlocProvider<ReservationFormBloc>(
+                                    create: (context) => ReservationFormBloc(
+                                        reservationActorBloc: context
+                                            .read<ReservationActorBloc>(),
+                                        initialState: ReservationFormState(
+                                          reservationForm:
+                                              ReservationForm.initial(
+                                                  room.idRoom,
+                                                  context
+                                                      .read<DatePickerCubit>()
+                                                      .state
+                                                      .visualizedDate,
+                                                  int.tryParse(context
+                                                      .read<
+                                                          AuthenticationBloc>()
+                                                      .state
+                                                      .authenticatedUser
+                                                      .user
+                                                      .idResource)),
+                                          isEditing: false,
+                                          isSaving: false,
+                                        )),
+                                  ),
+                                ],
+                                child: ReservationFormPage(),
+                              ),
                             ),
                           ),
                         ),
