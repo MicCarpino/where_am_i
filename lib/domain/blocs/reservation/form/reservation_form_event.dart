@@ -25,5 +25,7 @@ abstract class ReservationFormEvent with _$ReservationFormEvent {
   const factory ReservationFormEvent.participantsChanged(
       List<String> participants) = _ParticipantsChanged;
 
-  const factory ReservationFormEvent.saved() = _Saved;
+  const factory ReservationFormEvent.saveSubmitted() = _SaveSubmitted;
+
+  const factory ReservationFormEvent.saveFailed() = _SaveFailed;
 }

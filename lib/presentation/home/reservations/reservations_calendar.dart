@@ -6,9 +6,12 @@ import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
 import 'package:where_am_i/domain/blocs/date_picker/date_picker_cubit.dart';
+import 'package:where_am_i/domain/blocs/reservation/form/reservation_form_bloc.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/presentation/home/reservations/reservations_details_dialog.dart';
 import 'package:where_am_i/domain/blocs/reservation/actor/reservation_actor_bloc.dart';
+
+import 'form/reservation_form_page.dart';
 
 //https://pub.dev/packages/flutter_week_view
 
@@ -151,15 +154,32 @@ class ReservationsCalendar extends StatelessWidget {
                 ]),
                 onTap: () {
                   Navigator.of(context).pop();
-                  /* Navigator.push(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BlocProvider.value(
-                        value: _reservationBloc,
+                      builder: (_) => MultiBlocProvider(
+                        providers: [
+                          BlocProvider.value(
+                            value: context.read<AuthenticationBloc>(),
+                          ),
+                          BlocProvider.value(
+                            value: context.read<ReservationActorBloc>(),
+                          ),
+                          BlocProvider.value(
+                            value: context.read<DatePickerCubit>(),
+                          ),
+                          BlocProvider<ReservationFormBloc>(
+                            create: (context) => ReservationFormBloc(
+                              reservationActorBloc:
+                                  context.read<ReservationActorBloc>(),
+                            )..add(ReservationFormEvent.initializeEdit(
+                                reservation)),
+                          ),
+                        ],
                         child: ReservationFormPage(),
                       ),
                     ),
-                  );*/
+                  );
                 }),
             InkWell(
                 child: Row(children: [

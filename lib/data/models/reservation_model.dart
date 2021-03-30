@@ -43,7 +43,7 @@ class ReservationModel extends Reservation {
         startHour: json["startHour"],
         endHour: json["endHour"],
         description: json["description"],
-        participants: json["idParticipants"]?.split(","),
+        participants: json["idParticipants"]?.split(",") ?? [],
         status: json["status"]);
   }
 
@@ -58,9 +58,9 @@ class ReservationModel extends Reservation {
         'endHour': endHour,
         'endMinutes': endMinutes,
         'description': description,
-        'idParticipants': participants.length > 1
+        'idParticipants': participants.isNotEmpty
             ? participants.join(",")
-            : participants.first,
+            : null,
         'status': status,
       };
 

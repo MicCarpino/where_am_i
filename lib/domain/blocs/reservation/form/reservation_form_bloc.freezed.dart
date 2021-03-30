@@ -65,8 +65,13 @@ class _$ReservationFormEventTearOff {
   }
 
 // ignore: unused_element
-  _Saved saved() {
-    return const _Saved();
+  _SaveSubmitted saveSubmitted() {
+    return const _SaveSubmitted();
+  }
+
+// ignore: unused_element
+  _SaveFailed saveFailed() {
+    return const _SaveFailed();
   }
 }
 
@@ -85,7 +90,8 @@ mixin _$ReservationFormEvent {
     @required TResult endTimeChanged(TimeOfDay endTime),
     @required TResult descriptionChanged(String description),
     @required TResult participantsChanged(List<String> participants),
-    @required TResult saved(),
+    @required TResult saveSubmitted(),
+    @required TResult saveFailed(),
   });
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object>({
@@ -96,7 +102,8 @@ mixin _$ReservationFormEvent {
     TResult endTimeChanged(TimeOfDay endTime),
     TResult descriptionChanged(String description),
     TResult participantsChanged(List<String> participants),
-    TResult saved(),
+    TResult saveSubmitted(),
+    TResult saveFailed(),
     @required TResult orElse(),
   });
   @optionalTypeArgs
@@ -108,7 +115,8 @@ mixin _$ReservationFormEvent {
     @required TResult endTimeChanged(_EndTimeChanged value),
     @required TResult descriptionChanged(_DescriptionChanged value),
     @required TResult participantsChanged(_ParticipantsChanged value),
-    @required TResult saved(_Saved value),
+    @required TResult saveSubmitted(_SaveSubmitted value),
+    @required TResult saveFailed(_SaveFailed value),
   });
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object>({
@@ -119,7 +127,8 @@ mixin _$ReservationFormEvent {
     TResult endTimeChanged(_EndTimeChanged value),
     TResult descriptionChanged(_DescriptionChanged value),
     TResult participantsChanged(_ParticipantsChanged value),
-    TResult saved(_Saved value),
+    TResult saveSubmitted(_SaveSubmitted value),
+    TResult saveFailed(_SaveFailed value),
     @required TResult orElse(),
   });
 }
@@ -228,7 +237,8 @@ class _$_InitializeEmpty implements _InitializeEmpty {
     @required TResult endTimeChanged(TimeOfDay endTime),
     @required TResult descriptionChanged(String description),
     @required TResult participantsChanged(List<String> participants),
-    @required TResult saved(),
+    @required TResult saveSubmitted(),
+    @required TResult saveFailed(),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -237,7 +247,8 @@ class _$_InitializeEmpty implements _InitializeEmpty {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return initializeEmpty(idRoom, date, idHandler);
   }
 
@@ -251,7 +262,8 @@ class _$_InitializeEmpty implements _InitializeEmpty {
     TResult endTimeChanged(TimeOfDay endTime),
     TResult descriptionChanged(String description),
     TResult participantsChanged(List<String> participants),
-    TResult saved(),
+    TResult saveSubmitted(),
+    TResult saveFailed(),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -271,7 +283,8 @@ class _$_InitializeEmpty implements _InitializeEmpty {
     @required TResult endTimeChanged(_EndTimeChanged value),
     @required TResult descriptionChanged(_DescriptionChanged value),
     @required TResult participantsChanged(_ParticipantsChanged value),
-    @required TResult saved(_Saved value),
+    @required TResult saveSubmitted(_SaveSubmitted value),
+    @required TResult saveFailed(_SaveFailed value),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -280,7 +293,8 @@ class _$_InitializeEmpty implements _InitializeEmpty {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return initializeEmpty(this);
   }
 
@@ -294,7 +308,8 @@ class _$_InitializeEmpty implements _InitializeEmpty {
     TResult endTimeChanged(_EndTimeChanged value),
     TResult descriptionChanged(_DescriptionChanged value),
     TResult participantsChanged(_ParticipantsChanged value),
-    TResult saved(_Saved value),
+    TResult saveSubmitted(_SaveSubmitted value),
+    TResult saveFailed(_SaveFailed value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -385,7 +400,8 @@ class _$_InitializeEdit implements _InitializeEdit {
     @required TResult endTimeChanged(TimeOfDay endTime),
     @required TResult descriptionChanged(String description),
     @required TResult participantsChanged(List<String> participants),
-    @required TResult saved(),
+    @required TResult saveSubmitted(),
+    @required TResult saveFailed(),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -394,7 +410,8 @@ class _$_InitializeEdit implements _InitializeEdit {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return initializeEdit(reservation);
   }
 
@@ -408,7 +425,8 @@ class _$_InitializeEdit implements _InitializeEdit {
     TResult endTimeChanged(TimeOfDay endTime),
     TResult descriptionChanged(String description),
     TResult participantsChanged(List<String> participants),
-    TResult saved(),
+    TResult saveSubmitted(),
+    TResult saveFailed(),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -428,7 +446,8 @@ class _$_InitializeEdit implements _InitializeEdit {
     @required TResult endTimeChanged(_EndTimeChanged value),
     @required TResult descriptionChanged(_DescriptionChanged value),
     @required TResult participantsChanged(_ParticipantsChanged value),
-    @required TResult saved(_Saved value),
+    @required TResult saveSubmitted(_SaveSubmitted value),
+    @required TResult saveFailed(_SaveFailed value),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -437,7 +456,8 @@ class _$_InitializeEdit implements _InitializeEdit {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return initializeEdit(this);
   }
 
@@ -451,7 +471,8 @@ class _$_InitializeEdit implements _InitializeEdit {
     TResult endTimeChanged(_EndTimeChanged value),
     TResult descriptionChanged(_DescriptionChanged value),
     TResult participantsChanged(_ParticipantsChanged value),
-    TResult saved(_Saved value),
+    TResult saveSubmitted(_SaveSubmitted value),
+    TResult saveFailed(_SaveFailed value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -538,7 +559,8 @@ class _$_IdRoomChanged implements _IdRoomChanged {
     @required TResult endTimeChanged(TimeOfDay endTime),
     @required TResult descriptionChanged(String description),
     @required TResult participantsChanged(List<String> participants),
-    @required TResult saved(),
+    @required TResult saveSubmitted(),
+    @required TResult saveFailed(),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -547,7 +569,8 @@ class _$_IdRoomChanged implements _IdRoomChanged {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return idRoomChanged(idRoom);
   }
 
@@ -561,7 +584,8 @@ class _$_IdRoomChanged implements _IdRoomChanged {
     TResult endTimeChanged(TimeOfDay endTime),
     TResult descriptionChanged(String description),
     TResult participantsChanged(List<String> participants),
-    TResult saved(),
+    TResult saveSubmitted(),
+    TResult saveFailed(),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -581,7 +605,8 @@ class _$_IdRoomChanged implements _IdRoomChanged {
     @required TResult endTimeChanged(_EndTimeChanged value),
     @required TResult descriptionChanged(_DescriptionChanged value),
     @required TResult participantsChanged(_ParticipantsChanged value),
-    @required TResult saved(_Saved value),
+    @required TResult saveSubmitted(_SaveSubmitted value),
+    @required TResult saveFailed(_SaveFailed value),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -590,7 +615,8 @@ class _$_IdRoomChanged implements _IdRoomChanged {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return idRoomChanged(this);
   }
 
@@ -604,7 +630,8 @@ class _$_IdRoomChanged implements _IdRoomChanged {
     TResult endTimeChanged(_EndTimeChanged value),
     TResult descriptionChanged(_DescriptionChanged value),
     TResult participantsChanged(_ParticipantsChanged value),
-    TResult saved(_Saved value),
+    TResult saveSubmitted(_SaveSubmitted value),
+    TResult saveFailed(_SaveFailed value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -692,7 +719,8 @@ class _$_StartTimeChanged implements _StartTimeChanged {
     @required TResult endTimeChanged(TimeOfDay endTime),
     @required TResult descriptionChanged(String description),
     @required TResult participantsChanged(List<String> participants),
-    @required TResult saved(),
+    @required TResult saveSubmitted(),
+    @required TResult saveFailed(),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -701,7 +729,8 @@ class _$_StartTimeChanged implements _StartTimeChanged {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return startTimeChanged(startTime);
   }
 
@@ -715,7 +744,8 @@ class _$_StartTimeChanged implements _StartTimeChanged {
     TResult endTimeChanged(TimeOfDay endTime),
     TResult descriptionChanged(String description),
     TResult participantsChanged(List<String> participants),
-    TResult saved(),
+    TResult saveSubmitted(),
+    TResult saveFailed(),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -735,7 +765,8 @@ class _$_StartTimeChanged implements _StartTimeChanged {
     @required TResult endTimeChanged(_EndTimeChanged value),
     @required TResult descriptionChanged(_DescriptionChanged value),
     @required TResult participantsChanged(_ParticipantsChanged value),
-    @required TResult saved(_Saved value),
+    @required TResult saveSubmitted(_SaveSubmitted value),
+    @required TResult saveFailed(_SaveFailed value),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -744,7 +775,8 @@ class _$_StartTimeChanged implements _StartTimeChanged {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return startTimeChanged(this);
   }
 
@@ -758,7 +790,8 @@ class _$_StartTimeChanged implements _StartTimeChanged {
     TResult endTimeChanged(_EndTimeChanged value),
     TResult descriptionChanged(_DescriptionChanged value),
     TResult participantsChanged(_ParticipantsChanged value),
-    TResult saved(_Saved value),
+    TResult saveSubmitted(_SaveSubmitted value),
+    TResult saveFailed(_SaveFailed value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -845,7 +878,8 @@ class _$_EndTimeChanged implements _EndTimeChanged {
     @required TResult endTimeChanged(TimeOfDay endTime),
     @required TResult descriptionChanged(String description),
     @required TResult participantsChanged(List<String> participants),
-    @required TResult saved(),
+    @required TResult saveSubmitted(),
+    @required TResult saveFailed(),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -854,7 +888,8 @@ class _$_EndTimeChanged implements _EndTimeChanged {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return endTimeChanged(endTime);
   }
 
@@ -868,7 +903,8 @@ class _$_EndTimeChanged implements _EndTimeChanged {
     TResult endTimeChanged(TimeOfDay endTime),
     TResult descriptionChanged(String description),
     TResult participantsChanged(List<String> participants),
-    TResult saved(),
+    TResult saveSubmitted(),
+    TResult saveFailed(),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -888,7 +924,8 @@ class _$_EndTimeChanged implements _EndTimeChanged {
     @required TResult endTimeChanged(_EndTimeChanged value),
     @required TResult descriptionChanged(_DescriptionChanged value),
     @required TResult participantsChanged(_ParticipantsChanged value),
-    @required TResult saved(_Saved value),
+    @required TResult saveSubmitted(_SaveSubmitted value),
+    @required TResult saveFailed(_SaveFailed value),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -897,7 +934,8 @@ class _$_EndTimeChanged implements _EndTimeChanged {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return endTimeChanged(this);
   }
 
@@ -911,7 +949,8 @@ class _$_EndTimeChanged implements _EndTimeChanged {
     TResult endTimeChanged(_EndTimeChanged value),
     TResult descriptionChanged(_DescriptionChanged value),
     TResult participantsChanged(_ParticipantsChanged value),
-    TResult saved(_Saved value),
+    TResult saveSubmitted(_SaveSubmitted value),
+    TResult saveFailed(_SaveFailed value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -999,7 +1038,8 @@ class _$_DescriptionChanged implements _DescriptionChanged {
     @required TResult endTimeChanged(TimeOfDay endTime),
     @required TResult descriptionChanged(String description),
     @required TResult participantsChanged(List<String> participants),
-    @required TResult saved(),
+    @required TResult saveSubmitted(),
+    @required TResult saveFailed(),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -1008,7 +1048,8 @@ class _$_DescriptionChanged implements _DescriptionChanged {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return descriptionChanged(description);
   }
 
@@ -1022,7 +1063,8 @@ class _$_DescriptionChanged implements _DescriptionChanged {
     TResult endTimeChanged(TimeOfDay endTime),
     TResult descriptionChanged(String description),
     TResult participantsChanged(List<String> participants),
-    TResult saved(),
+    TResult saveSubmitted(),
+    TResult saveFailed(),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1042,7 +1084,8 @@ class _$_DescriptionChanged implements _DescriptionChanged {
     @required TResult endTimeChanged(_EndTimeChanged value),
     @required TResult descriptionChanged(_DescriptionChanged value),
     @required TResult participantsChanged(_ParticipantsChanged value),
-    @required TResult saved(_Saved value),
+    @required TResult saveSubmitted(_SaveSubmitted value),
+    @required TResult saveFailed(_SaveFailed value),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -1051,7 +1094,8 @@ class _$_DescriptionChanged implements _DescriptionChanged {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return descriptionChanged(this);
   }
 
@@ -1065,7 +1109,8 @@ class _$_DescriptionChanged implements _DescriptionChanged {
     TResult endTimeChanged(_EndTimeChanged value),
     TResult descriptionChanged(_DescriptionChanged value),
     TResult participantsChanged(_ParticipantsChanged value),
-    TResult saved(_Saved value),
+    TResult saveSubmitted(_SaveSubmitted value),
+    TResult saveFailed(_SaveFailed value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1157,7 +1202,8 @@ class _$_ParticipantsChanged implements _ParticipantsChanged {
     @required TResult endTimeChanged(TimeOfDay endTime),
     @required TResult descriptionChanged(String description),
     @required TResult participantsChanged(List<String> participants),
-    @required TResult saved(),
+    @required TResult saveSubmitted(),
+    @required TResult saveFailed(),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -1166,7 +1212,8 @@ class _$_ParticipantsChanged implements _ParticipantsChanged {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return participantsChanged(participants);
   }
 
@@ -1180,7 +1227,8 @@ class _$_ParticipantsChanged implements _ParticipantsChanged {
     TResult endTimeChanged(TimeOfDay endTime),
     TResult descriptionChanged(String description),
     TResult participantsChanged(List<String> participants),
-    TResult saved(),
+    TResult saveSubmitted(),
+    TResult saveFailed(),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1200,7 +1248,8 @@ class _$_ParticipantsChanged implements _ParticipantsChanged {
     @required TResult endTimeChanged(_EndTimeChanged value),
     @required TResult descriptionChanged(_DescriptionChanged value),
     @required TResult participantsChanged(_ParticipantsChanged value),
-    @required TResult saved(_Saved value),
+    @required TResult saveSubmitted(_SaveSubmitted value),
+    @required TResult saveFailed(_SaveFailed value),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -1209,7 +1258,8 @@ class _$_ParticipantsChanged implements _ParticipantsChanged {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
     return participantsChanged(this);
   }
 
@@ -1223,7 +1273,8 @@ class _$_ParticipantsChanged implements _ParticipantsChanged {
     TResult endTimeChanged(_EndTimeChanged value),
     TResult descriptionChanged(_DescriptionChanged value),
     TResult participantsChanged(_ParticipantsChanged value),
-    TResult saved(_Saved value),
+    TResult saveSubmitted(_SaveSubmitted value),
+    TResult saveFailed(_SaveFailed value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
@@ -1244,34 +1295,36 @@ abstract class _ParticipantsChanged implements ReservationFormEvent {
 }
 
 /// @nodoc
-abstract class _$SavedCopyWith<$Res> {
-  factory _$SavedCopyWith(_Saved value, $Res Function(_Saved) then) =
-      __$SavedCopyWithImpl<$Res>;
+abstract class _$SaveSubmittedCopyWith<$Res> {
+  factory _$SaveSubmittedCopyWith(
+          _SaveSubmitted value, $Res Function(_SaveSubmitted) then) =
+      __$SaveSubmittedCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$SavedCopyWithImpl<$Res>
+class __$SaveSubmittedCopyWithImpl<$Res>
     extends _$ReservationFormEventCopyWithImpl<$Res>
-    implements _$SavedCopyWith<$Res> {
-  __$SavedCopyWithImpl(_Saved _value, $Res Function(_Saved) _then)
-      : super(_value, (v) => _then(v as _Saved));
+    implements _$SaveSubmittedCopyWith<$Res> {
+  __$SaveSubmittedCopyWithImpl(
+      _SaveSubmitted _value, $Res Function(_SaveSubmitted) _then)
+      : super(_value, (v) => _then(v as _SaveSubmitted));
 
   @override
-  _Saved get _value => super._value as _Saved;
+  _SaveSubmitted get _value => super._value as _SaveSubmitted;
 }
 
 /// @nodoc
-class _$_Saved implements _Saved {
-  const _$_Saved();
+class _$_SaveSubmitted implements _SaveSubmitted {
+  const _$_SaveSubmitted();
 
   @override
   String toString() {
-    return 'ReservationFormEvent.saved()';
+    return 'ReservationFormEvent.saveSubmitted()';
   }
 
   @override
   bool operator ==(dynamic other) {
-    return identical(this, other) || (other is _Saved);
+    return identical(this, other) || (other is _SaveSubmitted);
   }
 
   @override
@@ -1287,7 +1340,8 @@ class _$_Saved implements _Saved {
     @required TResult endTimeChanged(TimeOfDay endTime),
     @required TResult descriptionChanged(String description),
     @required TResult participantsChanged(List<String> participants),
-    @required TResult saved(),
+    @required TResult saveSubmitted(),
+    @required TResult saveFailed(),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -1296,8 +1350,9 @@ class _$_Saved implements _Saved {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
-    return saved();
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
+    return saveSubmitted();
   }
 
   @override
@@ -1310,12 +1365,13 @@ class _$_Saved implements _Saved {
     TResult endTimeChanged(TimeOfDay endTime),
     TResult descriptionChanged(String description),
     TResult participantsChanged(List<String> participants),
-    TResult saved(),
+    TResult saveSubmitted(),
+    TResult saveFailed(),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
-    if (saved != null) {
-      return saved();
+    if (saveSubmitted != null) {
+      return saveSubmitted();
     }
     return orElse();
   }
@@ -1330,7 +1386,8 @@ class _$_Saved implements _Saved {
     @required TResult endTimeChanged(_EndTimeChanged value),
     @required TResult descriptionChanged(_DescriptionChanged value),
     @required TResult participantsChanged(_ParticipantsChanged value),
-    @required TResult saved(_Saved value),
+    @required TResult saveSubmitted(_SaveSubmitted value),
+    @required TResult saveFailed(_SaveFailed value),
   }) {
     assert(initializeEmpty != null);
     assert(initializeEdit != null);
@@ -1339,8 +1396,9 @@ class _$_Saved implements _Saved {
     assert(endTimeChanged != null);
     assert(descriptionChanged != null);
     assert(participantsChanged != null);
-    assert(saved != null);
-    return saved(this);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
+    return saveSubmitted(this);
   }
 
   @override
@@ -1353,19 +1411,153 @@ class _$_Saved implements _Saved {
     TResult endTimeChanged(_EndTimeChanged value),
     TResult descriptionChanged(_DescriptionChanged value),
     TResult participantsChanged(_ParticipantsChanged value),
-    TResult saved(_Saved value),
+    TResult saveSubmitted(_SaveSubmitted value),
+    TResult saveFailed(_SaveFailed value),
     @required TResult orElse(),
   }) {
     assert(orElse != null);
-    if (saved != null) {
-      return saved(this);
+    if (saveSubmitted != null) {
+      return saveSubmitted(this);
     }
     return orElse();
   }
 }
 
-abstract class _Saved implements ReservationFormEvent {
-  const factory _Saved() = _$_Saved;
+abstract class _SaveSubmitted implements ReservationFormEvent {
+  const factory _SaveSubmitted() = _$_SaveSubmitted;
+}
+
+/// @nodoc
+abstract class _$SaveFailedCopyWith<$Res> {
+  factory _$SaveFailedCopyWith(
+          _SaveFailed value, $Res Function(_SaveFailed) then) =
+      __$SaveFailedCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$SaveFailedCopyWithImpl<$Res>
+    extends _$ReservationFormEventCopyWithImpl<$Res>
+    implements _$SaveFailedCopyWith<$Res> {
+  __$SaveFailedCopyWithImpl(
+      _SaveFailed _value, $Res Function(_SaveFailed) _then)
+      : super(_value, (v) => _then(v as _SaveFailed));
+
+  @override
+  _SaveFailed get _value => super._value as _SaveFailed;
+}
+
+/// @nodoc
+class _$_SaveFailed implements _SaveFailed {
+  const _$_SaveFailed();
+
+  @override
+  String toString() {
+    return 'ReservationFormEvent.saveFailed()';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) || (other is _SaveFailed);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object>({
+    @required TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
+    @required TResult initializeEdit(Reservation reservation),
+    @required TResult idRoomChanged(int idRoom),
+    @required TResult startTimeChanged(TimeOfDay startTime),
+    @required TResult endTimeChanged(TimeOfDay endTime),
+    @required TResult descriptionChanged(String description),
+    @required TResult participantsChanged(List<String> participants),
+    @required TResult saveSubmitted(),
+    @required TResult saveFailed(),
+  }) {
+    assert(initializeEmpty != null);
+    assert(initializeEdit != null);
+    assert(idRoomChanged != null);
+    assert(startTimeChanged != null);
+    assert(endTimeChanged != null);
+    assert(descriptionChanged != null);
+    assert(participantsChanged != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
+    return saveFailed();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object>({
+    TResult initializeEmpty(int idRoom, DateTime date, int idHandler),
+    TResult initializeEdit(Reservation reservation),
+    TResult idRoomChanged(int idRoom),
+    TResult startTimeChanged(TimeOfDay startTime),
+    TResult endTimeChanged(TimeOfDay endTime),
+    TResult descriptionChanged(String description),
+    TResult participantsChanged(List<String> participants),
+    TResult saveSubmitted(),
+    TResult saveFailed(),
+    @required TResult orElse(),
+  }) {
+    assert(orElse != null);
+    if (saveFailed != null) {
+      return saveFailed();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object>({
+    @required TResult initializeEmpty(_InitializeEmpty value),
+    @required TResult initializeEdit(_InitializeEdit value),
+    @required TResult idRoomChanged(_IdRoomChanged value),
+    @required TResult startTimeChanged(_StartTimeChanged value),
+    @required TResult endTimeChanged(_EndTimeChanged value),
+    @required TResult descriptionChanged(_DescriptionChanged value),
+    @required TResult participantsChanged(_ParticipantsChanged value),
+    @required TResult saveSubmitted(_SaveSubmitted value),
+    @required TResult saveFailed(_SaveFailed value),
+  }) {
+    assert(initializeEmpty != null);
+    assert(initializeEdit != null);
+    assert(idRoomChanged != null);
+    assert(startTimeChanged != null);
+    assert(endTimeChanged != null);
+    assert(descriptionChanged != null);
+    assert(participantsChanged != null);
+    assert(saveSubmitted != null);
+    assert(saveFailed != null);
+    return saveFailed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object>({
+    TResult initializeEmpty(_InitializeEmpty value),
+    TResult initializeEdit(_InitializeEdit value),
+    TResult idRoomChanged(_IdRoomChanged value),
+    TResult startTimeChanged(_StartTimeChanged value),
+    TResult endTimeChanged(_EndTimeChanged value),
+    TResult descriptionChanged(_DescriptionChanged value),
+    TResult participantsChanged(_ParticipantsChanged value),
+    TResult saveSubmitted(_SaveSubmitted value),
+    TResult saveFailed(_SaveFailed value),
+    @required TResult orElse(),
+  }) {
+    assert(orElse != null);
+    if (saveFailed != null) {
+      return saveFailed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SaveFailed implements ReservationFormEvent {
+  const factory _SaveFailed() = _$_SaveFailed;
 }
 
 /// @nodoc

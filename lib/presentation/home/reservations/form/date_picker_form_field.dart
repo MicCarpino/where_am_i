@@ -40,10 +40,7 @@ class DatePickerFormField extends StatelessWidget {
                         context: context,
                         initialTime: pickerState.value,
                         builder: (context, child) {
-                          return Theme(
-                            data: ThemeData(),
-                            child: child,
-                          );
+                          return Theme(data: ThemeData(), child: child);
                         }).then((selectedTime) {
                       if (selectedTime != null) {
                         context.read<ReservationFormBloc>().add(

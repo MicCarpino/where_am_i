@@ -20,7 +20,6 @@ class SubjectFormField extends StatelessWidget {
         return TextFormField(
           controller: controller,
           decoration: InputDecoration(
-              labelText: 'Oggetto prenotazione*',
               errorText: state.reservationForm.subjectForm.invalid
                   ? 'Campo obbligatorio'
                   : null),

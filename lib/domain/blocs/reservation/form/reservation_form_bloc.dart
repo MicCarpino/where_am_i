@@ -21,7 +21,9 @@ class ReservationFormBloc
   ReservationFormBloc({@required this.reservationActorBloc})
       : super(ReservationFormState.initial()) {
     _reservationActorSubscription = reservationActorBloc.listen((actorState) {
-      // actorState.maybeMap(orElse: (){},updateSuccess: (value) => yield,)
+      actorState.maybeMap(
+          orElse: () {},
+          actionFailure: (_) => add(ReservationFormEvent.saveFailed()));
     });
   }
 
@@ -77,7 +79,7 @@ class ReservationFormBloc
               state.reservationForm.copyWith(participants: value.participants),
         );
       },
-      saved: (value) async* {
+      saveSubmitted: (value) async* {
         yield state.copyWith(isSaving: true);
         final form = Formz.validate([
           state.reservationForm.subjectForm,
@@ -98,14 +100,24 @@ class ReservationFormBloc
             endHour: state.reservationForm.endTimeForm.value.hour,
             endMinutes: state.reservationForm.endTimeForm.value.minute,
           );
-          print(reservation.toString());
-          /*reservationActorBloc.add(state.isEditing
-              ? ReservationActorEvent.update(reservation)
-              : ReservationActorEvent.insert(reservation));*/
+          reservationActorBloc.add(
+            state.isEditing
+                ? ReservationActorEvent.update(reservation)
+                : ReservationActorEvent.insert(reservation),
+          );
         } else {
           yield state.copyWith(isSaving: false);
         }
       },
+      saveFailed: (value) async* {
+        yield state.copyWith(isSaving: false);
+      },
     );
+  }
+
+  @override
+  Future<void> close() {
+    _reservationActorSubscription.cancel();
+    return super.close();
   }
 }
