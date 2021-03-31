@@ -1,56 +1,26 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/core/utils/enums.dart';
-import 'package:where_am_i/data/models/workstation_model.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 
-class Workstation extends Equatable {
-  final int idWorkstation;
-  final String idResource;
-  final DateTime workstationDate;
-  final String freeName;
-  final String codeWorkstation;
-  final TimeOfDay startTime;
-  final TimeOfDay endTime;
-  final int status;
-  final bool hasMoreForCurrentMonth;
+part 'workstation.freezed.dart';
 
-  Workstation({
-    @required this.idWorkstation,
-    this.idResource,
-    @required this.workstationDate,
-    this.freeName,
-    @required this.codeWorkstation,
-    @required this.startTime,
-    @required this.endTime,
-    @required this.status,
-    this.hasMoreForCurrentMonth = false,
-  }) : assert(idResource != null || freeName != null);
+@freezed
+abstract class Workstation implements _$Workstation {
+  const Workstation._();
 
-  @override
-  List<Object> get props => [
-        idWorkstation,
-        idResource,
-        workstationDate,
-        freeName,
-        codeWorkstation,
-        startTime,
-        endTime,
-        status,
-        hasMoreForCurrentMonth,
-      ];
-
-  WorkstationModel toWorkstationModel() => WorkstationModel(
-        idWorkstation: idWorkstation,
-        idResource: idResource,
-        workstationDate: workstationDate,
-        freeName: freeName,
-        codeWorkstation: codeWorkstation,
-        startTime: startTime,
-        endTime: endTime,
-        status: status,
-      );
+  const factory Workstation({
+    int idWorkstation,
+    String idResource,
+    @required DateTime workstationDate,
+    String freeName,
+    String codeWorkstation,
+    @required TimeOfDay startTime,
+    @required TimeOfDay endTime,
+    @required int status,
+    @Default(false) bool hasMoreForCurrentMonth,
+  }) = _Workstation;
 
   Workstation setWorkstationCode(String workstationCode) {
     return Workstation(
@@ -62,28 +32,6 @@ class Workstation extends Equatable {
         startTime: this.startTime,
         endTime: this.endTime,
         status: this.status);
-  }
-
-  Workstation copyWith({
-    int idWorkstation,
-    String idResource,
-    DateTime workstationDate,
-    String freeName,
-    String codeWorkstation,
-    TimeOfDay startTime,
-    TimeOfDay endTime,
-    int status,
-    bool hasMoreForCurrentMonth,
-  }) {
-    return Workstation(
-        idWorkstation: idWorkstation ?? this.idWorkstation,
-        idResource: idResource ?? this.idResource,
-        workstationDate: workstationDate ?? this.workstationDate,
-        freeName: freeName ?? this.freeName,
-        codeWorkstation: codeWorkstation ?? this.codeWorkstation,
-        startTime: startTime ?? this.startTime,
-        endTime: endTime ?? this.endTime,
-        status: status ?? this.status);
   }
 
   TimeSlot getTimeSlot() {

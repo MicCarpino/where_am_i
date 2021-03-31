@@ -36,11 +36,11 @@ class MyPresencesWatcherBloc
       getUserPresences: (e) async* {
         yield const MyPresencesWatcherState.loadInProgress();
         final presences = await workstationRepository.getAllForCurrentUser();
-        presences
+        yield presences
             .fold((failure) => MyPresencesWatcherState.loadFailure(failure),
                 (presences) {
           cachedUserPresences = presences;
-          add(MyPresencesWatcherEvent.workstationsReceived());
+         return MyPresencesWatcherState.loadSuccess(cachedUserPresences);
         });
       },
       workstationsReceived: (e) async* {

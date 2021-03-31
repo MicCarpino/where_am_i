@@ -9,6 +9,7 @@ import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
+import 'package:where_am_i/data/models/workstation_dto.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 
@@ -75,7 +76,9 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final insertResult = await remoteDataSource.insertWorkstation(
-          loggedUser.authenticationToken, workstation.toWorkstationModel());
+        loggedUser.authenticationToken,
+        WorkstationDto.fromDomain(workstation),
+      );
       return Right(insertResult);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
@@ -91,7 +94,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       var loggedUser = await localDataSource.getCachedUser();
       final insertResult = await remoteDataSource.insertAllWorkstations(
           loggedUser.authenticationToken,
-          newWorkstations.map((e) => e.toWorkstationModel()).toList());
+          newWorkstations.map((e) => WorkstationDto.fromDomain(e)).toList());
       return Right(insertResult);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
@@ -106,8 +109,9 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     try {
       var loggedUser = await localDataSource.getCachedUser();
       final updateResult = await remoteDataSource.updateWorkstation(
-          loggedUser.authenticationToken,
-          updatedWorkstation.toWorkstationModel());
+        loggedUser.authenticationToken,
+        WorkstationDto.fromDomain(updatedWorkstation),
+      );
       return Right(updateResult);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));
@@ -123,7 +127,9 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
       var loggedUser = await localDataSource.getCachedUser();
       final updateResult = await remoteDataSource.updateAllWorkstations(
           loggedUser.authenticationToken,
-          updatedWorkstations.map((e) => e.toWorkstationModel()).toList());
+          updatedWorkstations
+              .map((e) => WorkstationDto.fromDomain(e))
+              .toList());
       return Right(updateResult);
     } on ServerException catch (error) {
       return Left(ServerFailure(error.errorMessage));

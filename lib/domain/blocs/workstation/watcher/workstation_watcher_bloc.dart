@@ -64,12 +64,11 @@ class WorkstationWatcherBloc
         );
       },
       onPresencesUpdated: (value) async* {
-        //TODO: without loadInProgress state the update doesn't occurs not even with "copyWith"
         yield WorkstationWatcherState.loadInProgress();
         yield state.maybeMap(
-            orElse: () => WorkstationWatcherState.loadSuccess(value.presences),
+            orElse: () => WorkstationWatcherState.loadSuccess([]..addAll(value.presences)),
             loadSuccess: (successState) =>
-                successState.copyWith(usersWithWorkstations: value.presences));
+                successState.copyWith(usersWithWorkstations: []..addAll(value.presences)));
       },
     );
   }
@@ -98,19 +97,19 @@ class WorkstationWatcherBloc
               cachedUsersPresences[updatedIndex]
                   .copyWith(workstation: value.workstation);
         }
-        add(WorkstationWatcherEvent.onPresencesUpdated(cachedUsersPresences));
+        add(WorkstationWatcherEvent.onPresencesUpdated(List.of(cachedUsersPresences)));
       },
       multipleUpdateSuccess: (value) {
-        value.workstations.map((workstation) {
+        value.workstations.forEach((workstation) {
           final updatedIndex = cachedUsersPresences.indexWhere((element) =>
-              element.workstation.idWorkstation == workstation.idWorkstation);
+              element.workstation?.idWorkstation == workstation.idWorkstation);
           if (updatedIndex != -1) {
             cachedUsersPresences[updatedIndex] =
                 cachedUsersPresences[updatedIndex]
                     .copyWith(workstation: workstation);
           }
         });
-        add(WorkstationWatcherEvent.onPresencesUpdated(cachedUsersPresences));
+        add(WorkstationWatcherEvent.onPresencesUpdated(List.of(cachedUsersPresences)));
       },
       orElse: () {},
     );

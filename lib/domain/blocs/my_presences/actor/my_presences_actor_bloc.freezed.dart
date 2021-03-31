@@ -409,6 +409,8 @@ abstract class _$RemovedCopyWith<$Res> {
   factory _$RemovedCopyWith(_Removed value, $Res Function(_Removed) then) =
       __$RemovedCopyWithImpl<$Res>;
   $Res call({Workstation workstation});
+
+  $WorkstationCopyWith<$Res> get workstation;
 }
 
 /// @nodoc
@@ -428,6 +430,16 @@ class __$RemovedCopyWithImpl<$Res>
     return _then(_Removed(
       workstation == freezed ? _value.workstation : workstation as Workstation,
     ));
+  }
+
+  @override
+  $WorkstationCopyWith<$Res> get workstation {
+    if (_value.workstation == null) {
+      return null;
+    }
+    return $WorkstationCopyWith<$Res>(_value.workstation, (value) {
+      return _then(_value.copyWith(workstation: value));
+    });
   }
 }
 
@@ -543,6 +555,8 @@ abstract class _$UpdatedCopyWith<$Res> {
   factory _$UpdatedCopyWith(_Updated value, $Res Function(_Updated) then) =
       __$UpdatedCopyWithImpl<$Res>;
   $Res call({Workstation workstation});
+
+  $WorkstationCopyWith<$Res> get workstation;
 }
 
 /// @nodoc
@@ -562,6 +576,16 @@ class __$UpdatedCopyWithImpl<$Res>
     return _then(_Updated(
       workstation == freezed ? _value.workstation : workstation as Workstation,
     ));
+  }
+
+  @override
+  $WorkstationCopyWith<$Res> get workstation {
+    if (_value.workstation == null) {
+      return null;
+    }
+    return $WorkstationCopyWith<$Res>(_value.workstation, (value) {
+      return _then(_value.copyWith(workstation: value));
+    });
   }
 }
 
@@ -678,6 +702,8 @@ abstract class _$EditRequestedCopyWith<$Res> {
           _EditRequested value, $Res Function(_EditRequested) then) =
       __$EditRequestedCopyWithImpl<$Res>;
   $Res call({DateTime day, Workstation workstation});
+
+  $WorkstationCopyWith<$Res> get workstation;
 }
 
 /// @nodoc
@@ -700,6 +726,16 @@ class __$EditRequestedCopyWithImpl<$Res>
       day == freezed ? _value.day : day as DateTime,
       workstation == freezed ? _value.workstation : workstation as Workstation,
     ));
+  }
+
+  @override
+  $WorkstationCopyWith<$Res> get workstation {
+    if (_value.workstation == null) {
+      return null;
+    }
+    return $WorkstationCopyWith<$Res>(_value.workstation, (value) {
+      return _then(_value.copyWith(workstation: value));
+    });
   }
 }
 
@@ -1278,6 +1314,8 @@ abstract class _$InsertSuccessCopyWith<$Res> {
           _InsertSuccess value, $Res Function(_InsertSuccess) then) =
       __$InsertSuccessCopyWithImpl<$Res>;
   $Res call({Workstation workstation});
+
+  $WorkstationCopyWith<$Res> get workstation;
 }
 
 /// @nodoc
@@ -1298,6 +1336,16 @@ class __$InsertSuccessCopyWithImpl<$Res>
     return _then(_InsertSuccess(
       workstation == freezed ? _value.workstation : workstation as Workstation,
     ));
+  }
+
+  @override
+  $WorkstationCopyWith<$Res> get workstation {
+    if (_value.workstation == null) {
+      return null;
+    }
+    return $WorkstationCopyWith<$Res>(_value.workstation, (value) {
+      return _then(_value.copyWith(workstation: value));
+    });
   }
 }
 
@@ -2320,6 +2368,8 @@ abstract class _$UpdateSuccessCopyWith<$Res> {
           _UpdateSuccess value, $Res Function(_UpdateSuccess) then) =
       __$UpdateSuccessCopyWithImpl<$Res>;
   $Res call({Workstation workstation});
+
+  $WorkstationCopyWith<$Res> get workstation;
 }
 
 /// @nodoc
@@ -2340,6 +2390,16 @@ class __$UpdateSuccessCopyWithImpl<$Res>
     return _then(_UpdateSuccess(
       workstation == freezed ? _value.workstation : workstation as Workstation,
     ));
+  }
+
+  @override
+  $WorkstationCopyWith<$Res> get workstation {
+    if (_value.workstation == null) {
+      return null;
+    }
+    return $WorkstationCopyWith<$Res>(_value.workstation, (value) {
+      return _then(_value.copyWith(workstation: value));
+    });
   }
 }
 
@@ -2665,6 +2725,8 @@ abstract class _$ShowTimeSlotDialogCopyWith<$Res> {
           _ShowTimeSlotDialog value, $Res Function(_ShowTimeSlotDialog) then) =
       __$ShowTimeSlotDialogCopyWithImpl<$Res>;
   $Res call({DateTime date, Workstation workstation});
+
+  $WorkstationCopyWith<$Res> get workstation;
 }
 
 /// @nodoc
@@ -2687,6 +2749,16 @@ class __$ShowTimeSlotDialogCopyWithImpl<$Res>
       date == freezed ? _value.date : date as DateTime,
       workstation == freezed ? _value.workstation : workstation as Workstation,
     ));
+  }
+
+  @override
+  $WorkstationCopyWith<$Res> get workstation {
+    if (_value.workstation == null) {
+      return null;
+    }
+    return $WorkstationCopyWith<$Res>(_value.workstation, (value) {
+      return _then(_value.copyWith(workstation: value));
+    });
   }
 }
 

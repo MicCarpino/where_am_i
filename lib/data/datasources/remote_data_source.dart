@@ -9,8 +9,9 @@ import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/models/authenticated_user_model.dart';
 import 'package:where_am_i/data/models/reservation_model.dart';
 import 'package:where_am_i/data/models/user_model.dart';
-import 'package:where_am_i/data/models/workstation_model.dart';
+import 'package:where_am_i/data/models/workstation_dto.dart';
 import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/domain/entities/workstation.dart';
 
 abstract class RemoteDataSource {
   //USER
@@ -22,28 +23,28 @@ abstract class RemoteDataSource {
   Future<UserModel> updateUser(String token, UserModel userUpdated);
 
   //WORKSTATIONS
-  Future<List<WorkstationModel>> getAllWorkstationsByDate(
+  Future<List<Workstation>> getAllWorkstationsByDate(
       String token, DateTime date);
 
-  Future<List<WorkstationModel>> getAllWorkstationsByIdResource(
+  Future<List<Workstation>> getAllWorkstationsByIdResource(
       String token, String idResource);
 
-  Future<List<WorkstationModel>> getAllWorkstationsByIdResourceToEndOfMonth(
+  Future<List<Workstation>> getAllWorkstationsByIdResourceToEndOfMonth(
       String token, String idResource, String date);
 
-  Future<WorkstationModel> insertWorkstation(
-      String token, WorkstationModel workstation);
+  Future<Workstation> insertWorkstation(
+      String token, WorkstationDto workstation);
 
-  Future<List<WorkstationModel>> insertAllWorkstations(
-      String authenticationToken, List<WorkstationModel> list);
+  Future<List<Workstation>> insertAllWorkstations(
+      String authenticationToken, List<WorkstationDto> list);
 
-  Future<WorkstationModel> updateWorkstation(
-      String token, WorkstationModel updatedWorkstation);
+  Future<Workstation> updateWorkstation(
+      String token, WorkstationDto updatedWorkstation);
 
-  Future<List<WorkstationModel>> updateAllWorkstations(
-      String token, List<WorkstationModel> list);
+  Future<List<Workstation>> updateAllWorkstations(
+      String token, List<WorkstationDto> list);
 
-  Future<WorkstationModel> updateWorkstationStatus(
+  Future<Workstation> updateWorkstationStatus(
       String token, WorkstationStatusParameters workstationStatusParameters);
 
   Future<void> deleteWorkstation(String token, int idWorkstation);
@@ -95,7 +96,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<List<WorkstationModel>> getAllWorkstationsByDate(
+  Future<List<Workstation>> getAllWorkstationsByDate(
       String token, DateTime date) async {
     var uri = Uri.https(
         BASE_URL, '/WhereAmI/workstation/byDate/${formatDateToString(date)}');
@@ -105,15 +106,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       List<dynamic> workstationsList = json.decode(response.body);
-      return List<WorkstationModel>.from(
-          workstationsList.map((e) => WorkstationModel.fromJson(e)));
+      return List<Workstation>.from(
+          workstationsList.map((e) => WorkstationDto.fromJson(e).toDomain()));
     } else {
       return _handleFailureResult(response);
     }
   }
 
   @override
-  Future<List<WorkstationModel>> getAllWorkstationsByIdResource(
+  Future<List<Workstation>> getAllWorkstationsByIdResource(
       String token, String idResource) async {
     var uri =
         Uri.https(BASE_URL, '/WhereAmI/workstation/byIdResource/$idResource');
@@ -123,15 +124,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       List<dynamic> workstationsList = json.decode(response.body);
-      return List<WorkstationModel>.from(
-          workstationsList.map((e) => WorkstationModel.fromJson(e)));
+      return List<Workstation>.from(
+          workstationsList.map((e) => WorkstationDto.fromJson(e).toDomain()));
     } else {
       return _handleFailureResult(response);
     }
   }
 
   @override
-  Future<List<WorkstationModel>> getAllWorkstationsByIdResourceToEndOfMonth(
+  Future<List<Workstation>> getAllWorkstationsByIdResourceToEndOfMonth(
       String token, String idResource, String date) async {
     var uri = Uri.https(BASE_URL,
         '/WhereAmI/workstation//byIdResourceToEndOfMonth/$idResource/$date');
@@ -141,16 +142,16 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       List<dynamic> workstationsList = json.decode(response.body);
-      return List<WorkstationModel>.from(
-          workstationsList.map((e) => WorkstationModel.fromJson(e)));
+      return List<Workstation>.from(
+          workstationsList.map((e) => WorkstationDto.fromJson(e).toDomain()));
     } else {
       return _handleFailureResult(response);
     }
   }
 
   @override
-  Future<WorkstationModel> insertWorkstation(
-      String token, WorkstationModel workstation) async {
+  Future<Workstation> insertWorkstation(
+      String token, WorkstationDto workstation) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/workstation');
     final response = await http
         .post(uri,
@@ -161,15 +162,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
             body: json.encode(workstation.toJson()))
         .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
-      return WorkstationModel.fromJson(json.decode(response.body));
+      return WorkstationDto.fromJson(json.decode(response.body)).toDomain();
     } else {
       return _handleFailureResult(response);
     }
   }
 
   @override
-  Future<List<WorkstationModel>> insertAllWorkstations(
-      String token, List<WorkstationModel> list) async {
+  Future<List<Workstation>> insertAllWorkstations(
+      String token, List<WorkstationDto> list) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/insertAll');
     var body = json.encode(
         list.map((workstationModel) => workstationModel.toJson()).toList());
@@ -183,16 +184,16 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       List<dynamic> workstationsList = json.decode(response.body);
-      return List<WorkstationModel>.from(
-          workstationsList.map((e) => WorkstationModel.fromJson(e)));
+      return List<Workstation>.from(
+          workstationsList.map((e) => WorkstationDto.fromJson(e).toDomain()));
     } else {
       return _handleFailureResult(response);
     }
   }
 
   @override
-  Future<WorkstationModel> updateWorkstation(
-      String token, WorkstationModel updatedWorkstation) async {
+  Future<Workstation> updateWorkstation(
+      String token, WorkstationDto updatedWorkstation) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/workstation');
     var body = json.encode(updatedWorkstation.toJson());
     final response = await http
@@ -204,15 +205,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
             body: body)
         .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
-      return WorkstationModel.fromJson(jsonDecode(response.body));
+      return WorkstationDto.fromJson(jsonDecode(response.body)).toDomain();
     } else {
       return _handleFailureResult(response);
     }
   }
 
   @override
-  Future<List<WorkstationModel>> updateAllWorkstations(
-      String token, List<WorkstationModel> list) async {
+  Future<List<Workstation>> updateAllWorkstations(
+      String token, List<WorkstationDto> list) async {
     var uri = Uri.https(BASE_URL, '/WhereAmI/workstation/updateAll');
     var body = json.encode(
         list.map((workstationModel) => workstationModel.toJson()).toList());
@@ -226,15 +227,15 @@ class RemoteDataSourceImpl implements RemoteDataSource {
         .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       List<dynamic> workstationsList = json.decode(response.body);
-      return List<WorkstationModel>.from(
-          workstationsList.map((e) => WorkstationModel.fromJson(e)));
+      return List<Workstation>.from(
+          workstationsList.map((e) => WorkstationDto.fromJson(e).toDomain()));
     } else {
       return _handleFailureResult(response);
     }
   }
 
   @override
-  Future<WorkstationModel> updateWorkstationStatus(String token,
+  Future<Workstation> updateWorkstationStatus(String token,
       WorkstationStatusParameters workstationStatusParameters) async {
     var uri = Uri.https(BASE_URL,
         '/WhereAmI/workstation/${workstationStatusParameters.idWorkstation}/${workstationStatusParameters.status}');
@@ -243,7 +244,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       HttpHeaders.contentTypeHeader: 'application/json'
     }).timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
-      return WorkstationModel.fromJson(jsonDecode(response.body));
+      return WorkstationDto.fromJson(jsonDecode(response.body)).toDomain();
     } else {
       return _handleFailureResult(response);
     }
@@ -339,10 +340,14 @@ class RemoteDataSourceImpl implements RemoteDataSource {
       BASE_URL,
       '/WhereAmI/reservation/${reservationModel.idReservation}',
     );
-    final response = await http.put(uri, headers: {
-      HttpHeaders.authorizationHeader: token,
-      HttpHeaders.contentTypeHeader: 'application/json'
-    },body: body).timeout(HTTP_TIMEOUT);
+    final response = await http
+        .put(uri,
+            headers: {
+              HttpHeaders.authorizationHeader: token,
+              HttpHeaders.contentTypeHeader: 'application/json'
+            },
+            body: body)
+        .timeout(HTTP_TIMEOUT);
     if (response.statusCode == 200) {
       return ReservationModel.fromJson(json.decode(response.body));
     } else {
