@@ -26,7 +26,7 @@ class Desk extends StatefulWidget {
 }
 
 class _DeskState extends State<Desk> {
-  final isDeskOfLoggedUser = false;
+  bool isDeskOfLoggedUser;
   User loggedUser;
   bool isEditAllowed;
 
@@ -35,12 +35,19 @@ class _DeskState extends State<Desk> {
     super.initState();
     loggedUser =
         context.read<AuthenticationBloc>().state.authenticatedUser.user;
+    isDeskOfLoggedUser = context
+            .read<DatePickerCubit>()
+            .state
+            .visualizedDate
+            .isAtSameMomentTimeLess(DateTime.now()) &&
+        context.read<AuthenticationBloc>().state.assignedWorkstation ==
+            widget.workstationCode;
     isEditAllowed = context.read<DatePickerCubit>().isEditAllowed();
   }
 
   @override
   Widget build(BuildContext context) {
-    String  resourceLabel = _getDeskLabel();
+    String resourceLabel = _getDeskLabel();
     return Container(
       child: CustomPaint(
           painter: DeskMarker(widget.usersWithWorkstations

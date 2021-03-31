@@ -1,6 +1,5 @@
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/data/repositories/workstation_repository_impl.dart';
@@ -25,7 +24,6 @@ import 'package:where_am_i/domain/blocs/users_management/users_management_bloc.d
 final getIt = GetIt.instance;
 
 Future<void> init() async {
-  getIt.registerLazySingleton(() => UserService());
   // Bloc
   getIt.registerLazySingleton(() => AuthenticationBloc(
         authenticationRepository: getIt(),
@@ -82,5 +80,5 @@ Future<void> init() async {
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();
-  getIt.registerLazySingleton(() => sharedPreferences);
+  getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 }

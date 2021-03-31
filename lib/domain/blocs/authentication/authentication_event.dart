@@ -19,3 +19,12 @@ class AuthenticationStatusChanged extends AuthenticationEvent {
 class AuthenticationLogoutRequested extends AuthenticationEvent {}
 
 class AuthenticationTokenExpired extends AuthenticationEvent {}
+
+class WorkstationAssigned extends AuthenticationEvent {
+  const WorkstationAssigned(this.workstationCode);
+
+  final int workstationCode;
+
+  @override
+  List<Object> get props => [workstationCode];
+}

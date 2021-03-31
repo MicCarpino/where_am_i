@@ -3,12 +3,14 @@ import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
+import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
 import 'package:where_am_i/domain/blocs/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
+import 'package:where_am_i/injection_container.dart';
 
 part 'workstation_watcher_event.dart';
 
@@ -66,15 +68,35 @@ class WorkstationWatcherBloc
       onPresencesUpdated: (value) async* {
         yield WorkstationWatcherState.loadInProgress();
         yield state.maybeMap(
-            orElse: () => WorkstationWatcherState.loadSuccess([]..addAll(value.presences)),
-            loadSuccess: (successState) =>
-                successState.copyWith(usersWithWorkstations: []..addAll(value.presences)));
+            orElse: () => WorkstationWatcherState.loadSuccess(
+                []..addAll(value.presences)),
+            loadSuccess: (successState) => successState.copyWith(
+                usersWithWorkstations: []..addAll(value.presences)));
       },
     );
   }
 
   List<UserWithWorkstation> _mergeUserWithWorkstations(
       List<User> users, List<Workstation> workstations) {
+    if (workstations.any((element) =>
+        element.workstationDate.isAtSameMomentTimeLess(DateTime.now()))) {
+      // ignore: close_sinks
+      final authBloc = getIt<AuthenticationBloc>();
+      final assignedWorkstation = workstations
+          .singleWhereOrNull(
+            (e) =>
+                e.idResource ==
+                    authBloc.state.authenticatedUser.user.idResource &&
+                e.workstationDate.zeroed() == DateTime.now().zeroed(),
+          )
+          ?.codeWorkstation;
+      authBloc.add(
+        WorkstationAssigned(assignedWorkstation != null
+            ? int.tryParse(assignedWorkstation)
+            : null),
+      );
+    }
+
     return workstations
         .where((e) => e.freeName != null)
         .map((freeName) =>
@@ -97,7 +119,8 @@ class WorkstationWatcherBloc
               cachedUsersPresences[updatedIndex]
                   .copyWith(workstation: value.workstation);
         }
-        add(WorkstationWatcherEvent.onPresencesUpdated(List.of(cachedUsersPresences)));
+        add(WorkstationWatcherEvent.onPresencesUpdated(
+            List.of(cachedUsersPresences)));
       },
       multipleUpdateSuccess: (value) {
         value.workstations.forEach((workstation) {
@@ -109,7 +132,8 @@ class WorkstationWatcherBloc
                     .copyWith(workstation: workstation);
           }
         });
-        add(WorkstationWatcherEvent.onPresencesUpdated(List.of(cachedUsersPresences)));
+        add(WorkstationWatcherEvent.onPresencesUpdated(
+            List.of(cachedUsersPresences)));
       },
       orElse: () {},
     );

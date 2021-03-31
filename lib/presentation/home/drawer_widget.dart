@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/enums.dart';
-import 'package:where_am_i/data/user_service.dart';
 import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
 import 'package:where_am_i/domain/entities/user.dart';
-import 'package:where_am_i/injection_container.dart';
 
 class DrawerWidget extends StatefulWidget {
   final Function(String, Pages) setTitleAndPage;
@@ -48,23 +46,18 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 icon: Icons.event_available,
                 text: 'Le mie presenze',
               ),
-              loggedUser != null && loggedUser.idRole >= ROLE_STAFF
-                  ? _buildItem(
-                      drawerItemRelatedPage: Pages.presences_management_page,
-                      icon: Icons.supervisor_account,
-                      text: 'Gestione presenze',
-                    )
-                  : Container(),
-              //loggedUser != null && loggedUser.idRole == ROLE_ADMIN
-              loggedUser != null &&
-                      (loggedUser.idRole == ROLE_ADMIN ||
-                          loggedUser.idResource == "177")
-                  ? _buildItem(
-                      drawerItemRelatedPage: Pages.users_management_page,
-                      icon: Icons.lock_open,
-                      text: 'Gestione utenze',
-                    )
-                  : Container(),
+              if (loggedUser?.isStaffOrAdmin())
+                _buildItem(
+                  drawerItemRelatedPage: Pages.presences_management_page,
+                  icon: Icons.supervisor_account,
+                  text: 'Gestione presenze',
+                ),
+              if (loggedUser?.idRole == ROLE_ADMIN)
+                _buildItem(
+                  drawerItemRelatedPage: Pages.users_management_page,
+                  icon: Icons.lock_open,
+                  text: 'Gestione utenze',
+                )
             ])),
             Container(
                 child: Align(
@@ -135,25 +128,39 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
   _buildHeader() {
     return DrawerHeader(
-        // decoration: BoxDecoration(color: dncBlue),
-        child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Image(image: AssetImage('assets/dnc_def_logo.png'), width: 200),
-        loggedUser != null
-            ? Text('Ciao ${loggedUser?.name}',
-                style: TextStyle(
-                    color: dncBlue, fontSize: 20, fontWeight: FontWeight.bold))
-            : Container(),
-        _buildAssignedWorkplaceSection()
-      ],
-    ));
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Image(image: AssetImage('assets/dnc_def_logo.png'), width: 200),
+          BlocBuilder<AuthenticationBloc, AuthenticationState>(
+              builder: (context, state) {
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+              if (state.authenticatedUser != null)
+                Text(
+                  'Ciao ${loggedUser?.name}',
+                  style: TextStyle(
+                    color: dncBlue,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              SizedBox(height: 4),
+              if (state.assignedWorkstation != null)
+                _buildAssignedWorkplaceSection(state.assignedWorkstation)
+            ]);
+          }),
+        ],
+      ),
+    );
   }
 
-  Widget _buildAssignedWorkplaceSection() {
-    int assignedWorkstation = getIt<UserService>().getAssignedWorkstationCode;
+  Widget _buildAssignedWorkplaceSection(int codeWorkstation) {
+    int assignedWorkstation =
+        context.read<AuthenticationBloc>().state.assignedWorkstation;
     String workplaceIndicationLabel;
     if (assignedWorkstation == null) {
       return Container();

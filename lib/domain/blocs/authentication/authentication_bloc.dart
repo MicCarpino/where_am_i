@@ -43,6 +43,11 @@ class AuthenticationBloc
     } else if (event is AuthenticationTokenExpired) {
       print('PERFORMING 401 LOGOUT');
       await performLogOut(tokenExpired: true);
+    } else if (event is WorkstationAssigned) {
+      yield AuthenticationState.authenticated(
+        state.authenticatedUser,
+        event.workstationCode,
+      );
     }
   }
 
@@ -55,7 +60,7 @@ class AuthenticationBloc
       case AuthenticationStatus.authenticated:
         final user = await _authenticationRepository.getLoggedUser();
         return user.fold((l) => AuthenticationState.unauthenticated(),
-            (user) => AuthenticationState.authenticated(user));
+            (user) => AuthenticationState.authenticated(user, null));
       default:
         return const AuthenticationState.unknown();
     }
