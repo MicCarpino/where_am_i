@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meta/meta.dart';
+import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 
@@ -64,7 +65,8 @@ class WorkstationAssignmentBloc
     final assignableResources = allUsersWithWorkstations
         .where((element) =>
             element.workstation != null &&
-            element.workstation.codeWorkstation == null)
+            element.workstation.codeWorkstation == null &&
+            element.workstation.status == WORKSTATION_STATUS_CONFIRMED)
         .toList();
     assignableResources.removeWhere(
       (assignable) => assignedResources.any((assigned) =>
