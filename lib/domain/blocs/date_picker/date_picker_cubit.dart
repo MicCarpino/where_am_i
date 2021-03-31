@@ -12,17 +12,17 @@ class DatePickerCubit extends Cubit<DatePickerState> {
       : super(DatePickerState(visualizedDate: DateTime.now().zeroed()));
 
   void incrementDate() {
-    final newDate = state.visualizedDate.toUtc().add(
+    final newDate = state.visualizedDate.add(
       Duration(days: state.visualizedDate.weekday == DateTime.saturday ? 2 : 1),
     );
-    emit(state.copyWith(visualizedDate: newDate));
+    emit(state.copyWith(visualizedDate: newDate.zeroed()));
   }
 
   void decrementDate() {
-    final newDate = state.visualizedDate.toUtc().subtract(
+    final newDate = state.visualizedDate.subtract(
       Duration(days: state.visualizedDate.weekday == DateTime.monday ? 2 : 1),
     );
-    emit(state.copyWith(visualizedDate: newDate));
+    emit(state.copyWith(visualizedDate: newDate.zeroed()));
   }
 
   void onDateChanged(DateTime date) =>
