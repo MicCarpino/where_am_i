@@ -23,12 +23,7 @@ class PresencesManagementTile extends StatelessWidget {
       onLongPress: () => null,
       child: Row(children: [
         _buildResourceSection(context),
-        userWithWorkstation?.workstation?.status == WORKSTATION_STATUS_PENDING
-            ? _buildButtons()
-            : userWithWorkstation?.workstation?.status ==
-                    WORKSTATION_STATUS_REFUSED
-                ? _buildRefusedIcon()
-                : Container()
+        _buildTrailingIcon(),
       ]),
     );
   }
@@ -80,6 +75,26 @@ class PresencesManagementTile extends StatelessWidget {
     );
   }
 
+  Widget _buildTrailingIcon() {
+    final status = userWithWorkstation.workstation?.status;
+    if (status == WORKSTATION_STATUS_CONFIRMED &&
+        userWithWorkstation.workstation.codeWorkstation != null) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Icon(Icons.computer, color: dncBlue),
+      );
+    } else if (status == WORKSTATION_STATUS_REFUSED) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Icon(Icons.block, color: Colors.red),
+      );
+    } else if (status == WORKSTATION_STATUS_PENDING) {
+      return _buildButtons();
+    } else {
+      return Container();
+    }
+  }
+
   Widget _buildButtons() {
     return Container(
       child: Padding(
@@ -89,10 +104,7 @@ class PresencesManagementTile extends StatelessWidget {
             //accept button
             FloatingActionButton(
               backgroundColor: Colors.green,
-              child: Icon(
-                Icons.check,
-                color: Colors.white,
-              ),
+              child: Icon(Icons.check, color: Colors.white),
               onPressed: () =>
                   onStatusButtonClick(WORKSTATION_STATUS_CONFIRMED),
             ),
@@ -100,25 +112,11 @@ class PresencesManagementTile extends StatelessWidget {
             //refuse button
             FloatingActionButton(
               backgroundColor: Colors.red,
-              child: Icon(
-                Icons.clear,
-                color: Colors.white,
-              ),
-              onPressed: () => onStatusButtonClick(
-                WORKSTATION_STATUS_REFUSED,
-              ),
+              child: Icon(Icons.clear, color: Colors.white),
+              onPressed: () => onStatusButtonClick(WORKSTATION_STATUS_REFUSED),
             )
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildRefusedIcon() {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Icon(Icons.block, color: Colors.red),
       ),
     );
   }
