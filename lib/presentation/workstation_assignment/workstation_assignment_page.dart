@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/blocs/date_picker/date_picker_cubit.dart';
@@ -42,6 +41,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
           builder: (context, state) => state.maybeMap(
             orElse: () => Container(),
             loadSuccess: (value) {
+              _expanded.value = null;
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
