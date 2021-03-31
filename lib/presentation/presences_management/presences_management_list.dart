@@ -11,7 +11,8 @@ import 'package:where_am_i/presentation/presences_management/presences_managemen
 
 class PresencesManagementList extends StatefulWidget {
   @override
-  _PresencesManagementListState createState() => _PresencesManagementListState();
+  _PresencesManagementListState createState() =>
+      _PresencesManagementListState();
 }
 
 class _PresencesManagementListState extends State<PresencesManagementList> {
@@ -161,7 +162,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
 
   Widget _buildAddExternalUserButton() {
     final isEditAllowed =
-    BlocProvider.of<DatePickerCubit>(context).isEditAllowed();
+        BlocProvider.of<DatePickerCubit>(context).isEditAllowed();
     return IconButton(
       icon: Icon(Icons.person_add,
           color: isEditAllowed ? Colors.black87 : Colors.grey),
@@ -194,18 +195,47 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
 
   _onResourceLongClick(
       BuildContext context, UserWithWorkstation userWithWorkstation) {
-    context.read<PresencesManagementActorBloc>().add(
-          userWithWorkstation.workstation != null
-              ? PresencesManagementActorEvent.removed(
-                  userWithWorkstation.workstation,
-                )
-              : PresencesManagementActorEvent.added(
-                  timeSlot: TimeSlot.fullDay,
-                  date: context.read<DatePickerCubit>().state.visualizedDate,
-                  idResource: userWithWorkstation.user?.idResource,
-                  freeName: userWithWorkstation.workstation?.freeName,
-                ),
-        );
+    if (userWithWorkstation.workstation == null) {
+      context
+          .read<PresencesManagementActorBloc>()
+          .add(PresencesManagementActorEvent.added(
+            timeSlot: TimeSlot.fullDay,
+            date: context.read<DatePickerCubit>().state.visualizedDate,
+            idResource: userWithWorkstation.user?.idResource,
+            freeName: userWithWorkstation.workstation?.freeName,
+          ));
+    } else if (userWithWorkstation.workstation.codeWorkstation == null) {
+      context
+          .read<PresencesManagementActorBloc>()
+          .add(PresencesManagementActorEvent.removed(
+            userWithWorkstation.workstation,
+          ));
+    } else {
+      showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+                title: Text('Attenzione'),
+                content: Text(
+                    '${userWithWorkstation.getResourceLabel()} è già stato assegnato/a ad una postazione. \nVuoi procedere con la rimozione della sua presenza? '),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text('ANNULLA'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      context
+                          .read<PresencesManagementActorBloc>()
+                          .add(PresencesManagementActorEvent.removed(
+                            userWithWorkstation.workstation,
+                          ));
+                      Navigator.pop(context);
+                    },
+                    child: Text('CONFERMA'),
+                  ),
+                ],
+              ));
+    }
   }
 
   _onStatusButtonClick(BuildContext context, Workstation workstation) {
