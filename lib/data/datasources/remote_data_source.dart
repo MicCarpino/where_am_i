@@ -91,7 +91,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return AuthenticatedUserModel.fromJson(json.decode(response.body));
     } else {
-      return _handleFailureResult(response);
+       throw UnauthorizedException();
     }
   }
 

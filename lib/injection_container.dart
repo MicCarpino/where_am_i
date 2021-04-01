@@ -10,7 +10,6 @@ import 'package:where_am_i/domain/repositories/reservation_repository.dart';
 import 'package:where_am_i/domain/repositories/authentication_repository.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
-import 'package:where_am_i/domain/usecases/perform_log_in.dart';
 import 'package:where_am_i/domain/usecases/perform_log_out.dart';
 import 'package:where_am_i/domain/usecases/users/get_all_user_by_filter.dart';
 import 'package:where_am_i/domain/usecases/users/get_all_users.dart';
@@ -18,7 +17,6 @@ import 'package:where_am_i/domain/usecases/users/get_logged_user.dart';
 import 'package:where_am_i/domain/usecases/users/get_user_by_id.dart';
 import 'package:where_am_i/domain/usecases/users/update_user.dart';
 import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
-import 'package:where_am_i/domain/blocs/login/login_bloc.dart';
 import 'package:where_am_i/domain/blocs/users_management/users_management_bloc.dart';
 
 final getIt = GetIt.instance;
@@ -29,17 +27,11 @@ Future<void> init() async {
         authenticationRepository: getIt(),
         performLogOut: getIt(),
       ));
-  getIt.registerLazySingleton(() => LoginBloc(
-        performLogIn: getIt(),
-        performLogOut: getIt(),
-        getLoggedUser: getIt(),
-      ));
   getIt.registerFactory(
       () => UsersManagementBloc(getUsers: getIt(), updateUser: getIt()));
 
   // Use Cases
   //User
-  getIt.registerLazySingleton(() => PerformLogIn(getIt()));
   getIt.registerLazySingleton(() => PerformLogOut(getIt()));
   getIt.registerLazySingleton(() => GetLoggedUser(getIt()));
   getIt.registerLazySingleton(() => GetAllUsers(getIt()));

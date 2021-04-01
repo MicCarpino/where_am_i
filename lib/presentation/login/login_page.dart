@@ -8,9 +8,6 @@ import 'package:where_am_i/presentation/responsive_builder.dart';
 import 'package:where_am_i/domain/blocs/login/log_in_bloc.dart';
 
 class LoginScreen extends StatelessWidget {
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => LoginScreen());
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

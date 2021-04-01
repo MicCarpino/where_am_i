@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/error/failure.dart';
+import 'package:where_am_i/core/utils/aes_utils.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/domain/entities/authenticated_user.dart';
@@ -36,8 +37,9 @@ class AuthRepositoryImpl implements AuthenticationRepository {
   Future<Either<Failure, AuthenticatedUser>> performUserAuthentication(
       String username, String password) async {
     try {
-      final loggedUser =
-          await remoteDataSource.performUserAuthentication(username, password);
+      final encryptedPassword = AesUtils().cryptPassword(password);
+      final loggedUser = await remoteDataSource.performUserAuthentication(
+          username, encryptedPassword);
       localDataSource.cacheLoggedUser(loggedUser);
       _controller.add(AuthenticationStatus.authenticated);
       return Right(loggedUser);

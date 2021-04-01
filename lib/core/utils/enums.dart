@@ -1,3 +1,9 @@
+enum DeviceType{
+  desktop,
+  tablet,
+  mobile,
+}
+
 enum Pages {
   workplaces_page,
   my_presences_page,

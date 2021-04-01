@@ -107,3 +107,11 @@ extension TimeSlotTimes on TimeSlot {
 extension IterableNullOrEmpty on Iterable {
   bool isNullOrEmpty() => this == null || this.isEmpty;
 }
+
+extension DeviceTypeExtension on MediaQueryData {
+  DeviceType get deviceType {
+    if (size.width >= 1500) return DeviceType.desktop;
+    if (size.width >= 600) return DeviceType.tablet;
+    return DeviceType.mobile;
+  }
+}
