@@ -23,19 +23,19 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
   final LocalDataSource localDataSource;
 
   @override
-  Stream<LogInState> mapEventToState(
-    LogInEvent event,
-  ) async* {
+  Stream<LogInState> mapEventToState(LogInEvent event) async* {
     yield* event.map(
       usernameChanged: (value) async* {
         yield state.copyWith(
-          password: LoginFormField.dirty(value.username),
+          username: LoginFormField.dirty(value.username),
+          showErrorMessages:true,
           loginFailureOrSuccess: none(),
         );
       },
       passwordChanged: (value) async* {
         yield state.copyWith(
           password: LoginFormField.dirty(value.password),
+          showErrorMessages:true,
           loginFailureOrSuccess: none(),
         );
       },
@@ -59,14 +59,18 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
                   state.username.value, state.password.value);
           yield state.copyWith(
             isLoading: false,
-            loginFailureOrSuccess: optionOf(logInResult.fold(
-              (failure) => Left(failure.getErrorMessageFromFailure()),
-              (_) => Right(unit),
-            )),
+            showErrorMessages:true,
+            loginFailureOrSuccess: optionOf(
+              logInResult.fold(
+                (failure) => Left(failure.getErrorMessageFromFailure()),
+                (_) => Right(unit),
+              ),
+            ),
           );
         } else {
           yield state.copyWith(
             isLoading: false,
+            showErrorMessages:true,
             username: LoginFormField.dirty(state.username.value),
             password: LoginFormField.dirty(state.password.value),
             loginFailureOrSuccess: none(),

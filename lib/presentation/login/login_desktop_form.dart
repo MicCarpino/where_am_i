@@ -8,8 +8,6 @@ import 'package:where_am_i/presentation/responsive_builder.dart';
 import 'package:where_am_i/domain/blocs/login/log_in_bloc.dart';
 
 class LoginDesktopForm extends StatelessWidget {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
   final FocusNode _usernameFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
 
@@ -41,16 +39,19 @@ class LoginDesktopForm extends StatelessWidget {
                 ),
                 SizedBox(height: 48),
                 LoginFormFieldWidget(
-                  controller: _usernameController,
+                  formField: state.username,
                   label: 'Username',
                   focusNode: _usernameFocus,
                   nextFocusNode: _passwordFocus,
                   textInputAction: TextInputAction.next,
                   prefixIcon: Icons.person,
+                  onChanged: (username) => context
+                      .read<LogInBloc>()
+                      .add(LogInEvent.usernameChanged(username)),
                 ),
                 SizedBox(height: 24),
                 LoginFormFieldWidget(
-                  controller: _passwordController,
+                  formField: state.password,
                   label: 'Password',
                   focusNode: _passwordFocus,
                   textInputAction: TextInputAction.done,
@@ -59,6 +60,9 @@ class LoginDesktopForm extends StatelessWidget {
                   suffixIcon: state.isPasswordVisible
                       ? Icons.visibility
                       : Icons.visibility_off,
+                  onChanged: (password) => context
+                      .read<LogInBloc>()
+                      .add(LogInEvent.passwordChanged(password)),
                 ),
                 SizedBox(height: 16),
                 Row(
@@ -75,12 +79,7 @@ class LoginDesktopForm extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 16),
-                LoginButton(
-                  'Log In',
-                  isLoading: state.isLoading,
-                  onTap: () =>
-                      context.read<LogInBloc>().add(LogInEvent.performLogin()),
-                )
+                LoginButton(isLoading: state.isLoading)
               ],
             ),
           ),
