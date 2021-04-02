@@ -56,8 +56,8 @@ class LoginDesktopForm extends StatelessWidget {
                   focusNode: _passwordFocus,
                   textInputAction: TextInputAction.done,
                   prefixIcon: Icons.lock,
-                  obscureText: state.isPasswordVisible,
-                  suffixIcon: state.isPasswordVisible
+                  obscureText: state.isPasswordHidden,
+                  suffixIcon: state.isPasswordHidden
                       ? Icons.visibility
                       : Icons.visibility_off,
                   onChanged: (password) => context

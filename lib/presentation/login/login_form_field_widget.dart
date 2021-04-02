@@ -45,7 +45,7 @@ class LoginFormFieldWidget extends StatelessWidget {
       ),
       child: TextFormField(
         initialValue: formField.value,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        autovalidateMode: AutovalidateMode.always,
         textInputAction: textInputAction,
         focusNode: focusNode,
         onChanged: (value) => onChanged(value),

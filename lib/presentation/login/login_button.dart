@@ -13,7 +13,7 @@ class LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? CenteredLoading(width: 20, height: 20)
+        ? CenteredLoading(width: 40, height: 40)
         : MaterialButton(
             elevation: 5.0,
             padding: EdgeInsets.fromLTRB(50, 15, 50, 15),

@@ -714,7 +714,7 @@ class _$LogInStateTearOff {
   _LogInState call(
       {@required LoginFormField username,
       @required LoginFormField password,
-      @required bool isPasswordVisible,
+      @required bool isPasswordHidden,
       @required bool isRememberMeChecked,
       @required bool isLoading,
       @required bool showErrorMessages,
@@ -722,7 +722,7 @@ class _$LogInStateTearOff {
     return _LogInState(
       username: username,
       password: password,
-      isPasswordVisible: isPasswordVisible,
+      isPasswordHidden: isPasswordHidden,
       isRememberMeChecked: isRememberMeChecked,
       isLoading: isLoading,
       showErrorMessages: showErrorMessages,
@@ -739,7 +739,7 @@ const $LogInState = _$LogInStateTearOff();
 mixin _$LogInState {
   LoginFormField get username;
   LoginFormField get password;
-  bool get isPasswordVisible;
+  bool get isPasswordHidden;
   bool get isRememberMeChecked;
   bool get isLoading;
   bool get showErrorMessages;
@@ -757,7 +757,7 @@ abstract class $LogInStateCopyWith<$Res> {
   $Res call(
       {LoginFormField username,
       LoginFormField password,
-      bool isPasswordVisible,
+      bool isPasswordHidden,
       bool isRememberMeChecked,
       bool isLoading,
       bool showErrorMessages,
@@ -776,7 +776,7 @@ class _$LogInStateCopyWithImpl<$Res> implements $LogInStateCopyWith<$Res> {
   $Res call({
     Object username = freezed,
     Object password = freezed,
-    Object isPasswordVisible = freezed,
+    Object isPasswordHidden = freezed,
     Object isRememberMeChecked = freezed,
     Object isLoading = freezed,
     Object showErrorMessages = freezed,
@@ -787,9 +787,9 @@ class _$LogInStateCopyWithImpl<$Res> implements $LogInStateCopyWith<$Res> {
           username == freezed ? _value.username : username as LoginFormField,
       password:
           password == freezed ? _value.password : password as LoginFormField,
-      isPasswordVisible: isPasswordVisible == freezed
-          ? _value.isPasswordVisible
-          : isPasswordVisible as bool,
+      isPasswordHidden: isPasswordHidden == freezed
+          ? _value.isPasswordHidden
+          : isPasswordHidden as bool,
       isRememberMeChecked: isRememberMeChecked == freezed
           ? _value.isRememberMeChecked
           : isRememberMeChecked as bool,
@@ -813,7 +813,7 @@ abstract class _$LogInStateCopyWith<$Res> implements $LogInStateCopyWith<$Res> {
   $Res call(
       {LoginFormField username,
       LoginFormField password,
-      bool isPasswordVisible,
+      bool isPasswordHidden,
       bool isRememberMeChecked,
       bool isLoading,
       bool showErrorMessages,
@@ -834,7 +834,7 @@ class __$LogInStateCopyWithImpl<$Res> extends _$LogInStateCopyWithImpl<$Res>
   $Res call({
     Object username = freezed,
     Object password = freezed,
-    Object isPasswordVisible = freezed,
+    Object isPasswordHidden = freezed,
     Object isRememberMeChecked = freezed,
     Object isLoading = freezed,
     Object showErrorMessages = freezed,
@@ -845,9 +845,9 @@ class __$LogInStateCopyWithImpl<$Res> extends _$LogInStateCopyWithImpl<$Res>
           username == freezed ? _value.username : username as LoginFormField,
       password:
           password == freezed ? _value.password : password as LoginFormField,
-      isPasswordVisible: isPasswordVisible == freezed
-          ? _value.isPasswordVisible
-          : isPasswordVisible as bool,
+      isPasswordHidden: isPasswordHidden == freezed
+          ? _value.isPasswordHidden
+          : isPasswordHidden as bool,
       isRememberMeChecked: isRememberMeChecked == freezed
           ? _value.isRememberMeChecked
           : isRememberMeChecked as bool,
@@ -867,14 +867,14 @@ class _$_LogInState implements _LogInState {
   const _$_LogInState(
       {@required this.username,
       @required this.password,
-      @required this.isPasswordVisible,
+      @required this.isPasswordHidden,
       @required this.isRememberMeChecked,
       @required this.isLoading,
       @required this.showErrorMessages,
       @required this.loginFailureOrSuccess})
       : assert(username != null),
         assert(password != null),
-        assert(isPasswordVisible != null),
+        assert(isPasswordHidden != null),
         assert(isRememberMeChecked != null),
         assert(isLoading != null),
         assert(showErrorMessages != null),
@@ -885,7 +885,7 @@ class _$_LogInState implements _LogInState {
   @override
   final LoginFormField password;
   @override
-  final bool isPasswordVisible;
+  final bool isPasswordHidden;
   @override
   final bool isRememberMeChecked;
   @override
@@ -897,7 +897,7 @@ class _$_LogInState implements _LogInState {
 
   @override
   String toString() {
-    return 'LogInState(username: $username, password: $password, isPasswordVisible: $isPasswordVisible, isRememberMeChecked: $isRememberMeChecked, isLoading: $isLoading, showErrorMessages: $showErrorMessages, loginFailureOrSuccess: $loginFailureOrSuccess)';
+    return 'LogInState(username: $username, password: $password, isPasswordHidden: $isPasswordHidden, isRememberMeChecked: $isRememberMeChecked, isLoading: $isLoading, showErrorMessages: $showErrorMessages, loginFailureOrSuccess: $loginFailureOrSuccess)';
   }
 
   @override
@@ -910,9 +910,9 @@ class _$_LogInState implements _LogInState {
             (identical(other.password, password) ||
                 const DeepCollectionEquality()
                     .equals(other.password, password)) &&
-            (identical(other.isPasswordVisible, isPasswordVisible) ||
+            (identical(other.isPasswordHidden, isPasswordHidden) ||
                 const DeepCollectionEquality()
-                    .equals(other.isPasswordVisible, isPasswordVisible)) &&
+                    .equals(other.isPasswordHidden, isPasswordHidden)) &&
             (identical(other.isRememberMeChecked, isRememberMeChecked) ||
                 const DeepCollectionEquality()
                     .equals(other.isRememberMeChecked, isRememberMeChecked)) &&
@@ -932,7 +932,7 @@ class _$_LogInState implements _LogInState {
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(username) ^
       const DeepCollectionEquality().hash(password) ^
-      const DeepCollectionEquality().hash(isPasswordVisible) ^
+      const DeepCollectionEquality().hash(isPasswordHidden) ^
       const DeepCollectionEquality().hash(isRememberMeChecked) ^
       const DeepCollectionEquality().hash(isLoading) ^
       const DeepCollectionEquality().hash(showErrorMessages) ^
@@ -948,7 +948,7 @@ abstract class _LogInState implements LogInState {
   const factory _LogInState(
           {@required LoginFormField username,
           @required LoginFormField password,
-          @required bool isPasswordVisible,
+          @required bool isPasswordHidden,
           @required bool isRememberMeChecked,
           @required bool isLoading,
           @required bool showErrorMessages,
@@ -960,7 +960,7 @@ abstract class _LogInState implements LogInState {
   @override
   LoginFormField get password;
   @override
-  bool get isPasswordVisible;
+  bool get isPasswordHidden;
   @override
   bool get isRememberMeChecked;
   @override

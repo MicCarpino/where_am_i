@@ -26,7 +26,7 @@ class LoginMobileForm extends StatelessWidget {
                   (a) => a.fold(
                         (l) => ScaffoldMessenger.of(context)
                             .showSnackBar(SnackBar(content: Text(l))),
-                        (r) => print('logged in'),
+                        (_) {},
                       )),
               builder: (context, state) {
                 return Column(
@@ -56,8 +56,8 @@ class LoginMobileForm extends StatelessWidget {
                       focusNode: _passwordFocus,
                       textInputAction: TextInputAction.done,
                       prefixIcon: Icons.lock,
-                      obscureText: state.isPasswordVisible,
-                      suffixIcon: state.isPasswordVisible
+                      obscureText: state.isPasswordHidden,
+                      suffixIcon: state.isPasswordHidden
                           ? Icons.visibility
                           : Icons.visibility_off,
                       onChanged: (password) => context

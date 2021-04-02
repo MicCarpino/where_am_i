@@ -5,9 +5,12 @@ import 'package:dartz/dartz.dart';
 import 'package:formz/formz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meta/meta.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
 import 'package:where_am_i/domain/blocs/login/login_form_field.dart';
 import 'package:where_am_i/domain/repositories/authentication_repository.dart';
+import 'package:where_am_i/injection_container.dart';
 
 part 'log_in_event.dart';
 
@@ -28,14 +31,14 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
       usernameChanged: (value) async* {
         yield state.copyWith(
           username: LoginFormField.dirty(value.username),
-          showErrorMessages:true,
+          showErrorMessages: true,
           loginFailureOrSuccess: none(),
         );
       },
       passwordChanged: (value) async* {
         yield state.copyWith(
           password: LoginFormField.dirty(value.password),
-          showErrorMessages:true,
+          showErrorMessages: true,
           loginFailureOrSuccess: none(),
         );
       },
@@ -47,7 +50,7 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
       },
       passwordVisibilityChanged: (_) async* {
         yield state.copyWith(
-          isPasswordVisible: !state.isPasswordVisible,
+          isPasswordHidden: !state.isPasswordHidden,
           loginFailureOrSuccess: none(),
         );
       },
@@ -59,18 +62,27 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
                   state.username.value, state.password.value);
           yield state.copyWith(
             isLoading: false,
-            showErrorMessages:true,
+            showErrorMessages: true,
             loginFailureOrSuccess: optionOf(
               logInResult.fold(
                 (failure) => Left(failure.getErrorMessageFromFailure()),
-                (_) => Right(unit),
+                (authenticatedUser) {
+                  localDataSource.cacheLoggedUser(authenticatedUser);
+                  state.isRememberMeChecked
+                      ? localDataSource.storeCredentials(
+                          state.username.value,
+                          state.password.value,
+                        )
+                      : localDataSource.removeStoredCredentials();
+                  return Right(unit);
+                },
               ),
             ),
           );
         } else {
           yield state.copyWith(
             isLoading: false,
-            showErrorMessages:true,
+            showErrorMessages: true,
             username: LoginFormField.dirty(state.username.value),
             password: LoginFormField.dirty(state.password.value),
             loginFailureOrSuccess: none(),
