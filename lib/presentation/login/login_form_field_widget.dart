@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -57,7 +58,6 @@ class LoginFormFieldWidget extends StatelessWidget {
         style: TextStyle(color: Colors.black87),
         validator: (_) => formField.invalid ? '' : null,
         decoration: InputDecoration(
-          fillColor: Colors.grey,
           labelText: label,
           labelStyle: loginLabelStyle,
           focusedBorder: OutlineInputBorder(
@@ -77,9 +77,7 @@ class LoginFormFieldWidget extends StatelessWidget {
                     onTap: () => context
                         .read<LogInBloc>()
                         .add(LogInEvent.passwordVisibilityChanged()),
-                    child: Icon(
-                        obscureText ? Icons.visibility : Icons.visibility_off,
-                        color: dncBlue),
+                    child: Icon(suffixIcon, color: dncBlue),
                   ),
                 )
               : null,

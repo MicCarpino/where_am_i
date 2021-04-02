@@ -13,24 +13,24 @@ class LoginDesktopForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LogInBloc, LogInState>(
-      builder: (context, state) => Center(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.all(48),
-            width: MediaQuery.of(context).size.width /
-                (ResponsiveBuilder.isWebOrDesktop(context) ? 3 : 2),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 10,
-                    blurRadius: 70),
-              ],
-            ),
-            child: Column(
+    return Center(
+      child: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(48),
+          width: MediaQuery.of(context).size.width /
+              (ResponsiveBuilder.isWebOrDesktop(context) ? 3 : 2),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 10,
+                  blurRadius: 70),
+            ],
+          ),
+          child: BlocBuilder<LogInBloc, LogInState>(
+            builder: (context, state) => Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
@@ -58,8 +58,8 @@ class LoginDesktopForm extends StatelessWidget {
                   prefixIcon: Icons.lock,
                   obscureText: state.isPasswordHidden,
                   suffixIcon: state.isPasswordHidden
-                      ? Icons.visibility
-                      : Icons.visibility_off,
+                      ? Icons.visibility_off
+                      : Icons.visibility,
                   onChanged: (password) => context
                       .read<LogInBloc>()
                       .add(LogInEvent.passwordChanged(password)),
@@ -79,7 +79,25 @@ class LoginDesktopForm extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 16),
-                LoginButton(isLoading: state.isLoading)
+                LoginButton(isLoading: state.isLoading),
+                SizedBox(height: 16),
+                state.loginFailureOrSuccess.fold(
+                  () => Container(),
+                  (a) => a.fold(
+                      (l) => Container(alignment: Alignment.center,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.25),
+                              border: Border.all(color: Colors.red[500]),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(4))),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 24.0),
+                            child: Text(l),
+                          )),
+                      (_) => Container()),
+                )
               ],
             ),
           ),
