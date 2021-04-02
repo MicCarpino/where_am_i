@@ -16,10 +16,14 @@ abstract class LogInState with _$LogInState {
     var storedUsername;
     var storedPassword;
     final sharedPreferences = getIt<SharedPreferences>();
-
-    if (sharedPreferences.getBool(IS_REMEMBER_ME_CHECKED) ?? false) {
-      storedUsername = sharedPreferences.getString(STORED_USERNAME);
-      storedPassword = sharedPreferences.getString(STORED_PASSWORD);
+    var usrCryptString = sharedPreferences.getStringList(STORED_USERNAME);
+    var pwCryptString = sharedPreferences.getStringList(STORED_PASSWORD);
+    if(usrCryptString !=null && pwCryptString != null){
+      final aes = AesUtils();
+      List<int> usrCryptInt = usrCryptString.map((e) => int.parse(e)).toList();
+      storedUsername =  aes.decrypt(usrCryptInt);
+      List<int> pwCryptInt = pwCryptString.map((e) => int.parse(e)).toList();
+      storedPassword = aes.decrypt(pwCryptInt);
     }
     return LogInState(
       username: storedUsername == null

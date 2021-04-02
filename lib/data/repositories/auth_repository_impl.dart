@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:dartz/dartz.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';

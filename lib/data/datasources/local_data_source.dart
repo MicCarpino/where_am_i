@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:where_am_i/core/utils/aes_utils.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/data/models/authenticated_user_model.dart';
 
@@ -42,17 +43,18 @@ class LocalDataSourceImpl implements LocalDataSource {
 
   @override
   Future<void> storeCredentials(String username, String password) {
+    final aes = AesUtils();
+    List<String> user = aes.encrypt(username).map((e) => e.toString()).toList();
+    List<String> pass = aes.encrypt(password).map((e) => e.toString()).toList();
     return Future.wait([
-      sharedPreferences.setBool(IS_REMEMBER_ME_CHECKED, true),
-      sharedPreferences.setString(STORED_USERNAME, username),
-      sharedPreferences.setString(STORED_PASSWORD, password),
+      sharedPreferences.setStringList(STORED_USERNAME, user),
+      sharedPreferences.setStringList(STORED_PASSWORD, pass),
     ]);
   }
 
   @override
   Future<void> removeStoredCredentials() {
     return Future.wait([
-      sharedPreferences.remove(IS_REMEMBER_ME_CHECKED),
       sharedPreferences.remove(STORED_USERNAME),
       sharedPreferences.remove(STORED_PASSWORD),
     ]);
