@@ -4,6 +4,7 @@ import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
 import 'package:where_am_i/domain/blocs/date_picker/date_picker_cubit.dart';
+import 'package:where_am_i/domain/blocs/home/home_cubit.dart';
 import 'package:where_am_i/domain/blocs/reservation/form/reservation_form.dart';
 import 'package:where_am_i/domain/blocs/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
@@ -23,13 +24,10 @@ import 'package:where_am_i/presentation/home/workstations/room_26A_F1.dart';
 import 'package:where_am_i/presentation/home/workstations/room_26A_F2.dart';
 import 'package:where_am_i/presentation/home/workstations/room_26B.dart';
 import 'package:where_am_i/presentation/home/workstations/room_staff.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 import '../../injection_container.dart';
 
 class HomePage extends StatelessWidget {
-  HomePage(this.setTitle);
-
-  final Function(String) setTitle;
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -94,19 +92,37 @@ class HomePage extends StatelessWidget {
                     return SingleChildScrollView(
                       scrollDirection: Axis.vertical,
                       padding: EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          _buildWorkstationsSection(Rooms.values[index]),
-                          SizedBox(height: 16),
-                          if (Rooms.values[index].idRoom != null)
-                            _buildReservationsSection(
-                                newContext, Rooms.values[index])
-                        ],
+                      child: ResponsiveBuilder(
+                        mobile: Column(
+                          children: [
+                            _buildWorkstationsSection(Rooms.values[index]),
+                            SizedBox(height: 16),
+                            if (Rooms.values[index].idRoom != null)
+                              _buildReservationsSection(
+                                  newContext, Rooms.values[index])
+                          ],
+                        ),
+                        desktop: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(flex: 1,
+                              child: _buildWorkstationsSection(
+                                  Rooms.values[index]),
+                            ),
+                            if (Rooms.values[index].idRoom != null)
+                              Flexible(flex: 1,
+                                child: _buildReservationsSection(
+                                    newContext, Rooms.values[index]),
+                              )
+                          ],
+                        ),
                       ),
                     );
                   },
                   onPageChanged: (pageIndex) {
-                    setTitle(Rooms.values[pageIndex].title);
+                    context
+                        .read<HomeCubit>()
+                        .changeTitle(Rooms.values[pageIndex]);
                   },
                 ),
               )

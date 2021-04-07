@@ -1,4 +1,4 @@
-enum DeviceType{
+enum DeviceType {
   desktop,
   tablet,
   mobile,
@@ -9,6 +9,21 @@ enum Pages {
   my_presences_page,
   presences_management_page,
   users_management_page
+}
+
+extension PagesTitles on Pages {
+  String getPageTitle() {
+    switch (this) {
+      case Pages.my_presences_page:
+        return 'Le mie presenze';
+      case Pages.presences_management_page:
+        return 'Gestione presenze';
+      case Pages.users_management_page:
+        return 'Gestione utenze';
+      default:
+        return '';
+    }
+  }
 }
 
 enum TimeSlot { fullDay, morning, evening }
@@ -75,9 +90,7 @@ extension RoomsTitles on Rooms {
   }
 }
 
-
 enum ReservationTimePicker { startPicker, endPicker }
-
 
 extension Reservation on ReservationTimePicker {
   String get title {
