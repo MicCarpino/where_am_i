@@ -104,13 +104,16 @@ class HomePage extends StatelessWidget {
                         ),
                         desktop: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Flexible(flex: 1,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width/4,
                               child: _buildWorkstationsSection(
                                   Rooms.values[index]),
                             ),
                             if (Rooms.values[index].idRoom != null)
-                              Flexible(flex: 1,
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width/4,
                                 child: _buildReservationsSection(
                                     newContext, Rooms.values[index]),
                               )
@@ -119,11 +122,9 @@ class HomePage extends StatelessWidget {
                       ),
                     );
                   },
-                  onPageChanged: (pageIndex) {
-                    context
-                        .read<HomeCubit>()
-                        .changeTitle(Rooms.values[pageIndex]);
-                  },
+                  onPageChanged: (pageIndex) => context
+                      .read<HomeCubit>()
+                      .changeTitle(Rooms.values[pageIndex]),
                 ),
               )
             ],

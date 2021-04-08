@@ -29,7 +29,7 @@ class HomeScreen extends StatelessWidget {
           ),
           desktop: Scaffold(
             appBar: AppBar(
-              title: Text('oooooooooooh'),
+              title: Text(state.currentPage.getPageTitle()),
               centerTitle: true,
             ),
             body: Row(
