@@ -33,7 +33,10 @@ class MyApp extends StatelessWidget {
       create: (_) => serviceLocator.getIt<AuthenticationBloc>(),
       child: MaterialApp(
         navigatorKey: _navigatorKey,
-        theme: ThemeData(primarySwatch: Colors.lightBlue),
+        theme: ThemeData(
+          primarySwatch: Colors.lightBlue,
+          primaryColor: dncBlue,
+        ),
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
@@ -46,7 +49,8 @@ class MyApp extends StatelessWidget {
         builder: (context, child) => MediaQuery(
             data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
             child: BlocListener<AuthenticationBloc, AuthenticationState>(
-              listenWhen: (p, c) => p.authenticationStatus != c.authenticationStatus,
+              listenWhen: (p, c) =>
+                  p.authenticationStatus != c.authenticationStatus,
               listener: (context, state) {
                 switch (state.authenticationStatus) {
                   case AuthenticationStatus.authenticated:

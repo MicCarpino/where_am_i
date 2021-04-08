@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/domain/blocs/home/home_cubit.dart';
-import 'package:where_am_i/presentation/home/drawer_widget.dart';
+import 'package:where_am_i/presentation/home/drawer/desktop_drawer.dart';
 import 'package:where_am_i/presentation/home/home_page.dart';
 import 'package:where_am_i/presentation/my_presences/my_presences_page.dart';
 import 'package:where_am_i/presentation/presences_management/presences_management_page.dart';
 import 'package:where_am_i/presentation/responsive_builder.dart';
 import 'package:where_am_i/presentation/roles_management/role_management_page.dart';
+
+import 'drawer/mobile_drawer.dart';
 
 class HomeScreen extends StatelessWidget {
   static Route route() {
@@ -23,17 +25,20 @@ class HomeScreen extends StatelessWidget {
           mobile: Scaffold(
             appBar: AppBar(title: Text(state.currentPage.getPageTitle())),
             body: getPageBody(state.currentPage),
-            drawer: Drawer(child: DrawerWidget()),
+            drawer: Drawer(child: MobileDrawer()),
           ),
           desktop: Scaffold(
-            appBar: AppBar(title: Text('oooooooooooh'),centerTitle: true,),
+            appBar: AppBar(
+              title: Text('oooooooooooh'),
+              centerTitle: true,
+            ),
             body: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width * 0.15,
-                  child: DrawerWidget(),
+                  child: DesktopDrawer(),
                 ),
                 Expanded(child: getPageBody(state.currentPage)),
               ],

@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/constants.dart';
@@ -7,113 +6,97 @@ import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart'
 import 'package:where_am_i/domain/blocs/home/home_cubit.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 
-class DrawerWidget extends StatelessWidget {
+class MobileDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final User loggedUser = BlocProvider.of<AuthenticationBloc>(context)
         .state
         .authenticatedUser
         .user;
-    return Column(
-      children: [
-            _buildHeader(context, loggedUser),
-            _buildItem(
-              context,
-              Pages.workplaces_page,
-              Icons.home,
-              'Home',
-            ),
-            _buildItem(
-              context,
-              Pages.my_presences_page,
-              Icons.event_available,
-              'Le mie presenze',
-            ),
-            if (loggedUser?.isStaffOrAdmin())
-              _buildItem(
-                context,
-                Pages.presences_management_page,
-                Icons.supervisor_account,
-                'Gestione presenze',
-              ),
-            if (loggedUser?.idRole == ROLE_ADMIN)
-              _buildItem(
-                context,
-                Pages.users_management_page,
-                Icons.lock_open,
-                'Gestione utenze',
-              ),
-        Container(
-            child: Align(
-                alignment: FractionalOffset.bottomCenter,
-                child: Column(
-                  children: <Widget>[
-                    ListTile(
-                        leading: Icon(Icons.exit_to_app, color: Colors.black87),
-                        title: Text('Logout'),
-                        onTap: () => context
-                            .read<AuthenticationBloc>()
-                            .add(AuthenticationLogoutRequested()))
-                  ],
-                )))
-      ],
-    );
-  }
-
-  Widget _buildItem(
-      BuildContext context, Pages pageItem, IconData icon, String text) {
-    final isCurrentPage =
-        pageItem == BlocProvider.of<HomeCubit>(context).state.currentPage;
-    return Container(margin: EdgeInsets.all(4),
-      child: Ink(
-        color: isCurrentPage ? dncOrange : null,
-        child: ListTile(
-          leading: Icon(
-            icon,
-            color: isCurrentPage ? Colors.white : Colors.black87,
-          ),
-          title: AutoSizeText(text,
-              maxLines: 1,
-              style: TextStyle(
-                  color: isCurrentPage ? Colors.white : Colors.black87)),
-          onTap: () {
-            if (isCurrentPage) {
-              BlocProvider.of<HomeCubit>(context).changePage(pageItem);
-            }
-            //close drawer
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
-
-/*
-  Widget _buildItem(
-      BuildContext context, Pages pageItem, IconData icon, String text) {
-    final isCurrentPage =
-        pageItem == BlocProvider.of<HomeCubit>(context).state.currentPage;
     return Container(
-      color: isCurrentPage ? dncOrange : null,
-      child: InkWell(onTap: () {
-        if (isCurrentPage) {
-          BlocProvider.of<HomeCubit>(context).changePage(pageItem);
-        }
-        //close drawer
-        Navigator.pop(context);
-      },hoverColor: dncOrangeTransparent,
-        child: Row(
+      width: MediaQuery.of(context).size.width * 0.65,
+      child: Drawer(
+        child: Column(
           children: [
-            Icon(icon, color: isCurrentPage ? Colors.white : Colors.black87),
-            AutoSizeText(text,
-                maxLines: 1,
-                style: TextStyle(
-                    color: isCurrentPage ? Colors.white : Colors.black87)),
+            Expanded(
+                child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                _buildHeader(context, loggedUser),
+                _buildItem(
+                  context,
+                  Pages.workplaces_page,
+                  Icons.home,
+                  'Home',
+                ),
+                _buildItem(
+                  context,
+                  Pages.my_presences_page,
+                  Icons.event_available,
+                  'Le mie presenze',
+                ),
+                if (loggedUser?.isStaffOrAdmin())
+                  _buildItem(
+                    context,
+                    Pages.presences_management_page,
+                    Icons.supervisor_account,
+                    'Gestione presenze',
+                  ),
+                if (loggedUser?.idRole == ROLE_ADMIN)
+                  _buildItem(
+                    context,
+                    Pages.users_management_page,
+                    Icons.lock_open,
+                    'Gestione utenze',
+                  )
+              ],
+            )),
+            Container(
+                child: Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: Column(
+                      children: <Widget>[
+                        ListTile(
+                            leading:
+                                Icon(Icons.exit_to_app, color: Colors.black87),
+                            title: Text('Logout'),
+                            onTap: () => context
+                                .read<AuthenticationBloc>()
+                                .add(AuthenticationLogoutRequested()))
+                      ],
+                    )))
           ],
         ),
       ),
     );
-  }*/
+  }
+
+  Widget _buildItem(
+      BuildContext context, Pages pageItem, IconData icon, String text) {
+    final isCurrentPage =
+        pageItem == BlocProvider.of<HomeCubit>(context).state.currentPage;
+    return Ink(
+      color: isCurrentPage ? dncOrange : null,
+      child: ListTile(
+        leading: Icon(
+          icon,
+          color: isCurrentPage ? Colors.white : Colors.black87,
+        ),
+        title: Text(text,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            style: TextStyle(
+                color: isCurrentPage ? Colors.white : Colors.black87)),
+        onTap: () {
+          if (isCurrentPage) {
+            BlocProvider.of<HomeCubit>(context).changePage(pageItem);
+          }
+          //close drawer
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
 
   _buildHeader(BuildContext context, User loggedUser) {
     return DrawerHeader(
