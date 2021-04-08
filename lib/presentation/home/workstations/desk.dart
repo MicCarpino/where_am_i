@@ -48,35 +48,38 @@ class _DeskState extends State<Desk> {
   @override
   Widget build(BuildContext context) {
     String resourceLabel = _getDeskLabel();
-    return Container(
-      child: CustomPaint(
-          painter: DeskMarker(widget.usersWithWorkstations
-                  .map((e) => e.workstation)
-                  ?.toList() ??
-              []),
-          child: MaterialButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-                side: BorderSide(
-                    color: isDeskOfLoggedUser ? dncOrange : Colors.black54,
-                    width: isDeskOfLoggedUser ? 2.5 : 1.0),
-              ),
-              //allow edit if user's role is staff or higher
-              onPressed: () => _onDeskClick(),
-              child: resourceLabel != null
-                  ? AutoSizeText(
-                      resourceLabel.replaceAll(" ", "\n"),
-                      maxLines: resourceLabel.split(" ")?.length,
-                      minFontSize: 10,
-                      maxFontSize: 14,
-                      softWrap: false,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.visible,
-                      style: TextStyle(
-                        color: isEditAllowed ? Colors.black : Colors.black45,
-                      ),
-                    )
-                  : Container())),
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: 10),
+      child: Container(
+        child: CustomPaint(
+            painter: DeskMarker(widget.usersWithWorkstations
+                    .map((e) => e.workstation)
+                    ?.toList() ??
+                []),
+            child: MaterialButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  side: BorderSide(
+                      color: isDeskOfLoggedUser ? dncOrange : Colors.black54,
+                      width: isDeskOfLoggedUser ? 2.5 : 1.0),
+                ),
+                //allow edit if user's role is staff or higher
+                onPressed: () => _onDeskClick(),
+                child: resourceLabel != null
+                    ? AutoSizeText(
+                        resourceLabel.replaceAll(" ", "\n"),
+                        maxLines: resourceLabel.split(" ")?.length,
+                        minFontSize: 10,
+                        maxFontSize: 14,
+                        softWrap: false,
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.visible,
+                        style: TextStyle(
+                          color: isEditAllowed ? Colors.black : Colors.black45,
+                        ),
+                      )
+                    : Container())),
+      ),
     );
   }
 

@@ -6,6 +6,7 @@ import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/home/workstations/desk.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 
 const desksNumberForWorkplace26B = 18;
 
@@ -19,8 +20,13 @@ class Room26B extends StatelessWidget {
         return state.map(
           initial: (_) => Container(),
           loadInProgress: (_) => CenteredLoading(),
+          loadFailure: (_) => RetryWidget(
+            onTryAgainPressed: () => context.read<WorkstationWatcherBloc>().add(
+                  WorkstationWatcherEvent.fetchPresences(DateTime.now()),
+                ),
+          ),
           loadSuccess: (value) {
-            return GridView.count(
+            final workstations = GridView.count(
               physics: ScrollPhysics(),
               shrinkWrap: true,
               childAspectRatio: 1 / 1,
@@ -35,7 +41,8 @@ class Room26B extends StatelessWidget {
                   final workstationForDesk = value.usersWithWorkstations
                       .where((element) =>
                           element.workstation?.codeWorkstation ==
-                          newWorkstationCode.toString()).toList();
+                          newWorkstationCode.toString())
+                      .toList();
                   return Desk(
                     usersWithWorkstations: workstationForDesk,
                     workstationCode: newWorkstationCode,
@@ -43,12 +50,16 @@ class Room26B extends StatelessWidget {
                 },
               ),
             );
-          },
-          loadFailure: (_) => RetryWidget(
-            onTryAgainPressed: () => context.read<WorkstationWatcherBloc>().add(
-                  WorkstationWatcherEvent.fetchPresences(DateTime.now()),
+            return ResponsiveBuilder(
+              mobile: workstations,
+              desktop: LayoutBuilder(
+                builder: (context, constraints) => SizedBox(
+                  width: constraints.maxWidth - (constraints.maxWidth * 0.5),
+                  child: workstations,
                 ),
-          ),
+              ),
+            );
+          },
         );
       },
     );

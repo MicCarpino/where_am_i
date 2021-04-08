@@ -7,7 +7,7 @@ import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/home/workstations/desk.dart';
-
+import 'package:where_am_i/presentation/responsive_builder.dart';
 
 class RoomStaff extends StatelessWidget {
   @override
@@ -18,29 +18,61 @@ class RoomStaff extends StatelessWidget {
         return state.map(
           initial: (_) => Container(),
           loadInProgress: (_) => CenteredLoading(),
-          loadSuccess: (value) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8),
-                  child: Text('Dirigenza', style: roomLabelStyle),
-                ),
-                _buildManagementRoom(value.usersWithWorkstations),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8),
-                  child: Text('Amministrazione', style: roomLabelStyle),
-                ),
-                _buildAdministrationRoom(
-                    value.usersWithWorkstations, screenWidth)
-              ],
-            );
-          },
           loadFailure: (_) => RetryWidget(
             onTryAgainPressed: () => context.read<WorkstationWatcherBloc>().add(
                   WorkstationWatcherEvent.fetchPresences(DateTime.now()),
                 ),
           ),
+          loadSuccess: (value) {
+            return ResponsiveBuilder(
+              mobile: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16, bottom: 8),
+                    child: Text('Dirigenza', style: roomLabelStyle),
+                  ),
+                  _buildManagementRoom(value.usersWithWorkstations),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16, bottom: 8),
+                    child: Text('Amministrazione', style: roomLabelStyle),
+                  ),
+                  _buildAdministrationRoom(value.usersWithWorkstations, screenWidth)
+                ],
+              ),
+              desktop: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Flexible(
+                    flex: 1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16, bottom: 8),
+                          child: Text('Dirigenza', style: roomLabelStyle),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16, bottom: 8),
+                          child: Text('Amministrazione', style: roomLabelStyle),
+                        ),
+                        _buildAdministrationRoom(
+                            value.usersWithWorkstations, screenWidth)
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
@@ -54,20 +86,22 @@ class RoomStaff extends StatelessWidget {
         children: [
           Expanded(
               flex: 1,
-              child: Column(children: [
-                _autoSizedWorkstation(
-                    usersWithWorkstations
-                        .where((element) =>
-                            element.workstation?.codeWorkstation == '48')
-                        .toList(),
-                    48),
-                _autoSizedWorkstation(
-                    usersWithWorkstations
-                        .where((element) =>
-                            element.workstation?.codeWorkstation == '49')
-                        .toList(),
-                    49)
-              ])),
+              child: Column(
+                children: [
+                  _autoSizedWorkstation(
+                      usersWithWorkstations
+                          .where((element) =>
+                              element.workstation?.codeWorkstation == '48')
+                          .toList(),
+                      48),
+                  _autoSizedWorkstation(
+                      usersWithWorkstations
+                          .where((element) =>
+                              element.workstation?.codeWorkstation == '49')
+                          .toList(),
+                      49)
+                ],
+              )),
           Expanded(
             flex: 1,
             child: Column(children: [

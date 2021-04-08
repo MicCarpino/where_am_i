@@ -58,39 +58,6 @@ class DesktopDrawer extends StatelessWidget {
     );
   }
 
-  Widget _buildItem(
-      BuildContext context, Pages pageItem, IconData icon, String text) {
-    final isCurrentPage =
-        pageItem == BlocProvider.of<HomeCubit>(context).state.currentPage;
-    return LayoutBuilder(
-      builder: (context, constraints) => Ink(
-        color: isCurrentPage ? dncOrange : null,
-        child: ListTile(
-          contentPadding:
-              EdgeInsets.all(constraints.maxWidth * tileSpacingMultiplier),
-          horizontalTitleGap: constraints.maxWidth * tileSpacingMultiplier,
-          leading: Icon(
-            icon,
-            size: constraints.maxWidth * iconSizeMultiplier,
-            color: isCurrentPage ? Colors.white : Colors.black87,
-          ),
-          title: AutoSizeText(text,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              style: TextStyle(
-                  color: isCurrentPage ? Colors.white : Colors.black87)),
-          onTap: () {
-            if (isCurrentPage) {
-              BlocProvider.of<HomeCubit>(context).changePage(pageItem);
-            }
-            //close drawer
-            Navigator.pop(context);
-          },
-        ),
-      ),
-    );
-  }
-
   _buildHeader(BuildContext context, User loggedUser) {
     return DrawerHeader(
       child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -117,6 +84,39 @@ class DesktopDrawer extends StatelessWidget {
                 _buildAssignedWorkplaceSection(context)
             ]);
       }),
+    );
+  }
+
+  Widget _buildItem(
+      BuildContext context, Pages pageItem, IconData icon, String text) {
+    final isCurrentPage =
+        pageItem == BlocProvider.of<HomeCubit>(context).state.currentPage;
+    return LayoutBuilder(
+      builder: (context, constraints) => Ink(
+        color: isCurrentPage ? dncOrange : null,
+        child: ListTile(
+          contentPadding:
+          EdgeInsets.all(constraints.maxWidth * tileSpacingMultiplier),
+          horizontalTitleGap: constraints.maxWidth * tileSpacingMultiplier,
+          leading: Icon(
+            icon,
+            size: constraints.maxWidth * iconSizeMultiplier,
+            color: isCurrentPage ? Colors.white : Colors.black87,
+          ),
+          title: AutoSizeText(text,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: TextStyle(
+                  color: isCurrentPage ? Colors.white : Colors.black87)),
+          onTap: () {
+            if (isCurrentPage) {
+              BlocProvider.of<HomeCubit>(context).changePage(pageItem);
+            }
+            //close drawer
+            Navigator.pop(context);
+          },
+        ),
+      ),
     );
   }
 

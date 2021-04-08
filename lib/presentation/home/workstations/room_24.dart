@@ -6,6 +6,7 @@ import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/home/workstations/desk.dart';
 
 import '../../core/centered_loading.dart';
+import '../../responsive_builder.dart';
 
 //starting index
 const R24_1_INDEX = 19;
@@ -23,7 +24,7 @@ class Room24 extends StatelessWidget {
           initial: (_) => Container(),
           loadInProgress: (_) => CenteredLoading(),
           loadSuccess: (value) {
-            return Row(
+            final workstations =  Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -81,6 +82,15 @@ class Room24 extends StatelessWidget {
                   ),
                 )
               ],
+            );
+            return ResponsiveBuilder(
+              mobile: workstations,
+              desktop: LayoutBuilder(
+                builder: (context, constraints) => SizedBox(
+                  width: constraints.maxWidth - (constraints.maxWidth * 0.25),
+                  child: workstations,
+                ),
+              ),
             );
           },
           loadFailure: (_) => RetryWidget(

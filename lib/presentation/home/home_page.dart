@@ -93,33 +93,33 @@ class HomePage extends StatelessWidget {
                       scrollDirection: Axis.vertical,
                       padding: EdgeInsets.all(16),
                       child: ResponsiveBuilder(
-                        mobile: Column(
-                          children: [
-                            _buildWorkstationsSection(Rooms.values[index]),
-                            SizedBox(height: 16),
-                            if (Rooms.values[index].idRoom != null)
-                              _buildReservationsSection(
-                                  newContext, Rooms.values[index])
-                          ],
-                        ),
-                        desktop: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width/4,
-                              child: _buildWorkstationsSection(
-                                  Rooms.values[index]),
-                            ),
-                            if (Rooms.values[index].idRoom != null)
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width/4,
-                                child: _buildReservationsSection(
-                                    newContext, Rooms.values[index]),
-                              )
-                          ],
-                        ),
-                      ),
+                          mobile: Column(
+                            children: [
+                              _buildWorkstationsSection(
+                                  context, Rooms.values[index]),
+                              SizedBox(height: 16),
+                              if (Rooms.values[index].idRoom != null)
+                                _buildReservationsSection(
+                                    newContext, Rooms.values[index])
+                            ],
+                          ),
+                          desktop: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Flexible(
+                                child: _buildWorkstationsSection(
+                                    context, Rooms.values[index]),
+                                flex: 1,
+                              ),
+                              if (Rooms.values[index].idRoom != null)
+                                Flexible(
+                                  child: _buildReservationsSection(
+                                      newContext, Rooms.values[index]),
+                                  flex: 1,
+                                )
+                            ],
+                          )),
                     );
                   },
                   onPageChanged: (pageIndex) => context
@@ -134,16 +134,16 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildWorkstationsSection(Rooms room) {
+  Widget _buildWorkstationsSection(BuildContext context, Rooms room) {
     switch (room) {
       case Rooms.room_26B:
         return Room26B();
-      case Rooms.room_24:
-        return Room24();
       case Rooms.room_26A_Floor1:
         return Room26AF1();
       case Rooms.room_26A_Floor2:
         return Room26AF2();
+      case Rooms.room_24:
+        return Room24();
       case Rooms.room_staff:
         return RoomStaff();
       default:

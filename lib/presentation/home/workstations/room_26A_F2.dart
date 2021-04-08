@@ -7,6 +7,7 @@ import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/home/workstations/desk.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 
 const ROOM_26AF2_STARTING_INDEX = 70;
 const ROOM_1_STARTING_INDEX = 50;
@@ -34,22 +35,22 @@ class Room26AF2 extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8),
+                  padding: const EdgeInsets.symmetric(vertical : 16),
                   child: Text('Stanza 1', style: roomLabelStyle),
                 ),
                 _build26AF2Room1(value.usersWithWorkstations),
                 Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8),
+                  padding: const EdgeInsets.symmetric(vertical : 16),
                   child: Text('Stanza 2', style: roomLabelStyle),
                 ),
                 _build26AF2Room2(value.usersWithWorkstations),
                 Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8),
+                  padding: const EdgeInsets.symmetric(vertical : 16),
                   child: Text('Stanza 3', style: roomLabelStyle),
                 ),
                 _build26AF2Room3(value.usersWithWorkstations),
                 Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8),
+                  padding: const EdgeInsets.symmetric(vertical : 16),
                   child: Text('Stanza 4', style: roomLabelStyle),
                 ),
                 _build26AF2Room4(value.usersWithWorkstations),
@@ -67,7 +68,7 @@ class Room26AF2 extends StatelessWidget {
   }
 
   Widget _build26AF2Room1(List<UserWithWorkstation> allUsersWithWorkstations) {
-    return GridView.count(
+    final workstations = GridView.count(
         physics: ScrollPhysics(),
         shrinkWrap: true,
         childAspectRatio: 1 / 1,
@@ -86,10 +87,21 @@ class Room26AF2 extends StatelessWidget {
             workstationCode: newWorkstationCode,
           );
         }));
+    return ResponsiveBuilder(
+      mobile: workstations,
+      desktop: LayoutBuilder(
+        builder: (context, constraints) => Center(
+          child: SizedBox(
+            width: constraints.maxWidth - (constraints.maxWidth * 0.25),
+            child: workstations,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _build26AF2Room2(List<UserWithWorkstation> allUsersWithWorkstations) {
-    return GridView.count(
+    final workstations = GridView.count(
         physics: ScrollPhysics(),
         shrinkWrap: true,
         childAspectRatio: 1 / 1,
@@ -108,10 +120,21 @@ class Room26AF2 extends StatelessWidget {
             workstationCode: newWorkstationCode,
           );
         }));
+    return ResponsiveBuilder(
+      mobile: workstations,
+      desktop: LayoutBuilder(
+        builder: (context, constraints) => Center(
+          child: SizedBox(
+            width: constraints.maxWidth - (constraints.maxWidth * 0.25),
+            child: workstations,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _build26AF2Room3(List<UserWithWorkstation> allUsersWithWorkstations) {
-    return GridView.count(
+    final workstations =  GridView.count(
         physics: ScrollPhysics(),
         shrinkWrap: true,
         childAspectRatio: 1 / 1,
@@ -130,12 +153,21 @@ class Room26AF2 extends StatelessWidget {
             workstationCode: newWorkstationCode,
           );
         }));
+    return ResponsiveBuilder(
+      mobile: workstations,
+      desktop: LayoutBuilder(
+        builder: (context, constraints) => Center(
+          child: SizedBox(
+            width: constraints.maxWidth - (constraints.maxWidth * 0.25),
+            child: workstations,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _build26AF2Room4(List<UserWithWorkstation> allUsersWithWorkstations) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 50),
-      child: GridView.count(
+   final workstations =  GridView.count(
           physics: ScrollPhysics(),
           shrinkWrap: true,
           childAspectRatio: 1 / 1,
@@ -153,7 +185,18 @@ class Room26AF2 extends StatelessWidget {
               usersWithWorkstations: workstationForDesk,
               workstationCode: newWorkstationCode,
             );
-          })),
+          })
     );
+   return ResponsiveBuilder(
+     mobile: workstations,
+     desktop: LayoutBuilder(
+       builder: (context, constraints) => Center(
+         child: SizedBox(
+           width: constraints.maxWidth - (constraints.maxWidth * 0.5),
+           child: workstations,
+         ),
+       ),
+     ),
+   );
   }
 }
