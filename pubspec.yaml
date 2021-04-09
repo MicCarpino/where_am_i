@@ -21,6 +21,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  # Flushbar
+  another_flushbar: ^1.10.17
   # AutoSize text view
   auto_size_text: ^2.1.0
    # Criptography

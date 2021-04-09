@@ -1,3 +1,5 @@
+import 'package:another_flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/constants.dart';
@@ -56,130 +58,113 @@ class _HomePageState extends State<HomePage>
       providers: [
         //Reservations
         BlocProvider<ReservationActorBloc>(
-            create: (context) =>
-                ReservationActorBloc(
-                    reservationRepository: getIt<ReservationRepository>())),
+            create: (context) => ReservationActorBloc(
+                reservationRepository: getIt<ReservationRepository>())),
         BlocProvider<ReservationWatcherBloc>(
-            create: (context) =>
-                ReservationWatcherBloc(
-                    reservationRepository: getIt<ReservationRepository>(),
-                    reservationActorBloc: context.read<
-                        ReservationActorBloc>())),
+            create: (context) => ReservationWatcherBloc(
+                reservationRepository: getIt<ReservationRepository>(),
+                reservationActorBloc: context.read<ReservationActorBloc>())),
         //Workstations
         BlocProvider<WorkstationActorBloc>(
-            create: (context) =>
-                WorkstationActorBloc(
-                    workstationRepository: getIt<WorkstationRepository>())),
+            create: (context) => WorkstationActorBloc(
+                workstationRepository: getIt<WorkstationRepository>())),
         BlocProvider<WorkstationWatcherBloc>(
-          create: (context) =>
-              WorkstationWatcherBloc(
-                workstationRepository: getIt<WorkstationRepository>(),
-                userRepository: getIt<UserRepository>(),
-                workstationActorBloc: context.read<WorkstationActorBloc>(),
-              ),
+          create: (context) => WorkstationWatcherBloc(
+            workstationRepository: getIt<WorkstationRepository>(),
+            userRepository: getIt<UserRepository>(),
+            workstationActorBloc: context.read<WorkstationActorBloc>(),
+          ),
         ),
         BlocProvider<DatePickerCubit>(create: (context) => DatePickerCubit()),
       ],
       child: Builder(
-        builder: (newContext) =>
-            MultiBlocListener(
-              listeners: [
-                BlocListener<WorkstationActorBloc, WorkstationActorState>(
-                  listener: (context, state) =>
-                      state.maybeMap(
-                        orElse: () {},
-                        actionFailure: (value) =>
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(
-                                  value.failure.getErrorMessageFromFailure()),
-                            )),
-                      ),
-                ),
-                BlocListener<ReservationActorBloc, ReservationActorState>(
-                  listener: (context, state) =>
-                      state.maybeMap(
-                        orElse: () {},
-                        actionFailure: (value) =>
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(
-                                  value.failure.getErrorMessageFromFailure()),
-                            )),
-                      ),
-                )
-              ],
-              child: Column(
-                children: [
-                  if (!ResponsiveBuilder.isMobile(context))
-                    Material(
-                      color: dncBlue,
-                      child: TabBar(
-                        controller: _tabController,
-                        tabs: Rooms.values.map((e) => Tab(text: e.title))
-                            .toList(),
-                        indicatorWeight: 2.5,
-                        indicatorColor: Colors.white,
-                        unselectedLabelColor: Colors.white,
-                      ),
-                    ),
-                  DatePicker((newDate) {
-                    newContext
-                        .read<WorkstationWatcherBloc>()
-                        .add(WorkstationWatcherEvent.fetchPresences(newDate));
-                    newContext
-                        .read<ReservationWatcherBloc>()
-                        .add(
-                        ReservationWatcherEvent.fetchReservations(newDate));
-                  }),
-                  Expanded(
-                    child: PageView.builder(
-                      controller: _pageController,
-                      itemCount: Rooms.values.length,
-                      itemBuilder: (_, index) {
-                        return SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          padding: EdgeInsets.all(16),
-                          child: ResponsiveBuilder(
-                              mobile: Column(
-                                children: [
-                                  _buildWorkstationsSection(
-                                      context, Rooms.values[index]),
-                                  SizedBox(height: 16),
-                                  if (Rooms.values[index].idRoom != null)
-                                    _buildReservationsSection(
-                                        newContext, Rooms.values[index])
-                                ],
-                              ),
-                              tabletOrDesktop: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceEvenly,
-                                children: [
-                                  Flexible(
-                                    child: _buildWorkstationsSection(
-                                        context, Rooms.values[index]),
-                                    flex: 1,
-                                  ),
-                                  if (Rooms.values[index].idRoom != null)
-                                    Flexible(
-                                      child: _buildReservationsSection(
-                                          newContext, Rooms.values[index]),
-                                      flex: 1,
-                                    )
-                                ],
-                              )),
-                        );
-                      },
-                      onPageChanged: (pageIndex) {
-                        _tabController.index = pageIndex;
-                        context
-                            .read<HomeCubit>()
-                            .changeTitle(Rooms.values[pageIndex]);
-                      },
-                    ),
-                  )
-                ],
+        builder: (newContext) => MultiBlocListener(
+          listeners: [
+            BlocListener<WorkstationActorBloc, WorkstationActorState>(
+              listener: (context, state) => state.maybeMap(
+                orElse: () {},
+                actionFailure: (value) => ResponsiveBuilder.showsErrorMessage(
+                    context, value.failure.getErrorMessageFromFailure()),
               ),
             ),
+            BlocListener<ReservationActorBloc, ReservationActorState>(
+              listener: (context, state) => state.maybeMap(
+                orElse: () {},
+                actionFailure: (value) => ResponsiveBuilder.showsErrorMessage(
+                    context, value.failure.getErrorMessageFromFailure()),
+              ),
+            )
+          ],
+          child: Column(
+            children: [
+              if (!ResponsiveBuilder.isMobile(context))
+                Material(
+                  color: dncBlue,
+                  child: TabBar(
+                    controller: _tabController,
+                    tabs: Rooms.values.map((e) => Tab(text: e.title)).toList(),
+                    indicatorWeight: 2.5,
+                    indicatorColor: Colors.white,
+                    unselectedLabelColor: Colors.white,
+                  ),
+                ),
+              DatePicker((newDate) {
+                newContext
+                    .read<WorkstationWatcherBloc>()
+                    .add(WorkstationWatcherEvent.fetchPresences(newDate));
+                newContext
+                    .read<ReservationWatcherBloc>()
+                    .add(ReservationWatcherEvent.fetchReservations(newDate));
+              }),
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: Rooms.values.length,
+                  itemBuilder: (_, index) {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      padding: EdgeInsets.all(16),
+                      child: ResponsiveBuilder(
+                          mobile: Column(
+                            children: [
+                              _buildWorkstationsSection(
+                                  context, Rooms.values[index]),
+                              SizedBox(height: 16),
+                              if (Rooms.values[index].idRoom != null)
+                                _buildReservationsSection(
+                                    newContext, Rooms.values[index])
+                            ],
+                          ),
+                          tabletOrDesktop: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Flexible(
+                                child: _buildWorkstationsSection(
+                                    context, Rooms.values[index]),
+                                flex: 1,
+                              ),
+                              if (Rooms.values[index].idRoom != null)
+                                Flexible(
+                                  child: _buildReservationsSection(
+                                      newContext, Rooms.values[index]),
+                                  flex: 1,
+                                )
+                            ],
+                          )),
+                    );
+                  },
+                  onPageChanged: (pageIndex) {
+                    _tabController.index = pageIndex;
+                    context
+                        .read<HomeCubit>()
+                        .changeTitle(Rooms.values[pageIndex]);
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -203,102 +188,86 @@ class _HomePageState extends State<HomePage>
 
   Widget _buildReservationsSection(BuildContext context, Rooms room) {
     return BlocBuilder<ReservationWatcherBloc, ReservationWatcherState>(
-        builder: (_, state) =>
-            state.map(
+        builder: (_, state) => state.map(
               initial: (_) => Container(),
               loadInProgress: (_) => CenteredLoading(),
-              loadSuccess: (value) =>
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
+              loadSuccess: (value) => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                              room.reservationRoomTitle, style: roomLabelStyle),
-                          Visibility(
-                            visible:
+                      Text(room.reservationRoomTitle, style: roomLabelStyle),
+                      Visibility(
+                        visible:
                             context.read<DatePickerCubit>().isEditAllowed(),
-                            child: IconButton(
-                              icon: Icon(
-                                Icons.add_circle_sharp,
-                                color: Colors.black54,
-                                size: 32,
-                              ),
-                              onPressed: () =>
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          MultiBlocProvider(
-                                            providers: [
-                                              BlocProvider.value(
-                                                value: context.read<
-                                                    AuthenticationBloc>(),
-                                              ),
-                                              BlocProvider.value(
-                                                value: context.read<
-                                                    ReservationActorBloc>(),
-                                              ),
-                                              BlocProvider.value(
-                                                value: context.read<
-                                                    DatePickerCubit>(),
-                                              ),
-                                              BlocProvider<ReservationFormBloc>(
-                                                create: (context) =>
-                                                    ReservationFormBloc(
-                                                        reservationActorBloc: context
-                                                            .read<
-                                                            ReservationActorBloc>(),
-                                                        initialState: ReservationFormState(
-                                                          reservationForm:
-                                                          ReservationForm
-                                                              .initial(
-                                                              room.idRoom,
-                                                              context
-                                                                  .read<
-                                                                  DatePickerCubit>()
-                                                                  .state
-                                                                  .visualizedDate,
-                                                              int.tryParse(
-                                                                  context
-                                                                      .read<
-                                                                      AuthenticationBloc>()
-                                                                      .state
-                                                                      .authenticatedUser
-                                                                      .user
-                                                                      .idResource)),
-                                                          isEditing: false,
-                                                          isSaving: false,
-                                                        )),
-                                              ),
-                                            ],
-                                            child: ReservationFormPage(),
-                                          ),
-                                    ),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.add_circle_sharp,
+                            color: Colors.black54,
+                            size: 32,
+                          ),
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => MultiBlocProvider(
+                                providers: [
+                                  BlocProvider.value(
+                                    value: context.read<AuthenticationBloc>(),
                                   ),
+                                  BlocProvider.value(
+                                    value: context.read<ReservationActorBloc>(),
+                                  ),
+                                  BlocProvider.value(
+                                    value: context.read<DatePickerCubit>(),
+                                  ),
+                                  BlocProvider<ReservationFormBloc>(
+                                    create: (context) => ReservationFormBloc(
+                                        reservationActorBloc: context
+                                            .read<ReservationActorBloc>(),
+                                        initialState: ReservationFormState(
+                                          reservationForm:
+                                              ReservationForm.initial(
+                                                  room.idRoom,
+                                                  context
+                                                      .read<DatePickerCubit>()
+                                                      .state
+                                                      .visualizedDate,
+                                                  int.tryParse(context
+                                                      .read<
+                                                          AuthenticationBloc>()
+                                                      .state
+                                                      .authenticatedUser
+                                                      .user
+                                                      .idResource)),
+                                          isEditing: false,
+                                          isSaving: false,
+                                        )),
+                                  ),
+                                ],
+                                child: ReservationFormPage(),
+                              ),
                             ),
-                          )
-                        ],
-                      ),
-                      ReservationsCalendar(
-                        reservationsList: value.reservations
-                            .where((element) => element.idRoom == room.idRoom)
-                            .toList(),
-                      ),
+                          ),
+                        ),
+                      )
                     ],
                   ),
+                  ReservationsCalendar(
+                    reservationsList: value.reservations
+                        .where((element) => element.idRoom == room.idRoom)
+                        .toList(),
+                  ),
+                ],
+              ),
               loadFailure: (value) =>
                   Center(child: RetryWidget(onTryAgainPressed: () {
-                    final date =
-                        context
-                            .read<DatePickerCubit>()
-                            .state
-                            .visualizedDate;
-                    context
-                        .read<ReservationWatcherBloc>()
-                        .add(ReservationWatcherEvent.fetchReservations(date));
-                  })),
+                final date =
+                    context.read<DatePickerCubit>().state.visualizedDate;
+                context
+                    .read<ReservationWatcherBloc>()
+                    .add(ReservationWatcherEvent.fetchReservations(date));
+              })),
             ));
   }
 
