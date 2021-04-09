@@ -28,10 +28,6 @@ class HomeScreen extends StatelessWidget {
             drawer: Drawer(child: MobileDrawer()),
           ),
           desktop: Scaffold(
-            appBar: AppBar(
-              title: Text(state.currentPage.getPageTitle()),
-              centerTitle: true,
-            ),
             body: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,93 +60,3 @@ class HomeScreen extends StatelessWidget {
     }
   }
 }
-
-/*
-class HomeScreen extends StatefulWidget {
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => HomeScreen());
-  }
-
-  final String title = "Civico 26/B";
-
-  @override
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  Pages _bodyContent;
-  String _title;
-  User loggedUser;
-
-  @override
-  void initState() {
-    super.initState();
-    //default view
-    _bodyContent = Pages.workplaces_page;
-    setState(() {
-      _title = widget.title;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ResponsiveBuilder(
-      desktop: Scaffold(
-        appBar: AppBar(
-          title: Text(_title, style: TextStyle(color: Colors.white)),
-          backgroundColor: dncBlue,
-          iconTheme: IconThemeData(color: Colors.white),
-        ),
-        body: Row(
-          children: [
-            MobileDrawer(_updateTitleAndBodyContent, _bodyContent),
-            //_getBodyContent(),
-          ],
-        ),
-      ),
-      mobile: Scaffold(
-        appBar: AppBar(
-          title: AutoSizeText(_title,
-              maxLines: 1, style: TextStyle(color: Colors.white)),
-          backgroundColor: dncBlue,
-          iconTheme: IconThemeData(color: Colors.white),
-        ),
-        drawer: DrawerWidget(_updateTitleAndBodyContent, _bodyContent),
-        body: _getBodyContent(),
-      ),
-    );
-  }
-
-  Widget _getBodyContent() {
-    //title setting is delegated to the drawer
-    switch (_bodyContent) {
-      case Pages.my_presences_page:
-        return MyPresencesPage();
-        break;
-      case Pages.presences_management_page:
-        return PresencesManagementPage();
-        break;
-      case Pages.users_management_page:
-        return RolesManagementPage();
-        break;
-      default:
-        //workplaces need callback function in order to change the title
-        //depending on visualized view pager's page
-        return HomePage(_updateTitle);
-    }
-  }
-
-  _updateTitle(String newTitle) {
-    setState(() {
-      _title = newTitle;
-    });
-  }
-
-  _updateTitleAndBodyContent(String newTitle, Pages newBodyContent) {
-    setState(() {
-      _title = newTitle;
-      _bodyContent = newBodyContent;
-    });
-  }
-}
-*/

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
@@ -27,7 +28,28 @@ import 'package:where_am_i/presentation/home/workstations/room_staff.dart';
 import 'package:where_am_i/presentation/responsive_builder.dart';
 import '../../injection_container.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  TabController _tabController;
+  PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: 0);
+    _tabController = TabController(vsync: this, length: Rooms.values.length)
+      ..addListener(() {
+        _pageController.animateToPage(_tabController.index,
+            duration: const Duration(milliseconds: 1),
+            curve: Curves.decelerate);
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -77,6 +99,17 @@ class HomePage extends StatelessWidget {
           ],
           child: Column(
             children: [
+              if (!ResponsiveBuilder.isMobile(context))
+                Material(
+                  color: dncBlue,
+                  child: TabBar(
+                    controller: _tabController,
+                    tabs: Rooms.values.map((e) => Tab(text: e.title)).toList(),
+                    indicatorWeight: 2.5,
+                    indicatorColor: Colors.white,
+                    unselectedLabelColor: Colors.white,
+                  ),
+                ),
               DatePicker((newDate) {
                 newContext
                     .read<WorkstationWatcherBloc>()
@@ -87,6 +120,7 @@ class HomePage extends StatelessWidget {
               }),
               Expanded(
                 child: PageView.builder(
+                  controller: _pageController,
                   itemCount: Rooms.values.length,
                   itemBuilder: (_, index) {
                     return SingleChildScrollView(
@@ -233,5 +267,12 @@ class HomePage extends StatelessWidget {
                     .add(ReservationWatcherEvent.fetchReservations(date));
               })),
             ));
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _pageController.dispose();
+    super.dispose();
   }
 }
