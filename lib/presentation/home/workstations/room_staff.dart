@@ -43,6 +43,7 @@ class RoomStaff extends StatelessWidget {
                 ],
               ),
               tabletOrDesktop: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Flexible(
