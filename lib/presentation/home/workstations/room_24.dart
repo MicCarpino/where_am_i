@@ -85,7 +85,7 @@ class Room24 extends StatelessWidget {
             );
             return ResponsiveBuilder(
               mobile: workstations,
-              desktop: LayoutBuilder(
+              tabletOrDesktop: LayoutBuilder(
                 builder: (context, constraints) => SizedBox(
                   width: constraints.maxWidth - (constraints.maxWidth * 0.25),
                   child: workstations,

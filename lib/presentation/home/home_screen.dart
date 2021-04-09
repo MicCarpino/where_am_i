@@ -27,7 +27,7 @@ class HomeScreen extends StatelessWidget {
             body: getPageBody(state.currentPage),
             drawer: Drawer(child: MobileDrawer()),
           ),
-          desktop: Scaffold(
+          tabletOrDesktop: Scaffold(
             body: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,

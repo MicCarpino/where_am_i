@@ -25,7 +25,7 @@ class LoginScreen extends StatelessWidget {
         ),
         child: ResponsiveBuilder(
           mobile: LoginMobileForm(),
-          desktop: LoginDesktopForm(),
+          tabletOrDesktop: LoginDesktopForm(),
         ),
       ),
     );

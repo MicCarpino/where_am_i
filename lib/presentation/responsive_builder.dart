@@ -4,9 +4,9 @@ import 'package:where_am_i/core/utils/extensions.dart';
 
 class ResponsiveBuilder extends StatelessWidget {
   final Widget mobile;
-  final Widget desktop;
+  final Widget tabletOrDesktop;
 
-  const ResponsiveBuilder({Key key, @required this.mobile, @required this.desktop})
+  const ResponsiveBuilder({Key key, @required this.mobile, @required this.tabletOrDesktop})
       : super(key: key);
 
   static bool isMobile(BuildContext context) {
@@ -28,7 +28,7 @@ class ResponsiveBuilder extends StatelessWidget {
         if (isMobile(context)) {
           return mobile;
         } else {
-          return desktop;
+          return tabletOrDesktop;
         }
       },
     );

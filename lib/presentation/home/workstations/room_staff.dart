@@ -37,22 +37,29 @@ class RoomStaff extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 16, bottom: 8),
                     child: Text('Amministrazione', style: roomLabelStyle),
                   ),
-                  _buildAdministrationRoom(value.usersWithWorkstations, screenWidth)
+                  _buildAdministrationRoom(
+                      value.usersWithWorkstations, screenWidth)
                 ],
               ),
-              desktop: Row(
+              tabletOrDesktop: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Flexible(
                     flex: 1,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16, bottom: 8),
-                          child: Text('Dirigenza', style: roomLabelStyle),
-                        ),
-                      ],
+                    child: Container(
+                      color: Colors.red,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16, bottom: 8),
+                            child: Text('Dirigenza', style: roomLabelStyle),
+                          ),
+                          Center(
+                              child: _desktopManagement(
+                                  value.usersWithWorkstations)),
+                        ],
+                      ),
                     ),
                   ),
                   Flexible(
@@ -62,10 +69,15 @@ class RoomStaff extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(top: 16, bottom: 8),
-                          child: Text('Amministrazione', style: roomLabelStyle),
+                          child:
+                              Text('Amministrazione', style: roomLabelStyle),
                         ),
-                        _buildAdministrationRoom(
-                            value.usersWithWorkstations, screenWidth)
+                        LayoutBuilder(
+                          builder: (context, constraints) =>
+                          _buildAdministrationRoom(
+                              value.usersWithWorkstations,
+                              constraints.maxWidth * 0.75),
+                        )
                       ],
                     ),
                   ),
@@ -79,54 +91,57 @@ class RoomStaff extends StatelessWidget {
   }
 
   Widget _buildManagementRoom(List<UserWithWorkstation> usersWithWorkstations) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
+    return Container(
+      height: 200,
+      width: 50,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    _autoSizedWorkstation(
+                        usersWithWorkstations
+                            .where((element) =>
+                                element.workstation?.codeWorkstation == '48')
+                            .toList(),
+                        48),
+                    _autoSizedWorkstation(
+                        usersWithWorkstations
+                            .where((element) =>
+                                element.workstation?.codeWorkstation == '49')
+                            .toList(),
+                        49)
+                  ],
+                )),
+            Expanded(
               flex: 1,
-              child: Column(
-                children: [
-                  _autoSizedWorkstation(
-                      usersWithWorkstations
-                          .where((element) =>
-                              element.workstation?.codeWorkstation == '48')
-                          .toList(),
-                      48),
-                  _autoSizedWorkstation(
-                      usersWithWorkstations
-                          .where((element) =>
-                              element.workstation?.codeWorkstation == '49')
-                          .toList(),
-                      49)
-                ],
-              )),
-          Expanded(
-            flex: 1,
-            child: Column(children: [
-              _autoSizedWorkstation(
-                  usersWithWorkstations
-                      .where((element) =>
-                          element.workstation?.codeWorkstation == '47')
-                      .toList(),
-                  47)
-            ]),
-          )
-        ],
+              child: Column(children: [
+                _autoSizedWorkstation(
+                    usersWithWorkstations
+                        .where((element) =>
+                            element.workstation?.codeWorkstation == '47')
+                        .toList(),
+                    47)
+              ]),
+            )
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildAdministrationRoom(
-    List<UserWithWorkstation> usersWithWorkstations,
-    double screenWidth,
-  ) {
-    var workstationSize = (screenWidth - 64) / 3;
+      List<UserWithWorkstation> usersWithWorkstations, double width) {
+    var workstationSize = (width - 64) / 3;
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
         mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Column(children: [
@@ -188,6 +203,14 @@ class RoomStaff extends StatelessWidget {
         usersWithWorkstations: userWithWorkstation,
         workstationCode: workstationCode,
       ),
+    );
+  }
+
+  Widget _desktopManagement(List<UserWithWorkstation> usersWithWorkstations) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container();
+      },
     );
   }
 }

@@ -46,7 +46,7 @@ class Room26AF1 extends StatelessWidget {
                     _build26ARoom2(successState)
                   ],
                 ),
-                desktop: Row(
+                tabletOrDesktop: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [

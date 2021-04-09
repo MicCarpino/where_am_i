@@ -149,7 +149,7 @@ class _HomePageState extends State<HomePage>
                                         newContext, Rooms.values[index])
                                 ],
                               ),
-                              desktop: Row(
+                              tabletOrDesktop: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment
                                     .spaceEvenly,

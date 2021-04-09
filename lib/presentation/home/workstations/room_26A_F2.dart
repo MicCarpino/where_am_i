@@ -89,7 +89,7 @@ class Room26AF2 extends StatelessWidget {
         }));
     return ResponsiveBuilder(
       mobile: workstations,
-      desktop: LayoutBuilder(
+      tabletOrDesktop: LayoutBuilder(
         builder: (context, constraints) => Center(
           child: SizedBox(
             width: constraints.maxWidth - (constraints.maxWidth * 0.25),
@@ -122,7 +122,7 @@ class Room26AF2 extends StatelessWidget {
         }));
     return ResponsiveBuilder(
       mobile: workstations,
-      desktop: LayoutBuilder(
+      tabletOrDesktop: LayoutBuilder(
         builder: (context, constraints) => Center(
           child: SizedBox(
             width: constraints.maxWidth - (constraints.maxWidth * 0.25),
@@ -155,7 +155,7 @@ class Room26AF2 extends StatelessWidget {
         }));
     return ResponsiveBuilder(
       mobile: workstations,
-      desktop: LayoutBuilder(
+      tabletOrDesktop: LayoutBuilder(
         builder: (context, constraints) => Center(
           child: SizedBox(
             width: constraints.maxWidth - (constraints.maxWidth * 0.25),
@@ -189,7 +189,7 @@ class Room26AF2 extends StatelessWidget {
     );
    return ResponsiveBuilder(
      mobile: workstations,
-     desktop: LayoutBuilder(
+     tabletOrDesktop: LayoutBuilder(
        builder: (context, constraints) => Center(
          child: SizedBox(
            width: constraints.maxWidth - (constraints.maxWidth * 0.5),
