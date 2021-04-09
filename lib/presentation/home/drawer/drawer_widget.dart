@@ -3,102 +3,68 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
-import 'package:where_am_i/domain/blocs/home/home_cubit.dart';
 import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/presentation/home/drawer/mobile_drawer_item.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 
-class MobileDrawer extends StatelessWidget {
+import 'desktop_drawer_item.dart';
+
+class DrawerWidget extends StatelessWidget {
+  const DrawerWidget({@required this.device});
+
+  final DeviceType device;
+
   @override
   Widget build(BuildContext context) {
     final User loggedUser = BlocProvider.of<AuthenticationBloc>(context)
         .state
         .authenticatedUser
         .user;
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.65,
-      child: Drawer(
-        child: Column(
-          children: [
-            Expanded(
-                child: ListView(
-              padding: EdgeInsets.zero,
-              children: <Widget>[
-                _buildHeader(context, loggedUser),
-                _buildItem(
-                  context,
-                  Pages.workplaces_page,
-                  Icons.home,
-                  'Home',
+    final drawerBody = Column(
+      children: [
+        Expanded(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              _buildHeader(context, loggedUser),
+              _buildDrawerItem(
+                Pages.workplaces_page,
+                Icons.home,
+                'Home',
+              ),
+              _buildDrawerItem(
+                Pages.my_presences_page,
+                Icons.event_available,
+                'Le mie presenze',
+              ),
+              if (loggedUser?.isStaffOrAdmin())
+                _buildDrawerItem(
+                  Pages.presences_management_page,
+                  Icons.supervisor_account,
+                  'Gestione presenze',
                 ),
-                _buildItem(
-                  context,
-                  Pages.my_presences_page,
-                  Icons.event_available,
-                  'Le mie presenze',
-                ),
-                if (loggedUser?.isStaffOrAdmin())
-                  _buildItem(
-                    context,
-                    Pages.presences_management_page,
-                    Icons.supervisor_account,
-                    'Gestione presenze',
-                  ),
-                if (loggedUser?.idRole == ROLE_ADMIN)
-                  _buildItem(
-                    context,
-                    Pages.users_management_page,
-                    Icons.lock_open,
-                    'Gestione utenze',
-                  )
-              ],
-            )),
-            Container(
-                child: Align(
-                    alignment: FractionalOffset.bottomCenter,
-                    child: Column(
-                      children: <Widget>[
-                        ListTile(
-                            leading:
-                                Icon(Icons.exit_to_app, color: Colors.black87),
-                            title: Text('Logout'),
-                            onTap: () => context
-                                .read<AuthenticationBloc>()
-                                .add(AuthenticationLogoutRequested()))
-                      ],
-                    )))
-          ],
+              if (loggedUser?.idRole == ROLE_ADMIN)
+                _buildDrawerItem(
+                  Pages.users_management_page,
+                  Icons.lock_open,
+                  'Gestione utenze',
+                )
+            ],
+          ),
         ),
+        _buildLogoutItem(context),
+      ],
+    );
+    return ResponsiveBuilder(
+      mobile: Container(
+        width: MediaQuery.of(context).size.width * 0.65,
+        child: Drawer(child: drawerBody),
       ),
+      tabletOrDesktop: drawerBody,
     );
   }
 
-  Widget _buildItem(
-      BuildContext context, Pages pageItem, IconData icon, String text) {
-    final isCurrentPage =
-        pageItem == BlocProvider.of<HomeCubit>(context).state.currentPage;
-    return Ink(
-      color: isCurrentPage ? dncOrange : null,
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: isCurrentPage ? Colors.white : Colors.black87,
-        ),
-        title: Text(text,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: TextStyle(
-                color: isCurrentPage ? Colors.white : Colors.black87)),
-        onTap: () {
-          if (isCurrentPage) {
-            BlocProvider.of<HomeCubit>(context).changePage(pageItem);
-          }
-          //close drawer
-          Navigator.pop(context);
-        },
-      ),
-    );
-  }
-
-  _buildHeader(BuildContext context, User loggedUser) {
+  Widget _buildHeader(BuildContext context, User loggedUser) {
     return DrawerHeader(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -155,5 +121,18 @@ class MobileDrawer extends StatelessWidget {
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ));
+  }
+
+  Widget _buildDrawerItem(Pages page, IconData icon, String label) =>
+      device == DeviceType.mobile
+          ? MobileDrawerItem(page, icon, label)
+          : DesktopDrawerItem(page, icon, label);
+
+  Widget _buildLogoutItem(BuildContext context) {
+    final performLogoutFunction = () =>
+        context.read<AuthenticationBloc>().add(AuthenticationLogoutRequested());
+    return device == DeviceType.mobile
+        ? MobileDrawerItem.logoutItem(performLogoutFunction)
+        : DesktopDrawerItem.logoutItem(performLogoutFunction);
   }
 }
