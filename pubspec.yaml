@@ -40,7 +40,7 @@ dependencies:
    # AutoCompleteTestView
   flutter_typeahead: ^2.0.0
    # Widget for daily calendar
-  flutter_week_view: ^1.0.0+1
+  flutter_week_view: ^1.0.0
   # Form validation
   formz: ^0.3.2
   # Service locator

@@ -14,8 +14,6 @@ import 'package:where_am_i/domain/blocs/reservation/actor/reservation_actor_bloc
 
 import 'form/reservation_form_page.dart';
 
-//https://pub.dev/packages/flutter_week_view
-
 class ReservationsCalendar extends StatelessWidget {
   final List<Reservation> reservationsList;
 
@@ -23,22 +21,24 @@ class ReservationsCalendar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: DayView(
-        userZoomable: false,
-        style: _getDayViewStyle(),
-        hoursColumnStyle: _getHoursColumnStyle(),
-        /*library display event basing on date displayed on his header. Since the
-         header is disabled the current event date should be set to "today" in
-         order to display the events on screen*/
-        date: DateTime.now(),
-        // +/- 10 minutes to prevent crop
-        minimumTime: HourMinute(hour: 8, minute: 50),
-        maximumTime: HourMinute(hour: 18, minute: 10),
-        events: reservationsList
-            .map((e) => _mapReservationToEvent(context, e))
-            .toList(),
+    return LayoutBuilder(
+      builder: (context, constraints) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        child: DayView(
+          userZoomable: false,
+          style: _getDayViewStyle(context),
+          hoursColumnStyle: _getHoursColumnStyle(),
+          /*library display event basing on date displayed on his header. Since the
+           header is disabled the current event date should be set to "today" in
+           order to display the events on screen*/
+          date: DateTime.now(),
+          // +/- 10 minutes to prevent crop
+          minimumTime: HourMinute(hour: 8, minute: 50),
+          maximumTime: HourMinute(hour: 18, minute: 10),
+          events: reservationsList
+              .map((e) => _mapReservationToEvent(context, e))
+              .toList(),
+        ),
       ),
     );
   }
@@ -109,9 +109,10 @@ class ReservationsCalendar extends StatelessWidget {
         ));
   }
 
-  DayViewStyle _getDayViewStyle() {
+  DayViewStyle _getDayViewStyle(BuildContext context) {
     return DayViewStyle(
       headerSize: 0,
+      hourRowHeight: MediaQuery.of(context).size.height * 0.075,
       backgroundColor: Colors.transparent,
       backgroundRulesColor: Colors.black26,
     );
