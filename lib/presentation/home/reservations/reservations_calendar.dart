@@ -11,6 +11,7 @@ import 'package:where_am_i/domain/blocs/reservation/form/reservation_form_bloc.d
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/presentation/home/reservations/reservations_details_dialog.dart';
 import 'package:where_am_i/domain/blocs/reservation/actor/reservation_actor_bloc.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 
 import 'form/reservation_form_page.dart';
 
@@ -120,89 +121,87 @@ class ReservationsCalendar extends StatelessWidget {
 
   Dialog _showEditReservationOptions(
       BuildContext context, Reservation reservation, bool isStaffOrAdmin) {
-    return Dialog(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (isStaffOrAdmin)
-              InkWell(
-                  child: Row(children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                          reservation.status == RESERVATION_PENDING
-                              ? 'CONFERMA'
-                              : 'REVOCA',
-                          style: boldStyle),
-                    ),
-                  ]),
-                  onTap: () {
-                    context.read<ReservationActorBloc>().add(
-                        ReservationActorEvent.update(reservation.copyWith(
-                            status: reservation.status == RESERVATION_PENDING
-                                ? RESERVATION_CONFIRMED
-                                : RESERVATION_PENDING)));
-                    Navigator.of(context).pop();
-                  }),
+    final dialogContent = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isStaffOrAdmin)
             InkWell(
                 child: Row(children: [
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Text('MODIFICA', style: boldStyle),
-                  ),
-                ]),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => MultiBlocProvider(
-                        providers: [
-                          BlocProvider.value(
-                            value: context.read<AuthenticationBloc>(),
-                          ),
-                          BlocProvider.value(
-                            value: context.read<ReservationActorBloc>(),
-                          ),
-                          BlocProvider.value(
-                            value: context.read<DatePickerCubit>(),
-                          ),
-                          BlocProvider<ReservationFormBloc>(
-                              create: (context) => ReservationFormBloc(
-                                    reservationActorBloc:
-                                        context.read<ReservationActorBloc>(),
-                                    initialState: ReservationFormState(
-                                      reservationForm:
-                                          ReservationForm.fromDomain(
-                                              reservation),
-                                      isEditing: true,
-                                      isSaving: false,
-                                    ),
-                                  )),
-                        ],
-                        child: ReservationFormPage(),
-                      ),
-                    ),
-                  );
-                }),
-            InkWell(
-                child: Row(children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text('ELIMINA', style: boldStyle),
+                    child: Text(
+                        reservation.status == RESERVATION_PENDING
+                            ? 'CONFERMA'
+                            : 'REVOCA',
+                        style: boldStyle),
                   ),
                 ]),
                 onTap: () {
                   context.read<ReservationActorBloc>().add(
-                      ReservationActorEvent.delete(reservation.idReservation));
+                      ReservationActorEvent.update(reservation.copyWith(
+                          status: reservation.status == RESERVATION_PENDING
+                              ? RESERVATION_CONFIRMED
+                              : RESERVATION_PENDING)));
                   Navigator.of(context).pop();
                 }),
-          ],
-        ),
+          InkWell(
+              child: Row(children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text('MODIFICA', style: boldStyle),
+                ),
+              ]),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => MultiBlocProvider(
+                      providers: [
+                        BlocProvider.value(
+                          value: context.read<AuthenticationBloc>(),
+                        ),
+                        BlocProvider.value(
+                          value: context.read<ReservationActorBloc>(),
+                        ),
+                        BlocProvider.value(
+                          value: context.read<DatePickerCubit>(),
+                        ),
+                        BlocProvider<ReservationFormBloc>(
+                            create: (context) => ReservationFormBloc(
+                                  reservationActorBloc:
+                                      context.read<ReservationActorBloc>(),
+                                  initialState: ReservationFormState(
+                                    reservationForm:
+                                        ReservationForm.fromDomain(reservation),
+                                    isEditing: true,
+                                    isSaving: false,
+                                  ),
+                                )),
+                      ],
+                      child: ReservationFormPage(),
+                    ),
+                  ),
+                );
+              }),
+          InkWell(
+              child: Row(children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text('ELIMINA', style: boldStyle),
+                ),
+              ]),
+              onTap: () {
+                context.read<ReservationActorBloc>().add(
+                    ReservationActorEvent.delete(reservation.idReservation));
+                Navigator.of(context).pop();
+              }),
+        ],
       ),
     );
+    return ResponsiveBuilder.showDialog(context, dialogContent);
   }
 }

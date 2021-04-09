@@ -64,4 +64,18 @@ class ResponsiveBuilder extends StatelessWidget {
             ),
           ).show(context);
   }
+
+  static Dialog showDialog(BuildContext context, Widget dialogContent) {
+    if (isMobile(context)) {
+      return Dialog(child: dialogContent);
+    } else {
+      return Dialog(
+        child: Container(
+          width:
+              MediaQuery.of(context).size.width / (isTablet(context) ? 2 : 3),
+          child: dialogContent,
+        ),
+      );
+    }
+  }
 }

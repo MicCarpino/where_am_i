@@ -4,6 +4,7 @@ import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/usecases/users/get_user_by_id.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 
 class ReservationDetailsDialog extends StatelessWidget {
   final Reservation reservation;
@@ -13,39 +14,39 @@ class ReservationDetailsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Oggetto', style: reservationLabelStyle),
-            SizedBox(height: 8),
-            Text(reservation.description),
-            Divider(),
-            Text('Referente', style: reservationLabelStyle),
-            SizedBox(height: 8),
-            FutureBuilder<User>(
-                future: _getReferentName(),
-                builder: (context, snapshot) =>
-                    snapshot.hasData && snapshot.data != null
-                        ? Text('${snapshot.data.surname} ${snapshot.data.name}')
-                        : Text('ID risorsa: ${reservation.idHandler}')),
-            Divider(),
-            Text('Orario', style: reservationLabelStyle),
-            SizedBox(height: 8),
-            Text(formatReservationTime()),
-            Divider(),
-            Text('Partecipanti', style: reservationLabelStyle),
-            SizedBox(height: 8),
-            Text(reservation.participants != null && reservation.participants.isNotEmpty
-                ? reservation.participants.join(",")
-                : "Nessun partecipante indicato"),
-          ],
-        ),
+    final dialogContent = Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('Oggetto', style: reservationLabelStyle),
+          SizedBox(height: 8),
+          Text(reservation.description),
+          Divider(),
+          Text('Referente', style: reservationLabelStyle),
+          SizedBox(height: 8),
+          FutureBuilder<User>(
+              future: _getReferentName(),
+              builder: (context, snapshot) =>
+                  snapshot.hasData && snapshot.data != null
+                      ? Text('${snapshot.data.surname} ${snapshot.data.name}')
+                      : Text('ID risorsa: ${reservation.idHandler}')),
+          Divider(),
+          Text('Orario', style: reservationLabelStyle),
+          SizedBox(height: 8),
+          Text(formatReservationTime()),
+          Divider(),
+          Text('Partecipanti', style: reservationLabelStyle),
+          SizedBox(height: 8),
+          Text(reservation.participants != null &&
+                  reservation.participants.isNotEmpty
+              ? reservation.participants.join(",")
+              : "Nessun partecipante indicato"),
+        ],
       ),
     );
+    return ResponsiveBuilder.showDialog(context, dialogContent);
   }
 
   String formatReservationTime() {
