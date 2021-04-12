@@ -9,6 +9,7 @@ import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/core/time_slot_dialog.dart';
 import 'package:where_am_i/presentation/my_presences/my_presences_calendar.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 import '../../injection_container.dart';
 
 class MyPresencesPage extends StatelessWidget {
@@ -31,11 +32,11 @@ class MyPresencesPage extends StatelessWidget {
         child: BlocListener<MyPresencesActorBloc, MyPresencesActorState>(
           listener: (context, state) {
             state.maybeMap(
-                deleteFailure: (f) => showSnackbar(
+                deleteFailure: (f) => ResponsiveBuilder.showsErrorMessage(
                     context, f.failure.getErrorMessageFromFailure()),
-                insertFailure: (f) => showSnackbar(
+                insertFailure: (f) => ResponsiveBuilder.showsErrorMessage(
                     context, f.failure.getErrorMessageFromFailure()),
-                updateFailure: (f) => showSnackbar(
+                updateFailure: (f) => ResponsiveBuilder.showsErrorMessage(
                     context, f.failure.getErrorMessageFromFailure()),
                 showTimeSlotDialog: (value) => showDialog(
                         context: context,
@@ -58,8 +59,29 @@ class MyPresencesPage extends StatelessWidget {
                 initial: (_) => Container(),
                 loadInProgress: (_) =>
                     const Center(child: CircularProgressIndicator()),
-                loadSuccess: (state) =>
-                    MyPresencesCalendar(userPresences: state.presences),
+                loadSuccess: (state) => ResponsiveBuilder(
+                    mobile: MyPresencesCalendar(userPresences: state.presences),
+                    tabletOrDesktop: LayoutBuilder(
+                      builder: (context, constraints) => Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Flexible(flex: 1, child: Container()),
+                          Flexible(
+                            flex: 3,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  MyPresencesCalendar(
+                                    userPresences: state.presences,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Flexible(flex: 1, child: Container()),
+                        ],
+                      ),
+                    )),
                 loadFailure: (_) => Container(
                     width: double.infinity,
                     height: double.infinity,
@@ -74,12 +96,6 @@ class MyPresencesPage extends StatelessWidget {
             },
           ),
         ));
-  }
-
-  void showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
   }
 
   void _handleDialogResult(BuildContext context,
