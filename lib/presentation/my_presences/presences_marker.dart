@@ -9,18 +9,18 @@ class PresencesMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        width: 100,
-        height: 100,
-        child: CustomPaint(
-          child: Center(
-            child: Text('${workstation.workstationDate.day}',
-                style:
-                    TextStyle().copyWith(color: Colors.black, fontSize: 14.0)),
-          ),
-          painter: MarkerPainter(
-              workstation.startTime, workstation.endTime, workstation.status),
-        ));
+    return Center(
+      child: Container(
+          width: 100,
+          height: 100,
+          child: CustomPaint(
+            child: Center(
+              child: Container()
+            ),
+            painter: MarkerPainter(
+                workstation.startTime, workstation.endTime, workstation.status),
+          )),
+    );
   }
 }
 
@@ -45,10 +45,10 @@ class MarkerPainter extends CustomPainter {
     var path = Path();
     //full day, drawing full circle
     if (startTime == TIME_SLOT_NINE && endTime == TIME_SLOT_EIGHTEEN) {
+      paint.style = PaintingStyle.stroke;
+      paint.strokeWidth = 18;
       canvas.drawCircle(
-          Offset(size.width / 2, size.height / 2), size.width / 2, paint);
-      canvas.drawCircle(Offset(size.width / 2, size.height / 2),
-          size.width / 3.5, Paint()..color = Colors.white);
+          Offset(size.width / 2, size.height / 2), size.width / 2.5, paint);
     } else {
       _drawHalfCenterAngled(path, size);
       canvas.drawPath(path, paint);
