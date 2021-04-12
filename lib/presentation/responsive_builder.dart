@@ -65,7 +65,7 @@ class ResponsiveBuilder extends StatelessWidget {
           ).show(context);
   }
 
-  static Dialog showDialog(BuildContext context, Widget dialogContent) {
+  static Dialog buildDialog(BuildContext context, Widget dialogContent) {
     if (isMobile(context)) {
       return Dialog(child: dialogContent);
     } else {

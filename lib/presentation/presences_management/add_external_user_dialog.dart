@@ -4,6 +4,7 @@ import 'package:where_am_i/core/utils/constants.dart';
 import 'package:meta/meta.dart';
 import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/domain/blocs/presences_management/actor/presences_management_actor_bloc.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 
 class AddExternalUserDialog extends StatelessWidget {
   final String messageText;
@@ -20,8 +21,8 @@ class AddExternalUserDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: Container(
+    return ResponsiveBuilder.buildDialog(context,
+       Container(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

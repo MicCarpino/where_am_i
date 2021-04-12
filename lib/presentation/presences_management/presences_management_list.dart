@@ -8,6 +8,7 @@ import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/presences_management/add_external_user_dialog.dart';
 import 'package:where_am_i/presentation/presences_management/presences_management_tile.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 
 class PresencesManagementList extends StatefulWidget {
   @override
@@ -46,73 +47,58 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
           return watcherState.maybeMap(
               loadSuccess: (state) {
                 return Expanded(
-                  child: ListView(children: [
-                    if (state.usersPending.isNotEmpty) ...[
-                      Container(
-                        padding: EdgeInsets.all(8),
-                        child: Text(
-                          'DA GESTIRE',
-                          style: TextStyle(color: Colors.blue, fontSize: 16),
+                  child: ResponsiveBuilder(
+                    mobile: ListView(
+                      children: [
+                        ..._buildUsersPendingSection(state.usersPending),
+                        Divider(color: Colors.grey, indent: 8, endIndent: 8),
+                        ..._buildUsersConfirmedSection(state.usersConfirmed),
+                        Divider(color: Colors.grey, indent: 8, endIndent: 8),
+                        ..._buildUsersRefusedOrAbsentSection(
+                            state.usersRefusedOrAbsent),
+                        Divider(color: Colors.grey, indent: 8, endIndent: 8),
+                      ],
+                    ),
+                    tabletOrDesktop: Flex(
+                      direction: Axis.horizontal,
+                      children: [
+                        Expanded(
+                          child: ListView(
+                            scrollDirection: Axis.vertical,
+                            children:
+                                _buildUsersPendingSection(state.usersPending),
+                          ),
                         ),
-                      ),
-                      ...state.usersPending
-                          .map((e) => PresencesManagementTile(
-                                userWithWorkstation: e,
-                                onSingleClick: () => null,
-                                onLongClick: () => null,
-                                onStatusButtonClick: (newStatus) =>
-                                    _onStatusButtonClick(
-                                  context,
-                                  e.workstation.copyWith(status: newStatus),
-                                ),
-                              ))
-                          .toList(),
-                      Divider(color: Colors.grey, indent: 8, endIndent: 8),
-                    ],
-                    if (state.usersConfirmed.isNotEmpty) ...[
-                      Container(
-                        padding: EdgeInsets.all(8),
-                        child: Text(
-                          'PRESENTI',
-                          style: TextStyle(color: Colors.blue, fontSize: 16),
+                        VerticalDivider(
+                            thickness: 1, indent: 15, endIndent: 15),
+                        Expanded(
+                          child: ListView(
+                            scrollDirection: Axis.vertical,
+                            children: _buildUsersConfirmedSection(
+                                state.usersConfirmed),
+                          ),
                         ),
-                      ),
-                      ...state.usersConfirmed
-                          .map((e) => PresencesManagementTile(
-                                userWithWorkstation: e,
-                                onSingleClick: () =>
-                                    _onResourceClick(context, e),
-                                onLongClick: () =>
-                                    _onResourceLongClick(context, e),
-                              ))
-                          .toList(),
-                      Divider(color: Colors.grey, indent: 8, endIndent: 8),
-                    ],
-                    ...[
-                      Container(
-                        padding: EdgeInsets.all(8),
-                        child: Text(
-                          'NON PRESENTI',
-                          style: TextStyle(color: Colors.blue, fontSize: 16),
+                        VerticalDivider(
+                            thickness: 1, indent: 15, endIndent: 15),
+                        Expanded(
+                          child: ListView(
+                            scrollDirection: Axis.vertical,
+                            children: _buildUsersRefusedOrAbsentSection(
+                                state.usersRefusedOrAbsent),
+                          ),
                         ),
-                      ),
-                      ...state.usersRefusedOrAbsent
-                          .map((e) => PresencesManagementTile(
-                                userWithWorkstation: e,
-                                onSingleClick: () =>
-                                    _onResourceClick(context, e),
-                                onLongClick: () =>
-                                    _onResourceLongClick(context, e),
-                              ))
-                          .toList(),
-                      Divider(color: Colors.grey, indent: 8, endIndent: 8),
-                    ],
-                  ]),
+                      ],
+                    ),
+                  ),
                 );
               },
               filteredList: (state) {
                 return Expanded(
                   child: ListView.separated(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveBuilder.isMobile(context)
+                            ? 0
+                            : MediaQuery.of(context).size.width * 0.15),
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
                     separatorBuilder: (_, index) =>
@@ -182,6 +168,71 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
     );
   }
 
+  List<Widget> _buildUsersPendingSection(
+      List<UserWithWorkstation> usersPending) {
+    List<Widget> list = [
+      Container(
+          padding: EdgeInsets.all(8),
+          child: Text(
+            'DA GESTIRE',
+            style: TextStyle(color: Colors.blue, fontSize: 16),
+          )),
+    ];
+    usersPending.isEmpty
+        ? list.add(ListTile(title: Text('Nessuna risorsa da gestire')))
+        : list.addAll(usersPending.map((e) => PresencesManagementTile(
+              userWithWorkstation: e,
+              onSingleClick: () => null,
+              onLongClick: () => null,
+              onStatusButtonClick: (newStatus) => _onStatusButtonClick(
+                context,
+                e.workstation.copyWith(status: newStatus),
+              ),
+            )));
+    return list;
+  }
+
+  List<Widget> _buildUsersConfirmedSection(
+      List<UserWithWorkstation> usersConfirmed) {
+    var list = <Widget>[
+      Container(
+        padding: EdgeInsets.all(8),
+        child: Text(
+          'PRESENTI',
+          style: TextStyle(color: Colors.blue, fontSize: 16),
+        ),
+      ),
+    ];
+    usersConfirmed.isEmpty
+        ? list.add(ListTile(title: Text('Nessuna risorsa confermata')))
+        : list.addAll(usersConfirmed.map((e) => PresencesManagementTile(
+              userWithWorkstation: e,
+              onSingleClick: () => _onResourceClick(context, e),
+              onLongClick: () => _onResourceLongClick(context, e),
+            )));
+    return list;
+  }
+
+  List<Widget> _buildUsersRefusedOrAbsentSection(
+      List<UserWithWorkstation> usersRefusedOrAbsent) {
+    return [
+      Container(
+        padding: EdgeInsets.all(8),
+        child: Text(
+          'NON PRESENTI',
+          style: TextStyle(color: Colors.blue, fontSize: 16),
+        ),
+      ),
+      ...usersRefusedOrAbsent
+          .map((e) => PresencesManagementTile(
+                userWithWorkstation: e,
+                onSingleClick: () => _onResourceClick(context, e),
+                onLongClick: () => _onResourceLongClick(context, e),
+              ))
+          .toList(),
+    ];
+  }
+
   _onResourceClick(
       BuildContext context, UserWithWorkstation userWithWorkstation) {
     context.read<PresencesManagementActorBloc>().add(
@@ -216,7 +267,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
           builder: (_) => AlertDialog(
                 title: Text('Attenzione'),
                 content: Text(
-                    '${userWithWorkstation.getResourceLabel()} è già stato assegnato/a ad una postazione. \nVuoi procedere con la rimozione della sua presenza? '),
+                    '${userWithWorkstation.getResourceLabel()} è già stato assegnato/a ad una postazione. \nVuoi comunque procedere con la rimozione della sua presenza? '),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),

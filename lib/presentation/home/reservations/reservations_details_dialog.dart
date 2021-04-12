@@ -46,7 +46,7 @@ class ReservationDetailsDialog extends StatelessWidget {
         ],
       ),
     );
-    return ResponsiveBuilder.showDialog(context, dialogContent);
+    return ResponsiveBuilder.buildDialog(context, dialogContent);
   }
 
   String formatReservationTime() {

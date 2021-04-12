@@ -202,6 +202,6 @@ class ReservationsCalendar extends StatelessWidget {
         ],
       ),
     );
-    return ResponsiveBuilder.showDialog(context, dialogContent);
+    return ResponsiveBuilder.buildDialog(context, dialogContent);
   }
 }
