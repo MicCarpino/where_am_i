@@ -15,6 +15,7 @@ import 'package:where_am_i/injection_container.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/custom_expansion_tile.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 import 'package:where_am_i/presentation/workstation_assignment/presences_checklist.dart';
 
 class WorkstationAssignmentPage extends StatelessWidget {
@@ -42,28 +43,39 @@ class WorkstationAssignmentPage extends StatelessWidget {
             orElse: () => Container(),
             loadSuccess: (value) {
               _expanded.value = null;
-              return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (value.assignedResources.isNotEmpty)
+              return ResponsiveBuilder(
+                mobile: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       ..._buildOccupantsList(context, value.assignedResources),
-                    if (value.assignableResources.isEmpty)
-                      Expanded(
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              'Al momento nessuna risorsa può essere assegnata a questa postazione',
-                              style: TextStyle(fontSize: 16),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      )
-                    else
+                      Divider(),
                       ..._buildAssignableResourcesList(
                           context, value.assignableResources)
-                  ]);
+                    ]),
+                tabletOrDesktop: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _buildOccupantsList(
+                          context,
+                          value.assignedResources,
+                        ),
+                      ),
+                    ),
+                    VerticalDivider(),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: _buildAssignableResourcesList(
+                          context,
+                          value.assignableResources,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
             },
           ),
         ),
@@ -83,7 +95,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
       var abc = aStartTime.compareTo(bStartTime);
       return abc != 0 ? abc : aEndTime.compareTo(bEndTime);
     });
-    return [
+    final occupantsList = <Widget>[
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
@@ -91,7 +103,24 @@ class WorkstationAssignmentPage extends StatelessWidget {
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
-      ...occupants.map<Widget>((e) {
+    ];
+    if (occupants.isEmpty) {
+      occupantsList.add(
+        Expanded(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Al momento nessuna risorsa risulta essere assegnata a questa postazione',
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+      );
+    } else {
+      occupantsList.addAll(occupants.map<Widget>((e) {
         String startTime = e.workstation.startTime.format(context);
         String endTime = e.workstation.endTime.format(context);
         return Row(
@@ -123,34 +152,52 @@ class WorkstationAssignmentPage extends StatelessWidget {
             )
           ],
         );
-      }),
-      Divider(),
-    ];
+      }));
+    }
+    return occupantsList;
   }
 
   List<Widget> _buildAssignableResourcesList(
     BuildContext context,
-    List<UserWithWorkstation> assignableUsers,
+    List<UserWithWorkstation> assignableResources,
   ) {
-    return [
+    final assignableResourcesList = <Widget>[
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
           'Risorse assegnabili alla postazione:',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
-      ),
-      Expanded(
+      )
+    ];
+    if (assignableResources.isEmpty)
+      assignableResourcesList.add(
+        Expanded(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Al momento nessuna risorsa può essere assegnata a questa postazione',
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+      );
+    else {
+      assignableResourcesList.add(Expanded(
         child: ListView(
           shrinkWrap: true,
-          children: assignableUsers
+          children: assignableResources
               .map((e) => e.workstation.hasMoreForCurrentMonth
                   ? _buildExpandableListTile(context, e)
                   : _buildSimpleListTile(context, e))
               .toList(),
         ),
-      ),
-    ];
+      ));
+    }
+    return assignableResourcesList;
   }
 
   Widget _buildSimpleListTile(

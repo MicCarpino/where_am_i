@@ -140,13 +140,13 @@ class _HomePageState extends State<HomePage>
                               Flexible(
                                 child: _buildWorkstationsSection(
                                     context, Rooms.values[index]),
-                                flex: 1,
+                                flex: 3,
                               ),
                               if (Rooms.values[index].idRoom != null)
                                 Flexible(
                                   child: _buildReservationsSection(
                                       newContext, Rooms.values[index]),
-                                  flex: 1,
+                                  flex: 2,
                                 )
                             ],
                           )),
