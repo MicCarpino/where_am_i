@@ -26,9 +26,24 @@ extension PagesTitles on Pages {
   }
 }
 
-enum TimeSlot { fullDay, morning, evening }
-
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
+
+enum TimeSlot {fullDay, morning, evening  }
+
+extension TimeSlotLabel on TimeSlot {
+  String get label {
+    switch (this) {
+      case TimeSlot.morning:
+        return 'Mattino';
+      case TimeSlot.evening:
+        return 'Pomeriggio';
+      case TimeSlot.fullDay:
+        return 'Tutto il giorno';
+      default:
+        return null;
+    }
+  }
+}
 
 enum Rooms { room_26B, room_26A_Floor1, room_26A_Floor2, room_24, room_staff }
 

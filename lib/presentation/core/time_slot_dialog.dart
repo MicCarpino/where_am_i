@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
@@ -5,6 +6,7 @@ import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 
 class TimeSlotDialog extends StatefulWidget {
   final DateTime selectedDate;
@@ -38,16 +40,15 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    /*return Dialog(
       clipBehavior: Clip.hardEdge,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(16)),
-      ),
-      elevation: 10,
-      child: SingleChildScrollView(
+      ),*/
+    return ResponsiveBuilder.buildDialog(context, SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _buildTitleSection(),
             if (widget.user != null || widget.workstation?.freeName != null)
@@ -66,9 +67,12 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(
                 height: 48.0,
@@ -76,9 +80,9 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
                 child: Checkbox(
                     value: _isRangeSelectionActive,
                     onChanged: (newValue) => setState(() {
-                      _isRangeSelectionActive = newValue;
-                      _dropDownSelectedDate = null;
-                    })),
+                          _isRangeSelectionActive = newValue;
+                          _dropDownSelectedDate = null;
+                        })),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
@@ -89,41 +93,44 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
               ),
             ],
           ),
-          if (_isRangeSelectionActive) _buildDropDownSection()
+          if (_isRangeSelectionActive) ...[
+            Text("Presente fino a :", style: TextStyle(fontSize: 16)),
+            DropdownButton<DateTime>(isExpanded: false,
+              value: _dropDownSelectedDate,
+              hint: Text('Ultimo giorno di presenza'),
+              items: _availableDates
+                  .map((date) => new DropdownMenuItem<DateTime>(
+                        value: date,
+                        child: new Text(formatter.format(date)),
+                      ))
+                  .toList(),
+              onChanged: (value) =>
+                  setState(() => _dropDownSelectedDate = value),
+            )
+          ]
         ],
       ),
     );
   }
 
-  Widget _buildDropDownSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text("Presente fino a :", style: TextStyle(fontSize: 16)),
-        DropdownButton<DateTime>(
-          value: _dropDownSelectedDate,
-          hint: Text('Ultimo giorno di presenza'),
-          items: _availableDates
-              .map((date) => new DropdownMenuItem<DateTime>(
-            value: date,
-            child: new Text(formatter.format(date)),
-          ))
-              .toList(),
-          onChanged: (value) => setState(() => _dropDownSelectedDate = value),
-        )
-      ],
+  Widget _buildTitleSection() {
+    String title =
+        "${widget.workstation == null ? 'Inserisci' : 'Modifica'} presenza per ${formatter.format(widget.selectedDate)}";
+    return Container(
+      alignment: Alignment.center,
+      width: double.infinity,
+      color: dncLightBlue,
+      padding: EdgeInsets.all(16),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 18, color: Colors.white),
+      ),
     );
   }
 
   Widget _buildButtons() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: TimeSlot.values
-            .where((timeSlot) {
+    final buttons = TimeSlot.values
+        .where((timeSlot) {
           //edit case, generating only options not equals to actual time slot
           if (widget.workstation != null) {
             return timeSlot != widget.workstation.getTimeSlot();
@@ -131,39 +138,42 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
           //displaying all buttons if performing multiple insert
           return _isRangeSelectionActive
               ? true
-          //else only morning/afternoon buttons
+              //else only morning/afternoon buttons
               : timeSlot != TimeSlot.fullDay;
         })
-            .map((timeSlot) => _buildTimeSlotButton(timeSlot))
-            .toList(),
+        .map((timeSlot) => _buildTimeSlotButton(timeSlot))
+        .toList();
+    return ResponsiveBuilder(
+      mobile: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: buttons,
+      ),
+      tabletOrDesktop: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: buttons,
       ),
     );
   }
 
   Widget _buildTimeSlotButton(TimeSlot timeSlot) {
-    String label = "TUTTO IL GIORNO";
-    if (timeSlot == TimeSlot.morning) {
-      label = "MATTINA";
-    } else if (timeSlot == TimeSlot.evening) {
-      label = "POMERIGGIO";
-    }
-    return AspectRatio(
-      aspectRatio: 2.5,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: MaterialButton(
-          elevation: 5,
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: BorderSide(color: Colors.blue)),
-          child: Text(
-            label,
-            style: TextStyle(fontSize: 20, color: Colors.blue),
-            textAlign: TextAlign.center,
-          ),
-          onPressed: () => _closeDialogAndSubmit(timeSlot),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: MaterialButton(
+        padding: EdgeInsets.all(36),
+        elevation: 5,
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.blue)),
+        child: Text(
+          timeSlot.label,
+          style: TextStyle(fontSize: 20, color: Colors.blue),
+          textAlign: TextAlign.center,
         ),
+        onPressed: () => _closeDialogAndSubmit(timeSlot),
       ),
     );
   }
@@ -179,34 +189,12 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     Navigator.pop(context, {timeSlot: selectedDates});
   }
 
-  Widget _buildTitleSection() {
-    String title =
-        "${widget.workstation == null ? 'Inserisci' : 'Modifica'} presenza per ${formatter.format(widget.selectedDate)}";
-
-    return Container(
-      color: dncLightBlue,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding:
-            const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-            child: Text(
-              title,
-              style: const TextStyle(fontSize: 18, color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void initValues() {
     startingDate = widget.selectedDate.zeroed();
     // DateTime month starts from 0, so month+1 is to compensate date "taken" from another Datetime
     // while setting 0 as day automatically turn it in the last day of the month
     lastDateOfMonth =
-    new DateTime(startingDate.year, startingDate.month + 1, 0);
+        new DateTime(startingDate.year, startingDate.month + 1, 0);
     if (lastDateOfMonth.weekday == DateTime.sunday) {
       lastDateOfMonth = new DateTime(
         lastDateOfMonth.year,
@@ -217,7 +205,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     //startingDate cannot be a value after the last day of the month, so it's
     //only necessary to check if is not equal to the last day
     startingDateIsBeforeLastDay =
-    !startingDate.isAtSameMomentAs(lastDateOfMonth);
+        !startingDate.isAtSameMomentAs(lastDateOfMonth);
     if (startingDateIsBeforeLastDay) {
       initDropdownValues();
     }
@@ -254,18 +242,13 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     } else {
       title = widget.workstation.freeName;
     }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: Text(title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              )),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Text(title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          )),
     );
   }
 }
