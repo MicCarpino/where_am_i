@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/user.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 
 class EditRoleDialog extends StatefulWidget {
   final User userSelected;
@@ -28,15 +29,21 @@ class _EditRoleDialogState extends State<EditRoleDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: Column(
+    return ResponsiveBuilder.buildDialog(
+      context,
+      Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Seleziona il ruolo da assegnare a ${widget.userSelected.surname} ${widget.userSelected.name}",
-              style: TextStyle(fontSize: 16),
+          Container(
+            width: double.infinity,
+            alignment: Alignment.center,
+            color: dncLightBlue,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Seleziona il ruolo da assegnare a ${widget.userSelected.name} ${widget.userSelected.surname} ",
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
             ),
           ),
           RadioListTile(
@@ -63,38 +70,27 @@ class _EditRoleDialogState extends State<EditRoleDialog> {
               onChanged: (value) => setState(() {
                     _groupValue = ROLE_USER;
                   })),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0, right: 16),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    FlatButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        "Annulla",
-                        style: TextStyle(color: dncBlue),
-                      ),
-                      color: Colors.transparent,
-                      padding: EdgeInsets.all(8),
-                    ),
-                    SizedBox(width: 16),
-                    FlatButton(
-                      onPressed: () => _onConfirmedPressed(),
-                      child: Text("Conferma", style: TextStyle(color: dncBlue)),
-                      color: Colors.transparent,
-                      padding: EdgeInsets.all(8),
-                    ),
-                  ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                MaterialButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("Annulla", style: TextStyle(color: Colors.white)),
+                  color: dncLightBlue,
+                  padding: EdgeInsets.all(16),
                 ),
-              )
-            ],
+                SizedBox(width: 16),
+                MaterialButton(
+                  onPressed: () => _onConfirmedPressed(),
+                  child: Text("Conferma", style: TextStyle(color: Colors.white)),
+                  color: dncLightBlue,
+                  padding: EdgeInsets.all(16),
+                ),
+              ],
+            ),
           )
         ],
       ),

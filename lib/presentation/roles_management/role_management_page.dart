@@ -6,6 +6,7 @@ import 'package:where_am_i/domain/blocs/users_management/users_management_bloc.d
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 import 'package:where_am_i/presentation/roles_management/edit_role_dialog.dart';
 
 final sl = GetIt.instance;
@@ -46,9 +47,7 @@ class _RolesManagementPageState extends State<RolesManagementPage> {
       builder: (context, state) {
         if (state is UsersListReadyState) {
           return _buildUsersList(state);
-        } else if (state is UsersListLoadingState) {
-          return Center(child: CenteredLoading());
-        } else {
+        } else if (state is UsersListErrorState) {
           return Container(
               width: double.infinity,
               height: double.infinity,
@@ -57,19 +56,19 @@ class _RolesManagementPageState extends State<RolesManagementPage> {
                     onTryAgainPressed: () =>
                         _usersBloc.add(OnUsersListFetchRequested())),
               ));
+        } else {
+          return Center(child: CenteredLoading());
         }
       },
       listener: (context, state) {
         if (state is UserUpdateErrorState) {
-          Scaffold.of(context).showSnackBar(SnackBar(
-              content: new Text(state.errorMessage),
-              duration: new Duration(seconds: 3)));
+          ResponsiveBuilder.showsErrorMessage(context, state.errorMessage);
         }
       },
     );
   }
 
-  Column _buildUsersList(UsersListReadyState state) {
+  Widget _buildUsersList(UsersListReadyState state) {
     return Column(
       children: [
         TextField(
@@ -102,7 +101,7 @@ class _RolesManagementPageState extends State<RolesManagementPage> {
                   style: TextStyle(color: Colors.black),
                 ),
                 trailing: _buildRoleLabel(user.idRole),
-                onLongPress: () => showDialog(
+                onTap: () => showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return EditRoleDialog(
