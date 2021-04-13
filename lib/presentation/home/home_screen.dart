@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) => ResponsiveBuilder(
           mobile: Scaffold(
-            appBar: AppBar(title: Text(state.currentPage.getPageTitle())),
+            appBar: AppBar(title: Text(state.title)),
             body: getPageBody(state.currentPage),
             drawer: Drawer(child: DrawerWidget(device: DeviceType.mobile)),
           ),

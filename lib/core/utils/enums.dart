@@ -21,7 +21,7 @@ extension PagesTitles on Pages {
       case Pages.users_management_page:
         return 'Gestione utenze';
       default:
-        return '';
+        return Rooms.values.first.title;
     }
   }
 }
