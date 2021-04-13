@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
+import 'package:where_am_i/presentation/responsive_builder.dart';
 
 class PresencesMarker extends StatelessWidget {
   final Workstation workstation;
@@ -14,22 +15,25 @@ class PresencesMarker extends StatelessWidget {
           width: 100,
           height: 100,
           child: CustomPaint(
-            child: Center(
-              child: Container()
-            ),
+            child: Center(child: Container()),
             painter: MarkerPainter(
-                workstation.startTime, workstation.endTime, workstation.status),
+              context,
+              workstation.startTime,
+              workstation.endTime,
+              workstation.status,
+            ),
           )),
     );
   }
 }
 
 class MarkerPainter extends CustomPainter {
+  final BuildContext context;
   final int status;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
 
-  MarkerPainter(this.startTime, this.endTime, this.status);
+  MarkerPainter(this.context, this.startTime, this.endTime, this.status);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -46,7 +50,7 @@ class MarkerPainter extends CustomPainter {
     //full day, drawing full circle
     if (startTime == TIME_SLOT_NINE && endTime == TIME_SLOT_EIGHTEEN) {
       paint.style = PaintingStyle.stroke;
-      paint.strokeWidth = 18;
+      paint.strokeWidth =  ResponsiveBuilder.isMobile(context)? 10 : 18;
       canvas.drawCircle(
           Offset(size.width / 2, size.height / 2), size.width / 2.5, paint);
     } else {
