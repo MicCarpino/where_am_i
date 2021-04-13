@@ -106,15 +106,13 @@ class WorkstationAssignmentPage extends StatelessWidget {
     ];
     if (occupants.isEmpty) {
       occupantsList.add(
-        Expanded(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Al momento nessuna risorsa risulta essere assegnata a questa postazione',
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.center,
-              ),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 32),
+            child: Text(
+              'Al momento nessuna risorsa risulta essere assegnata a questa postazione',
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
@@ -172,15 +170,13 @@ class WorkstationAssignmentPage extends StatelessWidget {
     ];
     if (assignableResources.isEmpty)
       assignableResourcesList.add(
-        Expanded(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Al momento nessuna risorsa può essere assegnata a questa postazione',
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.center,
-              ),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 32),
+            child: Text(
+              'Al momento nessuna risorsa può essere assegnata a questa postazione',
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
             ),
           ),
         ),
