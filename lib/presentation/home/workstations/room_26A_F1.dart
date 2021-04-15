@@ -51,7 +51,6 @@ class Room26AF1 extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Flexible(
-                      flex: 1,
                       child: LayoutBuilder(
                           builder: (context, constraints) => SizedBox(
                                 width: constraints.maxWidth -
@@ -71,7 +70,6 @@ class Room26AF1 extends StatelessWidget {
                               )),
                     ),
                     Flexible(
-                        flex: 1,
                         child: LayoutBuilder(
                           builder: (context, constraints) => SizedBox(
                             width: constraints.maxWidth -
@@ -103,57 +101,70 @@ class Room26AF1 extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(
-          child: GridView.count(
-            physics: ScrollPhysics(),
-            shrinkWrap: true,
-            childAspectRatio: 1 / 1,
-            crossAxisCount: 2,
-            mainAxisSpacing: 0,
-            crossAxisSpacing: 0,
-            children: List.generate(
-              room_1_2_desks_number,
-              (index) {
-                final newWorkstationCode = codeConverter
-                    .toOldWorkstationCode(R26A_FLOOR1_ROOM1_1_INDEX + index);
-                final workstationForDesk = value.usersWithWorkstations
-                    .where((element) =>
-                        element.workstation?.codeWorkstation ==
-                        newWorkstationCode.toString())
-                    .toList();
-                return Desk(
-                  usersWithWorkstations: workstationForDesk,
-                  workstationCode: newWorkstationCode,
-                );
-              },
-            ),
+        Flexible(
+          child: Column(
+            children: [
+              Container(width: double.infinity, height: 2, color: Colors.cyan),
+              SizedBox(height: 10),
+              GridView.count(
+                physics: ScrollPhysics(),
+                shrinkWrap: true,
+                childAspectRatio: 1 / 1,
+                crossAxisCount: 2,
+                mainAxisSpacing: 0,
+                crossAxisSpacing: 0,
+                children: List.generate(
+                  room_1_2_desks_number,
+                  (index) {
+                    final newWorkstationCode = codeConverter
+                        .toOldWorkstationCode(R26A_FLOOR1_ROOM1_1_INDEX + index);
+                    final workstationForDesk = value.usersWithWorkstations
+                        .where((element) =>
+                            element.workstation?.codeWorkstation ==
+                            newWorkstationCode.toString())
+                        .toList();
+                    return Desk(
+                      usersWithWorkstations: workstationForDesk,
+                      workstationCode: newWorkstationCode,
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
         SizedBox(width: 16),
-        Expanded(
-          child: GridView.count(
-            physics: ScrollPhysics(),
-            shrinkWrap: true,
-            childAspectRatio: 1 / 1,
-            crossAxisCount: 2,
-            mainAxisSpacing: 0,
-            crossAxisSpacing: 0,
-            children: List.generate(
-              room_1_2_desks_number,
-              (index) {
-                final newWorkstationCode = codeConverter
-                    .toOldWorkstationCode(R26A_FLOOR1_ROOM2_INDEX + index);
-                final workstationForDesk = value.usersWithWorkstations
-                    .where((element) =>
-                        element.workstation?.codeWorkstation ==
-                        newWorkstationCode.toString())
-                    .toList();
-                return Desk(
-                  usersWithWorkstations: workstationForDesk,
-                  workstationCode: newWorkstationCode,
-                );
-              },
-            ),
+        Flexible(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(width: double.infinity, height: 2, color: Colors.cyan),
+              SizedBox(height: 10),
+              GridView.count(
+                physics: ScrollPhysics(),
+                shrinkWrap: true,
+                childAspectRatio: 1 / 1,
+                crossAxisCount: 2,
+                mainAxisSpacing: 0,
+                crossAxisSpacing: 0,
+                children: List.generate(
+                  room_1_2_desks_number,
+                  (index) {
+                    final newWorkstationCode = codeConverter
+                        .toOldWorkstationCode(R26A_FLOOR1_ROOM2_INDEX + index);
+                    final workstationForDesk = value.usersWithWorkstations
+                        .where((element) =>
+                            element.workstation?.codeWorkstation ==
+                            newWorkstationCode.toString())
+                        .toList();
+                    return Desk(
+                      usersWithWorkstations: workstationForDesk,
+                      workstationCode: newWorkstationCode,
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         )
       ],
@@ -163,29 +174,36 @@ class Room26AF1 extends StatelessWidget {
   Widget _build26ARoom2(successState) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 60),
-      child: GridView.count(
-          physics: ScrollPhysics(),
-          shrinkWrap: true,
-          childAspectRatio: 1 / 1,
-          crossAxisCount: 2,
-          mainAxisSpacing: 0,
-          crossAxisSpacing: 0,
-          children: List.generate(
-            room_3_desks_number,
-            (index) {
-              final newWorkstationCode = codeConverter
-                  .toOldWorkstationCode(R26A_FLOOR1_ROOM2_INDEX + index);
-              final workstationForDesk = successState.usersWithWorkstations
-                  .where((element) =>
-                      element.workstation?.codeWorkstation ==
-                      newWorkstationCode.toString())
-                  .toList();
-              return Desk(
-                usersWithWorkstations: workstationForDesk,
-                workstationCode: newWorkstationCode,
-              );
-            },
-          )),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(width: double.infinity, height: 2, color: Colors.cyan),
+          SizedBox(height: 10),
+          GridView.count(
+              physics: ScrollPhysics(),
+              shrinkWrap: true,
+              childAspectRatio: 1 / 1,
+              crossAxisCount: 2,
+              mainAxisSpacing: 0,
+              crossAxisSpacing: 0,
+              children: List.generate(
+                room_3_desks_number,
+                (index) {
+                  final newWorkstationCode = codeConverter
+                      .toOldWorkstationCode(R26A_FLOOR1_ROOM2_INDEX + index);
+                  final workstationForDesk = successState.usersWithWorkstations
+                      .where((element) =>
+                          element.workstation?.codeWorkstation ==
+                          newWorkstationCode.toString())
+                      .toList();
+                  return Desk(
+                    usersWithWorkstations: workstationForDesk,
+                    workstationCode: newWorkstationCode,
+                  );
+                },
+              )),
+        ],
+      ),
     );
   }
 }
