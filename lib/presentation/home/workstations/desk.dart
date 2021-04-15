@@ -13,12 +13,12 @@ import 'package:where_am_i/presentation/home/workstations/desk_marker.dart';
 import 'package:where_am_i/presentation/workstation_assignment/workstation_assignment_page.dart';
 
 class Desk extends StatefulWidget {
-  final List<UserWithWorkstation> usersWithWorkstations;
   final int workstationCode;
+  final double width;
 
   Desk({
-    @required this.usersWithWorkstations,
     @required this.workstationCode,
+    @required this.width,
   });
 
   @override
@@ -29,6 +29,7 @@ class _DeskState extends State<Desk> {
   bool isDeskOfLoggedUser;
   User loggedUser;
   bool isEditAllowed;
+  List<UserWithWorkstation> assignedResources;
 
   @override
   void initState() {
@@ -47,39 +48,44 @@ class _DeskState extends State<Desk> {
 
   @override
   Widget build(BuildContext context) {
+    assignedResources = context.read<WorkstationWatcherBloc>().state.maybeWhen(
+        orElse: () => [],
+        loadSuccess: (value) => value
+            .where((element) =>
+        element.workstation?.codeWorkstation ==
+            widget.workstationCode.toString())
+            .toList()
+    );
     String resourceLabel = _getDeskLabel();
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: 10),
-      child: Container(
-        child: CustomPaint(
-            painter: DeskMarker(widget.usersWithWorkstations
-                    .map((e) => e.workstation)
-                    ?.toList() ??
-                []),
-            child: MaterialButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5),
-                  side: BorderSide(
-                      color: isDeskOfLoggedUser ? dncOrange : Colors.black54,
-                      width: isDeskOfLoggedUser ? 2.5 : 1.0),
-                ),
-                //allow edit if user's role is staff or higher
-                onPressed: () => _onDeskClick(),
-                child: resourceLabel != null
-                    ? AutoSizeText(
-                        resourceLabel.replaceAll(" ", "\n"),
-                        maxLines: resourceLabel.split(" ")?.length,
-                        minFontSize: 10,
-                        maxFontSize: 14,
-                        softWrap: false,
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.visible,
-                        style: TextStyle(
-                          color: isEditAllowed ? Colors.black : Colors.black45,
-                        ),
-                      )
-                    : Container())),
-      ),
+    return Container(
+      width: widget.width,
+      height: widget.width,
+      child: CustomPaint(
+          painter:
+              DeskMarker(assignedResources.map((e) => e.workstation).toList()),
+          child: MaterialButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+                side: BorderSide(
+                    color: isDeskOfLoggedUser ? dncOrange : Colors.black54,
+                    width: isDeskOfLoggedUser ? 2.5 : 1.0),
+              ),
+              //allow edit if user's role is staff or higher
+              onPressed: () => _onDeskClick(),
+              child: resourceLabel != null
+                  ? AutoSizeText(
+                      resourceLabel.replaceAll(" ", "\n"),
+                      maxLines: resourceLabel.split(" ")?.length,
+                      minFontSize: 10,
+                      maxFontSize: 14,
+                      softWrap: false,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.visible,
+                      style: TextStyle(
+                        color: isEditAllowed ? Colors.black : Colors.black45,
+                      ),
+                    )
+                  : Container())),
     );
   }
 
@@ -106,7 +112,7 @@ class _DeskState extends State<Desk> {
         ),
       );
     } else {
-      if (widget.usersWithWorkstations.length > 1) {
+      if (assignedResources.length > 1) {
         showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -128,7 +134,7 @@ class _DeskState extends State<Desk> {
   }
 
   List<Widget> _generateOccupantsList() {
-    final occupants = widget.usersWithWorkstations
+    final occupants = assignedResources
       ..sort((a, b) {
         var aStartTime = a.workstation.startTime.toDouble();
         var bStartTime = b.workstation.startTime.toDouble();
@@ -151,15 +157,13 @@ class _DeskState extends State<Desk> {
   }
 
   String _getDeskLabel() {
-    if (widget.usersWithWorkstations.isNullOrEmpty()) {
+    if (assignedResources.isNullOrEmpty()) {
       return null;
-    } else if (widget.usersWithWorkstations.length == 1) {
-      return widget.usersWithWorkstations.first
-          .getResourceLabel()
-          .toUpperCase();
+    } else if (assignedResources.length == 1) {
+      return assignedResources.first.getResourceLabel().toUpperCase();
     } else {
       //more then one resource for workstation
-      return widget.usersWithWorkstations
+      return assignedResources
           .firstWhere((element) => TimeOfDay.now().hour < 13
               ? element.workstation.endTime == TIME_SLOT_THIRTEEN
               : element.workstation.endTime == TIME_SLOT_EIGHTEEN)

@@ -52,7 +52,7 @@ class Room24 extends StatelessWidget {
                                       newWorkstationCode.toString())
                                   .toList();
                               return Desk(
-                                usersWithWorkstations: workstationForDesk,
+                                width: double.infinity,
                                 workstationCode: newWorkstationCode,
                               );
                             },
@@ -88,7 +88,7 @@ class Room24 extends StatelessWidget {
                                       newWorkstationCode.toString())
                                   .toList();
                               return Desk(
-                                usersWithWorkstations: workstationForDesk,
+                                width: double.infinity,
                                 workstationCode: newWorkstationCode,
                               );
                             },

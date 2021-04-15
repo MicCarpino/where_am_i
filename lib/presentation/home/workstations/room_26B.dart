@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
-import 'package:where_am_i/presentation/home/workstations/new_desk.dart';
+import 'package:where_am_i/presentation/home/workstations/desk.dart';
 import 'package:where_am_i/presentation/responsive_builder.dart';
 
 const desksNumberForWorkplace26B = 18;
@@ -39,16 +39,16 @@ class Room26B extends StatelessWidget {
                         (index) => Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                NewDesk(
+                                Desk(
                                   width: deskWidth,
                                   workstationCode: index + 1,
                                 ),
                                 SizedBox(width: deskSpacing),
-                                NewDesk(
+                                Desk(
                                   width: deskWidth,
                                   workstationCode: index + 7,
                                 ),
-                                NewDesk(
+                                Desk(
                                   width: deskWidth,
                                   workstationCode: index + 13,
                                 ),

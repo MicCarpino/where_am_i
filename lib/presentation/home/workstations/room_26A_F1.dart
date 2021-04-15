@@ -5,8 +5,9 @@ import 'package:where_am_i/core/utils/workstations_code_converter.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
-import 'package:where_am_i/presentation/home/workstations/desk.dart';
 import 'package:where_am_i/presentation/responsive_builder.dart';
+
+import 'desk.dart';
 
 const R26A_FLOOR1_ROOM1_1_INDEX = 76;
 const R26A_FLOOR1_ROOM1_2_INDEX = 82;
@@ -35,7 +36,7 @@ class Room26AF1 extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 16, bottom: 8),
+                      padding: const EdgeInsets.only(top: 8, bottom: 8),
                       child: Text('Stanza 1', style: roomLabelStyle),
                     ),
                     _build26ARoom1(successState),
@@ -124,7 +125,7 @@ class Room26AF1 extends StatelessWidget {
                             newWorkstationCode.toString())
                         .toList();
                     return Desk(
-                      usersWithWorkstations: workstationForDesk,
+                      width: double.infinity,
                       workstationCode: newWorkstationCode,
                     );
                   },
@@ -158,7 +159,7 @@ class Room26AF1 extends StatelessWidget {
                             newWorkstationCode.toString())
                         .toList();
                     return Desk(
-                      usersWithWorkstations: workstationForDesk,
+                      width: double.infinity,
                       workstationCode: newWorkstationCode,
                     );
                   },
@@ -197,7 +198,7 @@ class Room26AF1 extends StatelessWidget {
                           newWorkstationCode.toString())
                       .toList();
                   return Desk(
-                    usersWithWorkstations: workstationForDesk,
+                    width: double.infinity,
                     workstationCode: newWorkstationCode,
                   );
                 },

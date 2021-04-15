@@ -4,7 +4,7 @@ import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
-import 'package:where_am_i/presentation/home/workstations/new_desk.dart';
+import 'package:where_am_i/presentation/home/workstations/desk.dart';
 
 const ROOM_1_STARTING_INDEX = 50;
 const ROOM_2_STARTING_INDEX = 56;
@@ -27,7 +27,7 @@ class Room26AF2 extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.only(top:8.0, bottom: 16),
                   child: Text('Stanza 1', style: roomLabelStyle),
                 ),
                 _build26AF2Room1(),
@@ -101,8 +101,7 @@ class Room26AF2 extends StatelessWidget {
   Widget _build26AF2Room4() {
     return LayoutBuilder(
       builder: (_, constraints) {
-        final double deskWidth =
-            (constraints.maxWidth - windowWidth - windowSpacing) / 4;
+        final double deskWidth = (constraints.maxWidth) / 4;
         return Column(children: [
           Container(
             width: deskWidth * 2,
@@ -122,7 +121,7 @@ class Room26AF2 extends StatelessWidget {
       [bool hasWindow = false]) {
     final desks = List<Widget>.generate(
         desksNumber,
-        (index) => NewDesk(
+        (index) => Desk(
               width: deskWidth,
               workstationCode: startingIndex + index,
             ));
