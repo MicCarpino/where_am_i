@@ -39,7 +39,7 @@ class _RolesManagementPageState extends State<RolesManagementPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UsersManagementBloc, UsersManagementState>(
-      cubit: _usersBloc,
+      bloc: _usersBloc,
       buildWhen: (previous, current) =>
           current is UsersListReadyState ||
           current is UsersListErrorState ||
