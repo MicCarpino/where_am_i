@@ -1,27 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/styles.dart';
-import 'package:where_am_i/core/utils/workstations_code_converter.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
-import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
-import 'package:where_am_i/presentation/home/workstations/desk.dart';
-import 'package:where_am_i/presentation/responsive_builder.dart';
+import 'package:where_am_i/presentation/home/workstations/new_desk.dart';
 
-const ROOM_26AF2_STARTING_INDEX = 70;
 const ROOM_1_STARTING_INDEX = 50;
 const ROOM_2_STARTING_INDEX = 56;
 const ROOM_3_STARTING_INDEX = 64;
 const ROOM_4_STARTING_INDEX = 70;
 
-const ROOM_1_DESKS_NUMBER = 6;
-const ROOM_2_DESKS_NUMBER = 8;
-const ROOM_3_DESKS_NUMBER = 6;
-const ROOM_4_DESKS_NUMBER = 6;
-
 class Room26AF2 extends StatelessWidget {
-  final codeConverter = WorkstationCodesConverter();
+  final double windowSpacing = 10;
+  final double windowWidth = 2.5;
 
   @override
   Widget build(BuildContext context) {
@@ -35,25 +27,25 @@ class Room26AF2 extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical : 16),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text('Stanza 1', style: roomLabelStyle),
                 ),
-                _build26AF2Room1(value.usersWithWorkstations),
+                _build26AF2Room1(),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical : 16),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text('Stanza 2', style: roomLabelStyle),
                 ),
-                _build26AF2Room2(value.usersWithWorkstations),
+                _build26AF2Room2(),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical : 16),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text('Stanza 3', style: roomLabelStyle),
                 ),
-                _build26AF2Room3(value.usersWithWorkstations),
+                _build26AF2Room3(),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical : 16),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text('Stanza 4', style: roomLabelStyle),
                 ),
-                _build26AF2Room4(value.usersWithWorkstations),
+                _build26AF2Room4(),
               ],
             );
           },
@@ -67,136 +59,83 @@ class Room26AF2 extends StatelessWidget {
     );
   }
 
-  Widget _build26AF2Room1(List<UserWithWorkstation> allUsersWithWorkstations) {
-    final workstations = GridView.count(
-        physics: ScrollPhysics(),
-        shrinkWrap: true,
-        childAspectRatio: 1 / 1,
-        crossAxisCount: 3,
-        mainAxisSpacing: 0,
-        crossAxisSpacing: 0,
-        children: List.generate(ROOM_1_DESKS_NUMBER, (index) {
-          final newWorkstationCode = ROOM_1_STARTING_INDEX + index;
-          final workstationForDesk = allUsersWithWorkstations
-              .where((element) =>
-                  element.workstation?.codeWorkstation ==
-                  newWorkstationCode.toString())
-              .toList();
-          return Desk(
-            usersWithWorkstations: workstationForDesk,
-            workstationCode: newWorkstationCode,
-          );
-        }));
-    return ResponsiveBuilder(
-      mobile: workstations,
-      tabletOrDesktop: LayoutBuilder(
-        builder: (context, constraints) => Center(
-          child: SizedBox(
-            width: constraints.maxWidth - (constraints.maxWidth * 0.25),
-            child: workstations,
-          ),
-        ),
-      ),
+  Widget _build26AF2Room1() {
+    return LayoutBuilder(
+      builder: (_, constraints) {
+        final double deskWidth =
+            (constraints.maxWidth - windowWidth - windowSpacing) / 4;
+        return Column(children: [
+          _buildRow(3, deskWidth, ROOM_1_STARTING_INDEX, true),
+          _buildRow(3, deskWidth, ROOM_1_STARTING_INDEX + 3, true),
+        ]);
+      },
     );
   }
 
-  Widget _build26AF2Room2(List<UserWithWorkstation> allUsersWithWorkstations) {
-    final workstations = GridView.count(
-        physics: ScrollPhysics(),
-        shrinkWrap: true,
-        childAspectRatio: 1 / 1,
-        crossAxisCount: 4,
-        mainAxisSpacing: 0,
-        crossAxisSpacing: 0,
-        children: List.generate(ROOM_2_DESKS_NUMBER, (index) {
-          final newWorkstationCode = ROOM_2_STARTING_INDEX + index;
-          final workstationForDesk = allUsersWithWorkstations
-              .where((element) =>
-                  element.workstation?.codeWorkstation ==
-                  newWorkstationCode.toString())
-              .toList();
-          return Desk(
-            usersWithWorkstations: workstationForDesk,
-            workstationCode: newWorkstationCode,
-          );
-        }));
-    return ResponsiveBuilder(
-      mobile: workstations,
-      tabletOrDesktop: LayoutBuilder(
-        builder: (context, constraints) => Center(
-          child: SizedBox(
-            width: constraints.maxWidth - (constraints.maxWidth * 0.25),
-            child: workstations,
-          ),
-        ),
-      ),
+  Widget _build26AF2Room2() {
+    return LayoutBuilder(
+      builder: (_, constraints) {
+        final double deskWidth =
+            (constraints.maxWidth - windowWidth - windowSpacing) / 5;
+        return Column(children: [
+          _buildRow(4, deskWidth, ROOM_2_STARTING_INDEX, true),
+          _buildRow(4, deskWidth, ROOM_2_STARTING_INDEX + 4, true),
+        ]);
+      },
     );
   }
 
-  Widget _build26AF2Room3(List<UserWithWorkstation> allUsersWithWorkstations) {
-    final workstations =  GridView.count(
-        physics: ScrollPhysics(),
-        shrinkWrap: true,
-        childAspectRatio: 1 / 1,
-        crossAxisCount: 3,
-        mainAxisSpacing: 0,
-        crossAxisSpacing: 0,
-        children: List.generate(ROOM_3_DESKS_NUMBER, (index) {
-          final newWorkstationCode = ROOM_3_STARTING_INDEX + index;
-          final workstationForDesk = allUsersWithWorkstations
-              .where((element) =>
-                  element.workstation?.codeWorkstation ==
-                  newWorkstationCode.toString())
-              .toList();
-          return Desk(
-            usersWithWorkstations: workstationForDesk,
-            workstationCode: newWorkstationCode,
-          );
-        }));
-    return ResponsiveBuilder(
-      mobile: workstations,
-      tabletOrDesktop: LayoutBuilder(
-        builder: (context, constraints) => Center(
-          child: SizedBox(
-            width: constraints.maxWidth - (constraints.maxWidth * 0.25),
-            child: workstations,
-          ),
-        ),
-      ),
+  Widget _build26AF2Room3() {
+    return LayoutBuilder(
+      builder: (_, constraints) {
+        final double deskWidth =
+            (constraints.maxWidth - windowWidth - windowSpacing) / 4;
+        return Column(children: [
+          _buildRow(3, deskWidth, ROOM_3_STARTING_INDEX, true),
+          _buildRow(3, deskWidth, ROOM_3_STARTING_INDEX + 3, true),
+        ]);
+      },
     );
   }
 
-  Widget _build26AF2Room4(List<UserWithWorkstation> allUsersWithWorkstations) {
-   final workstations =  GridView.count(
-          physics: ScrollPhysics(),
-          shrinkWrap: true,
-          childAspectRatio: 1 / 1,
-          crossAxisCount: 2,
-          mainAxisSpacing: 0,
-          crossAxisSpacing: 0,
-          children: List.generate(ROOM_4_DESKS_NUMBER, (index) {
-            final newWorkstationCode = ROOM_4_STARTING_INDEX + index;
-            final workstationForDesk = allUsersWithWorkstations
-                .where((element) =>
-                    element.workstation?.codeWorkstation ==
-                    newWorkstationCode.toString())
-                .toList();
-            return Desk(
-              usersWithWorkstations: workstationForDesk,
-              workstationCode: newWorkstationCode,
-            );
-          })
+  Widget _build26AF2Room4() {
+    return LayoutBuilder(
+      builder: (_, constraints) {
+        final double deskWidth =
+            (constraints.maxWidth - windowWidth - windowSpacing) / 4;
+        return Column(children: [
+          Container(
+            width: deskWidth * 2,
+            height: windowWidth,
+            color: Colors.cyan,
+          ),
+          SizedBox(height: 10),
+          _buildRow(2, deskWidth, ROOM_4_STARTING_INDEX),
+          _buildRow(2, deskWidth, ROOM_4_STARTING_INDEX + 2),
+          _buildRow(2, deskWidth, ROOM_4_STARTING_INDEX + 4),
+        ]);
+      },
     );
-   return ResponsiveBuilder(
-     mobile: workstations,
-     tabletOrDesktop: LayoutBuilder(
-       builder: (context, constraints) => Center(
-         child: SizedBox(
-           width: constraints.maxWidth - (constraints.maxWidth * 0.5),
-           child: workstations,
-         ),
-       ),
-     ),
-   );
+  }
+
+  _buildRow(int desksNumber, double deskWidth, int startingIndex,
+      [bool hasWindow = false]) {
+    final desks = List<Widget>.generate(
+        desksNumber,
+        (index) => NewDesk(
+              width: deskWidth,
+              workstationCode: startingIndex + index,
+            ));
+    if (hasWindow) {
+      desks.addAll([
+        SizedBox(width: windowSpacing),
+        Container(width: windowWidth, height: deskWidth, color: Colors.cyan)
+      ]);
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: desks,
+    );
   }
 }
