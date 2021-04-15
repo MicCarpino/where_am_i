@@ -133,7 +133,8 @@ class _HomePageState extends State<HomePage>
                                     newContext, Rooms.values[index])
                             ],
                           ),
-                          tabletOrDesktop: Row(
+                          tabletOrDesktop: Flex(
+                            direction: Axis.horizontal,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
