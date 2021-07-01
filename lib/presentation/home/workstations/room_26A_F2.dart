@@ -6,6 +6,8 @@ import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/home/workstations/desk.dart';
 
+import '../../responsive_builder.dart';
+
 const ROOM_1_STARTING_INDEX = 50;
 const ROOM_2_STARTING_INDEX = 56;
 const ROOM_3_STARTING_INDEX = 64;
@@ -27,25 +29,25 @@ class Room26AF2 extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top:8.0, bottom: 16),
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 16),
                   child: Text('Stanza 1', style: roomLabelStyle),
                 ),
-                _build26AF2Room1(),
+                _build26AF2Room1(context),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text('Stanza 2', style: roomLabelStyle),
                 ),
-                _build26AF2Room2(),
+                _build26AF2Room2(context),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text('Stanza 3', style: roomLabelStyle),
                 ),
-                _build26AF2Room3(),
+                _build26AF2Room3(context),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text('Stanza 4', style: roomLabelStyle),
                 ),
-                _build26AF2Room4(),
+                _build26AF2Room4(context),
               ],
             );
           },
@@ -59,11 +61,11 @@ class Room26AF2 extends StatelessWidget {
     );
   }
 
-  Widget _build26AF2Room1() {
+  Widget _build26AF2Room1(BuildContext context) {
     return LayoutBuilder(
       builder: (_, constraints) {
         final double deskWidth =
-            (constraints.maxWidth - windowWidth - windowSpacing) / 4;
+            (constraints.maxWidth - windowWidth - windowSpacing) / (ResponsiveBuilder.isMobile(context) ? 3 : 4);
         return Column(children: [
           _buildRow(3, deskWidth, ROOM_1_STARTING_INDEX, true),
           _buildRow(3, deskWidth, ROOM_1_STARTING_INDEX + 3, true),
@@ -72,11 +74,11 @@ class Room26AF2 extends StatelessWidget {
     );
   }
 
-  Widget _build26AF2Room2() {
+  Widget _build26AF2Room2(BuildContext context) {
     return LayoutBuilder(
       builder: (_, constraints) {
         final double deskWidth =
-            (constraints.maxWidth - windowWidth - windowSpacing) / 5;
+            (constraints.maxWidth - windowWidth - windowSpacing) / (ResponsiveBuilder.isMobile(context) ? 4 : 5);
         return Column(children: [
           _buildRow(4, deskWidth, ROOM_2_STARTING_INDEX, true),
           _buildRow(4, deskWidth, ROOM_2_STARTING_INDEX + 4, true),
@@ -85,11 +87,11 @@ class Room26AF2 extends StatelessWidget {
     );
   }
 
-  Widget _build26AF2Room3() {
+  Widget _build26AF2Room3(BuildContext context) {
     return LayoutBuilder(
       builder: (_, constraints) {
         final double deskWidth =
-            (constraints.maxWidth - windowWidth - windowSpacing) / 4;
+            (constraints.maxWidth - windowWidth - windowSpacing) / (ResponsiveBuilder.isMobile(context) ? 3 : 4);
         return Column(children: [
           _buildRow(3, deskWidth, ROOM_3_STARTING_INDEX, true),
           _buildRow(3, deskWidth, ROOM_3_STARTING_INDEX + 3, true),
@@ -98,10 +100,10 @@ class Room26AF2 extends StatelessWidget {
     );
   }
 
-  Widget _build26AF2Room4() {
+  Widget _build26AF2Room4(BuildContext context) {
     return LayoutBuilder(
       builder: (_, constraints) {
-        final double deskWidth = (constraints.maxWidth) / 4;
+        final double deskWidth = constraints.maxWidth / (ResponsiveBuilder.isMobile(context) ? 3 : 4);
         return Column(children: [
           Container(
             width: deskWidth * 2,
