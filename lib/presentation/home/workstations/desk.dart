@@ -63,7 +63,7 @@ class _DeskState extends State<Desk> {
           painter: DeskMarker(
             assignedResources.map((e) => e.workstation).toList(),
           ),
-          child: MaterialButton(
+          child: MaterialButton(padding: EdgeInsets.all(4) ,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
                 side: BorderSide(
@@ -76,8 +76,7 @@ class _DeskState extends State<Desk> {
                   ? AutoSizeText(
                       resourceLabel.replaceAll(" ", "\n"),
                       maxLines: resourceLabel.split(" ")?.length,
-                      minFontSize: 8,
-                      maxFontSize: 14,
+                      minFontSize: 8,                      maxFontSize: 14,
                       softWrap: false,
                       textAlign: TextAlign.center,wrapWords: true,
                       overflow: TextOverflow.ellipsis,
