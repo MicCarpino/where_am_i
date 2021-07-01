@@ -9,6 +9,6 @@ abstract class HomeState with _$HomeState {
 
   factory HomeState.initial() => HomeState(
     currentPage: Pages.workplaces_page,
-    title: Pages.workplaces_page.toString(),
+    title: Pages.workplaces_page.getPageTitle(),
   );
 }
