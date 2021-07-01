@@ -52,17 +52,17 @@ class _DeskState extends State<Desk> {
         orElse: () => [],
         loadSuccess: (value) => value
             .where((element) =>
-        element.workstation?.codeWorkstation ==
-            widget.workstationCode.toString())
-            .toList()
-    );
+                element.workstation?.codeWorkstation ==
+                widget.workstationCode.toString())
+            .toList());
     String resourceLabel = _getDeskLabel();
     return Container(
       width: widget.width,
       height: widget.width,
       child: CustomPaint(
-          painter:
-              DeskMarker(assignedResources.map((e) => e.workstation).toList()),
+          painter: DeskMarker(
+            assignedResources.map((e) => e.workstation).toList(),
+          ),
           child: MaterialButton(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
@@ -76,11 +76,11 @@ class _DeskState extends State<Desk> {
                   ? AutoSizeText(
                       resourceLabel.replaceAll(" ", "\n"),
                       maxLines: resourceLabel.split(" ")?.length,
-                      minFontSize: 10,
+                      minFontSize: 8,
                       maxFontSize: 14,
                       softWrap: false,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.visible,
+                      textAlign: TextAlign.center,wrapWords: true,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: isEditAllowed ? Colors.black : Colors.black45,
                       ),
