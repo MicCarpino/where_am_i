@@ -119,11 +119,6 @@ class Room26AF1 extends StatelessWidget {
                   (index) {
                     final newWorkstationCode = codeConverter
                         .toOldWorkstationCode(R26A_FLOOR1_ROOM1_1_INDEX + index);
-                    final workstationForDesk = value.usersWithWorkstations
-                        .where((element) =>
-                            element.workstation?.codeWorkstation ==
-                            newWorkstationCode.toString())
-                        .toList();
                     return Desk(
                       width: double.infinity,
                       workstationCode: newWorkstationCode,
@@ -152,12 +147,7 @@ class Room26AF1 extends StatelessWidget {
                   room_1_2_desks_number,
                   (index) {
                     final newWorkstationCode = codeConverter
-                        .toOldWorkstationCode(R26A_FLOOR1_ROOM2_INDEX + index);
-                    final workstationForDesk = value.usersWithWorkstations
-                        .where((element) =>
-                            element.workstation?.codeWorkstation ==
-                            newWorkstationCode.toString())
-                        .toList();
+                        .toOldWorkstationCode(R26A_FLOOR1_ROOM1_2_INDEX + index);
                     return Desk(
                       width: double.infinity,
                       workstationCode: newWorkstationCode,
@@ -192,11 +182,6 @@ class Room26AF1 extends StatelessWidget {
                 (index) {
                   final newWorkstationCode = codeConverter
                       .toOldWorkstationCode(R26A_FLOOR1_ROOM2_INDEX + index);
-                  final workstationForDesk = successState.usersWithWorkstations
-                      .where((element) =>
-                          element.workstation?.codeWorkstation ==
-                          newWorkstationCode.toString())
-                      .toList();
                   return Desk(
                     width: double.infinity,
                     workstationCode: newWorkstationCode,
