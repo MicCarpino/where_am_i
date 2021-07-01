@@ -79,7 +79,7 @@ class DrawerWidget extends StatelessWidget {
                 children: [
                   if (state.authenticatedUser != null)
                     Text(
-                      'Ciao ${loggedUser?.name}',
+                      'Ciao ${loggedUser?.name?.split(" ")?.first}',
                       style: TextStyle(
                         color: dncBlue,
                         fontSize: 20,
