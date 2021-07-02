@@ -151,8 +151,7 @@ class _DeskState extends State<Desk> {
                 style: TextStyle(fontSize: 16),
               ),
             ))
-        .toList()
-          ..add(Divider());
+        .toList();
   }
 
   String _getDeskLabel() {
