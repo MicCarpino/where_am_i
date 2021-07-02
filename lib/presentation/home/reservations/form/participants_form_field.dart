@@ -84,9 +84,14 @@ class _ParticipantsFormFieldState extends State<ParticipantsFormField> {
         suggestionsCallback: (pattern) => pattern.isNotEmpty
             ? getIt<UserRepository>().getAllUsers().then((value) => value
                 .getOrElse(() => null)
-                .where((element) =>
-                    element.name.contains(pattern) ||
-                    element.surname.contains(pattern))
+                .where((user) => pattern.split(" ").every((element) =>
+                        user.name
+                            .toLowerCase()
+                            .contains(element.toLowerCase()) ||
+                        user.surname
+                            .toLowerCase()
+                            .contains(element.toLowerCase()))
+                    )
                 .toList()
                   ..sort((a, b) => b.surname.compareTo(a.surname)))
             : null,
@@ -101,7 +106,7 @@ class _ParticipantsFormFieldState extends State<ParticipantsFormField> {
                     .state
                     .reservationForm
                     .participants)
-                  ..add('${suggestion.getSurnameAndName()}'),
+                  ..add(suggestion.getSurnameAndName()),
               ));
         },
       ),
