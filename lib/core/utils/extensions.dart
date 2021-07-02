@@ -13,7 +13,7 @@ extension StringExtension on String {
 
 extension StringContainsCaseInsensitive on String {
   bool containsCaseInsensitive(String otherString) {
-    return this.toLowerCase().contains(otherString);
+    return this.toLowerCase().contains(otherString.toLowerCase());
   }
 }
 

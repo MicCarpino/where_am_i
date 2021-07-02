@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:where_am_i/core/utils/constants.dart';
+import 'package:where_am_i/core/utils/extensions.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
@@ -85,13 +86,8 @@ class _ParticipantsFormFieldState extends State<ParticipantsFormField> {
             ? getIt<UserRepository>().getAllUsers().then((value) => value
                 .getOrElse(() => null)
                 .where((user) => pattern.split(" ").every((element) =>
-                        user.name
-                            .toLowerCase()
-                            .contains(element.toLowerCase()) ||
-                        user.surname
-                            .toLowerCase()
-                            .contains(element.toLowerCase()))
-                    )
+                    user.name.containsCaseInsensitive(element) ||
+                    user.surname.containsCaseInsensitive(element)))
                 .toList()
                   ..sort((a, b) => b.surname.compareTo(a.surname)))
             : null,

@@ -47,12 +47,13 @@ class PresencesManagementWatcherBloc extends Bloc<
         if (e.filterString != null && e.filterString.isNotEmpty) {
           final filteredList = cachedUsersPresences.where((element) {
             if (element.user != null) {
-              return element.user.name
-                      .containsCaseInsensitive(e.filterString) ||
-                  element.user.surname.containsCaseInsensitive(e.filterString);
+              return e.filterString.split(" ").every((pattern) =>
+                  element.user.name.containsCaseInsensitive(pattern) ||
+                  element.user.surname.containsCaseInsensitive(pattern));
             } else if (element.workstation.freeName != null) {
-              return element.workstation.freeName
-                  .containsCaseInsensitive(e.filterString);
+              return e.filterString.split(" ").every((pattern) => element
+                  .workstation.freeName
+                  .containsCaseInsensitive(pattern));
             }
             return false;
           }).toList();
