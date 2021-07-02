@@ -3,13 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/domain/blocs/reservation/form/reservation_form_bloc.dart';
 
 class SubjectFormField extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ReservationFormBloc, ReservationFormState>(
       buildWhen: (previous, current) =>
-          previous.reservationForm.subjectForm.value !=
-          current.reservationForm.subjectForm.value,
+          previous.reservationForm.subjectForm !=
+          current.reservationForm.subjectForm,
       builder: (context, state) {
         return TextFormField(
           initialValue: state.reservationForm.subjectForm.value,

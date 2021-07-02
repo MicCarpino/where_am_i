@@ -44,7 +44,7 @@ dependencies:
    # Widget for daily calendar
   flutter_week_view: ^1.0.0
   # Form validation
-  formz: ^0.3.2
+  formz: ^0.4.0
   # Service locator
   get_it: ^6.0.0
   # Remote API

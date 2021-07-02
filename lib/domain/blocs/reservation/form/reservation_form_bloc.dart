@@ -93,11 +93,24 @@ class ReservationFormBloc
                 : ReservationActorEvent.insert(reservation),
           );
         } else {
-          yield state.copyWith(isSaving: false);
+          print(
+              'is valid:' + state.reservationForm.subjectForm.valid.toString());
+          yield state.copyWith(
+              isSaving: false,
+              reservationForm: state.reservationForm.copyWith(
+                subjectForm:
+                    SubjectForm.dirty(state.reservationForm.subjectForm.value),
+              ));
         }
       },
       saveFailed: (value) async* {
-        yield state.copyWith(isSaving: false);
+        yield state.copyWith(
+            isSaving: false,
+            reservationForm: state.reservationForm.copyWith(
+              subjectForm: SubjectForm.dirty(
+                state.reservationForm.subjectForm.value,
+              ),
+            ));
       },
     );
   }
