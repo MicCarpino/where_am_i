@@ -6,6 +6,8 @@ import 'package:where_am_i/presentation/login/login_button.dart';
 import 'package:where_am_i/presentation/login/login_form_field_widget.dart';
 import 'package:where_am_i/domain/blocs/login/log_in_bloc.dart';
 
+import '../responsive_builder.dart';
+
 class LoginMobileForm extends StatelessWidget {
   final FocusNode _usernameFocus = FocusNode();
   final FocusNode _passwordFocus = FocusNode();
@@ -24,8 +26,7 @@ class LoginMobileForm extends StatelessWidget {
               listener: (context, state) => state.loginFailureOrSuccess.fold(
                   () {},
                   (a) => a.fold(
-                        (l) => ScaffoldMessenger.of(context)
-                            .showSnackBar(SnackBar(content: Text(l))),
+                        (l) => ResponsiveBuilder.showsErrorMessage(context, l),
                         (_) {},
                       )),
               builder: (context, state) {

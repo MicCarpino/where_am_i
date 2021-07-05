@@ -15,6 +15,7 @@ import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/core/time_slot_dialog.dart';
 import 'package:where_am_i/presentation/presences_management/presences_management_list.dart';
 import '../../injection_container.dart';
+import '../responsive_builder.dart';
 
 class PresencesManagementPage extends StatelessWidget {
   @override
@@ -39,11 +40,8 @@ class PresencesManagementPage extends StatelessWidget {
           PresencesManagementActorState>(
         listener: (context, state) {
           state.maybeMap(
-              actionFailure: (f) => ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(f.failure.getErrorMessageFromFailure()),
-                    ),
-                  ),
+              actionFailure: (f) => ResponsiveBuilder.showsErrorMessage(
+                  context, f.failure.getErrorMessageFromFailure()),
               showTimeSlotDialog: (value) => showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -110,9 +108,7 @@ class PresencesManagementPage extends StatelessWidget {
   }
 
   void showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ResponsiveBuilder.showsErrorMessage(context, message);
   }
 
   void _handleDialogResult(
