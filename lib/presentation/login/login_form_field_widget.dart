@@ -57,6 +57,7 @@ class LoginFormFieldWidget extends StatelessWidget {
         keyboardType: TextInputType.text,
         style: TextStyle(color: Colors.black87),
         validator: (_) => formField.invalid ? '' : null,
+        enabled: !context.read<LogInBloc>().state.isLoading,
         decoration: InputDecoration(
           labelText: label,
           labelStyle: loginLabelStyle,
