@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/styles.dart';
+import 'package:where_am_i/domain/blocs/date_picker/date_picker_cubit.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
@@ -53,7 +54,9 @@ class Room26AF2 extends StatelessWidget {
           },
           loadFailure: (_) => RetryWidget(
             onTryAgainPressed: () => context.read<WorkstationWatcherBloc>().add(
-                  WorkstationWatcherEvent.fetchPresences(DateTime.now()),
+                  WorkstationWatcherEvent.fetchPresences(
+                    context.read<DatePickerCubit>().state.visualizedDate,
+                  ),
                 ),
           ),
         );
@@ -65,7 +68,8 @@ class Room26AF2 extends StatelessWidget {
     return LayoutBuilder(
       builder: (_, constraints) {
         final double deskWidth =
-            (constraints.maxWidth - windowWidth - windowSpacing) / (ResponsiveBuilder.isMobile(context) ? 3 : 4);
+            (constraints.maxWidth - windowWidth - windowSpacing) /
+                (ResponsiveBuilder.isMobile(context) ? 3 : 4);
         return Column(children: [
           _buildRow(3, deskWidth, ROOM_1_STARTING_INDEX, true),
           _buildRow(3, deskWidth, ROOM_1_STARTING_INDEX + 3, true),
@@ -78,7 +82,8 @@ class Room26AF2 extends StatelessWidget {
     return LayoutBuilder(
       builder: (_, constraints) {
         final double deskWidth =
-            (constraints.maxWidth - windowWidth - windowSpacing) / (ResponsiveBuilder.isMobile(context) ? 4 : 5);
+            (constraints.maxWidth - windowWidth - windowSpacing) /
+                (ResponsiveBuilder.isMobile(context) ? 4 : 5);
         return Column(children: [
           _buildRow(4, deskWidth, ROOM_2_STARTING_INDEX, true),
           _buildRow(4, deskWidth, ROOM_2_STARTING_INDEX + 4, true),
@@ -91,7 +96,8 @@ class Room26AF2 extends StatelessWidget {
     return LayoutBuilder(
       builder: (_, constraints) {
         final double deskWidth =
-            (constraints.maxWidth - windowWidth - windowSpacing) / (ResponsiveBuilder.isMobile(context) ? 3 : 4);
+            (constraints.maxWidth - windowWidth - windowSpacing) /
+                (ResponsiveBuilder.isMobile(context) ? 3 : 4);
         return Column(children: [
           _buildRow(3, deskWidth, ROOM_3_STARTING_INDEX, true),
           _buildRow(3, deskWidth, ROOM_3_STARTING_INDEX + 3, true),
@@ -103,7 +109,8 @@ class Room26AF2 extends StatelessWidget {
   Widget _build26AF2Room4(BuildContext context) {
     return LayoutBuilder(
       builder: (_, constraints) {
-        final double deskWidth = constraints.maxWidth / (ResponsiveBuilder.isMobile(context) ? 3 : 4);
+        final double deskWidth = constraints.maxWidth /
+            (ResponsiveBuilder.isMobile(context) ? 3 : 4);
         return Column(children: [
           Container(
             width: deskWidth * 2,

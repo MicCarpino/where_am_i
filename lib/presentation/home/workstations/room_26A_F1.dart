@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/core/utils/workstations_code_converter.dart';
+import 'package:where_am_i/domain/blocs/date_picker/date_picker_cubit.dart';
 import 'package:where_am_i/domain/blocs/workstation/watcher/workstation_watcher_bloc.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
@@ -27,7 +28,7 @@ class Room26AF1 extends StatelessWidget {
           loadInProgress: (_) => CenteredLoading(),
           loadFailure: (_) => RetryWidget(
             onTryAgainPressed: () => context.read<WorkstationWatcherBloc>().add(
-                  WorkstationWatcherEvent.fetchPresences(DateTime.now()),
+                  WorkstationWatcherEvent.fetchPresences(context.read<DatePickerCubit>().state.visualizedDate),
                 ),
           ),
           loadSuccess: (successState) {

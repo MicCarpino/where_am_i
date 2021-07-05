@@ -259,14 +259,17 @@ class _HomePageState extends State<HomePage>
                   ),
                 ],
               ),
-              loadFailure: (value) =>
-                  Center(child: RetryWidget(onTryAgainPressed: () {
-                final date =
-                    context.read<DatePickerCubit>().state.visualizedDate;
-                context
-                    .read<ReservationWatcherBloc>()
-                    .add(ReservationWatcherEvent.fetchReservations(date));
-              })),
+              loadFailure: (value) => Center(
+                  child: RetryWidget(
+                      onTryAgainPressed: () =>
+                          context.read<ReservationWatcherBloc>().add(
+                                ReservationWatcherEvent.fetchReservations(
+                                  context
+                                      .read<DatePickerCubit>()
+                                      .state
+                                      .visualizedDate,
+                                ),
+                              ))),
             ));
   }
 
