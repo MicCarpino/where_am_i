@@ -29,6 +29,10 @@ class MyApp extends StatelessWidget {
       systemNavigationBarColor: Colors.white, // navigation bar color
       statusBarColor: dncDarkBlue, // status bar color
     ));
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return BlocProvider(
       create: (_) => serviceLocator.getIt<AuthenticationBloc>(),
       child: MaterialApp(
