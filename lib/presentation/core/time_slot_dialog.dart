@@ -192,17 +192,24 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     // while setting 0 as day automatically turn it in the last day of the month
     lastDateOfMonth =
         new DateTime(startingDate.year, startingDate.month + 1, 0);
-    if (lastDateOfMonth.weekday == DateTime.sunday) {
+    if (lastDateOfMonth.weekday == DateTime.saturday) {
       lastDateOfMonth = new DateTime(
         lastDateOfMonth.year,
         lastDateOfMonth.month,
         lastDateOfMonth.day - 1,
       );
     }
-    //startingDate cannot be a value after the last day of the month, so it's
+    if (lastDateOfMonth.weekday == DateTime.sunday) {
+      lastDateOfMonth = new DateTime(
+        lastDateOfMonth.year,
+        lastDateOfMonth.month,
+        lastDateOfMonth.day - 2,
+      );
+    }
+    //startingDate cannot be a value after or equal to the last day of the month, so it's
     //only necessary to check if is not equal to the last day
-    startingDateIsBeforeLastDay =
-        !startingDate.isAtSameMomentAs(lastDateOfMonth);
+    startingDateIsBeforeLastDay = startingDate.isBeforeTimeLess(lastDateOfMonth);
+    print('is before $startingDateIsBeforeLastDay');
     if (startingDateIsBeforeLastDay) {
       initDropdownValues();
     }
@@ -210,7 +217,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
 
   void initDropdownValues() {
     DateTime date = startingDate.add(Duration(days: 1));
-    //should set to zero othwerwise on legal hour switch the hours is set to 1AM
+    //should set to zero otherwise on legal hour switch the hours is set to 1AM
     while (!date.isAfterTimeLess(lastDateOfMonth)) {
       if (date.weekday != DateTime.saturday &&
           date.weekday != DateTime.sunday) {
@@ -235,7 +242,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   _buildNameSection() {
     String title;
     if (widget.user != null) {
-      title = '${widget.user.surname} ${widget.user.name} ';
+      title = '${widget.user.surname} ${widget.user.name}';
     } else {
       title = widget.workstation.freeName;
     }
