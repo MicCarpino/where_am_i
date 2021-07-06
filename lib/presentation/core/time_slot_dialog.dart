@@ -40,15 +40,12 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
 
   @override
   Widget build(BuildContext context) {
-    /*return Dialog(
-      clipBehavior: Clip.hardEdge,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(16)),
-      ),*/
-    return ResponsiveBuilder.buildDialog(context, SingleChildScrollView(
+    return ResponsiveBuilder.buildDialog(
+      context,
+      SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.max,
           children: [
             _buildTitleSection(),
             if (widget.user != null || widget.workstation?.freeName != null)
@@ -95,7 +92,8 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
           ),
           if (_isRangeSelectionActive) ...[
             Text("Presente fino a :", style: TextStyle(fontSize: 16)),
-            DropdownButton<DateTime>(isExpanded: false,
+            DropdownButton<DateTime>(
+              isExpanded: false,
               value: _dropDownSelectedDate,
               hint: Text('Ultimo giorno di presenza'),
               items: _availableDates
@@ -150,10 +148,9 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: buttons,
       ),
-      tabletOrDesktop: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: buttons,
+      tabletOrDesktop: Container(
+        width: double.infinity,
+        child: Wrap(alignment: WrapAlignment.center, children: buttons),
       ),
     );
   }
