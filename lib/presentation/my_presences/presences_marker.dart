@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
-import 'package:where_am_i/presentation/responsive_builder.dart';
+import 'dart:math';
 
 class PresencesMarker extends StatelessWidget {
   final Workstation workstation;
@@ -12,10 +12,9 @@ class PresencesMarker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-          width: 100,
-          height: 100,
+          width: double.infinity,
+          height: double.infinity,
           child: CustomPaint(
-            child: Center(child: Container()),
             painter: MarkerPainter(
               context,
               workstation.startTime,
@@ -37,6 +36,8 @@ class MarkerPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    final circleWidth = size.width * 0.14;
+    final externalRadiusMultiplier = 0.45;
     var paint = Paint();
     if (status == WORKSTATION_STATUS_PENDING) {
       paint.color = dncBlue;
@@ -45,35 +46,54 @@ class MarkerPainter extends CustomPainter {
     } else {
       paint.color = Colors.red[500];
     }
-    paint.style = PaintingStyle.fill;
     var path = Path();
     //full day, drawing full circle
     if (startTime == TIME_SLOT_NINE && endTime == TIME_SLOT_EIGHTEEN) {
       paint.style = PaintingStyle.stroke;
-      paint.strokeWidth =  ResponsiveBuilder.isMobile(context)? 10 : 18;
+      //circle's width
+      paint.strokeWidth = circleWidth;
       canvas.drawCircle(
-          Offset(size.width / 2, size.height / 2), size.width / 2.5, paint);
+        //circle's center position
+        Offset(size.width * 0.5, size.height * 0.5),
+        //circle's internal radius
+        (size.width - circleWidth) * externalRadiusMultiplier,
+        paint,
+      );
     } else {
-      _drawHalfCenterAngled(path, size);
+      paint.style = PaintingStyle.fill;
+      final startingPoint = size.width * (0.5 - externalRadiusMultiplier);
+      final endingPoint = size.width * (0.5 + externalRadiusMultiplier);
+      path.moveTo(startingPoint, size.height * 0.5);
+      path.arcToPoint(
+        Offset(endingPoint, size.height * 0.5),
+        radius: Radius.circular(1),
+      );
+      path.lineTo(endingPoint - circleWidth, size.height * 0.5);
+      path.arcToPoint(Offset(startingPoint + circleWidth, size.height * 0.5),
+          radius: Radius.circular(1), clockwise: false);
+      path.lineTo(startingPoint, size.height * 0.5);
+      //rotation
+      bool isMorningSlot =
+          startTime == TIME_SLOT_NINE && endTime == TIME_SLOT_THIRTEEN;
+      final angle = (isMorningSlot ? -45.0 : 135) * pi / 180;
+      _rotateCanvasAroundCenter(canvas, size, angle);
       canvas.drawPath(path, paint);
     }
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 
-  _drawHalfCenterAngled(Path path, Size size) {
-    //establishing if should draw arcs clockwise (half circle top left)
-    bool isMorningSlot =
-        startTime == TIME_SLOT_NINE && endTime == TIME_SLOT_THIRTEEN;
-    path.moveTo(size.width * 0.15, size.height * 0.85);
-    path.arcToPoint(Offset(size.width * 0.85, size.height * 0.15),
-        radius: Radius.circular(size.width / 10), clockwise: isMorningSlot);
-    path.lineTo(size.width * 0.7, size.height * 0.30);
-    path.arcToPoint(Offset(size.width * 0.30, size.height * 0.7),
-        radius: Radius.circular(size.width / 10), clockwise: !isMorningSlot);
-    path.lineTo(size.width * 0.15, size.height * 0.85);
+  _rotateCanvasAroundCenter(Canvas canvas, Size size, double angle) {
+    final double r =
+        sqrt(size.width * size.width + size.height * size.height) / 2;
+    final alpha = atan(size.height / size.width);
+    final beta = alpha + angle;
+    final shiftY = r * sin(beta);
+    final shiftX = r * cos(beta);
+    final translateX = size.width / 2 - shiftX;
+    final translateY = size.height / 2 - shiftY;
+    canvas.translate(translateX, translateY);
+    canvas.rotate(angle);
   }
 }
