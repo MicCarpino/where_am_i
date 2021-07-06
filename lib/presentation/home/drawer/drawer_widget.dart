@@ -23,12 +23,11 @@ class DrawerWidget extends StatelessWidget {
         .user;
     final drawerBody = Column(
       children: [
-
-        _buildHeader(context, loggedUser),
         Expanded(
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
+              _buildHeader(context, loggedUser),
               _buildDrawerItem(
                 Pages.workplaces_page,
                 Icons.home,
@@ -67,19 +66,24 @@ class DrawerWidget extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context, User loggedUser) {
-    return DrawerHeader( padding: EdgeInsets.all(8),
+    return DrawerHeader(
+      padding: EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Image(image: AssetImage('assets/dnc_def_logo.png'),fit: BoxFit.fill,),
+            child: Image(
+              image: AssetImage('assets/dnc_def_logo.png'),
+              fit: BoxFit.fill,
+            ),
           ),
           BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, state) {
             return Column(
-              mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   if (state.authenticatedUser != null)
                     AutoSizeText(
@@ -125,7 +129,8 @@ class DrawerWidget extends StatelessWidget {
     return AutoSizeText('Oggi lavori $workplaceIndicationLabel',
         minFontSize: 16,
         maxFontSize: 24,
-        wrapWords: true, style: TextStyle(
+        wrapWords: true,
+        style: TextStyle(
           color: dncBlue,
           fontWeight: FontWeight.bold,
         ));

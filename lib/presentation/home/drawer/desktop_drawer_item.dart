@@ -35,7 +35,7 @@ class DesktopDrawerItem extends StatelessWidget {
               color: isCurrentPage ? Colors.white : Colors.black87,
               size: iconSize,
             ),
-            contentPadding: EdgeInsets.symmetric(horizontal: 8),
+            contentPadding: EdgeInsets.symmetric(horizontal: 8,vertical: 8),
             horizontalTitleGap: 8,
             minLeadingWidth: 18,
             title: AutoSizeText(text,
