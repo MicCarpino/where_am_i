@@ -20,7 +20,7 @@ final loginBoxDecorationStyle = BoxDecoration(
 );
 
 final roomLabelStyle = TextStyle(
-  fontSize: 20,
+  fontSize: 18,
 );
 
 final reservationLabelStyle = TextStyle(
@@ -28,6 +28,7 @@ final reservationLabelStyle = TextStyle(
   fontWeight: FontWeight.bold,
   color: Colors.black54,
 );
+
 
 final reservationFormTextStyle = TextStyle(fontSize: 16);
 

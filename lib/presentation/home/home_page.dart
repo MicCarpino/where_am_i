@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/constants.dart';
@@ -100,7 +101,15 @@ class _HomePageState extends State<HomePage>
                   color: dncBlue,
                   child: TabBar(
                     controller: _tabController,
-                    tabs: Rooms.values.map((e) => Tab(text: e.title)).toList(),
+                    tabs: Rooms.values
+                        .map((e) => Tab(
+                              child: AutoSizeText(
+                                e.title,
+                                wrapWords: false,
+                                softWrap: true,
+                              ),
+                            ))
+                        .toList(),
                     indicatorWeight: 2.5,
                     indicatorColor: Colors.white,
                     unselectedLabelColor: Colors.white,
@@ -193,64 +202,73 @@ class _HomePageState extends State<HomePage>
               loadSuccess: (value) => Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(room.reservationRoomTitle, style: roomLabelStyle),
-                      Visibility(
-                        visible:
-                            context.read<DatePickerCubit>().isEditAllowed(),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.add_circle_sharp,
-                            color: Colors.black54,
-                            size: 32,
-                          ),
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => MultiBlocProvider(
-                                providers: [
-                                  BlocProvider.value(
-                                    value: context.read<AuthenticationBloc>(),
-                                  ),
-                                  BlocProvider.value(
-                                    value: context.read<ReservationActorBloc>(),
-                                  ),
-                                  BlocProvider.value(
-                                    value: context.read<DatePickerCubit>(),
-                                  ),
-                                  BlocProvider<ReservationFormBloc>(
-                                    create: (context) => ReservationFormBloc(
-                                        reservationActorBloc: context
-                                            .read<ReservationActorBloc>(),
-                                        initialState: ReservationFormState(
-                                          reservationForm:
-                                              ReservationForm.initial(
-                                                  room.idRoom,
-                                                  context
-                                                      .read<DatePickerCubit>()
-                                                      .state
-                                                      .visualizedDate,
-                                                  int.tryParse(context
-                                                      .read<
-                                                          AuthenticationBloc>()
-                                                      .state
-                                                      .authenticatedUser
-                                                      .user
-                                                      .idResource)),
-                                          isEditing: false,
-                                          isSaving: false,
-                                        )),
-                                  ),
-                                ],
-                                child: ReservationFormPage(),
+                  Container(
+                    width: double.infinity,
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      alignment: WrapAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          room.reservationRoomTitle,
+                          style: roomLabelStyle,
+                          maxLines: 2,
+                        ),
+                        Visibility(
+                          visible:
+                              context.read<DatePickerCubit>().isEditAllowed(),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.add_circle_sharp,
+                              color: Colors.black54,
+                              size: 26,
+                            ),
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider.value(
+                                      value: context.read<AuthenticationBloc>(),
+                                    ),
+                                    BlocProvider.value(
+                                      value:
+                                          context.read<ReservationActorBloc>(),
+                                    ),
+                                    BlocProvider.value(
+                                      value: context.read<DatePickerCubit>(),
+                                    ),
+                                    BlocProvider<ReservationFormBloc>(
+                                      create: (context) => ReservationFormBloc(
+                                          reservationActorBloc: context
+                                              .read<ReservationActorBloc>(),
+                                          initialState: ReservationFormState(
+                                            reservationForm:
+                                                ReservationForm.initial(
+                                                    room.idRoom,
+                                                    context
+                                                        .read<DatePickerCubit>()
+                                                        .state
+                                                        .visualizedDate,
+                                                    int.tryParse(context
+                                                        .read<
+                                                            AuthenticationBloc>()
+                                                        .state
+                                                        .authenticatedUser
+                                                        .user
+                                                        .idResource)),
+                                            isEditing: false,
+                                            isSaving: false,
+                                          )),
+                                    ),
+                                  ],
+                                  child: ReservationFormPage(),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                   ReservationsCalendar(
                     reservationsList: value.reservations

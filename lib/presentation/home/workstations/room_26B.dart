@@ -70,9 +70,14 @@ class Room26B extends StatelessWidget {
             return ResponsiveBuilder(
               mobile: desks,
               tabletOrDesktop: LayoutBuilder(
-                builder: (context, constraints) => SizedBox(
-                  width: constraints.maxWidth - (constraints.maxWidth * 0.5),
-                  child: desks,
+                builder: (_, constraints) => Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: constraints.maxWidth * 0.15,
+                  ),
+                  child: SizedBox(
+                    width: constraints.maxWidth,
+                    child: desks,
+                  ),
                 ),
               ),
             );

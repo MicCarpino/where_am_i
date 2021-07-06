@@ -32,7 +32,10 @@ class HomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.15,
+                  constraints: BoxConstraints(
+                    minWidth: MediaQuery.of(context).size.width * 0.15,
+                    maxWidth: MediaQuery.of(context).size.width * 0.18,
+                  ),
                   child: DrawerWidget(device: DeviceType.desktop),
                 ),
                 Expanded(child: getPageBody(state.currentPage)),

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:where_am_i/core/utils/constants.dart';
@@ -22,11 +23,12 @@ class DrawerWidget extends StatelessWidget {
         .user;
     final drawerBody = Column(
       children: [
+
+        _buildHeader(context, loggedUser),
         Expanded(
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
-              _buildHeader(context, loggedUser),
               _buildDrawerItem(
                 Pages.workplaces_page,
                 Icons.home,
@@ -65,24 +67,29 @@ class DrawerWidget extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context, User loggedUser) {
-    return DrawerHeader(
+    return DrawerHeader( padding: EdgeInsets.all(8),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Image(image: AssetImage('assets/dnc_def_logo.png'), width: 200),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image(image: AssetImage('assets/dnc_def_logo.png'),fit: BoxFit.fill,),
+          ),
           BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, state) {
             return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   if (state.authenticatedUser != null)
-                    Text(
+                    AutoSizeText(
                       'Ciao ${loggedUser?.name?.split(" ")?.first}',
+                      minFontSize: 18,
+                      maxFontSize: 26,
+                      maxLines: 2,
+                      wrapWords: true,
                       style: TextStyle(
                         color: dncBlue,
-                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -115,10 +122,11 @@ class DrawerWidget extends StatelessWidget {
     } else if (assignedWorkstation >= 47 && assignedWorkstation <= 49) {
       workplaceIndicationLabel = 'in dirigenza';
     }
-    return Text('Oggi lavori $workplaceIndicationLabel',
-        style: TextStyle(
+    return AutoSizeText('Oggi lavori $workplaceIndicationLabel',
+        minFontSize: 16,
+        maxFontSize: 24,
+        wrapWords: true, style: TextStyle(
           color: dncBlue,
-          fontSize: 16,
           fontWeight: FontWeight.bold,
         ));
   }

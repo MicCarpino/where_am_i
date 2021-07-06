@@ -28,7 +28,9 @@ class Room26AF1 extends StatelessWidget {
           loadInProgress: (_) => CenteredLoading(),
           loadFailure: (_) => RetryWidget(
             onTryAgainPressed: () => context.read<WorkstationWatcherBloc>().add(
-                  WorkstationWatcherEvent.fetchPresences(context.read<DatePickerCubit>().state.visualizedDate),
+                  WorkstationWatcherEvent.fetchPresences(
+                    context.read<DatePickerCubit>().state.visualizedDate,
+                  ),
                 ),
           ),
           loadSuccess: (successState) {
@@ -64,7 +66,7 @@ class Room26AF1 extends StatelessWidget {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8.0),
                                       child: Text('Stanza 1',
-                                          style: roomLabelStyle),
+                                          style: roomLabelStyle)
                                     ),
                                     _build26ARoom1(successState),
                                   ],
@@ -73,23 +75,22 @@ class Room26AF1 extends StatelessWidget {
                     ),
                     Flexible(
                         child: LayoutBuilder(
-                          builder: (context, constraints) => SizedBox(
-                            width: constraints.maxWidth -
-                                (constraints.maxWidth * 0.3),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                  child:
-                                      Text('Stanza 2', style: roomLabelStyle),
-                                ),
-                                _build26ARoom2(successState),
-                              ],
+                      builder: (context, constraints) => SizedBox(
+                        width:
+                            constraints.maxWidth - (constraints.maxWidth * 0.3),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text('Stanza 2', style: roomLabelStyle),
                             ),
-                          ),
-                        ))
+                            _build26ARoom2(successState),
+                          ],
+                        ),
+                      ),
+                    ))
                   ],
                 ));
           },
@@ -118,8 +119,9 @@ class Room26AF1 extends StatelessWidget {
                 children: List.generate(
                   room_1_2_desks_number,
                   (index) {
-                    final newWorkstationCode = codeConverter
-                        .toOldWorkstationCode(R26A_FLOOR1_ROOM1_1_INDEX + index);
+                    final newWorkstationCode =
+                        codeConverter.toOldWorkstationCode(
+                            R26A_FLOOR1_ROOM1_1_INDEX + index);
                     return Desk(
                       width: double.infinity,
                       workstationCode: newWorkstationCode,
@@ -147,8 +149,9 @@ class Room26AF1 extends StatelessWidget {
                 children: List.generate(
                   room_1_2_desks_number,
                   (index) {
-                    final newWorkstationCode = codeConverter
-                        .toOldWorkstationCode(R26A_FLOOR1_ROOM1_2_INDEX + index);
+                    final newWorkstationCode =
+                        codeConverter.toOldWorkstationCode(
+                            R26A_FLOOR1_ROOM1_2_INDEX + index);
                     return Desk(
                       width: double.infinity,
                       workstationCode: newWorkstationCode,
