@@ -10,7 +10,6 @@ import 'package:where_am_i/data/models/authenticated_user_model.dart';
 import 'package:where_am_i/data/models/reservation_model.dart';
 import 'package:where_am_i/data/models/user_model.dart';
 import 'package:where_am_i/data/models/workstation_dto.dart';
-import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 
 abstract class RemoteDataSource {
@@ -20,7 +19,7 @@ abstract class RemoteDataSource {
 
   Future<List<UserModel>> getUsers(String token);
 
-  Future<UserModel> updateUser(String token, UserModel userUpdated);
+  Future<UserModel> updateUserRole(String token, String idResource, int idRole);
 
   //WORKSTATIONS
   Future<List<Workstation>> getAllWorkstationsByDate(
@@ -91,7 +90,7 @@ class RemoteDataSourceImpl implements RemoteDataSource {
     if (response.statusCode == 200) {
       return AuthenticatedUserModel.fromJson(json.decode(response.body));
     } else {
-       throw UnauthorizedException();
+      throw UnauthorizedException();
     }
   }
 
@@ -298,9 +297,9 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   }
 
   @override
-  Future<UserModel> updateUser(String token, User updatedUser) async {
-    var uri = Uri.https(BASE_URL, '/WhereAmI/role/${updatedUser.idResource}',
-        {'idRole': updatedUser.idRole.toString()});
+  Future<UserModel> updateUserRole(String token, String idResource, int idRole) async {
+    var uri = Uri.https(BASE_URL,
+        '/WhereAmI/user/updateRole/$idResource/$idRole');
     final response = await http.put(uri, headers: {
       HttpHeaders.authorizationHeader: token,
       HttpHeaders.contentTypeHeader: 'application/json'

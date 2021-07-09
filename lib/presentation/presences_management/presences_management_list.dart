@@ -152,8 +152,10 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
     return IconButton(
       icon: Icon(Icons.person_add,
           color: isEditAllowed ? Colors.black87 : Colors.grey),
-      onPressed: () => isEditAllowed
-          ? showDialog(
+      onPressed: () {
+        if (isEditAllowed) {
+          FocusScope.of(context).unfocus();
+          showDialog(
               context: context,
               builder: (BuildContext _) {
                 return BlocProvider.value(
@@ -163,8 +165,9 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
                     date: context.read<DatePickerCubit>().state.visualizedDate,
                   ),
                 );
-              })
-          : null,
+              });
+        }
+      },
     );
   }
 

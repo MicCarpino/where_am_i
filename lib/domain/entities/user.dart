@@ -22,11 +22,20 @@ class User extends Equatable {
   UserModel toUserModel() => UserModel(
       idResource: idResource, idRole: idRole, name: name, surname: surname);
 
-  bool isStaffOrAdmin(){
+  bool isStaffOrAdmin() {
     return this.idRole >= ROLE_STAFF;
   }
 
-  String getSurnameAndName(){
+  String getSurnameAndName() {
     return '$surname $name';
+  }
+
+  User copyWith({String idResource, int idRole, String name, String surname}) {
+    return User(
+      idResource: idResource ?? this.idResource,
+      idRole: idRole ?? this.idRole,
+      name: name ?? this.name,
+      surname: surname ?? this.surname,
+    );
   }
 }

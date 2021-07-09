@@ -78,15 +78,13 @@ class _EditRoleDialogState extends State<EditRoleDialog> {
               children: [
                 MaterialButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text("Annulla", style: TextStyle(color: Colors.white)),
-                  color: dncLightBlue,
+                  child: Text("Annulla", style: TextStyle(color: Colors.blue)),
                   padding: EdgeInsets.all(16),
                 ),
                 SizedBox(width: 16),
                 MaterialButton(
                   onPressed: () => _onConfirmedPressed(),
-                  child: Text("Conferma", style: TextStyle(color: Colors.white)),
-                  color: dncLightBlue,
+                  child: Text("Conferma", style: TextStyle(color: Colors.blue)),
                   padding: EdgeInsets.all(16),
                 ),
               ],

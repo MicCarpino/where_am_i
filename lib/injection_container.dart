@@ -15,9 +15,7 @@ import 'package:where_am_i/domain/usecases/users/get_all_user_by_filter.dart';
 import 'package:where_am_i/domain/usecases/users/get_all_users.dart';
 import 'package:where_am_i/domain/usecases/users/get_logged_user.dart';
 import 'package:where_am_i/domain/usecases/users/get_user_by_id.dart';
-import 'package:where_am_i/domain/usecases/users/update_user.dart';
 import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
-import 'package:where_am_i/domain/blocs/users_management/users_management_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -27,8 +25,6 @@ Future<void> init() async {
         authenticationRepository: getIt(),
         performLogOut: getIt(),
       ));
-  getIt.registerFactory(
-      () => UsersManagementBloc(getUsers: getIt(), updateUser: getIt()));
 
   // Use Cases
   //User
@@ -37,7 +33,6 @@ Future<void> init() async {
   getIt.registerLazySingleton(() => GetAllUsers(getIt()));
   getIt.registerLazySingleton(() => GetUserById(getIt()));
   getIt.registerLazySingleton(() => GetAllUserByFilter(getIt()));
-  getIt.registerLazySingleton(() => UpdateUser(getIt()));
   // Repository
   getIt.registerLazySingleton<AuthenticationRepository>(
       () => (AuthRepositoryImpl(

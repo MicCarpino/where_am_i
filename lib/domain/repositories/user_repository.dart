@@ -6,5 +6,5 @@ abstract class UserRepository {
 
   Future<Either<Failure, List<User>>> getAllUsers();
 
-  Future<Either<Failure,List<User>>> updateUser(User user);
+  Future<Either<Failure,User>> updateUserRole(String idResource, int idRole);
 }
