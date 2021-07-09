@@ -25,8 +25,8 @@ class WorkstationWatcherBloc
     @required this.userRepository,
     @required this.workstationActorBloc,
   }) : super(WorkstationWatcherState.initial()) {
-    _workstationActorSubscription =
-        workstationActorBloc.listen((state) => _handleActorStateChange(state));
+    _workstationActorSubscription = workstationActorBloc.stream
+        .listen((state) => _handleActorStateChange(state));
 
     add(WorkstationWatcherEvent.fetchPresences(DateTime.now().zeroed()));
   }
@@ -60,6 +60,7 @@ class WorkstationWatcherBloc
             (workstations) {
               cachedUsersPresences =
                   _mergeUserWithWorkstations(users, workstations);
+              _checkForAssignedWorkstation();
               return WorkstationWatcherState.loadSuccess(cachedUsersPresences);
             },
           ),
@@ -67,36 +68,18 @@ class WorkstationWatcherBloc
       },
       onPresencesUpdated: (value) async* {
         yield WorkstationWatcherState.loadInProgress();
+        _checkForAssignedWorkstation();
         yield state.maybeMap(
-            orElse: () => WorkstationWatcherState.loadSuccess(
-                []..addAll(value.presences)),
+            orElse: () =>
+                WorkstationWatcherState.loadSuccess(cachedUsersPresences),
             loadSuccess: (successState) => successState.copyWith(
-                usersWithWorkstations: []..addAll(value.presences)));
+                usersWithWorkstations: cachedUsersPresences));
       },
     );
   }
 
   List<UserWithWorkstation> _mergeUserWithWorkstations(
       List<User> users, List<Workstation> workstations) {
-    if (workstations.any((element) =>
-        element.workstationDate.isAtSameMomentTimeLess(DateTime.now()))) {
-      // ignore: close_sinks
-      final authBloc = getIt<AuthenticationBloc>();
-      final assignedWorkstation = workstations
-          .singleWhereOrNull(
-            (e) =>
-                e.idResource ==
-                    authBloc.state.authenticatedUser.user.idResource &&
-                e.workstationDate.zeroed() == DateTime.now().zeroed(),
-          )
-          ?.codeWorkstation;
-      authBloc.add(
-        WorkstationAssigned(assignedWorkstation != null
-            ? int.tryParse(assignedWorkstation)
-            : null),
-      );
-    }
-
     return workstations
         .where((e) => e.freeName != null)
         .map((freeName) =>
@@ -119,8 +102,7 @@ class WorkstationWatcherBloc
               cachedUsersPresences[updatedIndex]
                   .copyWith(workstation: value.workstation);
         }
-        add(WorkstationWatcherEvent.onPresencesUpdated(
-            List.of(cachedUsersPresences)));
+        add(WorkstationWatcherEvent.onPresencesUpdated());
       },
       multipleUpdateSuccess: (value) {
         value.workstations.forEach((workstation) {
@@ -132,11 +114,36 @@ class WorkstationWatcherBloc
                     .copyWith(workstation: workstation);
           }
         });
-        add(WorkstationWatcherEvent.onPresencesUpdated(
-            List.of(cachedUsersPresences)));
+        add(WorkstationWatcherEvent.onPresencesUpdated());
       },
       orElse: () {},
     );
+  }
+
+  _checkForAssignedWorkstation() {
+    bool isCurrentDateWorkstation = cachedUsersPresences
+        .firstWhere((element) => element.workstation != null)
+        .workstation
+        .workstationDate
+        .isAtSameMomentTimeLess(DateTime.now());
+    final authBloc = getIt<AuthenticationBloc>();
+    if (isCurrentDateWorkstation) {
+      // ignore: close_sinks
+      final assignedWorkstation = cachedUsersPresences
+          .singleWhereOrNull((element) =>
+              element.workstation != null &&
+              element.workstation.idResource ==
+                  authBloc.state.authenticatedUser.user.idResource)
+          ?.workstation
+          ?.codeWorkstation;
+      authBloc.add(
+        WorkstationAssigned(assignedWorkstation != null
+            ? int.tryParse(assignedWorkstation)
+            : null),
+      );
+    } else {
+      authBloc.add(WorkstationAssigned(null));
+    }
   }
 
   @override

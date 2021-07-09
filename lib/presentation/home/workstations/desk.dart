@@ -26,7 +26,6 @@ class Desk extends StatefulWidget {
 }
 
 class _DeskState extends State<Desk> {
-  bool isDeskOfLoggedUser;
   User loggedUser;
   bool isEditAllowed;
   List<UserWithWorkstation> assignedResources;
@@ -36,13 +35,6 @@ class _DeskState extends State<Desk> {
     super.initState();
     loggedUser =
         context.read<AuthenticationBloc>().state.authenticatedUser.user;
-    isDeskOfLoggedUser = context
-            .read<DatePickerCubit>()
-            .state
-            .visualizedDate
-            .isAtSameMomentTimeLess(DateTime.now()) &&
-        context.read<AuthenticationBloc>().state.assignedWorkstation ==
-            widget.workstationCode;
     isEditAllowed = context.read<DatePickerCubit>().isEditAllowed();
   }
 
@@ -63,28 +55,39 @@ class _DeskState extends State<Desk> {
           painter: DeskMarker(
             assignedResources.map((e) => e.workstation).toList(),
           ),
-          child: MaterialButton(padding: EdgeInsets.all(4) ,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
-                side: BorderSide(
-                    color: isDeskOfLoggedUser ? dncOrange : Colors.black54,
-                    width: isDeskOfLoggedUser ? 2.5 : 1.0),
-              ),
-              //allow edit if user's role is staff or higher
-              onPressed: () => _onDeskClick(),
-              child: resourceLabel != null
-                  ? AutoSizeText(
-                      resourceLabel.replaceAll(" ", "\n"),
-                      maxLines: resourceLabel.split(" ")?.length,
-                      minFontSize: 8,                      maxFontSize: 14,
-                      softWrap: false,
-                      textAlign: TextAlign.center,wrapWords: true,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: isEditAllowed ? Colors.black : Colors.black45,
-                      ),
-                    )
-                  : Container())),
+          child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            bloc: context.read<AuthenticationBloc>(),
+            builder: (_, state) {
+              final isDeskOfLoggedUser =
+                  state.assignedWorkstation == widget.workstationCode;
+              return MaterialButton(
+                  padding: EdgeInsets.all(4),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    side: BorderSide(
+                        color: isDeskOfLoggedUser ? dncOrange : Colors.black54,
+                        width: isDeskOfLoggedUser ? 2.5 : 1.0),
+                  ),
+                  //allow edit if user's role is staff or higher
+                  onPressed: () => _onDeskClick(),
+                  child: resourceLabel != null
+                      ? AutoSizeText(
+                          resourceLabel.replaceAll(" ", "\n"),
+                          maxLines: resourceLabel.split(" ")?.length,
+                          minFontSize: 8,
+                          maxFontSize: 14,
+                          softWrap: false,
+                          textAlign: TextAlign.center,
+                          wrapWords: true,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color:
+                                isEditAllowed ? Colors.black : Colors.black45,
+                          ),
+                        )
+                      : Container());
+            },
+          )),
     );
   }
 
