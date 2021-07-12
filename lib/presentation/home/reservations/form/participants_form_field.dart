@@ -82,15 +82,17 @@ class _ParticipantsFormFieldState extends State<ParticipantsFormField> {
                         icon: Icon(Icons.person_add_rounded, color: dncBlue),
                       )
                     : null)),
-        suggestionsCallback: (pattern) => pattern.isNotEmpty
-            ? getIt<UserRepository>().getAllUsers().then((value) => value
-                .getOrElse(() => null)
-                .where((user) => pattern.split(" ").every((element) =>
-                    user.name.containsCaseInsensitive(element) ||
-                    user.surname.containsCaseInsensitive(element)))
-                .toList()
-                  ..sort((a, b) => b.surname.compareTo(a.surname)))
-            : null,
+        suggestionsCallback: (pattern) async {
+          final usersOrFailure = await getIt<UserRepository>().getAllUsers();
+          return usersOrFailure.fold(
+              (l) => null,
+              (r) => r
+                  .where((user) => pattern.split(" ").every((element) =>
+                      user.name.containsCaseInsensitive(element) ||
+                      user.surname.containsCaseInsensitive(element)))
+                  .toList()
+                    ..sort((a, b) => b.surname.compareTo(a.surname)));
+        },
         itemBuilder: (context, User suggestion) =>
             new ListTile(title: new Text(suggestion.getSurnameAndName())),
         onSuggestionSelected: (User suggestion) {
