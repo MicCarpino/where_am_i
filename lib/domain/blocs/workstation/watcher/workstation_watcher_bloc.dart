@@ -122,10 +122,10 @@ class WorkstationWatcherBloc
 
   _checkForAssignedWorkstation() {
     bool isCurrentDateWorkstation = cachedUsersPresences
-        .firstWhere((element) => element.workstation != null)
-        .workstation
-        .workstationDate
-        .isAtSameMomentTimeLess(DateTime.now());
+        .firstWhere((element) => element.workstation != null, orElse: ()=>null)
+        ?.workstation
+        ?.workstationDate
+        ?.isAtSameMomentTimeLess(DateTime.now()) ?? false;
     final authBloc = getIt<AuthenticationBloc>();
     if (isCurrentDateWorkstation) {
       // ignore: close_sinks
