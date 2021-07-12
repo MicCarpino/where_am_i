@@ -120,10 +120,13 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                                     'CONFERMA',
                                     style: TextStyle(color: Colors.white),
                                   ),
-                                  onPressed: () => context
+                                  onPressed: () {
+                                    FocusScope.of(context).unfocus();
+                                    context
                                       .read<ReservationFormBloc>()
                                       .add(
-                                          ReservationFormEvent.saveSubmitted()),
+                                          ReservationFormEvent.saveSubmitted());
+                                  },
                                 ),
                                 SizedBox(width: 8.0),
                               ],
