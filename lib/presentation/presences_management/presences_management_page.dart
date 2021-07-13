@@ -70,11 +70,9 @@ class PresencesManagementPage extends StatelessWidget {
               builder: (context, state) {
                 return state.maybeMap(
                   initial: (_) => Container(),
-                  loadInProgress: (_) => Expanded(
+                  loadInProgress: (_) => Flexible(
                       child: const Center(child: CircularProgressIndicator())),
-                  loadFailure: (_) => Container(
-                      width: double.infinity,
-                      height: double.infinity,
+                  loadFailure: (_) => Flexible(
                       child: Center(
                         child: RetryWidget(
                           onTryAgainPressed: () => context
