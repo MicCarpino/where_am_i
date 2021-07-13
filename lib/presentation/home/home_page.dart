@@ -18,6 +18,7 @@ import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/presentation/core/date_picker.dart';
+import 'package:where_am_i/presentation/core/loading_overlay.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/home/reservations/form/reservation_form_page.dart';
 import 'package:where_am_i/presentation/home/reservations/reservations_calendar.dart';
@@ -80,18 +81,26 @@ class _HomePageState extends State<HomePage>
         builder: (newContext) => MultiBlocListener(
           listeners: [
             BlocListener<WorkstationActorBloc, WorkstationActorState>(
-              listener: (context, state) => state.maybeMap(
+              listener: (context, state) {
+                LoadingOverlay.dismissIfShowing(context);
+                return state.maybeMap(
+                actionInProgress: (_) => LoadingOverlay.show(context),
                 orElse: () {},
                 actionFailure: (value) => ResponsiveBuilder.showsErrorMessage(
                     context, value.failure.getErrorMessageFromFailure()),
-              ),
+              );
+              },
             ),
             BlocListener<ReservationActorBloc, ReservationActorState>(
-              listener: (context, state) => state.maybeMap(
+              listener: (context, state) {
+                LoadingOverlay.dismissIfShowing(context);
+                return state.maybeMap(
+                  actionInProgress: (_) => LoadingOverlay.show(context),
                 orElse: () {},
                 actionFailure: (value) => ResponsiveBuilder.showsErrorMessage(
                     context, value.failure.getErrorMessageFromFailure()),
-              ),
+              );
+              },
             )
           ],
           child: Column(

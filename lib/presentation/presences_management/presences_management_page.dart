@@ -11,6 +11,7 @@ import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 import 'package:where_am_i/presentation/core/date_picker.dart';
+import 'package:where_am_i/presentation/core/loading_overlay.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/core/time_slot_dialog.dart';
 import 'package:where_am_i/presentation/presences_management/presences_management_list.dart';
@@ -39,7 +40,9 @@ class PresencesManagementPage extends StatelessWidget {
       child: BlocListener<PresencesManagementActorBloc,
           PresencesManagementActorState>(
         listener: (context, state) {
-          state.maybeMap(
+          LoadingOverlay.dismissIfShowing(context);
+          return state.maybeMap(
+              actionInProgress: (_) => LoadingOverlay.show(context),
               actionFailure: (f) => ResponsiveBuilder.showsErrorMessage(
                   context, f.failure.getErrorMessageFromFailure()),
               showTimeSlotDialog: (value) => showDialog(
@@ -74,10 +77,9 @@ class PresencesManagementPage extends StatelessWidget {
                       child: const Center(child: CircularProgressIndicator())),
                   loadFailure: (_) => Flexible(
                       child: Center(
-                        child: RetryWidget(
-                          onTryAgainPressed: () => context
-                              .read<PresencesManagementWatcherBloc>()
-                              .add(
+                    child: RetryWidget(
+                      onTryAgainPressed: () =>
+                          context.read<PresencesManagementWatcherBloc>().add(
                                 PresencesManagementWatcherEvent
                                     .getAllUsersPresencesByDate(
                                   context
@@ -86,8 +88,8 @@ class PresencesManagementPage extends StatelessWidget {
                                       .visualizedDate,
                                 ),
                               ),
-                        ),
-                      )),
+                    ),
+                  )),
                   // loadSuccess and filteredList state
                   orElse: () => PresencesManagementList(),
                 );

@@ -6,6 +6,7 @@ import 'package:where_am_i/domain/blocs/my_presences/actor/my_presences_actor_bl
 import 'package:where_am_i/domain/blocs/my_presences/watcher/my_presences_watcher_bloc.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
+import 'package:where_am_i/presentation/core/loading_overlay.dart';
 import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/core/time_slot_dialog.dart';
 import 'package:where_am_i/presentation/my_presences/my_presences_calendar.dart';
@@ -31,7 +32,9 @@ class MyPresencesPage extends StatelessWidget {
         ],
         child: BlocListener<MyPresencesActorBloc, MyPresencesActorState>(
           listener: (context, state) {
-            state.maybeMap(
+            LoadingOverlay.dismissIfShowing(context);
+            return state.maybeMap(
+                actionInProgress: (_) => LoadingOverlay.show(context),
                 deleteFailure: (f) => ResponsiveBuilder.showsErrorMessage(
                     context, f.failure.getErrorMessageFromFailure()),
                 insertFailure: (f) => ResponsiveBuilder.showsErrorMessage(
