@@ -129,6 +129,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
   Widget _buildSearchBar() {
     return Expanded(
       child: TextField(
+        autofocus: false,
         controller: _textFieldController,
         maxLines: 1,
         decoration: InputDecoration(
@@ -238,6 +239,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
 
   _onResourceClick(
       BuildContext context, UserWithWorkstation userWithWorkstation) {
+    FocusScope.of(context).unfocus();
     context.read<PresencesManagementActorBloc>().add(
           PresencesManagementActorEvent.editRequested(
             context.read<DatePickerCubit>().state.visualizedDate,
@@ -249,6 +251,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
 
   _onResourceLongClick(
       BuildContext context, UserWithWorkstation userWithWorkstation) {
+    FocusScope.of(context).unfocus();
     if (userWithWorkstation.workstation == null) {
       context
           .read<PresencesManagementActorBloc>()
