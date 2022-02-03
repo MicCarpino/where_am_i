@@ -43,7 +43,7 @@ class _PresencesChecklistState extends State<PresencesChecklist> {
                 ? null
                 : (bool) => setState(() => _presencesChecked[item] = bool));
       }),
-      MaterialButton(
+      OutlinedButton(
           child: Text('CONFERMA', style: TextStyle(color: Colors.blue)),
           onPressed: () {
             final updatedWorkstations = _presencesChecked.entries

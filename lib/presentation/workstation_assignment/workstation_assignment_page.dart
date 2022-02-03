@@ -33,10 +33,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
         workstationWatcherBloc: context.read<WorkstationWatcherBloc>(),
       ),
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: dncBlue,
-          iconTheme: IconThemeData(color: Colors.white),
-        ),
+        appBar: AppBar(iconTheme: IconThemeData(color: Colors.white)),
         body:
             BlocBuilder<WorkstationAssignmentBloc, WorkstationAssignmentState>(
           builder: (context, state) => state.maybeMap(
@@ -108,7 +105,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
       occupantsList.add(
         Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 32),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
             child: Text(
               'Al momento nessuna risorsa risulta essere assegnata a questa postazione',
               style: TextStyle(fontSize: 16),
@@ -172,7 +169,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
       assignableResourcesList.add(
         Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 32),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
             child: Text(
               'Al momento nessuna risorsa può essere assegnata a questa postazione',
               style: TextStyle(fontSize: 16),

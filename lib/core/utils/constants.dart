@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 const Color colorAccent = Color(0xffbe0f55);
 const Color dncLightGray = Color(0xffEEEEEE);
 const Color dncDarkGray = Color(0xffCCCCCC);
+//primary color
 const Color dncBlue = Color(0xff0057A1);
 const Color dncDarkBlue = Color(0xff004179);
 const Color dncLightBlue = Color(0xff5083D3);
@@ -18,6 +19,20 @@ const Color violet = Color(0xffD83BFF);
 const Color blackLight = Color(0xCC000000);
 const Color divider_color = Color(0xffaaaaaa);
 const Color transparent_70 = Color(0xffB3414141);
+
+//primary swatch color
+const MaterialColor primarySwatchColor = MaterialColor(0xff0057A1, {
+  50: Color(0xff1a68aa), //10%
+100: Color(0xff3379b4), //20%
+  200: Color(0xff4d89bd), //30%
+  300: Color(0xff669ac7), //40%
+  400: Color(0xff80abd0), //50%
+  500: Color(0xff99bcd9), //60%
+  600: Color(0xffb3cde3), //70%
+  700: Color(0xffccddec), //80%
+  800: Color(0xffe6eef6), //90%
+  900: Color(0xffffffff), //100%
+});
 
 //keys
 const CACHED_LOGGED_USER = 'CACHED_LOGGED_USER';
@@ -54,7 +69,7 @@ const TIME_SLOT_FOURTEEN = TimeOfDay(hour: 14, minute: 0);
 const TIME_SLOT_EIGHTEEN = TimeOfDay(hour: 18, minute: 0);
 
 //error messages
-const WORKSTATION_EDIT_STATUS_ERROR = 'Non è possibile modificare richieste di presenza già gestite. Contattare l\'amministrazione ';
-const WORKSTATION_EDIT_DATE_ERROR = 'Non è possibile eseguire modifiche per date passate';
-
-
+const WORKSTATION_EDIT_STATUS_ERROR =
+    'Non è possibile modificare richieste di presenza già gestite. Contattare l\'amministrazione ';
+const WORKSTATION_EDIT_DATE_ERROR =
+    'Non è possibile eseguire modifiche per date passate';

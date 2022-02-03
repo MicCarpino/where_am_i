@@ -38,9 +38,11 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         navigatorKey: _navigatorKey,
         theme: ThemeData(
-          primarySwatch: Colors.lightBlue,
-          primaryColor: dncBlue,
-        ),
+            //brightness: Brightness.light,
+            primaryColor: dncBlue,
+            appBarTheme: Theme.of(context)
+                .appBarTheme
+                .copyWith(backgroundColor: dncBlue)),
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
