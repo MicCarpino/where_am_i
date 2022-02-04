@@ -29,9 +29,9 @@ class ReservationsCalendar extends StatelessWidget {
           userZoomable: false,
           style: _getDayViewStyle(context),
           hoursColumnStyle: _getHoursColumnStyle(),
-          /*library display event basing on date displayed on his header. Since the
-           header is disabled the current event date should be set to "today" in
-           order to display the events on screen*/
+          /*The calendar library shows event basing on the date displayed on his header.
+          Since the header is disabled, the current event date should be set to "today" in
+           order to always display the events on screen*/
           date: DateTime.now(),
           // +/- 10 minutes to prevent crop
           minimumTime: HourMinute(hour: 8, minute: 50),
@@ -44,9 +44,11 @@ class ReservationsCalendar extends StatelessWidget {
     );
   }
 
+  //create a FlutterWeekViewEvent widget for each reservation
   FlutterWeekViewEvent _mapReservationToEvent(
       BuildContext context, Reservation reservation) {
     return FlutterWeekViewEvent(
+      //Blue color for pending reservations, orange for confirmed
       decoration: BoxDecoration(
           color: reservation.status == RESERVATION_PENDING
               ? dncLightBlue
@@ -73,11 +75,13 @@ class ReservationsCalendar extends StatelessWidget {
             Duration(
                 hours: reservation.endHour, minutes: reservation.endMinutes),
           ),
+      //show the details dialog
       onTap: () => showDialog(
           context: context,
           builder: (BuildContext context) {
             return ReservationDetailsDialog(reservation: reservation);
           }),
+      //show the "actions" dialog
       onLongPress: () {
         //allow reservation edit if:
         // - is not a reservation for past days
@@ -127,6 +131,7 @@ class ReservationsCalendar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          // confirm/revoke options for staff and admin
           if (isStaffOrAdmin)
             InkWell(
                 child: Row(children: [
@@ -147,6 +152,7 @@ class ReservationsCalendar extends StatelessWidget {
                               : RESERVATION_PENDING)));
                   Navigator.of(context).pop();
                 }),
+          //edit option
           InkWell(
               child: Row(children: [
                 Padding(
@@ -155,6 +161,8 @@ class ReservationsCalendar extends StatelessWidget {
                 ),
               ]),
               onTap: () {
+                //close the dialog and open the edit reservations page providing
+                //necessary blocs
                 Navigator.of(context).pop();
                 Navigator.push(
                   context,
@@ -174,6 +182,8 @@ class ReservationsCalendar extends StatelessWidget {
                             create: (context) => ReservationFormBloc(
                                   reservationActorBloc:
                                       context.read<ReservationActorBloc>(),
+                                  //initialize the reservation bloc state with the
+                                  //informations of the reservation selected
                                   initialState: ReservationFormState(
                                     reservationForm:
                                         ReservationForm.fromDomain(reservation),
@@ -187,6 +197,7 @@ class ReservationsCalendar extends StatelessWidget {
                   ),
                 );
               }),
+          //delete option
           InkWell(
               child: Row(children: [
                 Padding(
@@ -195,6 +206,7 @@ class ReservationsCalendar extends StatelessWidget {
                 ),
               ]),
               onTap: () {
+                //add delete event to the reservation bloc
                 context.read<ReservationActorBloc>().add(
                     ReservationActorEvent.delete(reservation.idReservation));
                 Navigator.of(context).pop();

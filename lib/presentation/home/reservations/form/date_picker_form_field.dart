@@ -5,6 +5,7 @@ import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/core/utils/styles.dart';
 import 'package:where_am_i/domain/blocs/reservation/form/reservation_form_bloc.dart';
 
+//the widget for the start/end time pickers in the reservation form
 class DatePickerFormField extends StatelessWidget {
   DatePickerFormField(this.timePicker);
 
@@ -14,6 +15,7 @@ class DatePickerFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: BlocBuilder<ReservationFormBloc, ReservationFormState>(
+        //rebuild this widget just when the start or end times change
         builder: (context, state) {
           var pickerState = timePicker == ReservationTimePicker.startPicker
               ? state.reservationForm.startTimeForm
@@ -21,6 +23,7 @@ class DatePickerFormField extends StatelessWidget {
           return Container(
             child: Column(
               children: [
+                //label for the time picker
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
                   child: Text(timePicker.title,
@@ -28,6 +31,7 @@ class DatePickerFormField extends StatelessWidget {
                           ? reservationLabelStyle
                           : reservationLabelStyle.copyWith(color: Colors.red)),
                 ),
+                //open the time picker dialog when pressed
                 MaterialButton(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -52,6 +56,7 @@ class DatePickerFormField extends StatelessWidget {
                       }
                     });
                   },
+                  //show the current time value inside the picker button
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 16, horizontal: 24.0),
@@ -62,6 +67,7 @@ class DatePickerFormField extends StatelessWidget {
                     ),
                   ),
                 ),
+                //show the error message, if present
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Text(

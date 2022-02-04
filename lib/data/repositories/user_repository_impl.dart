@@ -8,6 +8,7 @@ import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/repositories/user_repository.dart';
 
+// this repository take care of users data mediating between local and remote sources
 class UserRepositoryImpl implements UserRepository {
   final RemoteDataSource remoteDataSource;
   final LocalDataSource localDataSource;
@@ -17,6 +18,7 @@ class UserRepositoryImpl implements UserRepository {
     @required this.localDataSource,
   });
 
+  //fetch all
   @override
   Future<Either<Failure, List<User>>> getAllUsers() async {
     try {

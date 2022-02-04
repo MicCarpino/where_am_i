@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/user_with_workstation.dart';
 
+//widget for the presences management list tiles
 class PresencesManagementTile extends StatelessWidget {
   final UserWithWorkstation userWithWorkstation;
   final Function() onSingleClick;
@@ -17,7 +18,7 @@ class PresencesManagementTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //this inkwell is just for splash animation
+    //this inkwell is just for splash animation so gesture detection is disabled
     return InkWell(
       onTap: () => null,
       onLongPress: () => null,
@@ -28,6 +29,7 @@ class PresencesManagementTile extends StatelessWidget {
     );
   }
 
+  //name and time slot indication
   Widget _buildResourceSection(BuildContext context) {
     return Expanded(
       child: GestureDetector(
@@ -51,6 +53,7 @@ class PresencesManagementTile extends StatelessWidget {
     );
   }
 
+  //name of the resource
   Widget _buildNameSection() {
     return Text(
       userWithWorkstation.getResourceLabel(),
@@ -64,6 +67,7 @@ class PresencesManagementTile extends StatelessWidget {
     );
   }
 
+  //slot time of the resource
   Widget _buildTimeSlotSection(BuildContext context) {
     TimeOfDay startTime =
         userWithWorkstation.workstation?.startTime ?? TIME_SLOT_NINE;
@@ -75,19 +79,23 @@ class PresencesManagementTile extends StatelessWidget {
     );
   }
 
+  // right side of the tile
   Widget _buildTrailingIcon() {
     final status = userWithWorkstation.workstation?.status;
+    //resource assigned to a workstation, show a "computer" icon
     if (status == WORKSTATION_STATUS_CONFIRMED &&
         userWithWorkstation.workstation.codeWorkstation != null) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Icon(Icons.computer, color: dncBlue),
       );
+      //resource presence request refused, show a "block" icon
     } else if (status == WORKSTATION_STATUS_REFUSED) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Icon(Icons.block, color: Colors.red),
       );
+      //resource presence request waiting to be handled, show accept/reject buttons
     } else if (status == WORKSTATION_STATUS_PENDING) {
       return _buildButtons();
     } else {
@@ -95,6 +103,7 @@ class PresencesManagementTile extends StatelessWidget {
     }
   }
 
+  //accept/reject buttons
   Widget _buildButtons() {
     return Container(
       child: Padding(

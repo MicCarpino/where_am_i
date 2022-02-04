@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
 import 'package:convert/convert.dart';
 
+//class to encrypt the login password matching the back-end encryption
 class AesUtils {
   final int _keySize = 128;
   final int _iterationCount = 1000;

@@ -23,10 +23,15 @@ class LoginMobileForm extends StatelessWidget {
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
             child: BlocConsumer<LogInBloc, LogInState>(
+              //show error message in the Flushbar if login fails
               listener: (context, state) => state.loginFailureOrSuccess.fold(
+                //option none : nothing to show
                   () {},
-                  (a) => a.fold(
-                        (l) => ResponsiveBuilder.showsErrorMessage(context, l),
+                  //option some : there's a login result
+                  (leftOrRight) => leftOrRight.fold(
+                    //either left (failure): retrieve and show the login error from the failure
+                        (failure) => ResponsiveBuilder.showsErrorMessage(context, failure),
+                    //either right : login successful, navigation to home page will occur now
                         (_) {},
                       )),
               builder: (context, state) {

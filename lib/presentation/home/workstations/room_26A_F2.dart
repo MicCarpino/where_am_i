@@ -14,6 +14,8 @@ const ROOM_2_STARTING_INDEX = 56;
 const ROOM_3_STARTING_INDEX = 64;
 const ROOM_4_STARTING_INDEX = 70;
 
+//check room_26B.dart for details on how the workstations are built
+// and how the code conversion works
 class Room26AF2 extends StatelessWidget {
   final double windowSpacing = 10;
   final double windowWidth = 2.5;

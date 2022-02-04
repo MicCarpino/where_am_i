@@ -4,6 +4,7 @@ import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/domain/blocs/home/home_cubit.dart';
 
+//Drawer widget for mobile version
 class MobileDrawerItem extends StatelessWidget {
   const MobileDrawerItem(this.pageItem, this.icon, this.text);
 
@@ -15,6 +16,8 @@ class MobileDrawerItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isCurrentPage =
         pageItem == BlocProvider.of<HomeCubit>(context).state.currentPage;
+    // mark the drawer item with orange color and turn icon and text white
+    // if matches the current section selection
     return Ink(
       color: isCurrentPage ? dncOrange : null,
       child: ListTile(
@@ -47,6 +50,7 @@ class MobileDrawerItem extends StatelessWidget {
                 ListTile(
                     leading: Icon(Icons.exit_to_app, color: Colors.black87),
                     title: Text('Logout'),
+                    //add a logout event to the Authentication Bloc
                     onTap: logout)
               ],
             )));

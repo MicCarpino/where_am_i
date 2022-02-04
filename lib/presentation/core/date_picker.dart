@@ -4,7 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/blocs/date_picker/date_picker_cubit.dart';
 
+//this widget is responsible for the "navigation" through dates
 class DatePicker extends StatelessWidget {
+
+  //function to execute on date change
   final Function(DateTime date) onDateChanged;
 
   DatePicker(this.onDateChanged);
@@ -16,6 +19,7 @@ class DatePicker extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          //left arrow to decrease the date
           ClipOval(
             child: Material(
               color: Colors.transparent,
@@ -31,6 +35,7 @@ class DatePicker extends StatelessWidget {
               ),
             ),
           ),
+          //date indication and date picker dialog on tap
           GestureDetector(
               child: BlocConsumer<DatePickerCubit, DatePickerState>(
                 listenWhen: (previous, current) =>
@@ -44,6 +49,7 @@ class DatePicker extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 16)),
               ),
               onTap: () => _showCalendar(context)),
+          //right arrow to increase the date
           ClipOval(
             child: Material(
               color: Colors.transparent, // button color
@@ -65,10 +71,12 @@ class DatePicker extends StatelessWidget {
     );
   }
 
+  //date picker dialog
   _showCalendar(BuildContext context) async {
     await showDatePicker(
         context: context,
         initialDate: context.read<DatePickerCubit>().state.visualizedDate,
+        //sunday disable from selection
         selectableDayPredicate: (day) => day.weekday != DateTime.sunday,
         firstDate: DateTime.now().subtract(Duration(days: 365)),
         lastDate: DateTime.now().add(Duration(days: 365)),

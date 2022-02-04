@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:meta/meta.dart';
-
 import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/data/datasources/local_data_source.dart';
@@ -8,6 +7,7 @@ import 'package:where_am_i/data/datasources/remote_data_source.dart';
 import 'package:where_am_i/domain/entities/reservation.dart';
 import 'package:where_am_i/domain/repositories/reservation_repository.dart';
 
+// this repository take care of reservations data mediating between local and remote sources
 class ReservationRepositoryImpl implements ReservationRepository {
   final RemoteDataSource remoteDataSource;
   final LocalDataSource localDataSource;
@@ -17,6 +17,7 @@ class ReservationRepositoryImpl implements ReservationRepository {
     @required this.localDataSource,
   });
 
+  //reservations fetch for a specific date
   @override
   Future<Either<Failure, List<Reservation>>> getAllReservationsByDate(
       DateTime date) async {
@@ -32,6 +33,7 @@ class ReservationRepositoryImpl implements ReservationRepository {
     }
   }
 
+  //reservation insert
   @override
   Future<Either<Failure, Reservation>> insertReservation(
       Reservation reservation) async {
@@ -47,6 +49,7 @@ class ReservationRepositoryImpl implements ReservationRepository {
     }
   }
 
+  //reservation update
   @override
   Future<Either<Failure, Reservation>> updateReservation(
       Reservation reservation) async {
@@ -62,6 +65,7 @@ class ReservationRepositoryImpl implements ReservationRepository {
     }
   }
 
+  //reservation delete
   @override
   Future<Either<Failure, int>> deleteReservation(int idReservation) async {
     try {

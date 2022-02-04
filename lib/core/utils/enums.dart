@@ -4,6 +4,7 @@ enum DeviceType {
   mobile,
 }
 
+//the different sections of the app
 enum Pages {
   workplaces_page,
   my_presences_page,
@@ -11,6 +12,7 @@ enum Pages {
   users_management_page
 }
 
+//title of the different sections of the app
 extension PagesTitles on Pages {
   String getPageTitle() {
     switch (this) {
@@ -45,9 +47,12 @@ extension TimeSlotLabel on TimeSlot {
   }
 }
 
+//workspaces available in the home page
 enum Rooms { room_26B, room_26A_Floor1, room_26A_Floor2, room_24, room_staff }
 
 extension RoomsTitles on Rooms {
+
+  //labels for the reservations sections
   String reservationTitle() {
     switch (this) {
       case Rooms.room_26B:
@@ -61,6 +66,7 @@ extension RoomsTitles on Rooms {
     }
   }
 
+//label for the workspaces description
   String get title {
     switch (this) {
       case Rooms.room_26B:
@@ -77,7 +83,7 @@ extension RoomsTitles on Rooms {
         return null;
     }
   }
-
+//reservation room id
   int get idRoom {
     switch (this) {
       case Rooms.room_26B:
@@ -91,6 +97,7 @@ extension RoomsTitles on Rooms {
     }
   }
 
+  //reservation room title
   String get reservationRoomTitle {
     switch (this) {
       case Rooms.room_26B:

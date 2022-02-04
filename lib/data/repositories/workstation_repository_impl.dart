@@ -1,9 +1,7 @@
 import 'dart:async';
-
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
-
 import 'package:where_am_i/core/error/exceptions.dart';
 import 'package:where_am_i/core/error/failure.dart';
 import 'package:where_am_i/core/usecases/usecase.dart';
@@ -13,6 +11,7 @@ import 'package:where_am_i/data/models/workstation_dto.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/domain/repositories/workstation_repository.dart';
 
+// this repository take care of reservations data mediating between local and remote sources
 class WorkstationRepositoryImpl implements WorkstationRepository {
   final RemoteDataSource remoteDataSource;
   final LocalDataSource localDataSource;
@@ -24,6 +23,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     @required this.localDataSource,
   });
 
+  //workstations fetch for a specific date
   @override
   Future<Either<Failure, List<Workstation>>> getAllByDate(DateTime date) async {
     try {
@@ -38,6 +38,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     }
   }
 
+  //workstations fetch for the current user
   @override
   Future<Either<Failure, List<Workstation>>> getAllForCurrentUser() async {
     try {
@@ -55,6 +56,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     }
   }
 
+  //workstations fetch for a specific id resource to the end of the month
   @override
   Future<Either<Failure, List<Workstation>>> getAllByIdResourceToEndOfMonth(
       String idResource, String date) async {
@@ -71,6 +73,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     }
   }
 
+  //workstation insert
   @override
   Future<Either<Failure, Workstation>> insert(Workstation workstation) async {
     try {
@@ -87,6 +90,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     }
   }
 
+  //multiple workstation insert
   @override
   Future<Either<Failure, List<Workstation>>> insertAll(
       List<Workstation> newWorkstations) async {
@@ -103,6 +107,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     }
   }
 
+  //workstation update
   @override
   Future<Either<Failure, Workstation>> update(
       Workstation updatedWorkstation) async {
@@ -120,6 +125,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     }
   }
 
+  //multiple workstations update
   @override
   Future<Either<Failure, List<Workstation>>> updateAll(
       List<Workstation> updatedWorkstations) async {
@@ -138,6 +144,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     }
   }
 
+  //workstation status update
   @override
   Future<Either<Failure, Workstation>> updateStatus(
       WorkstationStatusParameters workstationStatusParameters) async {
@@ -153,6 +160,7 @@ class WorkstationRepositoryImpl implements WorkstationRepository {
     }
   }
 
+  //workstation delete
   @override
   Future<Either<Failure, int>> delete(int idWorkstation) async {
     try {

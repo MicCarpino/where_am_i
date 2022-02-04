@@ -80,11 +80,16 @@ class LoginDesktopForm extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 LoginButton(isLoading: state.isLoading),
+                // in the tablet/desktop/web version login errors are shown in a
+                // "fixed box" below the login form
                 SizedBox(height: 16),
                 state.loginFailureOrSuccess.fold(
+                  //option none : nothing to show
                   () => Container(),
-                  (a) => a.fold(
-                      (l) => Container(alignment: Alignment.center,
+                  //option some : there's a login result
+                  (leftOrRight) => leftOrRight.fold(
+                    //either left (failure): retrieve and show the login error from the failure
+                      (failure) => Container(alignment: Alignment.center,
                           width: double.infinity,
                           decoration: BoxDecoration(
                               color: Colors.red.withOpacity(0.25),
@@ -94,8 +99,9 @@ class LoginDesktopForm extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 8.0, horizontal: 24.0),
-                            child: Text(l),
+                            child: Text(failure),
                           )),
+                      //either right : login successful, navigation to home page will occur now
                       (_) => Container()),
                 )
               ],

@@ -6,6 +6,7 @@ import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/usecases/users/get_user_by_id.dart';
 import 'package:where_am_i/presentation/responsive_builder.dart';
 
+// this widget show a dialog reporting details of the reservation selected
 class ReservationDetailsDialog extends StatelessWidget {
   final Reservation reservation;
   final serviceLocator = GetIt.instance;
@@ -61,6 +62,8 @@ class ReservationDetailsDialog extends StatelessWidget {
     return digit < 10 ? "0$digit" : digit.toString();
   }
 
+  //retrieve the resource name and surname from the DNC resources list by id
+  //for some reason doesn't works on web/desktop builds
   Future<User> _getReferentName() async {
     final userFetchResult = await serviceLocator<GetUserById>()
         .call(reservation.idHandler.toString());

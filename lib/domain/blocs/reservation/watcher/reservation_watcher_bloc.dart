@@ -13,13 +13,20 @@ part 'reservation_watcher_state.dart';
 
 part 'reservation_watcher_bloc.freezed.dart';
 
+// this bloc handle the logic for the "reservations" section
+// the watcher bloc just handle list fetch and emission, while the operations
+// insert/delete/update are performed from the "actor bloc", in order to
+// facilitate state handling
 class ReservationWatcherBloc
     extends Bloc<ReservationWatcherEvent, ReservationWatcherState> {
   ReservationWatcherBloc({
     @required this.reservationRepository,
     @required this.reservationActorBloc,
   }) : super(ReservationWatcherState.initial()) {
+//fetch reservations for current date on bloc initialization
     add(ReservationWatcherEvent.fetchReservations(DateTime.now().zeroed()));
+
+    //subscribe to the actor bloc in order to update the list on successful crud operations
     _reservationActorSubscription = reservationActorBloc.listen((actorState) {
       actorState.maybeMap(
           insertSuccess: (value) {
@@ -60,19 +67,23 @@ class ReservationWatcherBloc
     ReservationWatcherEvent event,
   ) async* {
     yield* event.map(
+      //fetch reservations for a specific date
       fetchReservations: (value) async* {
         yield ReservationWatcherState.loadInProgress();
         final fetchResult =
             await reservationRepository.getAllReservationsByDate(value.date);
         yield fetchResult.fold(
+          //fetch failed, emit failure state
           (failure) => ReservationWatcherState.loadFailure(
               failure.getErrorMessageFromFailure()),
+          //fetch successful, emit state with the reservations list
           (reservations) {
             cachedReservations = reservations;
             return ReservationWatcherState.loadSuccess(reservations);
           },
         );
       },
+      //an update occurred and the updated list has to be emitted
       onReservationsUpdate: (value) async* {
         yield ReservationWatcherState.loadInProgress();
         yield state.maybeMap(

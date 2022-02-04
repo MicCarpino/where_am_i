@@ -10,6 +10,7 @@ import 'package:where_am_i/domain/repositories/user_repository.dart';
 import 'package:where_am_i/injection_container.dart';
 import 'package:where_am_i/domain/blocs/reservation/form/reservation_form_bloc.dart';
 
+//the widget for the "participants" field in the reservation form
 class ParticipantsFormField extends StatefulWidget {
   @override
   _ParticipantsFormFieldState createState() => _ParticipantsFormFieldState();
@@ -28,6 +29,7 @@ class _ParticipantsFormFieldState extends State<ParticipantsFormField> {
                 Text('Partecipanti', style: reservationLabelStyle),
                 _buildAddParticipantsTextField(context),
                 SizedBox(height: 8),
+                //participants "chips"
                 Wrap(
                   children: state.reservationForm.participants
                       .map((e) => _buildParticipantChip(context, e))
@@ -39,6 +41,7 @@ class _ParticipantsFormFieldState extends State<ParticipantsFormField> {
 
   Widget _buildAddParticipantsTextField(BuildContext context) {
     return BlocConsumer<ReservationFormBloc, ReservationFormState>(
+      //rebuild this widget just when the participants list change
       buildWhen: (p, c) =>
           p.reservationForm.participants != c.reservationForm.participants,
       listenWhen: (p, c) =>
@@ -47,6 +50,7 @@ class _ParticipantsFormFieldState extends State<ParticipantsFormField> {
         FocusScope.of(context).requestFocus(new FocusNode());
         setState(() => participantsController.clear());
       },
+      //this widget show suggestions in a dropdown, filtered while the user types
       builder: (context, state) => TypeAheadField(
         getImmediateSuggestions: false,
         hideOnEmpty: true,
@@ -56,7 +60,7 @@ class _ParticipantsFormFieldState extends State<ParticipantsFormField> {
             autofocus: false,
             onChanged: (value) => setState(() => participantsController.value =
                 participantsController.value.copyWith(text: value)),
-            //delete icon, clears textfield
+            //delete icon, clears the textfield
             decoration: InputDecoration(
                 prefixIcon: participantsController.text.isNotEmpty
                     ? IconButton(
@@ -66,7 +70,7 @@ class _ParticipantsFormFieldState extends State<ParticipantsFormField> {
                       )
                     : null,
                 hintText: "Aggiungi partecipante",
-                //add icon, add participant chip
+                //add icon, add participant chip with current typed text if pressed
                 suffixIcon: participantsController.text.isNotEmpty
                     ? IconButton(
                         onPressed: () => context
@@ -82,6 +86,7 @@ class _ParticipantsFormFieldState extends State<ParticipantsFormField> {
                         icon: Icon(Icons.person_add_rounded, color: dncBlue),
                       )
                     : null)),
+        //the function to retrieve the users list for the dropdown
         suggestionsCallback: (pattern) async {
           final usersOrFailure = await getIt<UserRepository>().getAllUsers();
           return usersOrFailure.fold(
@@ -93,8 +98,10 @@ class _ParticipantsFormFieldState extends State<ParticipantsFormField> {
                   .toList()
                     ..sort((a, b) => b.surname.compareTo(a.surname)));
         },
+        //builder for the elements in the dropdown
         itemBuilder: (context, User suggestion) =>
             new ListTile(title: new Text(suggestion.getSurnameAndName())),
+        //when an element in the dropdown is chosen update the bloc state
         onSuggestionSelected: (User suggestion) {
           context
               .read<ReservationFormBloc>()
@@ -111,6 +118,8 @@ class _ParticipantsFormFieldState extends State<ParticipantsFormField> {
     );
   }
 
+  //for each participants a "chip" is shown below the input field
+  //the x on the chip remove the participants when pressed
   Padding _buildParticipantChip(BuildContext context, String participant) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),

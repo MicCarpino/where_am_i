@@ -13,9 +13,11 @@ import 'package:where_am_i/presentation/my_presences/my_presences_calendar.dart'
 import 'package:where_am_i/presentation/responsive_builder.dart';
 import '../../injection_container.dart';
 
+// the page where the logged user can manage his presences
 class MyPresencesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    //create new instances of bloc classes used in this section
     return MultiBlocProvider(
         providers: [
           BlocProvider<MyPresencesActorBloc>(
@@ -34,13 +36,17 @@ class MyPresencesPage extends StatelessWidget {
           listener: (context, state) {
             LoadingOverlay.dismissIfShowing(context);
             return state.maybeMap(
+                //show the loading overlay when a presence action (api call) is in progress
                 actionInProgress: (_) => LoadingOverlay.show(context),
+                //show the error occurred when a presence action fails
                 deleteFailure: (f) => ResponsiveBuilder.showsErrorMessage(
                     context, f.failure.getErrorMessageFromFailure()),
                 insertFailure: (f) => ResponsiveBuilder.showsErrorMessage(
                     context, f.failure.getErrorMessageFromFailure()),
                 updateFailure: (f) => ResponsiveBuilder.showsErrorMessage(
                     context, f.failure.getErrorMessageFromFailure()),
+                //show the time slot selection dialog
+                //this should be moved back on ui layer instead of int the bloc
                 showTimeSlotDialog: (value) => showDialog(
                         context: context,
                         builder: (BuildContext context) {
@@ -60,10 +66,14 @@ class MyPresencesPage extends StatelessWidget {
             builder: (context, state) {
               return state.map(
                 initial: (_) => Container(),
+                //presences fetch in progress, show loading indicator
                 loadInProgress: (_) =>
                     const Center(child: CircularProgressIndicator()),
+                //presences fetch successful, build the 26B workstations
                 loadSuccess: (state) => ResponsiveBuilder(
+                    //on mobile show a full screen calendar
                     mobile: MyPresencesCalendar(userPresences: state.presences),
+                    // on tablet/desktop/web show a resized version of the calendar
                     tabletOrDesktop: LayoutBuilder(
                       builder: (context, constraints) => Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,6 +95,7 @@ class MyPresencesPage extends StatelessWidget {
                         ],
                       ),
                     )),
+                //presences fetch failed, show the retry button and define his callback
                 loadFailure: (_) => Container(
                     width: double.infinity,
                     height: double.infinity,
@@ -101,8 +112,11 @@ class MyPresencesPage extends StatelessWidget {
         ));
   }
 
+  // action on time slot dialog operation result
   void _handleDialogResult(BuildContext context,
       Map<TimeSlot, List<DateTime>> result, Workstation workstation) {
+    //no action has been performed on an existing workstation object, so it was
+    // an insert operation
     if (workstation == null) {
       final dates = result.values.first;
       context.read<MyPresencesActorBloc>().add(dates.length > 1
@@ -110,7 +124,7 @@ class MyPresencesPage extends StatelessWidget {
               result.keys.first, List.from(dates))
           : MyPresencesActorEvent.added(result.keys.first, dates.first));
     } else {
-      //edit case
+      //edit operation
       var selectedSlot = result.keys.first;
       context.read<MyPresencesActorBloc>().add(MyPresencesActorEvent.updated(
             workstation.copyWith(

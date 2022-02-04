@@ -13,6 +13,7 @@ import 'package:where_am_i/presentation/home/workstations/desk_marker.dart';
 import 'package:where_am_i/presentation/workstation_assignment/workstation_assignment_page.dart';
 
 class Desk extends StatefulWidget {
+  //the code for this workstation
   final int workstationCode;
   final double width;
 
@@ -28,6 +29,7 @@ class Desk extends StatefulWidget {
 class _DeskState extends State<Desk> {
   User loggedUser;
   bool isEditAllowed;
+  //list of resources assigned to this workstation
   List<UserWithWorkstation> assignedResources;
 
   @override
@@ -40,6 +42,7 @@ class _DeskState extends State<Desk> {
 
   @override
   Widget build(BuildContext context) {
+    //initialize the resources list for this workstation
     assignedResources = context.read<WorkstationWatcherBloc>().state.maybeWhen(
         orElse: () => [],
         loadSuccess: (value) => value
@@ -47,11 +50,13 @@ class _DeskState extends State<Desk> {
                 element.workstation?.codeWorkstation ==
                 widget.workstationCode.toString())
             .toList());
+    //get the resource name to display
     String resourceLabel = _getDeskLabel();
     return Container(
       width: widget.width,
       height: widget.width,
       child: CustomPaint(
+        //render the marker at the corner to indicate morning/afternoon desk occupation
           painter: DeskMarker(
             assignedResources.map((e) => e.workstation).toList(),
           ),
@@ -64,11 +69,11 @@ class _DeskState extends State<Desk> {
                   padding: EdgeInsets.all(4),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(5),
+                    //mark the workstation for the logged user with an orange border
                     side: BorderSide(
                         color: isDeskOfLoggedUser ? dncOrange : Colors.black54,
                         width: isDeskOfLoggedUser ? 2.5 : 1.0),
                   ),
-                  //allow edit if user's role is staff or higher
                   onPressed: () => _onDeskClick(),
                   child: resourceLabel != null
                       ? AutoSizeText(
@@ -91,7 +96,10 @@ class _DeskState extends State<Desk> {
     );
   }
 
+  //allow edit if user's role is staff or higher
   _onDeskClick() {
+    //open the workstation assignment page if the logged user is staff/admin and
+    // the date shown in the date picker is not earlier than today
     if (loggedUser.isStaffOrAdmin() && isEditAllowed) {
       Navigator.push(
         context,
@@ -114,6 +122,7 @@ class _DeskState extends State<Desk> {
         ),
       );
     } else {
+      //otherwise show the "occupants dialog", if there's at least one resource assigned
       if (assignedResources.length > 1) {
         showDialog(
             context: context,
@@ -136,12 +145,13 @@ class _DeskState extends State<Desk> {
   }
 
   List<Widget> _generateOccupantsList() {
+    //sort list by start time, then by end time
     final occupants = assignedResources
       ..sort((a, b) {
         var aStartTime = a.workstation.startTime.toDouble();
         var bStartTime = b.workstation.startTime.toDouble();
-        var aEndTime = a.workstation.startTime.toDouble();
-        var bEndTime = b.workstation.startTime.toDouble();
+        var aEndTime = a.workstation.endTime.toDouble();
+        var bEndTime = b.workstation.endTime.toDouble();
         var abc = aStartTime.compareTo(bStartTime);
         return abc != 0 ? abc : aEndTime.compareTo(bEndTime);
       });

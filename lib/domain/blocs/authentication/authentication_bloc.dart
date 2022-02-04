@@ -12,6 +12,7 @@ part 'authentication_event.dart';
 
 part 'authentication_state.dart';
 
+// this bloc handle the authentication logic
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final PerformLogOut performLogOut;
@@ -24,6 +25,10 @@ class AuthenticationBloc
         _authenticationRepository = authenticationRepository,
         performLogOut = performLogOut,
         super(const AuthenticationState.unknown()) {
+    //listen for authentication states changes occurring in the authentication repository
+    //when this bloc is instantiated at app startup and, consequently, this listener
+    // is added, the "get status" function is triggered an performs an authentication
+    // status check
     _authenticationStatusSubscription = _authenticationRepository.status.listen(
       (status) => add(AuthenticationStatusChanged(status)),
     );
@@ -37,12 +42,17 @@ class AuthenticationBloc
       AuthenticationEvent event) async* {
     if (event is AuthenticationStatusChanged) {
       yield await _mapAuthenticationStatusChangedToState(event);
+      //logout performed by the logged user
     } else if (event is AuthenticationLogoutRequested) {
       print('PERFORMING MANUAL LOGOUT');
       await performLogOut();
+      //logout on API 401 response, this event comes from the auth repository
+      // (function add event defined in the get it auth repo initialization)
     } else if (event is AuthenticationTokenExpired) {
       print('PERFORMING 401 LOGOUT');
       await performLogOut(tokenExpired: true);
+      //in the list of presences for the current day a workstations for the
+      // logged user has been found
     } else if (event is WorkstationAssigned) {
       yield AuthenticationState.authenticated(
         state.authenticatedUser,
@@ -51,6 +61,7 @@ class AuthenticationBloc
     }
   }
 
+  //an authentication change event occured
   Future<AuthenticationState> _mapAuthenticationStatusChangedToState(
     AuthenticationStatusChanged event,
   ) async {
@@ -58,6 +69,7 @@ class AuthenticationBloc
       case AuthenticationStatus.unauthenticated:
         return const AuthenticationState.unauthenticated();
       case AuthenticationStatus.authenticated:
+      //retrieving logged user details end emitting the "authenticated state"
         final user = await _authenticationRepository.getLoggedUser();
         return user.fold((l) => AuthenticationState.unauthenticated(),
             (user) => AuthenticationState.authenticated(user, null));

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 
+//This class use canvas to render an orange marker on top left or bottom right
+// corners, if occupied respectively on morning and afternoon
 class DeskMarker extends CustomPainter {
   final List<Workstation> workstations;
 

@@ -17,6 +17,10 @@ import 'package:where_am_i/domain/usecases/users/get_logged_user.dart';
 import 'package:where_am_i/domain/usecases/users/get_user_by_id.dart';
 import 'package:where_am_i/domain/blocs/authentication/authentication_bloc.dart';
 
+//https://pub.dev/packages/get_it
+
+//dependency injection package
+//use case, repositories and data source classes are instantiated as singleton
 final getIt = GetIt.instance;
 
 Future<void> init() async {
@@ -27,12 +31,14 @@ Future<void> init() async {
       ));
 
   // Use Cases
+
   //User
   getIt.registerLazySingleton(() => PerformLogOut(getIt()));
   getIt.registerLazySingleton(() => GetLoggedUser(getIt()));
   getIt.registerLazySingleton(() => GetAllUsers(getIt()));
   getIt.registerLazySingleton(() => GetUserById(getIt()));
   getIt.registerLazySingleton(() => GetAllUserByFilter(getIt()));
+
   // Repository
   getIt.registerLazySingleton<AuthenticationRepository>(
       () => (AuthRepositoryImpl(
@@ -57,13 +63,11 @@ Future<void> init() async {
   getIt.registerLazySingleton<LocalDataSource>(
       () => LocalDataSourceImpl(sharedPreferences: getIt()));
 
+  //defining 401 callback on remote data source instance
   getIt.registerLazySingleton<RemoteDataSource>(() => RemoteDataSourceImpl(
       onRevoke: () => getIt<AuthenticationBloc>().add(
             AuthenticationTokenExpired(),
           )));
-  // Core
-/*  sl.registerLazySingleton(() => InputConverter());
-  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));*/
 
   // External
   final sharedPreferences = await SharedPreferences.getInstance();

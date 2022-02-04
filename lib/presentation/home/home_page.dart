@@ -30,6 +30,7 @@ import 'package:where_am_i/presentation/home/workstations/room_staff.dart';
 import 'package:where_am_i/presentation/responsive_builder.dart';
 import '../../injection_container.dart';
 
+//The main page which holds the workspaces/workstations and reservation calendars
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -54,6 +55,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    //initialize Bloc used for workstations/reservations operations
     return MultiBlocProvider(
       providers: [
         //Reservations
@@ -84,27 +86,32 @@ class _HomePageState extends State<HomePage>
               listener: (context, state) {
                 LoadingOverlay.dismissIfShowing(context);
                 return state.maybeMap(
-                actionInProgress: (_) => LoadingOverlay.show(context),
-                orElse: () {},
-                actionFailure: (value) => ResponsiveBuilder.showsErrorMessage(
-                    context, value.failure.getErrorMessageFromFailure()),
-              );
+                  //show the loading overlay when a workstation action (api call) is in progress
+                  actionInProgress: (_) => LoadingOverlay.show(context),
+                  //show the error occurred when a workstation action resulted in an error
+                  actionFailure: (value) => ResponsiveBuilder.showsErrorMessage(
+                      context, value.failure.getErrorMessageFromFailure()),
+                  orElse: () {},
+                );
               },
             ),
             BlocListener<ReservationActorBloc, ReservationActorState>(
               listener: (context, state) {
                 LoadingOverlay.dismissIfShowing(context);
                 return state.maybeMap(
+                  //show the loading overlay when a reservation action (api call) is in progress
                   actionInProgress: (_) => LoadingOverlay.show(context),
-                orElse: () {},
-                actionFailure: (value) => ResponsiveBuilder.showsErrorMessage(
-                    context, value.failure.getErrorMessageFromFailure()),
-              );
+                  //show the error occurred when a reservation action resulted in an error
+                  actionFailure: (value) => ResponsiveBuilder.showsErrorMessage(
+                      context, value.failure.getErrorMessageFromFailure()),
+                  orElse: () {},
+                );
               },
             )
           ],
           child: Column(
             children: [
+              //if is not mobile layout show the tab bar on top with all workspaces options
               if (!ResponsiveBuilder.isMobile(context))
                 Material(
                   color: dncBlue,
@@ -133,24 +140,32 @@ class _HomePageState extends State<HomePage>
                     .add(ReservationWatcherEvent.fetchReservations(newDate));
               }),
               Expanded(
+                //build the widget responsible for the "navigation" between the workspaces
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: Rooms.values.length,
                   itemBuilder: (_, index) {
+                    //build workstations and reservations calendar
                     return SingleChildScrollView(
                       scrollDirection: Axis.vertical,
                       padding: EdgeInsets.all(16),
+                      //on mobile build first the workstation section and below
+                      // the reservation calendar
                       child: ResponsiveBuilder(
                           mobile: Column(
                             children: [
                               _buildWorkstationsSection(
                                   context, Rooms.values[index]),
                               SizedBox(height: 16),
+                              //if there's no "idRoom" for the current room it means
+                              //there's no meeting room for the current workspace
                               if (Rooms.values[index].idRoom != null)
                                 _buildReservationsSection(
                                     newContext, Rooms.values[index])
                             ],
                           ),
+                          // on desktop build workstation and eventual calendar
+                          // sections side by side
                           tabletOrDesktop: Flex(
                             direction: Axis.horizontal,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,6 +177,8 @@ class _HomePageState extends State<HomePage>
                                 flex: 3,
                               ),
                               if (Rooms.values[index].idRoom != null)
+                                //if there's no "idRoom" for the current room it means
+                                //there's no meeting room for the current workspace
                                 Flexible(
                                   child: _buildReservationsSection(
                                       newContext, Rooms.values[index]),
@@ -171,6 +188,9 @@ class _HomePageState extends State<HomePage>
                           )),
                     );
                   },
+                  // When the user slide or select a new workspace update the title
+                  // in the Home cubit. Ideally the navigation logic should be moved
+                  // there too
                   onPageChanged: (pageIndex) {
                     _tabController.index = pageIndex;
                     context
@@ -203,11 +223,14 @@ class _HomePageState extends State<HomePage>
     }
   }
 
+  //build the reservation section depending on the reservation bloc state
   Widget _buildReservationsSection(BuildContext context, Rooms room) {
     return BlocBuilder<ReservationWatcherBloc, ReservationWatcherState>(
         builder: (_, state) => state.map(
               initial: (_) => Container(),
+              // reservation fetch in progress, show loading indicator
               loadInProgress: (_) => CenteredLoading(),
+              // reservations list fetched, build the "calendar"
               loadSuccess: (value) => Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -222,6 +245,7 @@ class _HomePageState extends State<HomePage>
                           style: roomLabelStyle,
                           maxLines: 2,
                         ),
+                        //show/hide the "add reservation" button
                         Visibility(
                           visible:
                               context.read<DatePickerCubit>().isEditAllowed(),
@@ -231,9 +255,11 @@ class _HomePageState extends State<HomePage>
                               color: Colors.black54,
                               size: 26,
                             ),
+                            //open the "new reservation page"
                             onPressed: () => Navigator.push(
                               context,
                               MaterialPageRoute(
+                                //provide blocs needed by the "new reservation" page
                                 builder: (_) => MultiBlocProvider(
                                   providers: [
                                     BlocProvider.value(
@@ -250,6 +276,9 @@ class _HomePageState extends State<HomePage>
                                       create: (context) => ReservationFormBloc(
                                           reservationActorBloc: context
                                               .read<ReservationActorBloc>(),
+                                          // initialize the form state with the current
+                                          // date and the current logged user
+                                          // (subject of the reservation)
                                           initialState: ReservationFormState(
                                             reservationForm:
                                                 ReservationForm.initial(
@@ -279,6 +308,7 @@ class _HomePageState extends State<HomePage>
                       ],
                     ),
                   ),
+                  //build the calendar for this workspace
                   ReservationsCalendar(
                     reservationsList: value.reservations
                         .where((element) => element.idRoom == room.idRoom)
@@ -286,6 +316,8 @@ class _HomePageState extends State<HomePage>
                   ),
                 ],
               ),
+              // reservations fetch failed, show the retry button and define
+              // the action to perform when clicked
               loadFailure: (value) => Center(
                   child: RetryWidget(
                       onTryAgainPressed: () =>

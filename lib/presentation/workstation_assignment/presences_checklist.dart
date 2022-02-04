@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:where_am_i/domain/blocs/workstation/actor/workstation_actor_bloc.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 
+//checkable list of resource presences
 class PresencesChecklist extends StatefulWidget {
   const PresencesChecklist({
     @required this.codeWorkstation,
@@ -23,6 +24,7 @@ class _PresencesChecklistState extends State<PresencesChecklist> {
   @override
   void initState() {
     super.initState();
+    //set all dates checked by default
     widget.presences.forEach((element) {
       _presencesChecked.putIfAbsent(element, () => true);
     });
@@ -31,6 +33,7 @@ class _PresencesChecklistState extends State<PresencesChecklist> {
   @override
   Widget build(BuildContext context) {
     return Column(children: [
+      //generate a checkbox tile for each date corresponding a presence
       ...List<Widget>.generate(widget.presences.length, (index) {
         var item = widget.presences[index];
         return CheckboxListTile(
@@ -39,10 +42,13 @@ class _PresencesChecklistState extends State<PresencesChecklist> {
             ),
             subtitle: _buildSlotTimeLabel(context, item),
             value: _presencesChecked.values.elementAt(index),
+            //action to perform when a checkbox value changes
+            //cannot uncheck the first date
             onChanged: index == 0
                 ? null
                 : (bool) => setState(() => _presencesChecked[item] = bool));
       }),
+      //the confirm button to perform the assignment action once done with the dates selection
       OutlinedButton(
           child: Text('CONFERMA', style: TextStyle(color: Colors.blue)),
           onPressed: () {

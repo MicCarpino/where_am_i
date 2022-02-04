@@ -16,6 +16,10 @@ part 'presences_management_watcher_state.dart';
 
 part 'presences_management_watcher_bloc.freezed.dart';
 
+// this bloc handle the logic for the "presences management" section
+// the watcher bloc just handle list fetch and emission, while the operations
+// insert/delete/update are performed from the "actor bloc", in order to
+// facilitate state handling
 class PresencesManagementWatcherBloc extends Bloc<
     PresencesManagementWatcherEvent, PresencesManagementWatcherState> {
   PresencesManagementWatcherBloc(
@@ -23,9 +27,10 @@ class PresencesManagementWatcherBloc extends Bloc<
     this.userRepository,
     this.presencesManagementActorBloc,
   ) : super(PresencesManagementWatcherState.initial()) {
+    //subscribe to the actor bloc in order to update the list on successful crud operations
     _presencesSubscription = presencesManagementActorBloc
         .listen((state) => _handleActorStateChange(state));
-
+//fetch resources presences for current date on bloc initialization
     add(PresencesManagementWatcherEvent.getAllUsersPresencesByDate(
         DateTime.now()));
   }
@@ -67,6 +72,7 @@ class PresencesManagementWatcherBloc extends Bloc<
     );
   }
 
+  //fetch presences for a specific date
   Stream<PresencesManagementWatcherState> _mapGetPresencesToState(
       _GetUserPresences e) async* {
     yield const PresencesManagementWatcherState.loadInProgress();
@@ -75,6 +81,7 @@ class PresencesManagementWatcherBloc extends Bloc<
     final usersOrFailure = await userRepository.getAllUsers();
     final workstations = workstationsOrFailure.getOrElse(() => null);
     final users = usersOrFailure.getOrElse(() => null);
+    //if both users and workstations list fetch are successful mix them end emit the list
     if (users != null && workstations != null) {
       final usersWithWorkstations =
           _mergeUserWithWorkstations(users, workstations);
@@ -84,10 +91,12 @@ class PresencesManagementWatcherBloc extends Bloc<
             usersWithWorkstations),
       );
     } else {
+      //users and/or workstations list fetch failed
       yield PresencesManagementWatcherState.loadFailure();
     }
   }
 
+  //update in the presences list, split in sublist depending on the status and emit the result
   Stream<PresencesManagementWatcherState> _mapPresencesReceivedToState(
       _PresencesReceived e) async* {
     //WORKSTATION PENDING - can't have free names
@@ -96,7 +105,7 @@ class PresencesManagementWatcherBloc extends Bloc<
             e.user != null &&
             e.workstation?.status == WORKSTATION_STATUS_PENDING)
         .toList()
-          ..sortBySurnameAndName();
+      ..sortBySurnameAndName();
 
     //WORKSTATIONS CONFIRMED
     final freeNamesConfirmed = e.usersWithWorkstations
@@ -104,13 +113,13 @@ class PresencesManagementWatcherBloc extends Bloc<
             element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
             element.user == null)
         .toList()
-          ..sortByFreeName();
+      ..sortByFreeName();
     final usersConfirmed = e.usersWithWorkstations
         .where((element) =>
             element.workstation?.status == WORKSTATION_STATUS_CONFIRMED &&
             element.user != null)
         .toList()
-          ..sortBySurnameAndName();
+      ..sortBySurnameAndName();
     final resourcesConfirmed = freeNamesConfirmed..addAll(usersConfirmed);
 
     //WORKSTATIONS REFUSED or NOT PRESENT
@@ -119,9 +128,9 @@ class PresencesManagementWatcherBloc extends Bloc<
             e.workstation == null ||
             e.workstation?.status == WORKSTATION_STATUS_REFUSED)
         .toList()
-          ..sortBySurnameAndName();
+      ..sortBySurnameAndName();
 
-    //PUBLISH
+    //emit the result
     yield PresencesManagementWatcherState.loadSuccess(
       resourcesPending ?? List.empty(),
       resourcesConfirmed ?? List.empty(),
@@ -129,6 +138,7 @@ class PresencesManagementWatcherBloc extends Bloc<
     );
   }
 
+  // perform the user and workstations list mix
   List<UserWithWorkstation> _mergeUserWithWorkstations(
       List<User> users, List<Workstation> workstations) {
     return workstations
@@ -136,12 +146,13 @@ class PresencesManagementWatcherBloc extends Bloc<
         .map((freeName) =>
             UserWithWorkstation(user: null, workstation: freeName))
         .toList(growable: true)
-          ..addAll(users.map((user) => UserWithWorkstation(
-              user: user,
-              workstation: workstations.singleWhereOrNull((workstation) =>
-                  workstation.idResource == user.idResource))));
+      ..addAll(users.map((user) => UserWithWorkstation(
+          user: user,
+          workstation: workstations.singleWhereOrNull(
+              (workstation) => workstation.idResource == user.idResource))));
   }
 
+  //update the list with data coming from the actor bloc
   void _handleActorStateChange(PresencesManagementActorState actorState) {
     actorState.maybeMap(
       insertSuccess: (value) {

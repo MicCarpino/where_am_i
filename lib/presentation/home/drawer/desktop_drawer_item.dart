@@ -8,6 +8,7 @@ import 'package:where_am_i/domain/blocs/home/home_cubit.dart';
 final double iconSizeMultiplier = 0.125;
 final tileSpacingMultiplier = 0.01;
 
+//Drawer widget for tablet/desktop/web versions
 class DesktopDrawerItem extends StatelessWidget {
   const DesktopDrawerItem(this.pageItem, this.icon, this.text);
 
@@ -27,6 +28,8 @@ class DesktopDrawerItem extends StatelessWidget {
         } else if (iconSize > 24) {
           iconSize = 24;
         }
+        // mark the drawer item with orange color and turn icon and text white
+        // if matches the current section selection
         return Ink(
           color: isCurrentPage ? dncOrange : null,
           child: ListTile(
@@ -47,6 +50,7 @@ class DesktopDrawerItem extends StatelessWidget {
                 style: TextStyle(
                     color: isCurrentPage ? Colors.white : Colors.black87)),
             onTap: () {
+              //change section through the Home cubit
               if (!isCurrentPage) {
                 BlocProvider.of<HomeCubit>(context).changePage(pageItem);
               }
@@ -57,6 +61,7 @@ class DesktopDrawerItem extends StatelessWidget {
     );
   }
 
+  //item for logout
   static Widget logoutItem(Function logout) {
     return Container(
       child: Align(
@@ -75,6 +80,7 @@ class DesktopDrawerItem extends StatelessWidget {
                     color: Colors.black87,
                   ),
                   title: Text('Logout'),
+                  //add a logout event to the Authentication Bloc
                   onTap: logout),
             )
           ],

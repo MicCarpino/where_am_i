@@ -16,6 +16,8 @@ part 'presences_management_actor_state.dart';
 
 part 'presences_management_actor_bloc.freezed.dart';
 
+// this bloc handle the logic for the "presences management" section
+// the actor bloc take care of "actions" performed on list hold by the watcher bloc
 class PresencesManagementActorBloc
     extends Bloc<PresencesManagementActorEvent, PresencesManagementActorState> {
   PresencesManagementActorBloc(this._workstationRepository)
@@ -44,6 +46,7 @@ class PresencesManagementActorBloc
     );
   }
 
+  //perform a workstation insert and emit the result of the operation
   Stream<PresencesManagementActorState> _mapAddedEventToState(_Added e) async* {
     Workstation workstation = Workstation(
       idWorkstation: null,
@@ -62,9 +65,9 @@ class PresencesManagementActorBloc
     );
   }
 
+  //perform multiple workstations insert and emit the result of the operation
   Stream<PresencesManagementActorState> _mapAddedMultipleToState(
       _AddedMultiple e) async* {
-    //TODO noooo
     final insertOrFailure = await _workstationRepository.insertAll(e.dates
         .map((date) => Workstation(
       idWorkstation: null,
@@ -84,6 +87,7 @@ class PresencesManagementActorBloc
     );
   }
 
+  //perform a workstation delete and emit the result of the operation
   Stream<PresencesManagementActorState> _mapRemovedEventToState(_Removed e) async* {
       final removeOrFailure =
       await _workstationRepository.delete(e.workstation.idWorkstation);
@@ -93,6 +97,7 @@ class PresencesManagementActorBloc
       );
   }
 
+  //perform a workstation update and emit the result of the operation
   Stream<PresencesManagementActorState> _mapUpdatedEventToState(_Updated e) async* {
       final updateOrFailure =
       await _workstationRepository.update(e.workstation);

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:where_am_i/core/utils/constants.dart';
@@ -16,6 +15,7 @@ import 'package:where_am_i/presentation/home/reservations/form/subject_form_fiel
 import 'package:where_am_i/domain/blocs/reservation/form/reservation_form_bloc.dart';
 import 'package:where_am_i/presentation/responsive_builder.dart';
 
+// page displaying the form for insert/edit reservation operation
 class ReservationFormPage extends StatefulWidget {
   @override
   _ReservationFormPageState createState() => _ReservationFormPageState();
@@ -31,6 +31,7 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
     return BlocListener<ReservationActorBloc, ReservationActorState>(
       listener: (context, state) {
         state.maybeMap(
+          //close this page when reservation insert/update has been successful
           updateSuccess: (_) => Navigator.of(context).pop(),
           insertSuccess: (_) => Navigator.of(context).pop(),
           orElse: () {},
@@ -87,11 +88,13 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
                   // Participants section
                   SizedBox(height: 16),
                   ParticipantsFormField(),
-                  // Buttons section
+                  // Cancel/confirm buttons section
                   SizedBox(height: 16),
                   BlocBuilder<ReservationFormBloc, ReservationFormState>(
                       buildWhen: (previous, current) =>
                           previous.isSaving != current.isSaving,
+                      //show a progress indicator when an api call is in progress
+                      //otherwise show the buttons
                       builder: (context, state) => state.isSaving
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,

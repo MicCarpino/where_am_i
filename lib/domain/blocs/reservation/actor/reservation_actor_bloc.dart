@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:meta/meta.dart';
@@ -13,6 +12,8 @@ part 'reservation_actor_state.dart';
 
 part 'reservation_actor_bloc.freezed.dart';
 
+// this bloc handle the logic for the "reservations" section
+// the actor bloc take care of "actions" performed on list hold by the watcher bloc
 class ReservationActorBloc
     extends Bloc<ReservationActorEvent, ReservationActorState> {
   ReservationActorBloc({@required this.reservationRepository})
@@ -24,7 +25,8 @@ class ReservationActorBloc
     ReservationActorEvent event,
   ) async* {
     yield* event.map(
-      insert: (value) async* {
+      //perform a reservation insert and emit the result of the operation
+    insert: (value) async* {
         yield ReservationActorState.actionInProgress();
         final insertResult =
             await reservationRepository.insertReservation(value.reservation);
@@ -33,6 +35,7 @@ class ReservationActorBloc
           (reservation) => ReservationActorState.insertSuccess(reservation),
         );
       },
+      //perform a reservation update and emit the result of the operation
       update: (value) async* {
         yield ReservationActorState.actionInProgress();
         final updateResult =
@@ -41,6 +44,7 @@ class ReservationActorBloc
             (failure) => ReservationActorState.actionFailure(failure),
             (reservation) => ReservationActorState.updateSuccess(reservation));
       },
+      //perform a reservation delete and emit the result of the operation
       delete: (value) async* {
         yield ReservationActorState.actionInProgress();
         final deleteResult =

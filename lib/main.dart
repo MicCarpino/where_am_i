@@ -11,6 +11,7 @@ import 'package:where_am_i/presentation/home/home_screen.dart';
 import 'package:where_am_i/presentation/login/login_screen.dart';
 import 'package:where_am_i/presentation/login/splash_screen.dart';
 
+//Flutter binding e get_it (DI) initialization
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Intl.defaultLocale = 'it_IT';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // UI initialization
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       systemNavigationBarColor: Colors.white, // navigation bar color
       statusBarColor: dncDarkBlue, // status bar color
@@ -33,6 +35,7 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    //retrieve instance of AuthenticationBloc
     return BlocProvider(
       create: (_) => serviceLocator.getIt<AuthenticationBloc>(),
       child: MaterialApp(
@@ -54,11 +57,14 @@ class MyApp extends StatelessWidget {
         ],
         builder: (context, child) => MediaQuery(
             data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+            //reacting to authentication state changes
             child: BlocListener<AuthenticationBloc, AuthenticationState>(
+              //perform operation just when previous auth state differs from the newer one
               listenWhen: (p, c) =>
                   p.authenticationStatus != c.authenticationStatus,
               listener: (context, state) {
                 switch (state.authenticationStatus) {
+                  //user logged, show Home page
                   case AuthenticationStatus.authenticated:
                     _navigator.pushAndRemoveUntil<void>(
                       HomeScreen.route(),
@@ -66,6 +72,7 @@ class MyApp extends StatelessWidget {
                     );
                     break;
                   case AuthenticationStatus.unauthenticated:
+                    //user not logged, show Login page
                     _navigator.pushAndRemoveUntil<void>(
                       LoginScreen.route(),
                       (route) => false,

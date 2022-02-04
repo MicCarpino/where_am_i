@@ -6,6 +6,7 @@ import 'package:where_am_i/core/utils/enums.dart';
 import 'package:where_am_i/domain/blocs/presences_management/actor/presences_management_actor_bloc.dart';
 import 'package:where_am_i/presentation/responsive_builder.dart';
 
+//dialog widget to add new external resources
 class AddExternalUserDialog extends StatelessWidget {
   final String messageText;
   final DateTime date;
@@ -34,6 +35,7 @@ class AddExternalUserDialog extends StatelessWidget {
                 this.messageText,
                 style: TextStyle(fontSize: 16, color: Colors.black54),
               ),
+              //input text field
               Form(
                 key: _textFormFieldKey,
                 child: TextFormField(
@@ -46,18 +48,21 @@ class AddExternalUserDialog extends StatelessWidget {
                       return null;
                     }),
               ),
+              //dialog cancel/confirm buttons
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    //cancel button, close the dialog
                     TextButton(
                       onPressed: () => Navigator.pop(context),
                       child: Text("Annulla", style: TextStyle(color: dncBlue)),
                     ),
                     SizedBox(width: 16),
                     TextButton(
+                      //confirm button, if the input is valid add a new external resource
                       onPressed: () {
                         if (_textFormFieldKey.currentState.validate()) {
                           context

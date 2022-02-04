@@ -69,6 +69,8 @@ class RemoteDataSourceImpl implements RemoteDataSource {
   String formatDateToString(DateTime date) =>
       DateFormat('yyyy-MM-dd').format(date);
 
+  //check if the api call as failed because of authorization error and, if that's
+  // the case, dispatch the logout to the repository
   _handleFailureResult(http.Response response) {
     if (response.statusCode == 401) {
       print('CALLING LOGOUT ON 401');

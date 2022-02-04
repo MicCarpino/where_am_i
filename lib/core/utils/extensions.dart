@@ -55,7 +55,7 @@ extension TimeOfDayExtension on TimeOfDay {
 }
 
 extension DateTimeToZero on DateTime {
-  //Date with only year, month and day valorized.
+  //Date with only year, month and day valued.
   //Minutes,seconds and milliseconds are set to zero
   DateTime zeroed() {
     return DateTime(this.year, this.month, this.day);
@@ -79,6 +79,7 @@ extension DateTimeToZero on DateTime {
 }
 
 extension UserWithWorkstationListSorter on List<UserWithWorkstation> {
+  //extensions to easily sort a list of UserWithWorkstation objects
   List<UserWithWorkstation> sortBySurnameAndName() {
     this.sort((a, b) {
       int surnameResult = a.user?.surname?.compareTo(b.user?.surname);
@@ -108,6 +109,7 @@ extension IterableNullOrEmpty on Iterable {
   bool isNullOrEmpty() => this == null || this.isEmpty;
 }
 
+//determine "device type" on screen width
 extension DeviceTypeExtension on MediaQueryData {
   DeviceType get deviceType {
     if (size.width >= 1500) return DeviceType.desktop;

@@ -14,6 +14,8 @@ const R24_1_INDEX = 19;
 const R24_2_INDEX = 27;
 const desksNumberForWorkplace24 = 8;
 
+//check room_26B.dart for details on how the workstations are built
+// and how the code conversion works
 class Room24 extends StatelessWidget {
   final codeConverter = WorkstationCodesConverter();
 

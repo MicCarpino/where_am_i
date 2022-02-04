@@ -6,6 +6,8 @@ import 'package:where_am_i/domain/blocs/my_presences/actor/my_presences_actor_bl
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'presences_marker.dart';
 
+//https://pub.dev/packages/table_calendar
+
 class MyPresencesCalendar extends StatefulWidget {
   @override
   _MyPresencesCalendarState createState() => _MyPresencesCalendarState();
@@ -34,6 +36,7 @@ class _MyPresencesCalendarState extends State<MyPresencesCalendar>
   @override
   Widget build(BuildContext context) {
     return TableCalendar(
+      //disable sunday
       enabledDayPredicate: (day) => day.weekday != DateTime.sunday,
       initialSelectedDay: DateTime.now(),
       locale: 'it_IT',
@@ -55,6 +58,7 @@ class _MyPresencesCalendarState extends State<MyPresencesCalendar>
         centerHeaderTitle: true,
         formatButtonVisible: false,
       ),
+      //the widget representing the days
       builders: CalendarBuilders(
         selectedDayBuilder: (context, date, _) => Center(
           child: Text('${date.day}',
@@ -63,24 +67,30 @@ class _MyPresencesCalendarState extends State<MyPresencesCalendar>
                 fontWeight: FontWeight.bold,
               )),
         ),
+        //optional marker for the day widget, in this case the "circles"
+        // representing the time slot
         markersBuilder: (_, date, events, __) => events.isNotEmpty
             ? [PresencesMarker(workstation: events.first)]
             : List.empty(),
+        //the style of the widget for the current day
         todayDayBuilder: (context, date, events) => Container(
           alignment: Alignment.center,
           child: Text('${date.day}'),
         ),
       ),
+      // on single tap perform presences insert (full day) or remove
       onDaySelected: (date, events, holidays) => context
           .read<MyPresencesActorBloc>()
           .add(events.isEmpty
               ? MyPresencesActorEvent.added(TimeSlot.fullDay,date)
               : (MyPresencesActorEvent.removed(events.first as Workstation))),
+      //on long press show the time slot dialog
       onDayLongPressed: (day, events, _) =>
           context.read<MyPresencesActorBloc>().add(
                 MyPresencesActorEvent.editRequested(
                     day, events.isEmpty ? null : events.first),
               ),
+      //the object (workstation) assigned to a specific date
       events: {
         for (Workstation v in widget.userPresences) v.workstationDate: [v]
       },

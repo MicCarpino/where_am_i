@@ -6,6 +6,8 @@ import 'package:where_am_i/domain/entities/reservation.dart';
 
 part 'reservation_form.freezed.dart';
 
+
+//this class is a model specific for the reservation insert/edit form
 @freezed
 abstract class ReservationForm with _$ReservationForm {
   const ReservationForm._();
@@ -22,6 +24,7 @@ abstract class ReservationForm with _$ReservationForm {
     @required TimeForm endTimeForm,
   }) = _ReservationForm;
 
+  //factory for a brand new reservation
   factory ReservationForm.initial(int idRoom, DateTime date, int idHandler) =>
       ReservationForm(
         idReservation: null,
@@ -35,6 +38,7 @@ abstract class ReservationForm with _$ReservationForm {
         endTimeForm: TimeForm.dirty(TimeOfDay(hour: 18, minute: 0)),
       );
 
+  //factory for an edit reservation case
   factory ReservationForm.fromDomain(Reservation reservation) =>
       ReservationForm(
         idReservation: reservation.idReservation,
@@ -61,6 +65,7 @@ abstract class ReservationForm with _$ReservationForm {
 
 enum ReservationSubjectFormError { empty, invalidTime }
 
+//a Formz object for the subject field validation
 class SubjectForm extends FormzInput<String, ReservationSubjectFormError> {
   SubjectForm.pure(String value) : super.pure(value);
 
@@ -74,6 +79,7 @@ class SubjectForm extends FormzInput<String, ReservationSubjectFormError> {
 
 enum ReservationDateTimeError { invalid }
 
+//a Formz object for the time pickers validation
 class TimeForm extends FormzInput<TimeOfDay, ReservationDateTimeError> {
   TimeForm.pure(TimeOfDay value) : super.pure(value);
 

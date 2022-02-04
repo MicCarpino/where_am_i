@@ -18,9 +18,11 @@ import 'package:where_am_i/presentation/presences_management/presences_managemen
 import '../../injection_container.dart';
 import '../responsive_builder.dart';
 
+// the page where staff/admin can manage all resources presences
 class PresencesManagementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    //create new instances of bloc classes used in this section
     return MultiBlocProvider(
       providers: [
         BlocProvider<PresencesManagementActorBloc>(
@@ -42,9 +44,13 @@ class PresencesManagementPage extends StatelessWidget {
         listener: (context, state) {
           LoadingOverlay.dismissIfShowing(context);
           return state.maybeMap(
+              //show the loading overlay when a presence action (api call) is in progress
               actionInProgress: (_) => LoadingOverlay.show(context),
+              //show the error occurred when a presence action resulted failed
               actionFailure: (f) => ResponsiveBuilder.showsErrorMessage(
                   context, f.failure.getErrorMessageFromFailure()),
+              //show the time slot selection dialog
+              //this should be moved back on ui layer instead of int the bloc
               showTimeSlotDialog: (value) => showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -64,6 +70,7 @@ class PresencesManagementPage extends StatelessWidget {
         },
         child: Column(
           children: [
+            // date picker
             Builder(
               builder: (context) =>
                   DatePicker((newDate) => _onDateChanged(context, newDate)),
@@ -73,8 +80,10 @@ class PresencesManagementPage extends StatelessWidget {
               builder: (context, state) {
                 return state.maybeMap(
                   initial: (_) => Container(),
+                  //presences fetch in progress, show loading indicator
                   loadInProgress: (_) => Flexible(
                       child: const Center(child: CircularProgressIndicator())),
+                  //presences fetch failed, show the retry button and define his callback
                   loadFailure: (_) => Flexible(
                       child: Center(
                     child: RetryWidget(
@@ -90,7 +99,7 @@ class PresencesManagementPage extends StatelessWidget {
                               ),
                     ),
                   )),
-                  // loadSuccess and filteredList state
+                  // loadSuccess or filteredList state, show the resources/presences list
                   orElse: () => PresencesManagementList(),
                 );
               },
@@ -101,6 +110,7 @@ class PresencesManagementPage extends StatelessWidget {
     );
   }
 
+  //callback for the date change in the date picker
   _onDateChanged(BuildContext context, DateTime newDate) {
     context.read<PresencesManagementWatcherBloc>().add(
           PresencesManagementWatcherEvent.getAllUsersPresencesByDate(newDate),
@@ -111,11 +121,14 @@ class PresencesManagementPage extends StatelessWidget {
     ResponsiveBuilder.showsErrorMessage(context, message);
   }
 
+  // action on time slot dialog operation result
   void _handleDialogResult(
       BuildContext context,
       Map<TimeSlot, List<DateTime>> result,
       Workstation workstation,
       User user) {
+    //no action has been performed on an existing workstation object, so it was
+    // an insert operation
     if (workstation == null) {
       final dates = result.values.first;
       context.read<PresencesManagementActorBloc>().add(
@@ -132,7 +145,7 @@ class PresencesManagementPage extends StatelessWidget {
                   ),
           );
     } else {
-      //edit case
+      //edit operation
       var selectedSlot = result.keys.first;
       context.read<PresencesManagementActorBloc>().add(
             PresencesManagementActorEvent.updated(workstation.copyWith(

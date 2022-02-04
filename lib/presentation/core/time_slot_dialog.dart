@@ -8,6 +8,7 @@ import 'package:where_am_i/domain/entities/user.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'package:where_am_i/presentation/responsive_builder.dart';
 
+//dialog for presences time slot selection
 class TimeSlotDialog extends StatefulWidget {
   final DateTime selectedDate;
   final Workstation workstation;
@@ -28,7 +29,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   //checkbox value
   bool _isRangeSelectionActive = false;
 
-  //dropdown selected item
+  //dropdown selected date
   DateTime _dropDownSelectedDate;
   List<DateTime> _availableDates = [];
 
@@ -48,11 +49,13 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
           mainAxisSize: MainAxisSize.max,
           children: [
             _buildTitleSection(),
+            // resource name indication
             if (widget.user != null || widget.workstation?.freeName != null)
               _buildNameSection(),
             //not last day of month and not updating a presence
             if (startingDateIsBeforeLastDay && widget.workstation == null)
               _buildMultiplePresencesSection(),
+            // morning/afternoon buttons
             _buildButtons(),
           ],
         ),
@@ -60,6 +63,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     );
   }
 
+  //checkbox for multiple days presences
   Widget _buildMultiplePresencesSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -90,6 +94,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
               ),
             ],
           ),
+          //dropdown with dates available to the end of month
           if (_isRangeSelectionActive) ...[
             Text("Presente fino a :", style: TextStyle(fontSize: 16)),
             DropdownButton<DateTime>(
@@ -111,6 +116,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     );
   }
 
+  //title of the dialog with action (insert/edit) and resource name indications
   Widget _buildTitleSection() {
     String title =
         "${widget.workstation == null ? 'Inserisci' : 'Modifica'} presenza per ${formatter.format(widget.selectedDate)}";
@@ -126,6 +132,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
     );
   }
 
+  //time slot buttons
   Widget _buildButtons() {
     final buttons = TimeSlot.values
         .where((timeSlot) {
@@ -189,7 +196,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
   void initValues() {
     startingDate = widget.selectedDate.zeroed();
     // DateTime month starts from 0, so month+1 is to compensate date "taken" from another Datetime
-    // while setting 0 as day automatically turn it in the last day of the month
+    // while setting 0 as day value automatically turn it in the last day of the month
     lastDateOfMonth =
         new DateTime(startingDate.year, startingDate.month + 1, 0);
     if (lastDateOfMonth.weekday == DateTime.saturday) {
@@ -217,7 +224,7 @@ class _TimeSlotDialogState extends State<TimeSlotDialog> {
 
   void initDropdownValues() {
     DateTime date = startingDate.add(Duration(days: 1));
-    //should set to zero otherwise on legal hour switch the hours is set to 1AM
+    //should set to zero otherwise on legal hour switch the hour value will be set to 1AM
     while (!date.isAfterTimeLess(lastDateOfMonth)) {
       if (date.weekday != DateTime.saturday &&
           date.weekday != DateTime.sunday) {

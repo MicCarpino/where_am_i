@@ -10,6 +10,7 @@ import 'package:where_am_i/presentation/roles_management/role_management_page.da
 
 import 'drawer/drawer_widget.dart';
 
+//In the "home screen" are rendered all app sections reachable from the drawer
 class HomeScreen extends StatelessWidget {
   static Route route() {
     return MaterialPageRoute<void>(builder: (_) => HomeScreen());
@@ -21,11 +22,13 @@ class HomeScreen extends StatelessWidget {
       create: (context) => HomeCubit(),
       child: BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) => ResponsiveBuilder(
+          //build mobile layout featuring the title bar
           mobile: Scaffold(
             appBar: AppBar(title: Text(state.title)),
             body: getPageBody(state.currentPage),
             drawer: Drawer(child: DrawerWidget(device: DeviceType.mobile)),
           ),
+          //draw a larger layout for tablet/desktop/web
           tabletOrDesktop: Scaffold(
             body: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -47,6 +50,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  //return the section to be rendered depending on value of "HomeState"
   Widget getPageBody(Pages currentPage) {
     switch (currentPage) {
       case Pages.workplaces_page:

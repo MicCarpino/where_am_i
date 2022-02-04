@@ -9,6 +9,7 @@ import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/home/workstations/desk.dart';
 import 'package:where_am_i/presentation/responsive_builder.dart';
 
+//check room_26B.dart for details on how the workstations are built
 class RoomStaff extends StatelessWidget {
   final double windowSpacing = 40;
   final double windowWidth = 2.5;

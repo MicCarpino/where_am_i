@@ -14,6 +14,7 @@ import 'package:where_am_i/domain/repositories/authentication_repository.dart';
 
 enum AuthenticationStatus { unknown, authenticated, unauthenticated }
 
+// this repository take care of app authentication mediating between local and remote sources
 class AuthRepositoryImpl implements AuthenticationRepository {
   final RemoteDataSource remoteDataSource;
   final LocalDataSource localDataSource;
@@ -26,6 +27,7 @@ class AuthRepositoryImpl implements AuthenticationRepository {
     @required this.localDataSource,
   });
 
+  //stream which propagate authentication status changes to the authentication bloc
   Stream<AuthenticationStatus> get status async* {
     await Future<void>.delayed(const Duration(seconds: 1));
     final cachedUser = await localDataSource.getCachedUser();
@@ -39,21 +41,28 @@ class AuthRepositoryImpl implements AuthenticationRepository {
   Future<Either<Failure, AuthenticatedUser>> performUserAuthentication(
       String username, String password) async {
     try {
+      //password must be encrypted before being submitted
       final encryptedPassword = AesUtils().cryptPassword(password);
+      //login api call
       final loggedUser = await remoteDataSource.performUserAuthentication(
           username, encryptedPassword);
+      //login success, store the user object and emit the authenticated state
       localDataSource.cacheLoggedUser(loggedUser);
       _controller.add(AuthenticationStatus.authenticated);
       return Right(loggedUser);
     } on ServerException catch (e) {
+      //error from server not related to credentials validation
       return Left(ServerFailure(e.errorMessage));
     } on UnauthorizedException catch (_) {
+      //authorization error
       return Left(UnexpectedFailure("Credenziali errate"));
     } on Exception catch (e) {
+      //some other error occured
       return Left(UnexpectedFailure(e.toString()));
     }
   }
 
+  //retrieve logged user stored on device
   @override
   Future<Either<Failure, AuthenticatedUser>> getLoggedUser() async {
     try {
@@ -66,6 +75,7 @@ class AuthRepositoryImpl implements AuthenticationRepository {
     }
   }
 
+  //remove loged user from device storage
   @override
   Future<Either<Failure, void>> removeLoggedUser() async {
     try {
@@ -81,6 +91,7 @@ class AuthRepositoryImpl implements AuthenticationRepository {
 
   void dispose() => _controller.close();
 
+  //crypt and save credentials on device
   @override
   Future<Either<Failure, void>> storeCredentials(
       String username, String password) async {
@@ -94,6 +105,7 @@ class AuthRepositoryImpl implements AuthenticationRepository {
     }
   }
 
+  //remove credentials stored on device
   @override
   Future<Either<Failure, void>> removeStoredCredentials() async {
     try {

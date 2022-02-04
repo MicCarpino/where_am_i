@@ -21,7 +21,9 @@ class _RoleManagementListState extends State<RoleManagementList> {
   @override
   void initState() {
     super.initState();
+    //controller for the searchbar
     _textFieldController.addListener(() {
+      //add a filter update event to the bloc on text change
       context.read<RolesManagementWatcherBloc>().add(
           RolesManagementWatcherEvent.onFilterUpdate(
               filter: _textFieldController.text));
@@ -32,6 +34,7 @@ class _RoleManagementListState extends State<RoleManagementList> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        //search bar
         TextField(
           controller: _textFieldController,
           maxLines: 1,
@@ -48,6 +51,7 @@ class _RoleManagementListState extends State<RoleManagementList> {
                   ),
           ),
         ),
+        //list of users with roles indicated on right side
         Expanded(
           child: ListView.separated(
             scrollDirection: Axis.vertical,
@@ -63,6 +67,7 @@ class _RoleManagementListState extends State<RoleManagementList> {
                   style: TextStyle(color: Colors.black),
                 ),
                 trailing: _buildRoleLabel(user.idRole),
+                //on single click open the role management dialog
                 onTap: () => showDialog(
                   context: context,
                   builder: (BuildContext _) {
@@ -70,6 +75,7 @@ class _RoleManagementListState extends State<RoleManagementList> {
                     return EditRoleDialog(
                       userSelected: user,
                       onNewRoleAssigned: (newRoleId) =>
+                      //callback when a new role is assigned
                           itemContext.read<RolesManagementActorBloc>().add(
                                 RolesManagementActorEvent.onRoleUpdate(
                                     user, newRoleId),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 const Duration _kExpand = Duration(milliseconds: 200);
 
+//expansion tile used in Workstation assignment page
+//original code comes from the functionality from some package
 class CustomExpansionTile extends StatefulWidget {
   const CustomExpansionTile({
     Key key,
@@ -121,6 +123,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
     });
   }
 
+  //action to perform when the "expand" icon is pressed
   void _onExpansionIconClick() {
     widget.expansionCallback(!_isExpanded);
     _changeState(!_isExpanded);
@@ -145,14 +148,19 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
             iconColor: _iconColor.value,
             textColor: _headerColor.value,
             child: ListTile(
+              //if the presences list isExpanded, the click on the tile is disabled
+              //otherwise the action defined for the callback (workstation assignment)
+              //is performed
               onTap: () => _isExpanded ? null : widget.onHeaderClick(),
               leading: widget.leading,
               title: widget.title,
               subtitle: widget.subtitleWidget,
+              //arrow icon
               trailing: InkWell(
                 onTap: _onExpansionIconClick,
                 child: Container(
                   padding: EdgeInsets.all(16),
+                  //rotate arrow icon if the tile is expanded
                   child: widget.trailing ??
                       RotationTransition(
                         turns: _iconTurns,

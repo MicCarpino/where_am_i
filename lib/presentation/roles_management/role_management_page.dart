@@ -11,9 +11,11 @@ import 'package:where_am_i/presentation/roles_management/role_management_list.da
 
 import '../../injection_container.dart';
 
+// the page where the an user with admin role che manage other resources role for the app
 class RolesManagementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    //create new instances of bloc classes used in this section
     return MultiBlocProvider(
       providers: [
         BlocProvider<RolesManagementActorBloc>(
@@ -29,20 +31,26 @@ class RolesManagementPage extends StatelessWidget {
         listener: (context, state) {
           LoadingOverlay.dismissIfShowing(context);
           return state.maybeMap(
+            //show the loading overlay when a role assignment action (api call) is in progress
             actionInProgress: (_) => LoadingOverlay.show(context),
-            orElse: () {},
+            //show the error occurred when a role assignment action fails
             updateFailure: (e) => ResponsiveBuilder.showsErrorMessage(
-                  context,
-                  e.failure.getErrorMessageFromFailure(),
-                ));
+              context,
+              e.failure.getErrorMessageFromFailure(),
+            ),
+            orElse: () {},
+          );
         },
         child: BlocBuilder<RolesManagementWatcherBloc,
             RolesManagementWatcherState>(
           builder: (context, state) {
             return state.map(
                 initial: (_) => Container(),
+                //roles fetch in progress, show loading indicator
                 loadInProgress: (_) => Center(child: CenteredLoading()),
+                // roles fetch successul, build the resources list
                 loadSuccess: (e) => RoleManagementList(users: e.users),
+                //roles fetch failed, show the retry button and define his callback
                 loadFailure: (_) => Container(
                     width: double.infinity,
                     height: double.infinity,

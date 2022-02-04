@@ -8,6 +8,7 @@ import 'package:where_am_i/presentation/core/retry_widget.dart';
 import 'package:where_am_i/presentation/home/workstations/desk.dart';
 import 'package:where_am_i/presentation/responsive_builder.dart';
 
+// the number of the desks to render for the workspace 26B
 const desksNumberForWorkplace26B = 18;
 
 class Room26B extends StatelessWidget {
@@ -20,7 +21,9 @@ class Room26B extends StatelessWidget {
       builder: (_, state) {
         return state.map(
           initial: (_) => Container(),
+          //workstations fetch in progress, show loading indicator
           loadInProgress: (_) => CenteredLoading(),
+          //workstations fetch failed, show the retry button and define his callback
           loadFailure: (_) => RetryWidget(
             onTryAgainPressed: () => context.read<WorkstationWatcherBloc>().add(
                   WorkstationWatcherEvent.fetchPresences(
@@ -28,6 +31,7 @@ class Room26B extends StatelessWidget {
                   ),
                 ),
           ),
+          //workstations fetch successful, build the 26B workstations
           loadSuccess: (value) {
             final desks = LayoutBuilder(
               builder: (_, constraints) {
@@ -37,11 +41,19 @@ class Room26B extends StatelessWidget {
                         windowSpacing) /
                     3;
                 return Column(
+                  //generate 6 rows, 3 desks for each one
                     children: List.generate(
                         6,
                         (index) => Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                //the workstation code differs from the original android native layout
+                                //which was manually numbered on the Y axis
+                                // (0-6 from first column, 7-12 for the second, 13-20 for the last one).
+                                // To match the enumeration with the flutter loop widget generation,
+                                // which generate always workstations with code 0,1,2 for each row,
+                                // the index need to be increased with the difference from the
+                                // "original vertical index" and the "flutter horizontal index"
                                 Desk(
                                   width: deskWidth,
                                   workstationCode: index + 1,
@@ -68,7 +80,9 @@ class Room26B extends StatelessWidget {
               },
             );
             return ResponsiveBuilder(
+              // on mobile fill the whole space available
               mobile: desks,
+              // on tablet/desktop/web adjust dimensions leaving some space on the sides
               tabletOrDesktop: LayoutBuilder(
                 builder: (_, constraints) => Padding(
                   padding: EdgeInsets.symmetric(

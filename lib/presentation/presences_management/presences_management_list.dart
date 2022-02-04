@@ -10,6 +10,7 @@ import 'package:where_am_i/presentation/presences_management/add_external_user_d
 import 'package:where_am_i/presentation/presences_management/presences_management_tile.dart';
 import 'package:where_am_i/presentation/responsive_builder.dart';
 
+//widget for the presences management list
 class PresencesManagementList extends StatefulWidget {
   @override
   _PresencesManagementListState createState() =>
@@ -22,7 +23,9 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
   @override
   void initState() {
     super.initState();
+    //controller for the searchbar
     _textFieldController.addListener(() {
+      //add a filter update event to the bloc on text change
       context.read<PresencesManagementWatcherBloc>().add(
             PresencesManagementWatcherEvent.onFilterUpdated(
                 _textFieldController.text),
@@ -40,14 +43,19 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
   Widget build(BuildContext context) {
     return Expanded(
         child: Column(children: [
+      //search bar and "add external user" button
       Row(children: [_buildSearchBar(), _buildAddExternalUserButton()]),
+      //this list is built only on "success state", so only "load success" and
+      //"filter update" states need to be handled
       BlocBuilder<PresencesManagementWatcherBloc,
           PresencesManagementWatcherState>(
         builder: (context, watcherState) {
           return watcherState.maybeMap(
               loadSuccess: (state) {
+                //separating the list in 3 sections for the "success state"
                 return Expanded(
                   child: ResponsiveBuilder(
+                    //on mobile show the sections stacked
                     mobile: ListView(
                       children: [
                         ..._buildUsersPendingSection(state.usersPending),
@@ -59,6 +67,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
                         Divider(color: Colors.grey, indent: 8, endIndent: 8),
                       ],
                     ),
+                    //on tablet/desktop/web show the sections side-by-side
                     tabletOrDesktop: Flex(
                       direction: Axis.horizontal,
                       children: [
@@ -92,6 +101,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
                   ),
                 );
               },
+              //when there's a "search in progress" show the result in a single list
               filteredList: (state) {
                 return Expanded(
                   child: ListView.separated(
@@ -126,6 +136,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
     ]));
   }
 
+  //search bar widget, the controller take care of interaction with the bloc to filter the list
   Widget _buildSearchBar() {
     return Expanded(
       child: TextField(
@@ -147,11 +158,13 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
     );
   }
 
+  //button to open the dialog where an external resource can be added
   Widget _buildAddExternalUserButton() {
     final isEditAllowed =
         BlocProvider.of<DatePickerCubit>(context).isEditAllowed();
     return IconButton(
       icon: Icon(Icons.person_add,
+          //disabled for past days
           color: isEditAllowed ? Colors.black87 : Colors.grey),
       onPressed: () {
         if (isEditAllowed) {
@@ -159,6 +172,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
           showDialog(
               context: context,
               builder: (BuildContext _) {
+                //open a dialog providing the bloc instance
                 return BlocProvider.value(
                   value: context.read<PresencesManagementActorBloc>(),
                   child: AddExternalUserDialog(
@@ -172,6 +186,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
     );
   }
 
+  //list of users with status = 0 (pending)
   List<Widget> _buildUsersPendingSection(
       List<UserWithWorkstation> usersPending) {
     List<Widget> list = [
@@ -188,6 +203,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
               userWithWorkstation: e,
               onSingleClick: () => null,
               onLongClick: () => null,
+              //define the callback for the confirm/reject buttons
               onStatusButtonClick: (newStatus) => _onStatusButtonClick(
                 context,
                 e.workstation.copyWith(status: newStatus),
@@ -196,6 +212,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
     return list;
   }
 
+  //list of users with status = 1 (confirmed)
   List<Widget> _buildUsersConfirmedSection(
       List<UserWithWorkstation> usersConfirmed) {
     var list = <Widget>[
@@ -211,12 +228,14 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
         ? list.add(ListTile(title: Text('Nessuna risorsa confermata')))
         : list.addAll(usersConfirmed.map((e) => PresencesManagementTile(
               userWithWorkstation: e,
+              //define callbacks for single and long click
               onSingleClick: () => _onResourceClick(context, e),
               onLongClick: () => _onResourceLongClick(context, e),
             )));
     return list;
   }
 
+  //list of users with no workstation object or status = 2 (rejected)
   List<Widget> _buildUsersRefusedOrAbsentSection(
       List<UserWithWorkstation> usersRefusedOrAbsent) {
     return [
@@ -230,6 +249,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
       ...usersRefusedOrAbsent
           .map((e) => PresencesManagementTile(
                 userWithWorkstation: e,
+                //define callbacks for single and long click
                 onSingleClick: () => _onResourceClick(context, e),
                 onLongClick: () => _onResourceLongClick(context, e),
               ))
@@ -241,6 +261,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
       BuildContext context, UserWithWorkstation userWithWorkstation) {
     FocusScope.of(context).unfocus();
     context.read<PresencesManagementActorBloc>().add(
+      //single click, edit operation
           PresencesManagementActorEvent.editRequested(
             context.read<DatePickerCubit>().state.visualizedDate,
             userWithWorkstation.workstation,
@@ -252,6 +273,7 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
   _onResourceLongClick(
       BuildContext context, UserWithWorkstation userWithWorkstation) {
     FocusScope.of(context).unfocus();
+    //long click, insert operation if there's not a workstation object already
     if (userWithWorkstation.workstation == null) {
       context
           .read<PresencesManagementActorBloc>()
@@ -261,6 +283,8 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
             idResource: userWithWorkstation.user?.idResource,
             freeName: userWithWorkstation.workstation?.freeName,
           ));
+      //remove operation, the workstation object has not a codeWorkstation value
+      //so it means the user has not been assigned to a workstation yet
     } else if (userWithWorkstation.workstation.codeWorkstation == null) {
       context
           .read<PresencesManagementActorBloc>()
@@ -268,6 +292,8 @@ class _PresencesManagementListState extends State<PresencesManagementList> {
             userWithWorkstation.workstation,
           ));
     } else {
+      //remove operation on a user assigned to a workstation, show the alert dialog
+      //and perform the operation on confirmation
       showDialog(
           context: context,
           builder: (_) => AlertDialog(

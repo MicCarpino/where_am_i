@@ -3,6 +3,7 @@ import 'package:where_am_i/core/utils/constants.dart';
 import 'package:where_am_i/domain/entities/workstation.dart';
 import 'dart:math';
 
+//the circle marker builder for the time slot indication in the "my presences calendar"
 class PresencesMarker extends StatelessWidget {
   final Workstation workstation;
 
@@ -39,11 +40,14 @@ class MarkerPainter extends CustomPainter {
     final circleWidth = size.width * 0.14;
     final externalRadiusMultiplier = 0.45;
     var paint = Paint();
+    //pending, blue color
     if (status == WORKSTATION_STATUS_PENDING) {
       paint.color = dncBlue;
+      //confirmed, orange color
     } else if (status == WORKSTATION_STATUS_CONFIRMED) {
       paint.color = dncOrange;
     } else {
+      //rejected, red color
       paint.color = Colors.red[500];
     }
     var path = Path();
@@ -60,6 +64,7 @@ class MarkerPainter extends CustomPainter {
         paint,
       );
     } else {
+      //half day, drawing half circle
       paint.style = PaintingStyle.fill;
       final startingPoint = size.width * (0.5 - externalRadiusMultiplier);
       final endingPoint = size.width * (0.5 + externalRadiusMultiplier);
@@ -72,7 +77,7 @@ class MarkerPainter extends CustomPainter {
       path.arcToPoint(Offset(startingPoint + circleWidth, size.height * 0.5),
           radius: Radius.circular(1), clockwise: false);
       path.lineTo(startingPoint, size.height * 0.5);
-      //rotation
+      //rotation applied according to the time slot
       bool isMorningSlot =
           startTime == TIME_SLOT_NINE && endTime == TIME_SLOT_THIRTEEN;
       final angle = (isMorningSlot ? -45.0 : 135) * pi / 180;

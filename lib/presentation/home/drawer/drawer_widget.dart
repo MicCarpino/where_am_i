@@ -24,6 +24,7 @@ class DrawerWidget extends StatelessWidget {
     final drawerBody = Column(
       children: [
         Expanded(
+          //build items option according to user role
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[
@@ -56,6 +57,7 @@ class DrawerWidget extends StatelessWidget {
         _buildLogoutItem(context),
       ],
     );
+    // lower width for the mobile drawer
     return ResponsiveBuilder(
       mobile: Container(
         width: MediaQuery.of(context).size.width * 0.65,
@@ -78,6 +80,7 @@ class DrawerWidget extends StatelessWidget {
               fit: BoxFit.fill,
             ),
           ),
+          // build information about current user and his workspace
           BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, state) {
             return Column(
@@ -86,6 +89,7 @@ class DrawerWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   if (state.authenticatedUser != null)
+                    // user name and surname
                     AutoSizeText(
                       'Ciao ${loggedUser?.name?.split(" ")?.first}',
                       minFontSize: 18,
@@ -98,6 +102,7 @@ class DrawerWidget extends StatelessWidget {
                       ),
                     ),
                   SizedBox(height: 4),
+                  // indication of workspace of assigned workstation
                   if (state.assignedWorkstation != null)
                     _buildAssignedWorkplaceSection(context)
                 ]);

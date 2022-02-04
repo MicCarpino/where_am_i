@@ -1,6 +1,7 @@
 class WorkstationCodesConverter {
   //Because of automatic generation through list in some workplaces, desks order
   // is different from the original android version which was drawn manually
+  //this class map old codes to newer (flutter) codes for some workspaces
   int toOldWorkstationCode(int newWorkstationCode) {
     int workstationCode = newWorkstationCode;
     if (newWorkstationCode <= 18) {

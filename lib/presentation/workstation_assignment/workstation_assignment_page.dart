@@ -27,6 +27,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //create bloc instance for workstation assignment
     return BlocProvider<WorkstationAssignmentBloc>(
       create: (context) => WorkstationAssignmentBloc(
         workstationCode: selectedWorkstationCode,
@@ -39,8 +40,10 @@ class WorkstationAssignmentPage extends StatelessWidget {
           builder: (context, state) => state.maybeMap(
             orElse: () => Container(),
             loadSuccess: (value) {
+              //rebuild the list view when the workstations list is updated
               _expanded.value = null;
               return ResponsiveBuilder(
+                //show the assigned resources overview on top, then the assignable resources below
                 mobile: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -49,6 +52,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
                       ..._buildAssignableResourcesList(
                           context, value.assignableResources)
                     ]),
+                //show assigned and assignable resources lists side by side on tablet/desktop/web
                 tabletOrDesktop: Row(
                   children: [
                     Expanded(
@@ -80,6 +84,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
     );
   }
 
+  //list of resources currently assigned to this workstation
   List<Widget> _buildOccupantsList(
     BuildContext context,
     List<UserWithWorkstation> occupants,
@@ -101,6 +106,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
         ),
       ),
     ];
+    //no resources assigned
     if (occupants.isEmpty) {
       occupantsList.add(
         Center(
@@ -152,6 +158,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
     return occupantsList;
   }
 
+  // assignable resources list
   List<Widget> _buildAssignableResourcesList(
     BuildContext context,
     List<UserWithWorkstation> assignableResources,
@@ -165,6 +172,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
         ),
       )
     ];
+    //no resources assignable
     if (assignableResources.isEmpty)
       assignableResourcesList.add(
         Center(
@@ -193,6 +201,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
     return assignableResourcesList;
   }
 
+  //the standard tile for single day allocation, performed on tap
   Widget _buildSimpleListTile(
     BuildContext context,
     UserWithWorkstation userWithWorkstation,
@@ -209,6 +218,11 @@ class WorkstationAssignmentPage extends StatelessWidget {
     );
   }
 
+  //the expandable tile for multiple days allocation.
+  //When the sublist is not expanded, with a single tap on the tile the workstation
+  //is assigned for a single day.
+  //When the sublist is expanded the callback start the loading of the presences for
+  // the following days and the single tap is disabled
   Widget _buildExpandableListTile(
     BuildContext context,
     UserWithWorkstation userWithWorkstation,
@@ -219,6 +233,7 @@ class WorkstationAssignmentPage extends StatelessWidget {
       ),
       child: Builder(
         builder: (newContext) => CustomExpansionTile(
+          //single tap action, assign the workstation just for current day
           onHeaderClick: () {
             newContext.read<WorkstationActorBloc>().add(
                   WorkstationActorEvent.update(
@@ -228,6 +243,8 @@ class WorkstationAssignmentPage extends StatelessWidget {
                 );
           },
           expansionCallback: (hasExpanded) {
+            //if the sublist is expanding, load presences from current date to
+            // the end of month for the corresponding resource
             if (hasExpanded) {
               var date =
                   newContext.read<DatePickerCubit>().state.visualizedDate;
@@ -237,20 +254,26 @@ class WorkstationAssignmentPage extends StatelessWidget {
                       userWithWorkstation.user.idResource, date);
             }
           },
+          //time slot indication
           subtitleWidget:
               _buildSlotTimeLabel(context, userWithWorkstation.workstation),
           expandedItem: _expanded,
           key: Key(userWithWorkstation.workstation.idWorkstation.toString()),
+          //resource name indication
           title: Text(userWithWorkstation.getResourceLabel()),
           children: <Widget>[
+            //list of presences to the end of the month
             BlocBuilder<WorkstationMultipleAssignmentCubit,
                 WorkstationMultipleAssignmentState>(
               builder: (aContext, state) => state.map(
+                //loading indicator when loading
                   loadingState: (value) => CenteredLoading(),
+                  //presences list on data loaded
                   loadedState: (value) => PresencesChecklist(
                         codeWorkstation: selectedWorkstationCode,
                         presences: value.presences,
                       ),
+                  //retry button on failure
                   errorState: (value) => RetryWidget(
                         onTryAgainPressed: () {
                           var date = newContext

@@ -5,11 +5,14 @@ import 'package:where_am_i/presentation/core/centered_loading.dart';
 import 'package:where_am_i/domain/blocs/login/log_in_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+// this widget it's used only in the login form
 class LoginButton extends StatelessWidget {
   final isLoading;
 
   LoginButton({this.isLoading = false});
 
+  //if login state is loading build a loading indicator, otherwise a button
+  //which add the "perform login event" to the login bloc
   @override
   Widget build(BuildContext context) {
     return isLoading
@@ -24,13 +27,14 @@ class LoginButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: Text(
-                'Log In',
+              'Log In',
               style: TextStyle(
-                  color: Colors.white,
-                  letterSpacing: 1.5,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'OpenSans'),
+                color: Colors.white,
+                letterSpacing: 1.5,
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'OpenSans',
+              ),
             ),
           );
   }

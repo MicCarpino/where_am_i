@@ -12,6 +12,9 @@ abstract class LogInState with _$LogInState {
     @required Option<Either<String, Unit>> loginFailureOrSuccess,
   }) = _LogInState;
 
+  //the "initial login state" initialization checks if the "remember me" checkbox
+  //has been selected in the previous login and eventually retrieve stored
+  //username and password values to automatically fill the form
   factory LogInState.initial() {
     var storedUsername;
     var storedPassword;
@@ -33,7 +36,7 @@ abstract class LogInState with _$LogInState {
           ? LoginFormField.pure()
           : LoginFormField.dirty(storedPassword),
       isPasswordHidden: true,
-      isRememberMeChecked: storedPassword != null && storedPassword != null,
+      isRememberMeChecked: storedUsername != null && storedPassword != null,
       isLoading: false,
       showErrorMessages: false,
       loginFailureOrSuccess: none(),

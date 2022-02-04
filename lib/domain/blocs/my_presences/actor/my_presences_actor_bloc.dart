@@ -18,6 +18,8 @@ part 'my_presences_actor_state.dart';
 
 part 'my_presences_actor_bloc.freezed.dart';
 
+// this bloc handle the logic for the "my presences" section
+// the actor bloc take care of "actions" performed on list hold by the watcher bloc
 class MyPresencesActorBloc
     extends Bloc<MyPresencesActorEvent, MyPresencesActorState> {
   MyPresencesActorBloc(this._workstationRepository)
@@ -38,6 +40,7 @@ class MyPresencesActorBloc
     );
   }
 
+  //perform a workstation insert and emit the result of the operation
   Stream<MyPresencesActorState> _mapAddedEventToState(_Added e) async* {
     final currentUserId =
         getIt<AuthenticationBloc>().state.authenticatedUser.user.idResource;
@@ -57,6 +60,7 @@ class MyPresencesActorBloc
     );
   }
 
+  //perform multiple workstations insert and emit the result of the operation
   Stream<MyPresencesActorState> _mapAddedMultipleToState(
       _AddedMultiple e) async* {
     final currentUserId =
@@ -79,6 +83,7 @@ class MyPresencesActorBloc
     );
   }
 
+  //perform a workstation delete and emit the result of the operation
   Stream<MyPresencesActorState> _mapRemovedEventToState(_Removed e) async* {
     if (e.workstation.status != WORKSTATION_STATUS_PENDING) {
       yield MyPresencesActorState.deleteFailure(
@@ -94,6 +99,7 @@ class MyPresencesActorBloc
     }
   }
 
+  //perform a workstation update and emit the result of the operation
   Stream<MyPresencesActorState> _mapUpdatedEventToState(_Updated e) async* {
     if (e.workstation.status != WORKSTATION_STATUS_PENDING) {
       yield MyPresencesActorState.updateFailure(
@@ -109,16 +115,19 @@ class MyPresencesActorBloc
     }
   }
 
+  //handle a request for time slot dialog access
   Stream<MyPresencesActorState> _mapEditRequestedEventToState(
       _EditRequested e) async* {
     //date to edit previous current date
     if (!e.day.isBeforeTimeLess(DateTime.now())) {
+      //can't edit workstation "pending", show error
       if (e.workstation != null &&
           e.workstation?.status != WORKSTATION_STATUS_PENDING) {
         yield MyPresencesActorState.updateFailure(
           UnexpectedFailure(WORKSTATION_EDIT_STATUS_ERROR),
         );
       } else {
+        //validation successful, show the dialog
         yield MyPresencesActorState.showTimeSlotDialog(e.day, e.workstation);
       }
     } else {
